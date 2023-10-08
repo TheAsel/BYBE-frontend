@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
     <div class="tw-text-center tw-py-10 tw-px-4 sm:tw-px-6 lg:tw-px-8">
@@ -14,5 +12,3 @@
     </div>
   </q-page>
 </template>
-
-<style scoped></style>
