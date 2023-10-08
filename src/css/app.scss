@@ -1,0 +1,61 @@
+// app global css in SCSS form
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/Light/OpenSans-Light.woff2?v=1.101) format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/LightItalic/OpenSans-LightItalic.woff2?v=1.101) format('woff2');
+  font-weight: 300;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/Regular/OpenSans-Regular.woff2?v=1.101) format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/Italic/OpenSans-Italic.woff2?v=1.101) format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/Semibold/OpenSans-Semibold.woff2?v=1.101) format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/SemiboldItalic/OpenSans-SemiboldItalic.woff2?v=1.101) format('woff2');
+  font-weight: 600;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/Bold/OpenSans-Bold.woff2?v=1.101) format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/BoldItalic/OpenSans-BoldItalic.woff2?v=1.101) format('woff2');
+  font-weight: 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/ExtraBold/OpenSans-ExtraBold.woff2?v=1.101) format('woff2');
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url(fonts/ExtraBoldItalic/OpenSans-ExtraBoldItalic.woff2?v=1.101) format('woff2');
+  font-weight: 800;
+  font-style: italic;
+}
