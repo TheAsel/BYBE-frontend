@@ -123,5 +123,3 @@ const themeSwitch = () => {
     </nav>
   </header>
 </template>
-
-<style scoped></style>
