@@ -6,8 +6,8 @@ import { creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from './CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from './CreaturesTable/EncounterBuilder.vue';
 
-const creatures = ref(creaturesStore());
-const encounter = ref(encounterStore());
+const creatures = creaturesStore();
+const encounter = encounterStore();
 
 const columns: {
   name: string;
@@ -110,28 +110,30 @@ const rows = [
 
 const actualRows = ref();
 
-try {
-  const requestOptions = {
-    method: 'GET',
-    headers: { accept: 'application/json' }
-  };
-  const response = await fetch(
-    backendUrl + '/bestiary/list?sort_key=Name&order_by=Ascending&cursor=0&page_size=50',
-    requestOptions
-  );
-  const data = await response.json();
-  if (!response.ok) {
-    const error = (data && data.message) || response.status;
-    throw error;
+if (creatures.getCreatures.length === 0) {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    };
+    const response = await fetch(
+      backendUrl + '/bestiary/list?sort_key=Name&order_by=Ascending&cursor=0&page_size=50',
+      requestOptions
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      const error = (data && data.message) || response.status;
+      throw error;
+    }
+    actualRows.value = data;
+  } catch (error) {
+    console.log(error);
   }
-  actualRows.value = data;
-} catch (error) {
-  console.log(error);
 }
 
 console.log(actualRows.value);
 
-creatures.value.updateCreatures(rows);
+creatures.updateCreatures(rows);
 
 const creatureTable = ref();
 
@@ -156,7 +158,7 @@ const rarities = ['Common', 'Uncommon', 'Rare', 'Unique'];
 const filterRarity = ref('');
 
 const combineFilters = computed(() => {
-  let filteredItems = creatures.value.getCreatures;
+  let filteredItems = creatures.getCreatures;
   let filteredNames = filteredItems.filter((out) => {
     if (filterName.value && filterName.value.length) {
       return out.name.toLowerCase().includes(filterName.value.toLowerCase());
@@ -219,9 +221,9 @@ const sort = (col: string) => {
 };
 
 const addCreature = (creature: creature) => {
-  const selectedCreature = creatures.value.getCreatureId(creature.id);
+  const selectedCreature = creatures.getCreatureId(creature.id);
   if (selectedCreature) {
-    encounter.value.addToEncounter(selectedCreature);
+    encounter.addToEncounter(selectedCreature);
   }
 };
 </script>
