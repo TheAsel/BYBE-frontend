@@ -2,14 +2,14 @@
 import { ref } from 'vue';
 import { partyStore } from 'stores/store';
 
-const party = ref(partyStore().getParty);
-var tmpParty = ref([...party.value]);
+const party = partyStore();
+let tmpParty = ref(party.getParty);
 
 const dialog = ref(false);
 
 const restoreParty = () => {
   dialog.value = true;
-  tmpParty.value = [...party.value];
+  tmpParty.value = [...party.getParty];
 };
 
 const validateLevel = (index: number) => {
@@ -33,7 +33,7 @@ const removePlayer = (index: number) => {
 };
 
 const saveChanges = () => {
-  party.value = tmpParty.value;
+  party.updateParty(tmpParty.value);
 };
 </script>
 
