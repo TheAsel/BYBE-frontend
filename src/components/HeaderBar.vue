@@ -34,7 +34,8 @@ switch (theme) {
     break;
 
   default:
-    localStorage.setItem('hs_theme', 'light');
+    localStorage.setItem('hs_theme', 'dark');
+    $q.dark.set(true);
     break;
 }
 
