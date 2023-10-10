@@ -1,3 +1,4 @@
+import { creature } from '../types/creature';
 import { defineStore } from 'pinia';
 
 export const partyStore = defineStore('party', {
@@ -17,6 +18,69 @@ export const partyStore = defineStore('party', {
     },
     removePlayer(index: number) {
       this.party.splice(index, 1);
+    }
+  }
+});
+
+export const creaturesStore = defineStore('creatures', {
+  state: () => ({ creatures: [] as creature[] }),
+  getters: {
+    getCreatures: (state) => state.creatures,
+    getCreatureId: (state) => (id: number) => state.creatures.find((creature) => creature.id === id)
+  },
+  actions: {
+    updateCreatures(newCreatures: creature[]) {
+      this.creatures = newCreatures;
+    },
+    updateCreatureIndex(newValue: creature, index: number) {
+      this.creatures[index] = newValue;
+    },
+    addPlayer(newCreature: creature) {
+      this.creatures.push(newCreature);
+    },
+    removePlayer(index: number) {
+      this.creatures.splice(index, 1);
+    }
+  }
+});
+
+export const encounterStore = defineStore('encounter', {
+  state: () => ({ encounter: [] as creature[] }),
+  getters: {
+    getEncounter: (state) => state.encounter
+  },
+  actions: {
+    clearEncounter() {
+      this.encounter = [];
+    },
+    clearCreature(creature: creature) {
+      const index = this.encounter.indexOf(creature);
+      this.encounter.splice(index, 1);
+    },
+    changeVariant(index: number, variant: 'weak' | 'base' | 'elite') {
+      this.encounter[index].variant = variant;
+    },
+    addToEncounter(creature: creature, index?: number, variant?: 'weak' | 'base' | 'elite') {
+      if (index! >= 0) {
+        if (creature.quantity) {
+          creature.quantity!++;
+        } else {
+          creature.quantity = 1;
+        }
+        this.encounter.splice(index!, 1, creature);
+      } else {
+        const newCreature = { ...creature };
+        newCreature.quantity = 1;
+        newCreature.variant = variant || 'base';
+        this.encounter.push(newCreature);
+      }
+    },
+    removeFromEncounter(index: number) {
+      if (this.encounter[index].quantity! > 1) {
+        this.encounter[index].quantity!--;
+      } else {
+        this.encounter.splice(index, 1);
+      }
     }
   }
 });

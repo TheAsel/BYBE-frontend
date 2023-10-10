@@ -22,13 +22,18 @@ const generateEncounter = () => {};
 </script>
 
 <template>
-  <q-btn outline label="Encounter Builder" color="primary" @click="dialog = true" />
-  <q-dialog v-model="dialog">
+  <q-btn
+    outline
+    label="Encounter Builder"
+    class="tw-text-blue-600 dark:tw-text-blue-400"
+    @click="dialog = true"
+  />
+  <q-dialog v-model="dialog" aria-label="Encounter builder">
     <q-card>
       <q-card-section class="row items-center">
         <div class="text-h6">Encounter Builder</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
+        <q-btn icon="close" flat round dense v-close-popup aria-label="Close dialog" />
       </q-card-section>
 
       <q-separator />
@@ -88,14 +93,13 @@ const generateEncounter = () => {};
 
         <q-separator class="tw-mt-4" />
         <q-btn
-          outline
-          type="button"
-          class="full-width tw-mt-4"
-          color="primary"
+          unelevated
+          label="Generate Encounter"
+          type="submit"
+          class="full-width tw-mt-2 tw-text-blue-600 dark:tw-text-blue-400"
+          v-close-popup
           @click="generateEncounter"
-        >
-          Generate Encounter
-        </q-btn>
+        />
       </q-card-section>
     </q-card>
   </q-dialog>

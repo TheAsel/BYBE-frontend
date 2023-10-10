@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import PartyBuilder from './PartyBuilder.vue';
-import EncounterBuilder from './EncounterBuilder.vue';
+import { backendUrl } from 'src/boot/globals';
+import { creature } from '../../types/creature';
+import { creaturesStore, encounterStore } from 'stores/store';
+import PartyBuilder from './CreaturesTable/PartyBuilder.vue';
+import EncounterBuilder from './CreaturesTable/EncounterBuilder.vue';
+
+const creatures = ref(creaturesStore());
+const encounter = ref(encounterStore());
 
 const columns: {
   name: string;
@@ -102,6 +108,31 @@ const rows = [
   }
 ];
 
+const actualRows = ref();
+
+try {
+  const requestOptions = {
+    method: 'GET',
+    headers: { accept: 'application/json' }
+  };
+  const response = await fetch(
+    backendUrl + '/bestiary/list?sort_key=Name&order_by=Ascending&cursor=0&page_size=50',
+    requestOptions
+  );
+  const data = await response.json();
+  if (!response.ok) {
+    const error = (data && data.message) || response.status;
+    throw error;
+  }
+  actualRows.value = data;
+} catch (error) {
+  console.log(error);
+}
+
+console.log(actualRows.value);
+
+creatures.value.updateCreatures(rows);
+
 const creatureTable = ref();
 
 const visibleColumns = ref(['level', 'hp', 'family', 'alignment', 'size', 'rarity']);
@@ -125,10 +156,9 @@ const rarities = ['Common', 'Uncommon', 'Rare', 'Unique'];
 const filterRarity = ref('');
 
 const combineFilters = computed(() => {
-  let filteredItems = rows;
+  let filteredItems = creatures.value.getCreatures;
   let filteredNames = filteredItems.filter((out) => {
     if (filterName.value && filterName.value.length) {
-      console.log('hei');
       return out.name.toLowerCase().includes(filterName.value.toLowerCase());
     }
     return out;
@@ -188,8 +218,11 @@ const sort = (col: string) => {
   creatureTable.value.sort(col);
 };
 
-const addCreature = (row: Array<string | number>) => {
-  console.log(row);
+const addCreature = (creature: creature) => {
+  const selectedCreature = creatures.value.getCreatureId(creature.id);
+  if (selectedCreature) {
+    encounter.value.addToEncounter(selectedCreature);
+  }
 };
 </script>
 
@@ -229,6 +262,7 @@ const addCreature = (row: Array<string | number>) => {
           class="tw-mx-2 tw-p-2"
           icon="bi-eraser"
           size="md"
+          aria-label="Clear filters"
           @click="resetFilters"
         >
           <q-tooltip
@@ -258,7 +292,7 @@ const addCreature = (row: Array<string | number>) => {
         <q-td :props="name">
           <a :href="'https://2e.aonprd.com/Monsters.aspx?ID=' + name.row.id" target="_blank">
             <span
-              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-500"
+              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
               >{{ name.value }}</span
             >
           </a>
@@ -281,6 +315,7 @@ const addCreature = (row: Array<string | number>) => {
                 size="xs"
                 class="tw-p-2"
                 icon="bi-arrow-down-up"
+                aria-label="Sort name column"
                 @click="sort('name')"
               />
             </div>
@@ -311,6 +346,7 @@ const addCreature = (row: Array<string | number>) => {
                         :min="-1"
                         :max="25"
                         style="min-width: 200px"
+                        aria-label="Filter level"
                       />
                     </div>
                   </q-banner>
@@ -325,6 +361,7 @@ const addCreature = (row: Array<string | number>) => {
                 size="xs"
                 class="tw-p-2"
                 icon="bi-arrow-down-up"
+                aria-label="Sort level column"
                 @click="sort('level')"
               />
             </div>
@@ -349,6 +386,7 @@ const addCreature = (row: Array<string | number>) => {
                         :min="0"
                         :max="600"
                         style="min-width: 200px"
+                        aria-label="Filter HP"
                       />
                     </div>
                   </q-banner>
@@ -363,6 +401,7 @@ const addCreature = (row: Array<string | number>) => {
                 size="xs"
                 class="tw-p-2"
                 icon="bi-arrow-down-up"
+                aria-label="Sort hp column"
                 @click="sort('hp')"
               />
             </div>
@@ -395,6 +434,7 @@ const addCreature = (row: Array<string | number>) => {
                 size="xs"
                 class="tw-p-2"
                 icon="bi-arrow-down-up"
+                aria-label="Sort family column"
                 @click="sort('family')"
               />
             </div>
@@ -427,6 +467,7 @@ const addCreature = (row: Array<string | number>) => {
                 size="xs"
                 class="tw-p-2"
                 icon="bi-arrow-down-up"
+                aria-label="Sort alignment column"
                 @click="sort('alignment')"
               />
             </div>
@@ -459,6 +500,7 @@ const addCreature = (row: Array<string | number>) => {
                 size="xs"
                 class="tw-p-2"
                 icon="bi-arrow-down-up"
+                aria-label="Sort size column"
                 @click="sort('size')"
               />
             </div>
@@ -488,6 +530,7 @@ const addCreature = (row: Array<string | number>) => {
                 size="xs"
                 class="tw-p-2"
                 icon="bi-arrow-down-up"
+                aria-label="Sort rarity column"
                 @click="sort('rarity')"
               />
             </div>

@@ -38,13 +38,18 @@ const saveChanges = () => {
 </script>
 
 <template>
-  <q-btn outline label="Party Builder" color="primary" @click="restoreParty" />
-  <q-dialog v-model="dialog">
+  <q-btn
+    outline
+    label="Party Builder"
+    class="tw-text-blue-600 dark:tw-text-blue-400"
+    @click="restoreParty"
+  />
+  <q-dialog v-model="dialog" aria-label="Player builder">
     <q-card>
       <q-card-section class="row items-center">
         <div class="text-h6">Party Builder</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
+        <q-btn icon="close" flat round dense v-close-popup aria-label="Close dialog" />
       </q-card-section>
 
       <q-separator />
@@ -65,15 +70,23 @@ const saveChanges = () => {
               />
             </div>
             <div class="col-shrink tw-pl-3">
-              <q-btn flat round type="button" @click="removePlayer(index)" icon="bi-dash"> </q-btn>
+              <q-btn
+                flat
+                round
+                type="button"
+                @click="removePlayer(index)"
+                icon="bi-dash"
+                aria-label="Remove player"
+              >
+              </q-btn>
             </div>
           </div>
         </div>
         <q-btn
           outline
           type="button"
-          class="full-width tw-mt-4"
-          color="primary"
+          class="full-width tw-mt-4 tw-text-blue-600 dark:tw-text-blue-400"
+          aria-label="Add player"
           @click="addPlayer"
           icon="bi-plus"
         >
@@ -87,7 +100,7 @@ const saveChanges = () => {
           unelevated
           label="Save changes"
           type="submit"
-          color="primary"
+          class="tw-text-blue-600 dark:tw-text-blue-400"
           v-close-popup
           @click="saveChanges"
         />

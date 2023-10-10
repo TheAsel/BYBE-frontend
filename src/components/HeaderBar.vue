@@ -91,7 +91,7 @@ const themeSwitch = () => {
             :to="item.to"
             :class="
               currentPath === item.to
-                ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-500'
+                ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-400'
                 : 'tw-text-gray-500 hover:tw-text-gray-400 sm:tw-py-4 dark:tw-text-gray-400 dark:hover:tw-text-gray-500'
             "
             :aria-current="item.to ? 'page' : undefined"
@@ -108,6 +108,7 @@ const themeSwitch = () => {
               size="12px"
               href="https://github.com/TheAsel/BYBE-frontend"
               target="_blank"
+              aria-label="GitHub link"
             />
             <q-btn
               flat
@@ -116,6 +117,7 @@ const themeSwitch = () => {
               class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
               @click="themeSwitch"
               :icon="$q.dark.isActive ? 'bi-sun' : 'bi-moon'"
+              aria-label="Toggle theme"
             />
           </div>
         </div>
