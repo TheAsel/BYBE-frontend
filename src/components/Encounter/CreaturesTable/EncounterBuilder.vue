@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { filtersStore } from 'src/stores/store';
+
+const filters = filtersStore();
 
 const dialog = ref(false);
 
-const families = ['Dragon, Red', 'Kobold', 'Spawn of Rovagug'];
-const filterFamily = ref('');
-
-const alignments = ['LG', 'NG', 'CG', 'LN', 'N', 'CN', 'LE', 'NE', 'CE', 'Any', 'No Alignment'];
-const filterAlignment = ref('');
-
-const sizes = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
-const filterSize = ref('');
-
-const rarities = ['Common', 'Uncommon', 'Rare', 'Unique'];
-const filterRarity = ref('');
+const family = ref();
+const alignment = ref();
+const size = ref();
+const rarity = ref();
 
 const difficulties = ['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'];
 const filterDifficulty = ref('');
@@ -45,8 +41,8 @@ const generateEncounter = () => {};
             outlined
             clearable
             options-dense
-            v-model="filterFamily"
-            :options="families"
+            v-model="family"
+            :options="Object.freeze(filters.getFilters.family)"
             label="Family"
           />
 
@@ -55,8 +51,8 @@ const generateEncounter = () => {};
             outlined
             clearable
             options-dense
-            v-model="filterAlignment"
-            :options="alignments"
+            v-model="alignment"
+            :options="Object.freeze(filters.getFilters.alignment)"
             label="Alignment"
           />
 
@@ -65,8 +61,8 @@ const generateEncounter = () => {};
             outlined
             clearable
             options-dense
-            v-model="filterSize"
-            :options="sizes"
+            v-model="size"
+            :options="Object.freeze(filters.getFilters.size)"
             label="Size"
           />
 
@@ -75,8 +71,8 @@ const generateEncounter = () => {};
             outlined
             clearable
             options-dense
-            v-model="filterRarity"
-            :options="rarities"
+            v-model="rarity"
+            :options="Object.freeze(filters.getFilters.rarity)"
             label="Rarity"
           />
 

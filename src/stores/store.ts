@@ -22,6 +22,35 @@ export const partyStore = defineStore('party', {
   }
 });
 
+export const filtersStore = defineStore('filters', {
+  state: () => ({
+    filters: {
+      family: [] as string[],
+      alignment: [] as string[],
+      size: [] as string[],
+      rarity: [] as string[]
+    }
+  }),
+  getters: {
+    getFilters: (state) => state.filters
+  },
+  actions: {
+    updateFamilies(newFamilies: string[]) {
+      this.filters.family = newFamilies;
+    },
+    updateAlignments(newAlignments: string[]) {
+      this.filters.alignment = newAlignments;
+    },
+    updateSizes(newSizes: string[]) {
+      newSizes.reverse();
+      this.filters.size = newSizes;
+    },
+    updateRarities(newRarities: string[]) {
+      this.filters.rarity = newRarities;
+    }
+  }
+});
+
 export const creaturesStore = defineStore('creatures', {
   state: () => ({ creatures: [] as creature[] }),
   getters: {

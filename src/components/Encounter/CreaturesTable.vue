@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { backendUrl } from 'src/boot/globals';
+import { requestCreatures, requestFilters } from '../../utils/api-calls';
 import { creature } from '../../types/creature';
-import { creaturesStore, encounterStore } from 'stores/store';
+import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from './CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from './CreaturesTable/EncounterBuilder.vue';
 
+// ---- Stores declaration
+const filters = filtersStore();
 const creatures = creaturesStore();
 const encounter = encounterStore();
 
+// ---- Columns declaration
 const columns: {
   name: string;
   label: string;
@@ -75,88 +78,38 @@ const columns: {
   }
 ];
 
-const rows = [
-  {
-    id: 138,
-    name: 'Ancient Red Dragon',
-    level: 19,
-    hp: 425,
-    family: 'Dragon, Red',
-    alignment: 'CE',
-    size: 'Huge',
-    rarity: 'Uncommon'
-  },
-  {
-    id: 272,
-    name: 'Kobold Warrior',
-    level: -1,
-    hp: 8,
-    family: 'Kobold',
-    alignment: 'LE',
-    size: 'Small',
-    rarity: 'Common'
-  },
-  {
-    id: 490,
-    name: 'Tarrasque',
-    level: 25,
-    hp: 540,
-    family: 'Spawn of Rovagug',
-    alignment: 'CE',
-    size: 'Gargantuan',
-    rarity: 'Unique'
-  }
-];
-
-const actualRows = ref();
-
+// ---- API requests
 if (creatures.getCreatures.length === 0) {
-  try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      backendUrl + '/bestiary/list?sort_key=Name&order_by=Ascending&cursor=0&page_size=50',
-      requestOptions
-    );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = (data && data.message) || response.status;
-      throw error;
-    }
-    actualRows.value = data;
-  } catch (error) {
-    console.log(error);
-  }
+  creatures.updateCreatures(await requestCreatures(0, -1));
 }
 
-console.log(actualRows.value);
+if (filters.getFilters.family.length === 0) {
+  filters.updateFamilies(await requestFilters('families'));
+}
 
-creatures.updateCreatures(rows);
+if (filters.getFilters.alignment.length === 0) {
+  filters.updateAlignments(await requestFilters('alignments'));
+}
 
-const creatureTable = ref();
+if (filters.getFilters.size.length === 0) {
+  filters.updateSizes(await requestFilters('sizes'));
+}
 
-const visibleColumns = ref(['level', 'hp', 'family', 'alignment', 'size', 'rarity']);
+if (filters.getFilters.rarity.length === 0) {
+  filters.updateRarities(await requestFilters('rarities'));
+}
 
+// ---- Filters
 const filterName = ref('');
-
 const levelRange = ref({ min: -1, max: 25 });
-
 const hpRange = ref({ min: 0, max: 600 });
-
-const families = ['Dragon, Red', 'Kobold', 'Spawn of Rovagug'];
 const filterFamily = ref('');
-
-const alignments = ['LG', 'NG', 'CG', 'LN', 'N', 'CN', 'LE', 'NE', 'CE', 'Any', 'No Alignment'];
 const filterAlignment = ref('');
-
-const sizes = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
 const filterSize = ref('');
-
-const rarities = ['Common', 'Uncommon', 'Rare', 'Unique'];
 const filterRarity = ref('');
 
+// ---- Filter function
+// combines all filters
 const combineFilters = computed(() => {
   let filteredItems = creatures.getCreatures;
   let filteredNames = filteredItems.filter((out) => {
@@ -204,6 +157,7 @@ const combineFilters = computed(() => {
   return filteredRarity;
 });
 
+// ---- Reset filters function
 const resetFilters = () => {
   filterName.value = '';
   levelRange.value.min = -1;
@@ -216,10 +170,16 @@ const resetFilters = () => {
   filterRarity.value = '';
 };
 
+// ---- Table and visible columns
+const creatureTable = ref();
+const visibleColumns = ref(['level', 'hp', 'family', 'alignment', 'size', 'rarity']);
+
+// ---- Column sort function
 const sort = (col: string) => {
   creatureTable.value.sort(col);
 };
 
+// ---- Add creature to encounter function
 const addCreature = (creature: creature) => {
   const selectedCreature = creatures.getCreatureId(creature.id);
   if (selectedCreature) {
@@ -232,14 +192,13 @@ const addCreature = (creature: creature) => {
   <div class="q-pa-md tw-w-full md:tw-w-3/4">
     <q-table
       ref="creatureTable"
-      class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-slate-900 dark:tw-border-gray-700"
+      class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
       style="height: 80vh"
       flat
       bordered
       title="Creatures"
       :rows="combineFilters"
       :columns="columns"
-      row-key="name"
       :pagination="{ rowsPerPage: 0 }"
       :rows-per-page-options="[0]"
       :visible-columns="visibleColumns"
@@ -285,7 +244,7 @@ const addCreature = (creature: creature) => {
           display-value="Show\Hide columns"
           emit-value
           map-options
-          :options="columns"
+          :options="Object.freeze(columns)"
           option-value="name"
           style="min-width: 150px"
         />
@@ -423,9 +382,8 @@ const addCreature = (creature: creature) => {
                 clearable
                 options-dense
                 v-model="filterFamily"
-                :options="families"
+                :options="Object.freeze(filters.getFilters.family)"
                 label="Family"
-                style="min-width: 160px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -456,7 +414,7 @@ const addCreature = (creature: creature) => {
                 clearable
                 options-dense
                 v-model="filterAlignment"
-                :options="alignments"
+                :options="Object.freeze(filters.getFilters.alignment)"
                 label="Alignments"
                 style="min-width: 140px"
               />
@@ -489,7 +447,7 @@ const addCreature = (creature: creature) => {
                 clearable
                 options-dense
                 v-model="filterSize"
-                :options="sizes"
+                :options="Object.freeze(filters.getFilters.size)"
                 label="Size"
                 style="min-width: 120px"
               />
@@ -519,7 +477,7 @@ const addCreature = (creature: creature) => {
                 clearable
                 options-dense
                 v-model="filterRarity"
-                :options="rarities"
+                :options="Object.freeze(filters.getFilters.rarity)"
                 label="Rarity"
                 style="min-width: 135px"
               />
@@ -545,58 +503,36 @@ const addCreature = (creature: creature) => {
 
 <style>
 .sticky-header-table {
-  height: 310px;
-
-  td {
-    border-bottom: none;
-  }
-
   thead tr th {
     position: sticky;
     z-index: 1;
+    background-color: #ffffff;
     border-left: none;
     border-right: none;
     border-width: 1px;
-    border-color: #e5e7eb;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f3f4f6 !important;
   }
 
   thead tr:first-child th {
     top: 0;
   }
-
-  &.q-table--loading thead tr:last-child th {
-    top: 48px;
-  }
-
-  tbody {
-    scroll-margin-top: 48px;
-  }
-}
-
-.q-table--dark .q-table__top {
-  background-color: #1f2937;
-}
-
-.q-table--dark .q-table__middle {
-  background-color: #1f2937;
-}
-
-.q-table--dark .q-table__bottom {
-  background-color: #1f2937;
 }
 
 .q-table--dark thead tr th {
   background-color: #1f2937;
-  border-width: 1px;
-  border-color: #374151;
+}
+
+tr:nth-child(even) {
+  background-color: #f3f4f6 !important;
 }
 
 .q-table--dark tr:nth-child(even) {
   background-color: #374151 !important;
+}
+
+.sticky-header-table {
+  td {
+    border-bottom: none;
+  }
 }
 
 .q-table--dark td {
