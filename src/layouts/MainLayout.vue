@@ -7,7 +7,7 @@ import HeaderBar from 'components/HeaderBar.vue';
     <q-page-container>
       <HeaderBar />
       <router-view style="min-height: auto" />
-      <footer class="tw-relative tw-bottom-0 tw-inset-x-0 tw-text-center tw-py-5">
+      <footer class="tw-relative tw-bottom-0 tw-inset-x-0 tw-text-center tw-py-1">
         <div class="tw-max-w-[85rem] tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
           <p class="tw-text-sm dark:tw-text-white/50 tw-text-black/70">
             This website is not published, endorsed, or specifically approved by Paizo Inc. We are

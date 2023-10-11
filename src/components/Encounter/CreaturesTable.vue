@@ -193,7 +193,7 @@ const addCreature = (creature: creature) => {
     <q-table
       ref="creatureTable"
       class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      style="height: 80vh"
+      style="height: 85vh"
       flat
       bordered
       title="Creatures"
@@ -286,17 +286,10 @@ const addCreature = (creature: creature) => {
       <template v-slot:header-cell-level>
         <q-th>
           <div
-            style="min-width: 110px"
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
-              <q-field
-                dense
-                outlined
-                label="Level"
-                style="min-width: 80px; width: auto"
-                stack-label
-              >
+              <q-field dense outlined label="Level" style="min-width: 80px" stack-label>
                 <template v-slot:control> {{ levelRange.min }} to {{ levelRange.max }} </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -332,7 +325,6 @@ const addCreature = (creature: creature) => {
       <template v-slot:header-cell-hp>
         <q-th>
           <div
-            style="min-width: 130px"
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
@@ -372,7 +364,6 @@ const addCreature = (creature: creature) => {
       <template v-slot:header-cell-family>
         <q-th>
           <div
-            style="min-width: 190px"
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
@@ -384,6 +375,7 @@ const addCreature = (creature: creature) => {
                 v-model="filterFamily"
                 :options="Object.freeze(filters.getFilters.family)"
                 label="Family"
+                style="min-width: 180px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -404,7 +396,6 @@ const addCreature = (creature: creature) => {
       <template v-slot:header-cell-alignment>
         <q-th>
           <div
-            style="min-width: 170px"
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
@@ -415,8 +406,8 @@ const addCreature = (creature: creature) => {
                 options-dense
                 v-model="filterAlignment"
                 :options="Object.freeze(filters.getFilters.alignment)"
-                label="Alignments"
-                style="min-width: 140px"
+                label="Alignment"
+                style="min-width: 125px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -437,7 +428,6 @@ const addCreature = (creature: creature) => {
       <template v-slot:header-cell-size>
         <q-th>
           <div
-            style="min-width: 150px"
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
@@ -449,7 +439,7 @@ const addCreature = (creature: creature) => {
                 v-model="filterSize"
                 :options="Object.freeze(filters.getFilters.size)"
                 label="Size"
-                style="min-width: 120px"
+                style="min-width: 100px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -469,7 +459,7 @@ const addCreature = (creature: creature) => {
       </template>
       <template v-slot:header-cell-rarity>
         <q-th>
-          <div style="min-width: 165px" class="row no-wrap items-center">
+          <div class="row no-wrap items-center">
             <div class="col-grow">
               <q-select
                 dense
@@ -479,7 +469,7 @@ const addCreature = (creature: creature) => {
                 v-model="filterRarity"
                 :options="Object.freeze(filters.getFilters.rarity)"
                 label="Rarity"
-                style="min-width: 135px"
+                style="min-width: 100px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
