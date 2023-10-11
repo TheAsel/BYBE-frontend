@@ -10,7 +10,7 @@ const progress = ref(0.4);
 <template>
   <div class="q-pa-md tw-w-full md:tw-w-1/4">
     <div
-      style="height: 80vh"
+      style="height: 85vh"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
     >
       <div class="tw-flex tw-mx-4 tw-my-0.5">
@@ -25,8 +25,8 @@ const progress = ref(0.4);
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
       <q-scroll-area visible style="height: calc(100% - 106px)">
         <div v-for="(item, index) in encounter.getEncounter" :key="index" dense>
-          <div class="tw-flex tw-grow tw-flex-wrap">
-            <div class="tw-flex-initial tw-w-12 tw-my-auto tw-mr-2">
+          <div class="tw-flex tw-grow tw-flex-wrap justify-end">
+            <div class="tw-flex-initial tw-w-12 tw-my-auto tw-mx-1">
               <q-btn
                 unelevated
                 :ripple="false"
@@ -44,10 +44,10 @@ const progress = ref(0.4);
                 @click="encounter.removeFromEncounter(index)"
               />
             </div>
-            <div class="tw-flex-1 tw-grow tw-my-auto tw-mr-2">
+            <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
               {{ item.quantity }} {{ item.name }}
             </div>
-            <div class="tw-flex-initial tw-my-auto tw-mr-2">
+            <div class="tw-flex-initial tw-my-auto tw-mx-1">
               <q-btn-group unelevated flat spread>
                 <q-btn
                   flat
@@ -78,12 +78,12 @@ const progress = ref(0.4);
                 />
               </q-btn-group>
             </div>
-            <div class="tw-flex-initial tw-my-auto">
+            <div class="tw-flex-initial tw-my-auto tw-ml-1 tw-mr-3">
               <q-btn
                 unelevated
                 :ripple="false"
                 size="sm"
-                class="q-px-sm tw-mr-3"
+                class="q-px-sm"
                 icon="bi-trash"
                 aria-label="Clear creature"
                 @click="encounter.clearCreature(item)"
