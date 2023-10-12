@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import _ from 'lodash-es';
+import debounce from 'lodash-es/debounce';
 import { ref, watch } from 'vue';
 import { partyStore, encounterStore } from 'stores/store';
 import { encounterInfo } from '../../utils/api-calls';
@@ -23,7 +23,7 @@ const barValue = (xp: number, xpLevels: number[]) => {
 };
 */
 
-const debouncedCall = _.debounce(async function () {
+const debouncedCall = debounce(async function () {
   const encounterList = encounter.getEncounter;
   const enemyLevels: number[] = [];
   for (var i = 0; i < encounterList.length; i++) {
@@ -189,7 +189,8 @@ watch(party, () => {
         <q-linear-progress rounded size="35px" :value="barFill" :color="barColor">
           <div class="absolute-full flex flex-center">
             <q-badge
-              class="tw-absolute tw-text-base tw-opacity-80"
+              class="tw-absolute tw-text-base"
+              transparent
               color="grey-10"
               text-color="white"
               :label="barLabel"
