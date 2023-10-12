@@ -156,7 +156,13 @@ watch(party, () => {
       </q-scroll-area>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
       <div class="tw-flex tw-mx-4 tw-my-2">
-        <q-linear-progress rounded size="35px" :value="barFill" :color="info.getInfo.color">
+        <q-linear-progress
+          rounded
+          size="35px"
+          :value="barFill"
+          :color="info.getInfo.color"
+          aria-label="Encounter difficulty"
+        >
           <div class="absolute-full flex flex-center">
             <q-badge
               class="tw-absolute tw-text-base"
