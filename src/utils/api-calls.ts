@@ -42,3 +42,22 @@ export async function requestFilters(filter: 'families' | 'alignments' | 'sizes'
     console.log(error);
   }
 }
+
+export async function encounterInfo(encounter: { enemy_levels: number[]; party_levels: number[] }) {
+  try {
+    const requestOptions = {
+      method: 'POST',
+      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(encounter)
+    };
+    const response = await fetch(backendUrl + '/encounter/info', requestOptions);
+    const data = await response.json();
+    if (!response.ok) {
+      const error = (data && data.message) || response.status;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}

@@ -1,10 +1,101 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { encounterStore } from 'stores/store';
+import _ from 'lodash-es';
+import { ref, watch } from 'vue';
+import { partyStore, encounterStore } from 'stores/store';
+import { encounterInfo } from '../../utils/api-calls';
 
-const cost = ref(160);
+const cost = ref(0);
+const party = partyStore();
 const encounter = encounterStore();
-const progress = ref(0.4);
+const barFill = ref(1);
+const barColor = ref('lime');
+const barLabel = ref('Trivial');
+
+/*
+const barValue = (xp: number, xpLevels: number[]) => {
+  const xpIndex = xpLevels.indexOf(xp);
+  if (xpIndex === xpLevels.length) {
+  }
+  const high = xpLevels[xpIndex + 1];
+  const low = xpLevels[xpIndex - 1];
+  console.log(low, xp, high);
+  return (xp - low) / (high - low);
+};
+*/
+
+const debouncedCall = _.debounce(async function () {
+  const encounterList = encounter.getEncounter;
+  const enemyLevels: number[] = [];
+  for (var i = 0; i < encounterList.length; i++) {
+    for (var j = 0; j < encounterList[i].quantity!; j++) {
+      enemyLevels.push(encounterList[i].level);
+      switch (encounterList[i].variant) {
+        case 'weak':
+          enemyLevels[i]--;
+          break;
+        case 'elite':
+          enemyLevels[i]++;
+          break;
+        default:
+          break;
+      }
+    }
+  }
+  const partyLevels = party.getParty;
+  const post = {
+    enemy_levels: enemyLevels,
+    party_levels: partyLevels
+  };
+  const info = await encounterInfo(post);
+
+  cost.value = info.experience;
+  switch (info.difficulty) {
+    case 'Trivial':
+      barColor.value = 'lime';
+      barLabel.value = 'Trivial';
+      break;
+    case 'Low':
+      barColor.value = 'green';
+      barLabel.value = 'Low';
+      break;
+    case 'Moderate':
+      barColor.value = 'amber';
+      barLabel.value = 'Moderate';
+      break;
+    case 'Severe':
+      barColor.value = 'orange';
+      barLabel.value = 'Severe';
+      break;
+    case 'Extreme':
+      barColor.value = 'red';
+      barLabel.value = 'Extreme';
+      break;
+    case 'Impossible':
+      barColor.value = 'purple-10';
+      barLabel.value = 'Impossible';
+      break;
+
+    default:
+      barColor.value = 'lime';
+      barLabel.value = 'Trivial';
+      break;
+  }
+  /*
+  const xpLevels = Object.values(info.encounter_exp_levels).filter(
+    (value) => typeof value === 'number'
+  ) as number[];
+  xpLevels.sort((a, b) => a - b);
+
+  barFill.value = barValue(info.experience, xpLevels); */
+}, 500);
+
+watch(encounter, () => {
+  debouncedCall();
+});
+
+watch(party, () => {
+  debouncedCall();
+});
 </script>
 
 <template>
@@ -17,7 +108,7 @@ const progress = ref(0.4);
         <div
           class="text-subtitle1 font-bold tw-whitespace-nowrap tw-py-2.5 tw-pr-4 tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800"
         >
-          Encounter cost: {{ cost }}
+          Encounter cost: {{ cost }} XP
         </div>
         <q-space />
         <q-btn flat dense @click="encounter.clearEncounter">CLEAR</q-btn>
@@ -94,8 +185,17 @@ const progress = ref(0.4);
         </div>
       </q-scroll-area>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
-      <div class="tw-flex tw-mx-4 tw-my-0.5">
-        <q-linear-progress rounded size="16px" :value="progress" color="negative" class="tw-my-4" />
+      <div class="tw-flex tw-mx-4 tw-my-2">
+        <q-linear-progress rounded size="35px" :value="barFill" :color="barColor">
+          <div class="absolute-full flex flex-center">
+            <q-badge
+              class="tw-absolute tw-text-base tw-opacity-80"
+              color="grey-10"
+              text-color="white"
+              :label="barLabel"
+            />
+          </div>
+        </q-linear-progress>
       </div>
     </div>
   </div>
