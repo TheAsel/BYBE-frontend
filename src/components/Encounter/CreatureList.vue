@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import debounce from 'lodash-es/debounce';
 import { ref, watch } from 'vue';
-import { partyStore, encounterStore } from 'stores/store';
-import { encounterInfo } from '../../utils/api-calls';
+import { partyStore, encounterStore, infoStore } from 'stores/store';
+import { encounterInfo } from 'src/utils/api-calls';
 
-const cost = ref(0);
 const party = partyStore();
 const encounter = encounterStore();
+const info = infoStore();
+
 const barFill = ref(1);
-const barColor = ref('lime');
-const barLabel = ref('Trivial');
 
 /*
 const barValue = (xp: number, xpLevels: number[]) => {
@@ -18,7 +17,6 @@ const barValue = (xp: number, xpLevels: number[]) => {
   }
   const high = xpLevels[xpIndex + 1];
   const low = xpLevels[xpIndex - 1];
-  console.log(low, xp, high);
   return (xp - low) / (high - low);
 };
 */
@@ -46,40 +44,12 @@ const debouncedCall = debounce(async function () {
     enemy_levels: enemyLevels,
     party_levels: partyLevels
   };
-  const info = await encounterInfo(post);
-
-  cost.value = info.experience;
-  switch (info.difficulty) {
-    case 'Trivial':
-      barColor.value = 'lime';
-      barLabel.value = 'Trivial';
-      break;
-    case 'Low':
-      barColor.value = 'green';
-      barLabel.value = 'Low';
-      break;
-    case 'Moderate':
-      barColor.value = 'amber';
-      barLabel.value = 'Moderate';
-      break;
-    case 'Severe':
-      barColor.value = 'orange';
-      barLabel.value = 'Severe';
-      break;
-    case 'Extreme':
-      barColor.value = 'red';
-      barLabel.value = 'Extreme';
-      break;
-    case 'Impossible':
-      barColor.value = 'purple-10';
-      barLabel.value = 'Impossible';
-      break;
-
-    default:
-      barColor.value = 'lime';
-      barLabel.value = 'Trivial';
-      break;
+  try {
+    info.setInfo(await encounterInfo(post));
+  } catch (error) {
+    console.debug(error);
   }
+
   /*
   const xpLevels = Object.values(info.encounter_exp_levels).filter(
     (value) => typeof value === 'number'
@@ -108,7 +78,7 @@ watch(party, () => {
         <div
           class="text-subtitle1 font-bold tw-whitespace-nowrap tw-py-2.5 tw-pr-4 tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800"
         >
-          Encounter cost: {{ cost }} XP
+          Encounter cost: {{ info.getInfo.experience }} XP
         </div>
         <q-space />
         <q-btn flat dense @click="encounter.clearEncounter">CLEAR</q-btn>
@@ -186,14 +156,14 @@ watch(party, () => {
       </q-scroll-area>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
       <div class="tw-flex tw-mx-4 tw-my-2">
-        <q-linear-progress rounded size="35px" :value="barFill" :color="barColor">
+        <q-linear-progress rounded size="35px" :value="barFill" :color="info.getInfo.color">
           <div class="absolute-full flex flex-center">
             <q-badge
               class="tw-absolute tw-text-base"
               transparent
               color="grey-10"
               text-color="white"
-              :label="barLabel"
+              :label="info.getInfo.difficulty"
             />
           </div>
         </q-linear-progress>

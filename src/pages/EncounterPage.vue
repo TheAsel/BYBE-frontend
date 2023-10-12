@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { requestCreatures, requestFilters } from '../utils/api-calls';
+import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { filtersStore, creaturesStore } from 'stores/store';
 import SkeletonTable from 'src/components/Encounter/SkeletonTable.vue';
 import CreaturesTable from 'src/components/Encounter/CreaturesTable.vue';
@@ -33,7 +33,7 @@ try {
   }
   ready.value = true;
 } catch (error) {
-  console.log(error);
+  console.debug(error);
 }
 </script>
 

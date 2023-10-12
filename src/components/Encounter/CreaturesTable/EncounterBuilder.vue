@@ -27,7 +27,7 @@ const generateEncounter = () => {};
   <q-dialog v-model="dialog" aria-label="Encounter builder">
     <q-card>
       <q-card-section class="row items-center">
-        <div class="text-h6">Encounter Builder</div>
+        <div class="text-h6 tw-mr-4">Encounter Builder</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup aria-label="Close dialog" />
       </q-card-section>
@@ -86,17 +86,18 @@ const generateEncounter = () => {};
             label="Difficulty"
           />
         </div>
-
-        <q-separator class="tw-mt-4" />
+      </q-card-section>
+      <q-separator />
+      <q-card-actions>
         <q-btn
           unelevated
           label="Generate Encounter"
           type="submit"
-          class="full-width tw-mt-2 tw-text-blue-600 dark:tw-text-blue-400"
+          class="full-width tw-text-blue-600 dark:tw-text-blue-400"
           v-close-popup
           @click="generateEncounter"
         />
-      </q-card-section>
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>

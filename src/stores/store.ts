@@ -1,4 +1,5 @@
-import { creature } from '../types/creature';
+import { creature } from 'src/types/creature';
+import { encounter } from 'src/types/encounter';
 import { defineStore } from 'pinia';
 
 export const partyStore = defineStore('party', {
@@ -9,9 +10,6 @@ export const partyStore = defineStore('party', {
   actions: {
     updateParty(newParty: number[]) {
       this.party = newParty;
-    },
-    updatePartyIndex(newValue: number, index: number) {
-      this.party[index] = newValue;
     },
     addPlayer() {
       this.party.push(1);
@@ -60,15 +58,6 @@ export const creaturesStore = defineStore('creatures', {
   actions: {
     updateCreatures(newCreatures: creature[]) {
       this.creatures = newCreatures;
-    },
-    updateCreatureIndex(newValue: creature, index: number) {
-      this.creatures[index] = newValue;
-    },
-    addPlayer(newCreature: creature) {
-      this.creatures.push(newCreature);
-    },
-    removePlayer(index: number) {
-      this.creatures.splice(index, 1);
     }
   }
 });
@@ -109,6 +98,55 @@ export const encounterStore = defineStore('encounter', {
         this.encounter[index].quantity!--;
       } else {
         this.encounter.splice(index, 1);
+      }
+    }
+  }
+});
+
+export const infoStore = defineStore('info', {
+  state: () => ({
+    info: {
+      experience: 0,
+      difficulty: 'Trivial',
+      encounter_exp_levels: {
+        Moderate: 0,
+        Trivial: 0,
+        Low: 0,
+        Extreme: 0,
+        Severe: 0,
+        Impossible: 0
+      },
+      color: 'lime'
+    } as encounter
+  }),
+  getters: {
+    getInfo: (state) => state.info
+  },
+  actions: {
+    setInfo(info: encounter) {
+      this.info = info;
+      switch (info.difficulty) {
+        case 'Trivial':
+          this.info.color = 'lime';
+          break;
+        case 'Low':
+          this.info.color = 'green';
+          break;
+        case 'Moderate':
+          this.info.color = 'amber';
+          break;
+        case 'Severe':
+          this.info.color = 'orange';
+          break;
+        case 'Extreme':
+          this.info.color = 'red';
+          break;
+        case 'Impossible':
+          this.info.color = 'purple-10';
+          break;
+        default:
+          this.info.color = 'lime';
+          break;
       }
     }
   }

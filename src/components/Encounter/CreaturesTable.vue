@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { creature } from '../../types/creature';
+import { creature } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
-import PartyBuilder from './CreaturesTable/PartyBuilder.vue';
-import EncounterBuilder from './CreaturesTable/EncounterBuilder.vue';
+import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
+import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
 
 // ---- Stores declaration
 const filters = filtersStore();
