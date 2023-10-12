@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { TailwindDarkFix } from '../utils/tw-dark-fix';
+import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 
 TailwindDarkFix();
 

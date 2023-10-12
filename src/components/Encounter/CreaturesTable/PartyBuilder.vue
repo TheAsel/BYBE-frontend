@@ -47,7 +47,7 @@ const saveChanges = () => {
   <q-dialog v-model="dialog" aria-label="Player builder">
     <q-card>
       <q-card-section class="row items-center">
-        <div class="text-h6">Party Builder</div>
+        <div class="text-h6 tw-mr-4">Party Builder</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup aria-label="Close dialog" />
       </q-card-section>
@@ -95,12 +95,12 @@ const saveChanges = () => {
 
       <q-separator />
 
-      <q-card-actions class="float-right">
+      <q-card-actions>
         <q-btn
           unelevated
           label="Save changes"
           type="submit"
-          class="tw-text-blue-600 dark:tw-text-blue-400"
+          class="full-width tw-text-blue-600 dark:tw-text-blue-400"
           v-close-popup
           @click="saveChanges"
         />

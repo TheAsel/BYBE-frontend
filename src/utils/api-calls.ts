@@ -1,4 +1,6 @@
 import { backendUrl } from 'src/boot/globals';
+import { creature } from 'src/types/creature';
+import { encounter } from 'src/types/encounter';
 
 export async function requestCreatures(start: number, end: number) {
   const requestOptions = {
@@ -18,7 +20,7 @@ export async function requestCreatures(start: number, end: number) {
     const error = (data && data.message) || response.status;
     throw error;
   }
-  return data.results;
+  return data.results as creature[];
 }
 
 export async function requestFilters(filter: 'families' | 'alignments' | 'sizes' | 'rarities') {
@@ -32,7 +34,7 @@ export async function requestFilters(filter: 'families' | 'alignments' | 'sizes'
     const error = (data && data.message) || response.status;
     throw error;
   }
-  return data;
+  return data as string[];
 }
 
 export async function encounterInfo(encounter: { enemy_levels: number[]; party_levels: number[] }) {
@@ -47,5 +49,5 @@ export async function encounterInfo(encounter: { enemy_levels: number[]; party_l
     const error = (data && data.message) || response.status;
     throw error;
   }
-  return data;
+  return data as encounter;
 }
