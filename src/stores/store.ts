@@ -80,7 +80,7 @@ export const encounterStore = defineStore('encounter', {
   },
   actions: {
     clearEncounter() {
-      this.encounter = [];
+      this.encounter.splice(0, this.encounter.length);
     },
     clearCreature(creature: creature) {
       const index = this.encounter.indexOf(creature);

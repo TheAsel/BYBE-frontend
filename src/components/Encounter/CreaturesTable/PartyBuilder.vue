@@ -64,7 +64,7 @@ const saveChanges = () => {
                 min="1"
                 max="20"
                 :label="'Player ' + (index + 1)"
-                v-model="tmpParty[index]"
+                v-model.number="tmpParty[index]"
                 @update:model-value="validateLevel(index)"
                 dense
               />
