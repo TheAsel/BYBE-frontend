@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { requestCreatures, requestFilters } from '../../utils/api-calls';
 import { creature } from '../../types/creature';
 import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from './CreaturesTable/PartyBuilder.vue';
@@ -77,27 +76,6 @@ const columns: {
     sortable: true
   }
 ];
-
-// ---- API requests
-if (creatures.getCreatures.length === 0) {
-  creatures.updateCreatures(await requestCreatures(0, -1));
-}
-
-if (filters.getFilters.family.length === 0) {
-  filters.updateFamilies(await requestFilters('families'));
-}
-
-if (filters.getFilters.alignment.length === 0) {
-  filters.updateAlignments(await requestFilters('alignments'));
-}
-
-if (filters.getFilters.size.length === 0) {
-  filters.updateSizes(await requestFilters('sizes'));
-}
-
-if (filters.getFilters.rarity.length === 0) {
-  filters.updateRarities(await requestFilters('rarities'));
-}
 
 // ---- Filters
 const filterName = ref('');
