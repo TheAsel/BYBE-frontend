@@ -171,7 +171,7 @@ const addCreature = (creature: creature) => {
     <q-table
       ref="creatureTable"
       class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      style="height: 85vh"
+      style="height: calc(100vh - 140px)"
       flat
       bordered
       title="Creatures"

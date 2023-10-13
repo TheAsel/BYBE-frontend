@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import debounce from 'lodash-es/debounce';
+import { debounce } from 'lodash';
 import { ref, watch } from 'vue';
 import { partyStore, encounterStore, infoStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/api-calls';
@@ -71,7 +71,7 @@ watch(party, () => {
 <template>
   <div class="q-pa-md tw-w-full md:tw-w-1/4">
     <div
-      style="height: 85vh"
+      style="height: calc(100vh - 140px)"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
     >
       <div class="tw-flex tw-mx-4 tw-my-0.5">

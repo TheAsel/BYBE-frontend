@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
+import { debounce } from 'lodash';
 
 TailwindDarkFix();
 
@@ -51,6 +52,11 @@ const themeSwitch = () => {
     localStorage.setItem('hs_theme', 'light');
   }
 };
+
+const hidden = ref(true);
+const unhide = debounce(function () {
+  hidden.value = !hidden.value;
+}, 50);
 </script>
 
 <template>
@@ -70,16 +76,17 @@ const themeSwitch = () => {
             flat
             unelevated
             type="button"
-            data-hs-collapse="#navbar-collapse-with-animation"
-            aria-controls="navbar-collapse-with-animation"
+            aria-controls="navbar-collapse"
             aria-label="Toggle navigation"
             icon="bi-list"
+            @click="unhide"
           />
         </div>
       </div>
       <div
-        id="navbar-collapse-with-animation"
-        class="tw-hs-collapse:tw-hidden tw-overflow-hidden tw-transition-all tw-duration-300 tw-basis-full tw-grow sm:tw-block"
+        id="navbar-collapse"
+        class="tw-grow sm:tw-block"
+        :class="{ 'tw-hidden': hidden, 'overflow-hidden': hidden }"
       >
         <div
           class="tw-flex tw-flex-col tw-gap-y-4 tw-gap-x-0 tw-mt-5 sm:tw-flex-row sm:tw-items-center sm:tw-justify-end sm:tw-gap-y-0 sm:tw-gap-x-7 sm:tw-mt-0 sm:tw-pl-7"
@@ -98,7 +105,7 @@ const themeSwitch = () => {
             :aria-current="item.to ? 'page' : undefined"
             >{{ item.name }}
           </router-link>
-          <q-separator vertical inset />
+          <q-separator vertical inset class="sm:tw-block tw-hidden" />
 
           <div class="tw-flex tw-items-center tw-relative">
             <q-btn
