@@ -78,7 +78,7 @@ watch(party, () => {
         <div
           class="text-subtitle1 font-bold tw-whitespace-nowrap tw-py-2.5 tw-pr-4 tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800"
         >
-          Encounter cost: {{ info.getInfo.experience }} XP
+          Cost: {{ info.getInfo.experience }} XP
         </div>
         <q-space />
         <q-btn flat dense @click="encounter.clearEncounter">CLEAR</q-btn>
