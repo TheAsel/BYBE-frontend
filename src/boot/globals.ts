@@ -1,5 +1,4 @@
 import { boot } from 'quasar/wrappers';
-import 'preline';
 
 const backendUrl = 'https://dev-bybe.fly.dev';
 
