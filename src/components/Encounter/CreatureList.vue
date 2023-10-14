@@ -106,7 +106,7 @@ watch(party, () => {
               />
             </div>
             <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
-              {{ item.quantity }} {{ item.name }}
+              {{ item.quantity }} {{ item.name }} - Lv. {{ item.level }}
             </div>
             <div class="tw-flex-initial tw-my-auto tw-mx-1">
               <q-btn-group unelevated flat spread>
@@ -161,7 +161,7 @@ watch(party, () => {
           size="35px"
           :value="barFill"
           :color="info.getInfo.color"
-          aria-label="Encounter difficulty"
+          aria-label="Encounter challenge"
         >
           <div class="absolute-full flex flex-center">
             <q-badge
@@ -169,7 +169,7 @@ watch(party, () => {
               transparent
               color="grey-10"
               text-color="white"
-              :label="info.getInfo.difficulty"
+              :label="'Challenge: ' + info.getInfo.challenge"
             />
           </div>
         </q-linear-progress>

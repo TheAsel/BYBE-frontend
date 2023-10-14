@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { filtersStore } from 'src/stores/store';
+import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
+import { encounterGenerator } from 'src/utils/api-calls';
 
+const party = partyStore();
 const filters = filtersStore();
+const encounter = encounterStore();
 
 const dialog = ref(false);
 
@@ -11,10 +14,34 @@ const alignment = ref();
 const size = ref();
 const rarity = ref();
 
-const difficulties = ['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'];
-const filterDifficulty = ref('');
+const challenges = ['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'];
+const filterChallenge = ref('');
 
-const generateEncounter = () => {};
+const generateEncounter = async () => {
+  const partyLevels = party.getParty;
+  const post = {
+    party_levels: partyLevels
+  };
+  try {
+    const randomEncounter = await encounterGenerator(
+      post,
+      family.value,
+      alignment.value,
+      size.value,
+      rarity.value
+    );
+    if (randomEncounter.count > 0) {
+      encounter.clearEncounter();
+      for (var i = 0; i < randomEncounter.count; i++) {
+        encounter.addToEncounter(randomEncounter.results[i]);
+      }
+    } else {
+      // warning alert
+    }
+  } catch (error) {
+    console.debug(error);
+  }
+};
 </script>
 
 <template>
@@ -81,9 +108,9 @@ const generateEncounter = () => {};
             outlined
             clearable
             options-dense
-            v-model="filterDifficulty"
-            :options="difficulties"
-            label="Difficulty"
+            v-model="filterChallenge"
+            :options="challenges"
+            label="Challenge"
           />
         </div>
       </q-card-section>

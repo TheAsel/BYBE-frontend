@@ -107,7 +107,7 @@ export const infoStore = defineStore('info', {
   state: () => ({
     info: {
       experience: 0,
-      difficulty: 'Trivial',
+      challenge: 'Trivial',
       encounter_exp_levels: {
         Moderate: 0,
         Trivial: 0,
@@ -125,7 +125,7 @@ export const infoStore = defineStore('info', {
   actions: {
     setInfo(info: encounter) {
       this.info = info;
-      switch (info.difficulty) {
+      switch (info.challenge) {
         case 'Trivial':
           this.info.color = 'lime';
           break;
