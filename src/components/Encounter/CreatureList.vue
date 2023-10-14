@@ -1,25 +1,12 @@
 <script setup lang="ts">
 import { debounce } from 'lodash';
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
 import { partyStore, encounterStore, infoStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/api-calls';
 
 const party = partyStore();
 const encounter = encounterStore();
 const info = infoStore();
-
-const barFill = ref(1);
-
-/*
-const barValue = (xp: number, xpLevels: number[]) => {
-  const xpIndex = xpLevels.indexOf(xp);
-  if (xpIndex === xpLevels.length) {
-  }
-  const high = xpLevels[xpIndex + 1];
-  const low = xpLevels[xpIndex - 1];
-  return (xp - low) / (high - low);
-};
-*/
 
 const debouncedCall = debounce(async function () {
   const encounterList = encounter.getEncounter;
@@ -45,18 +32,15 @@ const debouncedCall = debounce(async function () {
     party_levels: partyLevels
   };
   try {
-    info.setInfo(await encounterInfo(post));
+    const returnedEncounterInfo = await encounterInfo(post);
+    if (typeof returnedEncounterInfo != 'undefined') {
+      info.setInfo(returnedEncounterInfo);
+    } else {
+      throw 'Error calculating encounter challenge';
+    }
   } catch (error) {
-    console.debug(error);
+    console.error(error);
   }
-
-  /*
-  const xpLevels = Object.values(info.encounter_exp_levels).filter(
-    (value) => typeof value === 'number'
-  ) as number[];
-  xpLevels.sort((a, b) => a - b);
-
-  barFill.value = barValue(info.experience, xpLevels); */
 }, 500);
 
 watch(encounter, () => {
@@ -69,7 +53,7 @@ watch(party, () => {
 </script>
 
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-1/4">
+  <div class="q-pa-md tw-w-full md:tw-w-[30%]">
     <div
       style="height: calc(100vh - 140px)"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
@@ -106,7 +90,24 @@ watch(party, () => {
               />
             </div>
             <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
-              {{ item.quantity }} {{ item.name }} - Lv. {{ item.level }}
+              {{ item.quantity }}
+              <a
+                :href="
+                  'https://2e.aonprd.com/Monsters.aspx?ID=' +
+                  item.id +
+                  '&Weak=' +
+                  (item.variant === 'weak') +
+                  '&Elite=' +
+                  (item.variant === 'elite')
+                "
+                target="_blank"
+              >
+                <span
+                  class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                  >{{ item.name }}</span
+                >
+              </a>
+              - Lv. {{ item.level }}
             </div>
             <div class="tw-flex-initial tw-my-auto tw-mx-1">
               <q-btn-group unelevated flat spread>
@@ -159,7 +160,7 @@ watch(party, () => {
         <q-linear-progress
           rounded
           size="35px"
-          :value="barFill"
+          :value="1"
           :color="info.getInfo.color"
           aria-label="Encounter challenge"
         >
