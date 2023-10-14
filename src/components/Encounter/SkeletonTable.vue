@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md tw-w-full md:tw-w-3/4">
     <q-markup-table
-      style="height: 85vh"
+      style="height: calc(100vh - 140px)"
       flat
       bordered
       dense

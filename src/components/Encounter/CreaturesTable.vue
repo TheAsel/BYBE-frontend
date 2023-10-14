@@ -183,7 +183,7 @@ const addCreature = (creature: creature) => {
       virtual-scroll
       dense
       no-data-label="No creature matches the current filters"
-      @row-click="(_, row) => addCreature(row)"
+      @row-dblclick="(_, row) => addCreature(row)"
     >
       <template v-slot:top>
         <q-item-label class="text-h6 font-bold tw-text-gray-800 dark:tw-text-gray-200"
