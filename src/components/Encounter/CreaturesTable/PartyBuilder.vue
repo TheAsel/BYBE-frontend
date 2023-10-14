@@ -38,14 +38,9 @@ const saveChanges = () => {
 </script>
 
 <template>
-  <q-btn
-    outline
-    label="Party Builder"
-    class="tw-text-blue-600 dark:tw-text-blue-400"
-    @click="restoreParty"
-  />
+  <q-btn push label="Party Builder" @click="restoreParty" />
   <q-dialog v-model="dialog" aria-label="Player builder">
-    <q-card>
+    <q-card flat bordered>
       <q-card-section class="row items-center">
         <div class="text-h6 tw-mr-4">Party Builder</div>
         <q-space />

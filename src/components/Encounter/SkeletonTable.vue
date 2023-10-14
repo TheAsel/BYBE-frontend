@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-3/4">
+  <div class="q-pa-md tw-w-full md:tw-w-[70%]">
     <q-markup-table
       style="height: calc(100vh - 140px)"
       flat
@@ -9,21 +9,23 @@
     >
       <thead style="height: 53px">
         <tr>
-          <th class="text-left" style="min-width: 180px">
+          <th class="text-left">
             <q-skeleton animation="blink" type="rect" />
           </th>
-          <th class="text-right" style="min-width: 80px"></th>
-          <th class="text-right" style="min-width: 100px">
+          <th class="text-right"></th>
+          <th class="text-right">
             <q-skeleton animation="blink" type="QRange" />
           </th>
-          <th class="text-right" style="min-width: 180px">
+          <th class="text-right">
             <q-skeleton animation="blink" type="QRange" />
           </th>
-          <th class="text-right" style="min-width: 125px"></th>
-          <th class="text-left" style="min-width: 100px">
+          <th>
+            <q-skeleton animation="blink" type="QCheckbox" />
+          </th>
+          <th class="text-left">
             <q-skeleton class="tw-ml-auto" animation="blink" type="QCheckbox" />
           </th>
-          <th class="text-right" style="min-width: 100px">
+          <th class="text-right">
             <q-skeleton animation="blink" type="QRange" />
           </th>
         </tr>
@@ -31,7 +33,7 @@
 
       <thead style="height: 49px">
         <tr>
-          <th class="text-left" style="min-width: 180px">
+          <th class="text-left" style="min-width: 225px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >
@@ -67,7 +69,7 @@
               </div>
             </div>
           </th>
-          <th class="text-right" style="min-width: 180px">
+          <th class="text-right" style="min-width: 125px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >
@@ -104,9 +106,7 @@
             </div>
           </th>
           <th class="text-right" style="min-width: 100px">
-            <div
-              class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
-            >
+            <div class="row no-wrap items-center">
               <div class="col-grow">
                 <q-skeleton animation="blink" type="QRange" />
               </div>

@@ -1,46 +1,73 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { shallowRef } from 'vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { filtersStore, creaturesStore } from 'stores/store';
-import SkeletonTable from 'src/components/Encounter/SkeletonTable.vue';
-import CreaturesTable from 'src/components/Encounter/CreaturesTable.vue';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 
 const filters = filtersStore();
 const creatures = creaturesStore();
-const ready = ref(false);
+const currentComponent = shallowRef();
 
+import('src/components/Encounter/SkeletonTable.vue').then((module) => {
+  currentComponent.value = module.default;
+});
 // ---- API requests
 try {
   if (filters.getFilters.family.length === 0) {
-    filters.updateFamilies(await requestFilters('families'));
+    const familyList = await requestFilters('families');
+    if (typeof familyList != 'undefined') {
+      filters.updateFamilies(familyList);
+    } else {
+      throw 'Error loading families';
+    }
   }
 
   if (filters.getFilters.alignment.length === 0) {
-    filters.updateAlignments(await requestFilters('alignments'));
+    const alignmentList = await requestFilters('alignments');
+    if (typeof alignmentList != 'undefined') {
+      filters.updateAlignments(alignmentList);
+    } else {
+      throw 'Error loading alignments';
+    }
   }
 
   if (filters.getFilters.size.length === 0) {
-    filters.updateSizes(await requestFilters('sizes'));
+    const sizeList = await requestFilters('sizes');
+    if (typeof sizeList != 'undefined') {
+      filters.updateSizes(sizeList);
+    } else {
+      throw 'Error loading sizes';
+    }
   }
 
   if (filters.getFilters.rarity.length === 0) {
-    filters.updateRarities(await requestFilters('rarities'));
+    const rarityList = await requestFilters('rarities');
+    if (typeof rarityList != 'undefined') {
+      filters.updateRarities(rarityList);
+    } else {
+      throw 'Error loading rarities';
+    }
   }
 
   if (creatures.getCreatures.length === 0) {
-    creatures.updateCreatures(await requestCreatures(0, -1));
+    const creatureList = await requestCreatures(0, -1);
+    if (typeof creatureList != 'undefined') {
+      creatures.updateCreatures(creatureList);
+    } else {
+      throw 'Error loading creatures';
+    }
   }
-  ready.value = true;
+  import('src/components/Encounter/CreaturesTable.vue').then((module) => {
+    currentComponent.value = module.default;
+  });
 } catch (error) {
-  console.debug(error);
+  console.error(error);
 }
 </script>
 
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
-    <CreaturesTable v-if="ready" />
-    <SkeletonTable v-else />
+    <component :is="currentComponent" />
     <CreatureList />
   </q-page>
 </template>

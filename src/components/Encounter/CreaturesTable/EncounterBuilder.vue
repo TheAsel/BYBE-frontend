@@ -33,20 +33,24 @@ const generateEncounter = async () => {
       size.value,
       rarity.value
     );
-    if (randomEncounter.count > 0) {
-      encounter.clearEncounter();
-      for (var i = 0; i < randomEncounter.count; i++) {
-        encounter.addToEncounter(randomEncounter.results[i]);
+    if (typeof randomEncounter != 'undefined') {
+      if (randomEncounter.count > 0) {
+        encounter.clearEncounter();
+        for (var i = 0; i < randomEncounter.count; i++) {
+          encounter.addToEncounter(randomEncounter.results[i]);
+        }
+      } else {
+        $q.notify({
+          progress: true,
+          type: 'warning',
+          message: 'No encounter could be generated from the current filters'
+        });
       }
     } else {
-      $q.notify({
-        progress: true,
-        type: 'warning',
-        message: 'No encounter could be generated from the current filters'
-      });
+      throw 'Error generating random encounter';
     }
   } catch (error) {
-    console.debug(error);
+    console.error(error);
   }
 };
 
@@ -54,14 +58,9 @@ defineExpose({ generateEncounter });
 </script>
 
 <template>
-  <q-btn
-    outline
-    label="Encounter Builder"
-    class="tw-text-blue-600 dark:tw-text-blue-400"
-    @click="dialog = true"
-  />
+  <q-btn push label="Encounter Builder" @click="dialog = true" />
   <q-dialog v-model="dialog" aria-label="Encounter builder">
-    <q-card>
+    <q-card flat bordered>
       <q-card-section class="row items-center">
         <div class="text-h6 tw-mr-4">Encounter Builder</div>
         <q-space />
