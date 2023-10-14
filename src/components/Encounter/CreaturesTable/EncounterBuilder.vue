@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useQuasar } from 'quasar';
 import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
+
+const $q = useQuasar();
 
 const party = partyStore();
 const filters = filtersStore();
@@ -36,12 +39,18 @@ const generateEncounter = async () => {
         encounter.addToEncounter(randomEncounter.results[i]);
       }
     } else {
-      // warning alert
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'No encounter could be generated from the current filters'
+      });
     }
   } catch (error) {
     console.debug(error);
   }
 };
+
+defineExpose({ generateEncounter });
 </script>
 
 <template>

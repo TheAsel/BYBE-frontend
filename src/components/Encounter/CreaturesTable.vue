@@ -5,6 +5,8 @@ import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
 
+const encounterBuilderRef = ref();
+
 // ---- Stores declaration
 const filters = filtersStore();
 const creatures = creaturesStore();
@@ -192,7 +194,36 @@ const addCreature = (creature: creature) => {
         <q-space />
         <PartyBuilder />
         <q-separator vertical inset class="tw-mx-4" />
-        <EncounterBuilder />
+        <EncounterBuilder ref="encounterBuilderRef" />
+        <q-btn
+          flat
+          rounded
+          dense
+          class="tw-mx-2 tw-p-2"
+          size="md"
+          aria-label="Random encounter"
+          @click="encounterBuilderRef.generateEncounter()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            viewBox="0.000108719 -63.9797 448 512"
+            fill="currentColor"
+            aria-label="D20 dice"
+          >
+            <path
+              d="M431.88 331.87c9.96973 -5.81055 16.1201 -16.6201 16.1201 -28.3301v-223.09c0 -11.7002 -6.15039 -22.5098 -16.1201 -28.3203l-192 -111.83c-4.65527 -2.71973 -10.1377 -4.2793 -15.9141 -4.2793c-5.77539 0 -11.1904 1.55957 -15.8457 4.2793l-192 111.83 c-9.96973 5.81055 -16.1201 16.6104 -16.1201 28.3203v223.09c0 11.71 6.15039 22.5195 16.1201 28.3203l192 111.84c4.65527 2.71973 10.1377 4.2793 15.9141 4.2793c5.77539 0 11.1904 -1.55957 15.8457 -4.2793zM224 390.38l-94.7002 -118.38h189.4zM124.62 240 l99.3799 -161.47l99.3701 161.47h-198.75zM192.9 68.0098l-92.5508 150.4l-44.4297 -133.28zM347.65 218.42l-92.5508 -150.41l136.98 17.1299zM354.82 278.11l45.8594 34.3896l-138.01 80.7803zM93.1797 278.11l92.3008 115.38l-138.54 -80.7002zM77.1699 250.13 l-44.96 33.7197l-0.169922 -169.119zM208 33.8799l-122.6 15.3203l122.6 -71.75v56.4297zM363.6 49.3301l-123.6 -15.4502v-56.7197zM370.83 250.13l44.9795 -134.93l0.170898 168.79zM224.14 -32h0.169922l-0.0898438 -0.0498047z"
+            />
+          </svg>
+          <q-tooltip
+            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+            anchor="top middle"
+            self="bottom middle"
+          >
+            Generate random encounter
+          </q-tooltip>
+        </q-btn>
         <q-space />
         <q-btn
           flat
