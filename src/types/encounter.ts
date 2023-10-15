@@ -17,5 +17,5 @@ export type encounter = {
 export type randomEncounter = {
   count: number;
   encounter_info: encounter;
-  results: creature[];
+  results?: creature[];
 };

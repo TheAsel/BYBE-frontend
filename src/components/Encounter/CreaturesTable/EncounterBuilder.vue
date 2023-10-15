@@ -34,7 +34,7 @@ const generateEncounter = async () => {
       rarity.value
     );
     if (typeof randomEncounter != 'undefined') {
-      if (randomEncounter.count > 0) {
+      if (randomEncounter.count > 0 && randomEncounter.results) {
         encounter.clearEncounter();
         for (var i = 0; i < randomEncounter.count; i++) {
           encounter.addToEncounter(randomEncounter.results[i]);
