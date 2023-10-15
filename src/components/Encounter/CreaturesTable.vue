@@ -271,7 +271,11 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">
-          <a :href="'https://2e.aonprd.com/Monsters.aspx?ID=' + name.row.id" target="_blank">
+          <a
+            :href="'https://2e.aonprd.com/Monsters.aspx?ID=' + name.row.id"
+            target="_blank"
+            rel="noopener"
+          >
             <span
               class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
               >{{ name.value }}</span
@@ -525,6 +529,10 @@ const addCreature = debounce(function (creature: creature) {
   thead tr:first-child th {
     top: 0;
   }
+
+  td {
+    border-bottom: none;
+  }
 }
 
 .q-table--dark thead tr th {
@@ -537,12 +545,6 @@ tr:nth-child(even) {
 
 .q-table--dark tr:nth-child(even) {
   background-color: #374151 !important;
-}
-
-.sticky-header-table {
-  td {
-    border-bottom: none;
-  }
 }
 
 .q-table--dark td {

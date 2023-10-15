@@ -11,12 +11,12 @@ import HeaderBar from 'components/HeaderBar.vue';
         <div class="tw-max-w-[85rem] tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
           <p class="tw-text-sm dark:tw-text-white/50 tw-text-black/70">
             BYBE uses trademarks and/or copyrights owned by Paizo Inc., used under Paizo's Community
-            Use Policy (<a href="https://paizo.com/communityuse" target="_blank"
+            Use Policy (<a href="https://paizo.com/communityuse" target="_blank" rel="noopener"
               >paizo.com/communityuse</a
             >). We are expressly prohibited from charging you to use or access this content. BYBE is
             not published, endorsed, or specifically approved by Paizo. For more information about
             Paizo Inc. and Paizo products, visit
-            <a href="https://paizo.com" target="_blank">paizo.com</a>.
+            <a href="https://paizo.com" target="_blank" rel="noopener">paizo.com</a>.
           </p>
         </div>
       </footer>

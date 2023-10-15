@@ -101,6 +101,7 @@ watch(party, () => {
                   (item.variant === 'elite')
                 "
                 target="_blank"
+                rel="noopener"
               >
                 <span
                   class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"

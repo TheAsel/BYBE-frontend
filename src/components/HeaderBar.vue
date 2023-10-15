@@ -117,6 +117,7 @@ const unhide = debounce(function () {
               href="https://github.com/TheAsel/BYBE-frontend"
               target="_blank"
               aria-label="GitHub link"
+              rel="noopener"
             />
             <q-btn
               flat
