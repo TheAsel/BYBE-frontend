@@ -9,23 +9,23 @@
     >
       <thead style="height: 53px">
         <tr>
-          <th class="text-left">
+          <th scope="col" class="text-left">
             <q-skeleton animation="blink" type="rect" />
           </th>
-          <th class="text-right"></th>
-          <th class="text-right">
+          <th scope="col" class="text-right"></th>
+          <th scope="col" class="text-right">
             <q-skeleton animation="blink" type="QRange" />
           </th>
-          <th class="text-right">
+          <th scope="col" class="text-right">
             <q-skeleton animation="blink" type="QRange" />
           </th>
-          <th>
+          <th scope="col">
             <q-skeleton animation="blink" type="QCheckbox" />
           </th>
-          <th class="text-left">
+          <th scope="col" class="text-left">
             <q-skeleton class="tw-ml-auto" animation="blink" type="QCheckbox" />
           </th>
-          <th class="text-right">
+          <th scope="col" class="text-right">
             <q-skeleton animation="blink" type="QRange" />
           </th>
         </tr>
@@ -33,7 +33,7 @@
 
       <thead style="height: 49px">
         <tr>
-          <th class="text-left" style="min-width: 225px">
+          <th scope="col" class="text-left" style="min-width: 225px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >
@@ -45,7 +45,7 @@
               </div>
             </div>
           </th>
-          <th class="text-right" style="min-width: 80px">
+          <th scope="col" class="text-right" style="min-width: 80px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >
@@ -57,7 +57,7 @@
               </div>
             </div>
           </th>
-          <th class="text-right" style="min-width: 100px">
+          <th scope="col" class="text-right" style="min-width: 100px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >
@@ -69,7 +69,7 @@
               </div>
             </div>
           </th>
-          <th class="text-right" style="min-width: 125px">
+          <th scope="col" class="text-right" style="min-width: 125px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >
@@ -81,7 +81,7 @@
               </div>
             </div>
           </th>
-          <th class="text-right" style="min-width: 125px">
+          <th scope="col" class="text-right" style="min-width: 125px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >
@@ -93,7 +93,7 @@
               </div>
             </div>
           </th>
-          <th class="text-right" style="min-width: 100px">
+          <th scope="col" class="text-right" style="min-width: 100px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >
@@ -105,7 +105,7 @@
               </div>
             </div>
           </th>
-          <th class="text-right" style="min-width: 100px">
+          <th scope="col" class="text-right" style="min-width: 100px">
             <div class="row no-wrap items-center">
               <div class="col-grow">
                 <q-skeleton animation="blink" type="QRange" />
