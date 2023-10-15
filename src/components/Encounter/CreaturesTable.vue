@@ -184,7 +184,6 @@ const addCreature = debounce(function (creature: creature) {
       :rows-per-page-options="[0]"
       :visible-columns="visibleColumns"
       virtual-scroll
-      dense
       no-data-label="No creature matches the current filters"
       @row-dblclick="(_, row) => addCreature(row)"
     >
@@ -517,13 +516,25 @@ const addCreature = debounce(function (creature: creature) {
 
 <style>
 .sticky-header-table {
+  .q-table__top {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
   thead tr th {
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
     position: sticky;
     z-index: 1;
     background-color: #ffffff;
     border-left: none;
     border-right: none;
     border-width: 1px;
+    border-color: #e5e7eb;
   }
 
   thead tr:first-child th {
@@ -533,10 +544,15 @@ const addCreature = debounce(function (creature: creature) {
   td {
     border-bottom: none;
   }
+
+  .q-table__bottom {
+    border-color: #e5e7eb;
+  }
 }
 
 .q-table--dark thead tr th {
   background-color: #1f2937;
+  border-color: #374151;
 }
 
 tr:nth-child(even) {
@@ -549,5 +565,10 @@ tr:nth-child(even) {
 
 .q-table--dark td {
   border-bottom: none;
+  border-color: #374151 !important;
+}
+
+.q-table--dark .q-table__bottom {
+  border-color: #374151;
 }
 </style>

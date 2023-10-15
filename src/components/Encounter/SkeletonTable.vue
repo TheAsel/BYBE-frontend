@@ -4,7 +4,6 @@
       style="height: calc(100vh - 140px)"
       flat
       bordered
-      dense
       class="tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
     >
       <thead style="height: 53px">

@@ -68,7 +68,7 @@ watch(party, () => {
         <q-btn flat dense @click="encounter.clearEncounter">CLEAR</q-btn>
       </div>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
-      <q-scroll-area visible style="height: calc(100% - 106px)">
+      <q-scroll-area visible style="height: calc(100% - 103px)">
         <div v-for="(item, index) in encounter.getEncounter" :key="index" dense>
           <div class="tw-flex tw-grow tw-flex-wrap justify-end">
             <div class="tw-flex-initial tw-w-12 tw-my-auto tw-mx-1">
@@ -157,7 +157,7 @@ watch(party, () => {
         </div>
       </q-scroll-area>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
-      <div class="tw-flex tw-mx-4 tw-my-2">
+      <div class="tw-flex tw-mx-4 tw-my-1.5">
         <q-linear-progress
           rounded
           size="35px"
