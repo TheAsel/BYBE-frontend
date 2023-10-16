@@ -19,8 +19,8 @@ watch(
 
 const navigation = [
   { name: 'Encounter Builder', to: '/encounter/' },
-  { name: 'NPC Generator', to: '/npc/' },
-  { name: 'Shop Generator', to: '/shop/' }
+  { name: 'Shop Generator', to: '/shop/' },
+  { name: 'NPC Generator', to: '/npc/' }
 ];
 
 const $q = useQuasar();
