@@ -18,7 +18,7 @@ const size = ref();
 const rarity = ref();
 
 const challenges = ['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'];
-const filterChallenge = ref('');
+const filterChallenge = ref();
 
 const generateEncounter = async () => {
   const partyLevels = party.getParty;
@@ -31,7 +31,8 @@ const generateEncounter = async () => {
       family.value,
       alignment.value,
       size.value,
-      rarity.value
+      rarity.value,
+      filterChallenge.value
     );
     if (typeof randomEncounter != 'undefined') {
       if (randomEncounter.count > 0 && randomEncounter.results) {
