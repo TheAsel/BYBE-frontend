@@ -7,6 +7,9 @@ export type creature = {
   alignment: string;
   size: string;
   rarity: string;
+  is_melee: boolean;
+  is_ranged: boolean;
+  is_spell_caster: boolean;
   quantity?: number;
   variant?: 'weak' | 'base' | 'elite';
 };
