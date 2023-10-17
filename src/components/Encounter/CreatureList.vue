@@ -16,10 +16,10 @@ const debouncedCall = debounce(async function () {
       enemyLevels.push(encounterList[i].level);
       switch (encounterList[i].variant) {
         case 'weak':
-          enemyLevels[i]--;
+          enemyLevels[j]--;
           break;
         case 'elite':
-          enemyLevels[i]++;
+          enemyLevels[j]++;
           break;
         default:
           break;
@@ -108,7 +108,7 @@ watch(party, () => {
                   >{{ item.name }}</span
                 >
               </a>
-              - Lv. {{ item.level }}
+              — Lv. {{ item.level }}
             </div>
             <div class="tw-flex-initial tw-my-auto tw-mx-1">
               <q-btn-group unelevated flat spread>
