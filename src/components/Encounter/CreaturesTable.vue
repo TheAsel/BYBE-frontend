@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { matArrowDropDown, matCancel, matWarning } from '@quasar/extras/material-icons';
-import { biEraser, biArrowDownUp } from '@quasar/extras/bootstrap-icons';
+import { biEraser, biArrowDownUp, biBook } from '@quasar/extras/bootstrap-icons';
 import debounce from 'lodash/debounce';
 import { creature } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
@@ -19,7 +19,7 @@ const encounter = encounterStore();
 const columns: {
   name: string;
   label: string;
-  field: string | ((row: number | string) => number | string);
+  field: (row: creature) => string | number | boolean[];
   required?: boolean | undefined;
   align?: 'left' | 'right' | 'center' | undefined;
   sortable?: boolean | undefined;
@@ -27,7 +27,7 @@ const columns: {
   {
     name: 'name',
     label: 'Name',
-    field: 'name',
+    field: (row) => row.name,
     required: true,
     align: 'left',
     sortable: true
@@ -35,7 +35,7 @@ const columns: {
   {
     name: 'level',
     label: 'Level',
-    field: 'level',
+    field: (row) => row.level,
     required: false,
     align: 'left',
     sortable: true
@@ -43,7 +43,7 @@ const columns: {
   {
     name: 'hp',
     label: 'HP',
-    field: 'hp',
+    field: (row) => row.hp,
     required: false,
     align: 'left',
     sortable: true
@@ -51,7 +51,7 @@ const columns: {
   {
     name: 'family',
     label: 'Family',
-    field: 'family',
+    field: (row) => row.family,
     required: false,
     align: 'left',
     sortable: true
@@ -59,7 +59,7 @@ const columns: {
   {
     name: 'alignment',
     label: 'Alignment',
-    field: 'alignment',
+    field: (row) => row.alignment,
     required: false,
     align: 'left',
     sortable: true
@@ -67,7 +67,7 @@ const columns: {
   {
     name: 'size',
     label: 'Size',
-    field: 'size',
+    field: (row) => row.size,
     required: false,
     align: 'left',
     sortable: true
@@ -75,7 +75,15 @@ const columns: {
   {
     name: 'rarity',
     label: 'Rarity',
-    field: 'rarity',
+    field: (row) => row.rarity,
+    required: false,
+    align: 'left',
+    sortable: true
+  },
+  {
+    name: 'attacks',
+    label: 'Attacks',
+    field: (row) => [row.is_melee, row.is_ranged, row.is_spell_caster],
     required: false,
     align: 'left',
     sortable: true
@@ -155,7 +163,7 @@ const resetFilters = () => {
 
 // ---- Table and visible columns
 const creatureTable = ref();
-const visibleColumns = ref(['level', 'hp', 'family', 'alignment', 'size', 'rarity']);
+const visibleColumns = ref(['level', 'family', 'alignment', 'size', 'attacks']);
 
 // ---- Column sort function
 const sort = (col: string) => {
@@ -182,6 +190,7 @@ const addCreature = debounce(function (creature: creature) {
       title="Creatures"
       :rows="combineFilters"
       :columns="columns"
+      selection="single"
       :pagination="{ rowsPerPage: 0 }"
       :rows-per-page-options="[0]"
       :visible-columns="visibleColumns"
@@ -286,6 +295,17 @@ const addCreature = debounce(function (creature: creature) {
           </div>
         </div>
       </template>
+      <template v-slot:body-selection="source">
+        <q-btn round unelevated :icon="biBook" size="sm">
+          <q-tooltip
+            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+            anchor="top middle"
+            self="bottom middle"
+          >
+            {{ source.row.name }}
+          </q-tooltip>
+        </q-btn>
+      </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">
           <a
@@ -298,6 +318,13 @@ const addCreature = debounce(function (creature: creature) {
               >{{ name.value }}</span
             >
           </a>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-attacks="attacks">
+        <q-td :props="attacks">
+          <q-icon v-if="attacks.row.is_melee" :name="biArrowDownUp" />
+          <q-icon v-if="attacks.row.is_ranged" :name="biArrowDownUp" />
+          <q-icon v-if="attacks.row.is_spell_caster" :name="biArrowDownUp" />
         </q-td>
       </template>
       <template v-slot:header-cell-name>
@@ -531,6 +558,38 @@ const addCreature = debounce(function (creature: creature) {
                 :icon="biArrowDownUp"
                 aria-label="Sort rarity column"
                 @click="sort('rarity')"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template v-slot:header-cell-attacks>
+        <q-th>
+          <div class="row no-wrap items-center">
+            <div class="col-grow">
+              <q-select
+                dense
+                outlined
+                clearable
+                :clear-icon="matCancel"
+                options-dense
+                v-model="filterRarity"
+                :options="Object.freeze(filters.getFilters.rarity)"
+                label="Attacks"
+                :dropdown-icon="matArrowDropDown"
+                style="min-width: 120px"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                rounded
+                dense
+                size="xs"
+                class="tw-p-2"
+                :icon="biArrowDownUp"
+                aria-label="Sort attacks column"
+                @click="sort('attacks')"
               />
             </div>
           </div>
