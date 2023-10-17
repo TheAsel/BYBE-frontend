@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { debounce } from 'lodash';
 import { ref, computed } from 'vue';
+import { matArrowDropDown, matCancel, matWarning } from '@quasar/extras/material-icons';
+import { biEraser, biArrowDownUp } from '@quasar/extras/bootstrap-icons';
+import debounce from 'lodash/debounce';
 import { creature } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
@@ -174,7 +176,7 @@ const addCreature = debounce(function (creature: creature) {
     <q-table
       ref="creatureTable"
       class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      style="height: calc(100vh - 140px)"
+      style="height: calc(100vh - 135px)"
       flat
       bordered
       title="Creatures"
@@ -214,12 +216,27 @@ const addCreature = debounce(function (creature: creature) {
                   xmlns="http://www.w3.org/2000/svg"
                   width="22"
                   height="22"
-                  viewBox="0.000108719 -63.9797 448 512"
+                  viewBox="0 0 512.021 512.021"
                   fill="currentColor"
                   aria-label="D20 dice"
                 >
                   <path
-                    d="M431.88 331.87c9.96973 -5.81055 16.1201 -16.6201 16.1201 -28.3301v-223.09c0 -11.7002 -6.15039 -22.5098 -16.1201 -28.3203l-192 -111.83c-4.65527 -2.71973 -10.1377 -4.2793 -15.9141 -4.2793c-5.77539 0 -11.1904 1.55957 -15.8457 4.2793l-192 111.83 c-9.96973 5.81055 -16.1201 16.6104 -16.1201 28.3203v223.09c0 11.71 6.15039 22.5195 16.1201 28.3203l192 111.84c4.65527 2.71973 10.1377 4.2793 15.9141 4.2793c5.77539 0 11.1904 -1.55957 15.8457 -4.2793zM224 390.38l-94.7002 -118.38h189.4zM124.62 240 l99.3799 -161.47l99.3701 161.47h-198.75zM192.9 68.0098l-92.5508 150.4l-44.4297 -133.28zM347.65 218.42l-92.5508 -150.41l136.98 17.1299zM354.82 278.11l45.8594 34.3896l-138.01 80.7803zM93.1797 278.11l92.3008 115.38l-138.54 -80.7002zM77.1699 250.13 l-44.96 33.7197l-0.169922 -169.119zM208 33.8799l-122.6 15.3203l122.6 -71.75v56.4297zM363.6 49.3301l-123.6 -15.4502v-56.7197zM370.83 250.13l44.9795 -134.93l0.170898 168.79zM224.14 -32h0.169922l-0.0898438 -0.0498047z"
+                    d="M490.421,137.707c-0.085-1.003-0.149-2.005-0.555-2.987c-0.107-0.256-0.32-0.427-0.448-0.683
+			c-0.277-0.533-0.597-0.981-0.96-1.472c-0.725-1.003-1.536-1.835-2.517-2.517c-0.256-0.171-0.363-0.491-0.64-0.64l-224-128
+			c-3.285-1.877-7.296-1.877-10.581,0l-224,128c-0.256,0.171-0.363,0.469-0.619,0.64c-1.024,0.704-1.899,1.557-2.645,2.624
+			c-0.299,0.427-0.597,0.811-0.832,1.28c-0.149,0.277-0.384,0.469-0.512,0.768c-0.469,1.173-0.619,2.389-0.661,3.584
+			c0,0.128-0.107,0.256-0.107,0.384v0.171c0,0.021,0,0.021,0,0.043v234.304c0,0.021,0,0.064,0,0.085v0.064
+			c0,0.213,0.149,0.405,0.171,0.619c0.085,1.493,0.32,2.987,1.045,4.352c0.043,0.085,0.128,0.107,0.171,0.192
+			c0.277,0.491,0.768,0.811,1.131,1.259c0.789,0.981,1.557,1.941,2.603,2.603c0.107,0.064,0.149,0.192,0.235,0.235l224,128
+			c1.664,0.939,3.477,1.408,5.312,1.408s3.648-0.469,5.291-1.408l224-128c0.107-0.064,0.149-0.192,0.256-0.256
+			c0.981-0.597,1.664-1.493,2.411-2.389c0.427-0.512,1.003-0.896,1.323-1.472c0.043-0.064,0.107-0.107,0.149-0.171
+			c0.576-1.109,0.683-2.325,0.853-3.52c0.064-0.491,0.384-0.939,0.384-1.451V138.688
+			C490.677,138.347,490.443,138.048,490.421,137.707z M455.52,136.981l-78.251,31.296L291.211,43.093L455.52,136.981z
+			 M256.011,29.504l97.067,141.184H158.944L256.011,29.504z M220.747,43.115l-86.037,125.163L56.48,136.981L220.747,43.115z
+			 M42.677,154.432l80.768,32.32L42.677,332.16V154.432z M138.635,203.392l98.325,178.773L49.248,364.288L138.635,203.392z
+			 M245.344,482.965l-165.12-94.336l165.12,15.573V482.965z M256.011,372.544l-99.285-180.523h198.571L256.011,372.544z
+			 M266.677,482.965v-78.571l165.035-15.723L266.677,482.965z M274.997,382.357l98.411-178.901l89.365,160.853L274.997,382.357z
+			 M469.344,332.203l-80.811-145.451l80.811-32.32V332.203z"
                   />
                 </svg>
                 <q-tooltip
@@ -238,7 +255,7 @@ const addCreature = debounce(function (creature: creature) {
               rounded
               dense
               class="tw-mx-2 tw-p-2"
-              icon="bi-eraser"
+              :icon="biEraser"
               size="md"
               aria-label="Clear filters"
               @click="resetFilters"
@@ -263,6 +280,7 @@ const addCreature = debounce(function (creature: creature) {
               map-options
               :options="Object.freeze(columns)"
               option-value="name"
+              :dropdown-icon="matArrowDropDown"
               style="min-width: 150px"
             />
           </div>
@@ -298,7 +316,7 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 size="xs"
                 class="tw-p-2"
-                icon="bi-arrow-down-up"
+                :icon="biArrowDownUp"
                 aria-label="Sort name column"
                 @click="sort('name')"
               />
@@ -337,7 +355,7 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 size="xs"
                 class="tw-p-2"
-                icon="bi-arrow-down-up"
+                :icon="biArrowDownUp"
                 aria-label="Sort level column"
                 @click="sort('level')"
               />
@@ -376,7 +394,7 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 size="xs"
                 class="tw-p-2"
-                icon="bi-arrow-down-up"
+                :icon="biArrowDownUp"
                 aria-label="Sort hp column"
                 @click="sort('hp')"
               />
@@ -394,10 +412,12 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 outlined
                 clearable
+                :clear-icon="matCancel"
                 options-dense
                 v-model="filterFamily"
                 :options="Object.freeze(filters.getFilters.family)"
                 label="Family"
+                :dropdown-icon="matArrowDropDown"
                 style="min-width: 125px"
               />
             </div>
@@ -408,7 +428,7 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 size="xs"
                 class="tw-p-2"
-                icon="bi-arrow-down-up"
+                :icon="biArrowDownUp"
                 aria-label="Sort family column"
                 @click="sort('family')"
               />
@@ -426,11 +446,13 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 outlined
                 clearable
+                :clear-icon="matCancel"
                 options-dense
                 v-model="filterAlignment"
                 :options="Object.freeze(filters.getFilters.alignment)"
                 label="Alignment"
-                style="min-width: 125px"
+                :dropdown-icon="matArrowDropDown"
+                style="min-width: 130px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -440,7 +462,7 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 size="xs"
                 class="tw-p-2"
-                icon="bi-arrow-down-up"
+                :icon="biArrowDownUp"
                 aria-label="Sort alignment column"
                 @click="sort('alignment')"
               />
@@ -458,10 +480,12 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 outlined
                 clearable
+                :clear-icon="matCancel"
                 options-dense
                 v-model="filterSize"
                 :options="Object.freeze(filters.getFilters.size)"
                 label="Size"
+                :dropdown-icon="matArrowDropDown"
                 style="min-width: 100px"
               />
             </div>
@@ -472,7 +496,7 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 size="xs"
                 class="tw-p-2"
-                icon="bi-arrow-down-up"
+                :icon="biArrowDownUp"
                 aria-label="Sort size column"
                 @click="sort('size')"
               />
@@ -488,10 +512,12 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 outlined
                 clearable
+                :clear-icon="matCancel"
                 options-dense
                 v-model="filterRarity"
                 :options="Object.freeze(filters.getFilters.rarity)"
                 label="Rarity"
+                :dropdown-icon="matArrowDropDown"
                 style="min-width: 100px"
               />
             </div>
@@ -502,13 +528,21 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 size="xs"
                 class="tw-p-2"
-                icon="bi-arrow-down-up"
+                :icon="biArrowDownUp"
                 aria-label="Sort rarity column"
                 @click="sort('rarity')"
               />
             </div>
           </div>
         </q-th>
+      </template>
+      <template v-slot:no-data="{ message }">
+        <div class="full-width row">
+          <span class="tw-py-2">
+            <q-icon size="sm" :name="matWarning" />
+            {{ message }}
+          </span>
+        </div>
       </template>
     </q-table>
   </div>

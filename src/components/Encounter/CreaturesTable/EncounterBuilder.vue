@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
+import { matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
+import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
 
@@ -44,7 +47,8 @@ const generateEncounter = async () => {
         $q.notify({
           progress: true,
           type: 'warning',
-          message: 'No encounter could be generated from the current filters'
+          message: 'No encounter could be generated from the current filters',
+          icon: matPriorityHigh
         });
       }
     } else {
@@ -65,7 +69,16 @@ defineExpose({ generateEncounter });
       <q-card-section class="row items-center">
         <div class="text-h6 tw-mr-4">Encounter Builder</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup aria-label="Close dialog" />
+        <q-btn
+          :icon="biXLg"
+          size="md"
+          padding="sm"
+          flat
+          round
+          dense
+          v-close-popup
+          aria-label="Close dialog"
+        />
       </q-card-section>
 
       <q-separator />
@@ -76,50 +89,60 @@ defineExpose({ generateEncounter });
             dense
             outlined
             clearable
+            :clear-icon="matCancel"
             options-dense
             v-model="family"
             :options="Object.freeze(filters.getFilters.family)"
             label="Family"
+            :dropdown-icon="matArrowDropDown"
           />
 
           <q-select
             dense
             outlined
             clearable
+            :clear-icon="matCancel"
             options-dense
             v-model="alignment"
             :options="Object.freeze(filters.getFilters.alignment)"
             label="Alignment"
+            :dropdown-icon="matArrowDropDown"
           />
 
           <q-select
             dense
             outlined
             clearable
+            :clear-icon="matCancel"
             options-dense
             v-model="size"
             :options="Object.freeze(filters.getFilters.size)"
             label="Size"
+            :dropdown-icon="matArrowDropDown"
           />
 
           <q-select
             dense
             outlined
             clearable
+            :clear-icon="matCancel"
             options-dense
             v-model="rarity"
             :options="Object.freeze(filters.getFilters.rarity)"
             label="Rarity"
+            :dropdown-icon="matArrowDropDown"
           />
 
           <q-select
             dense
             outlined
             clearable
+            :clear-icon="matCancel"
             options-dense
             v-model="filterChallenge"
             :options="challenges"
             label="Challenge"
+            :dropdown-icon="matArrowDropDown"
           />
         </div>
       </q-card-section>

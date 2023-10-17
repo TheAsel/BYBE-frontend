@@ -1,25 +1,32 @@
 <script setup>
+import {
+  biCalculator,
+  biShop,
+  biPersonVcard,
+  biArrowRightShort
+} from '@quasar/extras/bootstrap-icons';
+
 const cards = [
   {
     name: 'Encounter Builder',
     to: '/encounter/',
     description: 'Balance or randomly create combat encounters.',
     subtext: 'Try it out',
-    icon: 'bi-calculator'
+    icon: biCalculator
   },
   {
     name: 'Shop Generator',
     to: '/shop/',
     description: 'Create various types of shops of a specific level.',
     subtext: 'Work in progress...',
-    icon: 'bi-shop'
+    icon: biShop
   },
   {
     name: 'NPC Generator',
     to: '/npc/',
     description: "Quickly generate an NPC's name, ancestry, background and quirks.",
     subtext: 'Work in progress...',
-    icon: 'bi-person-vcard'
+    icon: biPersonVcard
   }
 ];
 </script>
@@ -46,7 +53,6 @@ const cards = [
         <q-icon
           :name="item.icon"
           class="tw-flex-shrink-0 tw-w-8 tw-h-8 tw-text-gray-800 tw-mt-4 tw-mr-6 dark:tw-text-gray-200"
-          size="32px"
         />
 
         <div>
@@ -64,9 +70,9 @@ const cards = [
           >
             {{ item.subtext }}
             <q-icon
-              name="bi-arrow-right-short"
-              class="tw-w-2.5 tw-h-2.5 tw-transition tw-ease-in-out group-hover:tw-translate-x-1"
-              size="20px"
+              :name="biArrowRightShort"
+              class="tw-transition tw-ease-in-out group-hover:tw-translate-x-1"
+              size="sm"
             />
           </p>
         </div>

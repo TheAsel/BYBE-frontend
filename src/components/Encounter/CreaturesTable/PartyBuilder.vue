@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { biXLg, biPlusLg, biDashLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore } from 'stores/store';
 
 const party = partyStore();
@@ -44,7 +45,16 @@ const saveChanges = () => {
       <q-card-section class="row items-center">
         <div class="text-h6 tw-mr-4">Party Builder</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup aria-label="Close dialog" />
+        <q-btn
+          :icon="biXLg"
+          size="md"
+          padding="sm"
+          flat
+          round
+          dense
+          v-close-popup
+          aria-label="Close dialog"
+        />
       </q-card-section>
 
       <q-separator />
@@ -70,7 +80,9 @@ const saveChanges = () => {
                 round
                 type="button"
                 @click="removePlayer(index)"
-                icon="bi-dash"
+                :icon="biDashLg"
+                size="md"
+                padding="sm"
                 aria-label="Remove player"
               >
               </q-btn>
@@ -83,7 +95,9 @@ const saveChanges = () => {
           class="full-width tw-mt-4 tw-text-blue-600 dark:tw-text-blue-400"
           aria-label="Add player"
           @click="addPlayer"
-          icon="bi-plus"
+          :icon="biPlusLg"
+          size="md"
+          padding="sm"
         >
         </q-btn>
       </q-card-section>

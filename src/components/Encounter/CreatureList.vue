@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { debounce } from 'lodash';
 import { watch } from 'vue';
+import { biPlus, biDash, biTrash } from '@quasar/extras/bootstrap-icons';
+import debounce from 'lodash/debounce';
 import { partyStore, encounterStore, infoStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/api-calls';
 
@@ -55,7 +56,7 @@ watch(party, () => {
 <template>
   <div class="q-pa-md tw-w-full md:tw-w-[30%]">
     <div
-      style="height: calc(100vh - 140px)"
+      style="height: calc(100vh - 135px)"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
     >
       <div class="tw-flex tw-mx-4 tw-my-0.5">
@@ -75,16 +76,18 @@ watch(party, () => {
               <q-btn
                 unelevated
                 :ripple="false"
-                size="xs"
-                icon="add"
+                size="sm"
+                class="q-px-md"
+                :icon="biPlus"
                 aria-label="Add creature"
                 @click="encounter.addToEncounter(item, index)"
               />
               <q-btn
                 unelevated
                 :ripple="false"
-                size="xs"
-                icon="remove"
+                size="sm"
+                class="q-px-md"
+                :icon="biDash"
                 aria-label="Remove creature"
                 @click="encounter.removeFromEncounter(index)"
               />
@@ -147,7 +150,7 @@ watch(party, () => {
                 :ripple="false"
                 size="sm"
                 class="q-px-sm"
-                icon="bi-trash"
+                :icon="biTrash"
                 aria-label="Clear creature"
                 @click="encounter.clearCreature(item)"
               />

@@ -2,8 +2,9 @@
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
+import { biList, biGithub, biSun, biMoon } from '@quasar/extras/bootstrap-icons';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 
 TailwindDarkFix();
 
@@ -78,7 +79,7 @@ const unhide = debounce(function () {
             type="button"
             aria-controls="navbar-collapse"
             aria-label="Toggle navigation"
-            icon="bi-list"
+            :icon="biList"
             @click="unhide"
           />
         </div>
@@ -111,9 +112,10 @@ const unhide = debounce(function () {
             <q-btn
               flat
               round
+              size="sm"
+              padding="sm"
               class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
-              icon="bi-github"
-              size="12px"
+              :icon="biGithub"
               href="https://github.com/TheAsel/BYBE-frontend"
               target="_blank"
               aria-label="GitHub link"
@@ -122,10 +124,11 @@ const unhide = debounce(function () {
             <q-btn
               flat
               round
-              size="11px"
+              size="sm"
+              padding="sm"
               class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
               @click="themeSwitch"
-              :icon="$q.dark.isActive ? 'bi-sun' : 'bi-moon'"
+              :icon="$q.dark.isActive ? biSun : biMoon"
               aria-label="Toggle theme"
             />
           </div>
