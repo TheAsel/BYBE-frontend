@@ -643,7 +643,6 @@ const addCreature = debounce(function (creature: creature) {
             anchor="top middle"
             self="bottom middle"
           >
-            <!-- TODO: replace with {{ source.row.source }} -->
             <i class="tw-whitespace-nowrap" v-for="item in source.row.sources" :key="item">
               {{ item }}
             </i>

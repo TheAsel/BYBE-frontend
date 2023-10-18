@@ -1,8 +1,8 @@
 {
   "name": "bybe-frontend",
-  "version": "0.0.1",
-  "description": "Pathfinder 2e - Encounter Builder FRONTEND",
-  "productName": "BYBE - PF2 Encounter Builder",
+  "version": "1.0.0",
+  "description": "Beyond Your Bestiary Explorer (BYBE) - Pathfinder 2e Tools Frontend",
+  "productName": "BYBE - Pathfinder 2e GM Tools",
   "author": "TheAsel",
   "private": true,
   "scripts": {
@@ -10,13 +10,14 @@
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
-    "build": "quasar build"
+    "build": "quasar build",
+    "start": "quasar serve --cache --history dist/spa"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.7",
     "lodash": "^4.17.21",
     "pinia": "^2.1.7",
-    "quasar": "^2.12.7",
+    "quasar": "^2.13.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
@@ -24,9 +25,9 @@
     "@quasar/app-vite": "^1.6.2",
     "@quasar/cli": "^2.3.0",
     "@types/lodash": "4.14.199",
-    "@types/node": "^20.8.6",
-    "@typescript-eslint/eslint-plugin": "^6.7.5",
-    "@typescript-eslint/parser": "^6.7.5",
+    "@types/node": "^20.8.7",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
