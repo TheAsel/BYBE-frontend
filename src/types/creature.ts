@@ -10,6 +10,7 @@ export type creature = {
   is_melee: boolean;
   is_ranged: boolean;
   is_spell_caster: boolean;
+  sources: string[];
   quantity?: number;
   variant?: 'weak' | 'base' | 'elite';
 };
