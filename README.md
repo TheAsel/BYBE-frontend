@@ -3,8 +3,8 @@
 > Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
 
 <p align="center">
-  <a href="https://pf2e-encounter-manager.fly.dev/">
-    <img src="https://i.imgur.com/xPMRk1u.png" width="1080" alt="BYBE Encounter Builder">
+  <a href="https://bybe.fly.dev/">
+    <img src="https://i.imgur.com/0dGCMNc.png" width="1080" alt="BYBE Encounter Builder">
   </a>
 </p>
 
@@ -25,7 +25,7 @@ Built using:
 - [Quasar](https://quasar.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
-## Installation guide
+## Installation guide - Local
 
 1. Install [Bun](https://bun.sh/) on your machine.
 2. Download the [latest release](https://github.com/TheAsel/BYBE-frontend/releases/latest) or clone this repository:
@@ -47,9 +47,34 @@ bun install
 bun run dev
 ```
 
-6. To instead deploy the production build (needs [Quasar CLI](https://quasar.dev/start/quasar-cli/)), run:
+6. To instead deploy the production build (needs [Node.js](https://nodejs.org/it) and [Quasar CLI](https://quasar.dev/start/quasar-cli/)), run:
 
 ```
 bun run build
+```
+
+```
 quasar serve dist/spa --history
+```
+
+## Installation guide - Docker
+
+1. Download the [latest release](https://github.com/TheAsel/BYBE-frontend/releases/latest) or clone this repository:
+
+```
+git clone https://github.com/TheAsel/BYBE-frontend
+```
+
+2. Navigate to the project's main directory
+
+3. Build the docker image:
+
+```
+docker build -t bybe-frontend .
+```
+
+4. Run the docker image:
+
+```
+docker run -p 4000:80 bybe-frontend
 ```
