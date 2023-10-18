@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { matArrowDropDown, matCancel, matWarning } from '@quasar/extras/material-icons';
 import { biEraser, biArrowDownUp, biBook } from '@quasar/extras/bootstrap-icons';
+import { mdiSword, mdiBowArrow, mdiMagicStaff } from '@quasar/extras/mdi-v7';
 import debounce from 'lodash/debounce';
 import { creature } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
@@ -98,6 +99,7 @@ const filterFamily = ref('');
 const filterAlignment = ref('');
 const filterSize = ref('');
 const filterRarity = ref('');
+const filterAttacks = ref([false, false, false]);
 
 // ---- Filter function
 // combines all filters
@@ -145,7 +147,17 @@ const combineFilters = computed(() => {
     }
     return out;
   });
-  return filteredRarity;
+  let filteredAttacks = filteredRarity.filter((out) => {
+    if (filterAttacks.value[0] || filterAttacks.value[1] || filterAttacks.value[2]) {
+      return (
+        out.is_melee === filterAttacks.value[0] &&
+        out.is_ranged === filterAttacks.value[1] &&
+        out.is_spell_caster === filterAttacks.value[2]
+      );
+    }
+    return out;
+  });
+  return filteredAttacks;
 });
 
 // ---- Reset filters function
@@ -159,6 +171,7 @@ const resetFilters = () => {
   filterAlignment.value = '';
   filterSize.value = '';
   filterRarity.value = '';
+  filterAttacks.value = [false, false, false];
 };
 
 // ---- Table and visible columns
@@ -295,38 +308,6 @@ const addCreature = debounce(function (creature: creature) {
           </div>
         </div>
       </template>
-      <template v-slot:body-selection="source">
-        <q-btn round unelevated :icon="biBook" size="sm">
-          <q-tooltip
-            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-            anchor="top middle"
-            self="bottom middle"
-          >
-            {{ source.row.name }}
-          </q-tooltip>
-        </q-btn>
-      </template>
-      <template v-slot:body-cell-name="name">
-        <q-td :props="name">
-          <a
-            :href="'https://2e.aonprd.com/Monsters.aspx?ID=' + name.row.id"
-            target="_blank"
-            rel="noopener"
-          >
-            <span
-              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
-              >{{ name.value }}</span
-            >
-          </a>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-attacks="attacks">
-        <q-td :props="attacks">
-          <q-icon v-if="attacks.row.is_melee" :name="biArrowDownUp" />
-          <q-icon v-if="attacks.row.is_ranged" :name="biArrowDownUp" />
-          <q-icon v-if="attacks.row.is_spell_caster" :name="biArrowDownUp" />
-        </q-td>
-      </template>
       <template v-slot:header-cell-name>
         <q-th>
           <div
@@ -369,6 +350,7 @@ const addCreature = debounce(function (creature: creature) {
                         :max="25"
                         style="min-width: 200px"
                         aria-label="Filter level"
+                        role="menuitem"
                       />
                     </div>
                   </q-banner>
@@ -408,6 +390,7 @@ const addCreature = debounce(function (creature: creature) {
                         :max="600"
                         style="min-width: 200px"
                         aria-label="Filter HP"
+                        role="menuitem"
                       />
                     </div>
                   </q-banner>
@@ -533,7 +516,9 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:header-cell-rarity>
         <q-th>
-          <div class="row no-wrap items-center">
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
             <div class="col-grow">
               <q-select
                 dense
@@ -565,20 +550,76 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:header-cell-attacks>
         <q-th>
-          <div class="row no-wrap items-center">
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
             <div class="col-grow">
-              <q-select
+              <q-field
                 dense
                 outlined
-                clearable
-                :clear-icon="matCancel"
-                options-dense
-                v-model="filterRarity"
-                :options="Object.freeze(filters.getFilters.rarity)"
                 label="Attacks"
-                :dropdown-icon="matArrowDropDown"
-                style="min-width: 120px"
-              />
+                style="min-width: 80px"
+                :stack-label="filterAttacks[0] || filterAttacks[1] || filterAttacks[2]"
+              >
+                <template v-slot:control>
+                  <q-icon v-if="filterAttacks[0]" :name="mdiSword" size="xs" />
+                  <q-icon v-if="filterAttacks[1]" :name="mdiBowArrow" size="xs" />
+                  <q-icon v-if="filterAttacks[2]" :name="mdiMagicStaff" size="xs" />
+                </template>
+                <q-popup-proxy>
+                  <q-banner rounded style="min-width: 100px">
+                    <div class="column">
+                      <q-toggle
+                        :icon="mdiSword"
+                        v-model="filterAttacks[0]"
+                        size="xl"
+                        role="menuitemcheckbox"
+                      >
+                        <q-tooltip
+                          class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[4, 4]"
+                        >
+                          Melee
+                        </q-tooltip>
+                      </q-toggle>
+
+                      <q-toggle
+                        :icon="mdiBowArrow"
+                        v-model="filterAttacks[1]"
+                        size="xl"
+                        role="menuitemcheckbox"
+                      >
+                        <q-tooltip
+                          class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[4, 4]"
+                        >
+                          Ranged
+                        </q-tooltip>
+                      </q-toggle>
+
+                      <q-toggle
+                        :icon="mdiMagicStaff"
+                        v-model="filterAttacks[2]"
+                        size="xl"
+                        role="menuitemcheckbox"
+                      >
+                        <q-tooltip
+                          class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[4, 4]"
+                        >
+                          Spells
+                        </q-tooltip>
+                      </q-toggle>
+                    </div>
+                  </q-banner>
+                </q-popup-proxy>
+              </q-field>
             </div>
             <div class="col-shrink tw-mx-2">
               <q-btn
@@ -594,6 +635,63 @@ const addCreature = debounce(function (creature: creature) {
             </div>
           </div>
         </q-th>
+      </template>
+      <template v-slot:body-selection="source">
+        <q-icon round unelevated :name="biBook" size="xs">
+          <q-tooltip
+            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+            anchor="top middle"
+            self="bottom middle"
+          >
+            <!-- TODO: replace with {{ source.row.source }} -->
+            <i class="tw-whitespace-nowrap">Bestiary 2 pg. 238</i>
+          </q-tooltip>
+        </q-icon>
+      </template>
+      <template v-slot:body-cell-name="name">
+        <q-td :props="name">
+          <a
+            :href="'https://2e.aonprd.com/Monsters.aspx?ID=' + name.row.id"
+            target="_blank"
+            rel="noopener"
+          >
+            <span
+              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+              >{{ name.value }}</span
+            >
+          </a>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-attacks="attacks">
+        <q-td :props="attacks">
+          <q-icon v-if="attacks.row.is_melee" :name="mdiSword" size="sm" left>
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Melee
+            </q-tooltip>
+          </q-icon>
+          <q-icon v-if="attacks.row.is_ranged" :name="mdiBowArrow" size="sm" left>
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Ranged
+            </q-tooltip>
+          </q-icon>
+          <q-icon v-if="attacks.row.is_spell_caster" :name="mdiMagicStaff" size="sm" left>
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Spells
+            </q-tooltip>
+          </q-icon>
+        </q-td>
       </template>
       <template v-slot:no-data="{ message }">
         <div class="full-width row">
