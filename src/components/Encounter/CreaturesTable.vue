@@ -637,14 +637,16 @@ const addCreature = debounce(function (creature: creature) {
         </q-th>
       </template>
       <template v-slot:body-selection="source">
-        <q-icon round unelevated :name="biBook" size="xs">
+        <q-icon round unelevated v-if="source.row.sources.length > 0" :name="biBook" size="xs">
           <q-tooltip
             class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
             anchor="top middle"
             self="bottom middle"
           >
             <!-- TODO: replace with {{ source.row.source }} -->
-            <i class="tw-whitespace-nowrap">Bestiary 2 pg. 238</i>
+            <i class="tw-whitespace-nowrap" v-for="item in source.row.sources" :key="item">
+              {{ item }}
+            </i>
           </q-tooltip>
         </q-icon>
       </template>
