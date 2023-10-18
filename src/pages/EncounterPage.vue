@@ -13,50 +13,52 @@ import('src/components/Encounter/SkeletonTable.vue').then((module) => {
 });
 // ---- API requests
 try {
-  if (filters.getFilters.family.length === 0) {
-    const familyList = await requestFilters('families');
+  if (
+    filters.getFilters.family.length === 0 ||
+    filters.getFilters.alignment.length === 0 ||
+    filters.getFilters.size.length === 0 ||
+    filters.getFilters.rarity.length === 0 ||
+    creatures.getCreatures.length === 0
+  ) {
+    let [familyList, alignmentList, sizeList, rarityList, creatureList] = await Promise.all([
+      requestFilters('families'),
+      requestFilters('alignments'),
+      requestFilters('sizes'),
+      requestFilters('rarities'),
+      requestCreatures(0, -1)
+    ]);
+
     if (typeof familyList != 'undefined') {
       filters.updateFamilies(familyList);
     } else {
       throw 'Error loading families';
     }
-  }
 
-  if (filters.getFilters.alignment.length === 0) {
-    const alignmentList = await requestFilters('alignments');
     if (typeof alignmentList != 'undefined') {
       filters.updateAlignments(alignmentList);
     } else {
       throw 'Error loading alignments';
     }
-  }
 
-  if (filters.getFilters.size.length === 0) {
-    const sizeList = await requestFilters('sizes');
     if (typeof sizeList != 'undefined') {
       filters.updateSizes(sizeList);
     } else {
       throw 'Error loading sizes';
     }
-  }
 
-  if (filters.getFilters.rarity.length === 0) {
-    const rarityList = await requestFilters('rarities');
     if (typeof rarityList != 'undefined') {
       filters.updateRarities(rarityList);
     } else {
       throw 'Error loading rarities';
     }
-  }
 
-  if (creatures.getCreatures.length === 0) {
-    const creatureList = await requestCreatures(0, -1);
     if (typeof creatureList != 'undefined') {
       creatures.updateCreatures(creatureList);
     } else {
       throw 'Error loading creatures';
     }
   }
+
   import('src/components/Encounter/CreaturesTable.vue').then((module) => {
     currentComponent.value = module.default;
   });
