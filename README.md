@@ -47,7 +47,7 @@ bun install
 bun run dev
 ```
 
-6. To instead deploy the production build (needs [Node.js](https://nodejs.org/it) and [Quasar CLI](https://quasar.dev/start/quasar-cli/)), run:
+6. To instead deploy the production build with Quasar (needs [Node.js](https://nodejs.org/it) and [Quasar CLI](https://quasar.dev/start/quasar-cli/)), run:
 
 ```
 bun run build
@@ -66,7 +66,6 @@ git clone https://github.com/TheAsel/BYBE-frontend
 ```
 
 2. Navigate to the project's main directory
-
 3. Build the docker image:
 
 ```
@@ -76,5 +75,5 @@ docker build -t bybe-frontend .
 4. Run the docker image:
 
 ```
-docker run -p 4000:80 bybe-frontend
+docker run -it -p 3000:80 --rm bybe-frontend
 ```
