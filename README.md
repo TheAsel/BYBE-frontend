@@ -77,3 +77,11 @@ docker build -t bybe-frontend .
 ```
 docker run -it -p 3000:80 --rm bybe-frontend
 ```
+
+## Support me
+
+If you like this tool, consider supporting me:
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B0Q8YOL)
+
+Also consider supporting [RakuJa](https://github.com/RakuJa), the backend developer. Thank you!
