@@ -1,14 +1,31 @@
 <script setup lang="ts">
 import { shallowRef } from 'vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
-import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
+import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import { creature } from 'src/types/creature';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 
+const party = partyStore();
 const filters = filtersStore();
 const creatures = creaturesStore();
 const encounter = encounterStore();
 const currentComponent = shallowRef();
+
+const localParty = localStorage.getItem('party');
+if (localParty) {
+  try {
+    const parsedParty: number[] = JSON.parse(localParty);
+    if (parsedParty && parsedParty.every((player) => player >= 1 && player <= 20)) {
+      party.updateParty(parsedParty);
+    } else {
+      throw 'Invalid saved party';
+    }
+  } catch (_) {
+    console.error('Invalid saved party');
+    localStorage.setItem('party', JSON.stringify([1, 1, 1, 1]));
+    party.updateParty([1, 1, 1, 1]);
+  }
+}
 
 import('src/components/Encounter/SkeletonTable.vue').then((module) => {
   currentComponent.value = module.default;

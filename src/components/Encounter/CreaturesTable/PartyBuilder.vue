@@ -35,6 +35,7 @@ const removePlayer = (index: number) => {
 
 const saveChanges = () => {
   party.updateParty(tmpParty.value);
+  localStorage.setItem('party', JSON.stringify(tmpParty.value));
 };
 </script>
 
