@@ -210,6 +210,8 @@ const addCreature = debounce(function (creature: creature) {
       virtual-scroll
       no-data-label="No creature matches the current filters"
       @row-dblclick="(_, row) => addCreature(row)"
+      id="v-step-0"
+      table-header-class="v-step-5"
     >
       <template v-slot:top>
         <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
@@ -233,6 +235,7 @@ const addCreature = debounce(function (creature: creature) {
                 size="md"
                 aria-label="Random encounter"
                 @click="encounterBuilderRef.generateEncounter()"
+                id="v-step-3"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -290,21 +293,22 @@ const addCreature = debounce(function (creature: creature) {
                 Clear Filters
               </q-tooltip>
             </q-btn>
-
-            <q-select
-              v-model="visibleColumns"
-              multiple
-              outlined
-              dense
-              options-dense
-              display-value="Show\Hide columns"
-              emit-value
-              map-options
-              :options="Object.freeze(columns)"
-              option-value="name"
-              :dropdown-icon="matArrowDropDown"
-              style="min-width: 150px"
-            />
+            <div id="v-step-4">
+              <q-select
+                v-model="visibleColumns"
+                multiple
+                outlined
+                dense
+                options-dense
+                display-value="Show\Hide columns"
+                emit-value
+                map-options
+                :options="Object.freeze(columns)"
+                option-value="name"
+                :dropdown-icon="matArrowDropDown"
+                style="min-width: 150px"
+              />
+            </div>
           </div>
         </div>
       </template>

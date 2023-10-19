@@ -58,6 +58,7 @@ watch(party, () => {
     <div
       style="height: calc(100vh - 135px)"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      id="v-step-6"
     >
       <div class="tw-flex tw-mx-4 tw-my-0.5">
         <div
@@ -167,6 +168,7 @@ watch(party, () => {
           :value="1"
           :color="info.getInfo.color"
           aria-label="Encounter challenge"
+          id="v-step-7"
         >
           <div class="absolute-full flex flex-center">
             <q-badge

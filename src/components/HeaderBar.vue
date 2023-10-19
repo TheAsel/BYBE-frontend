@@ -126,11 +126,21 @@ const unhide = debounce(function () {
               round
               size="sm"
               padding="sm"
-              class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
               @click="themeSwitch"
               :icon="$q.dark.isActive ? biSun : biMoon"
               aria-label="Toggle theme"
             />
+            <q-btn
+              v-if="currentPath === '/encounter/'"
+              flat
+              padding="sm"
+              class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              @click="$tours[currentPath].start()"
+              aria-label="Start tour"
+            >
+              HELP
+            </q-btn>
           </div>
         </div>
       </div>

@@ -39,7 +39,7 @@ const saveChanges = () => {
 </script>
 
 <template>
-  <q-btn push label="Party Builder" @click="restoreParty" />
+  <q-btn push label="Party Builder" @click="restoreParty" id="v-step-1" />
   <q-dialog v-model="dialog" aria-label="Player builder">
     <q-card flat bordered>
       <q-card-section class="row items-center">

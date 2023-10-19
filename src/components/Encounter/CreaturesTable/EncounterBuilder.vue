@@ -63,7 +63,7 @@ defineExpose({ generateEncounter });
 </script>
 
 <template>
-  <q-btn push label="Encounter Builder" @click="dialog = true" />
+  <q-btn push label="Encounter Builder" @click="dialog = true" id="v-step-2" />
   <q-dialog v-model="dialog" aria-label="Encounter builder">
     <q-card flat bordered>
       <q-card-section class="row items-center">
