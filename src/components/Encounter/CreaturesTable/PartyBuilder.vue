@@ -4,7 +4,7 @@ import { biXLg, biPlusLg, biDashLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore } from 'stores/store';
 
 const party = partyStore();
-let tmpParty = ref(party.getParty);
+const tmpParty = ref(party.getParty);
 
 const dialog = ref(false);
 
