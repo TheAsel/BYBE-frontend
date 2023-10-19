@@ -659,11 +659,7 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">
-          <a
-            :href="'https://2e.aonprd.com/Monsters.aspx?ID=' + name.row.id"
-            target="_blank"
-            rel="noopener"
-          >
+          <a :href="name.row.archive_link" target="_blank" rel="noopener">
             <span
               class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
               >{{ name.value }}</span

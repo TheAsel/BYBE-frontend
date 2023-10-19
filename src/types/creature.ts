@@ -11,6 +11,7 @@ export type creature = {
   is_ranged: boolean;
   is_spell_caster: boolean;
   sources: string[];
+  archive_link: string;
   quantity?: number;
   variant?: 'weak' | 'base' | 'elite';
 };

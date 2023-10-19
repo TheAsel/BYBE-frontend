@@ -42,7 +42,7 @@ const debouncedCall = debounce(async function () {
   } catch (error) {
     console.error(error);
   }
-}, 500);
+}, 300);
 
 watch(encounter, () => {
   debouncedCall();
@@ -97,8 +97,7 @@ watch(party, () => {
               {{ item.quantity }}
               <a
                 :href="
-                  'https://2e.aonprd.com/Monsters.aspx?ID=' +
-                  item.id +
+                  item.archive_link +
                   '&Weak=' +
                   (item.variant === 'weak') +
                   '&Elite=' +
