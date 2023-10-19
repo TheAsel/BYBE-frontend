@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://bybe.fly.dev/">
-    <img src="https://i.imgur.com/0dGCMNc.png" width="1080" alt="BYBE Encounter Builder">
+    <img src="https://i.imgur.com/U9OWwDX.png" width="1080" alt="BYBE Encounter Builder">
   </a>
 </p>
 
