@@ -87,7 +87,7 @@ const steps = [
   {
     target: '#v-step-2',
     content:
-      'From this dialog you can define your preferred filters for the random encounter generator.',
+      'From this dialog you can define your preferred settings for the random encounter generator.',
     params: {
       placement: 'bottom'
     }
@@ -95,7 +95,7 @@ const steps = [
   {
     target: '#v-step-3',
     content:
-      'Clicking this button will generate a new random encounter, using the filters previously described.',
+      'Clicking this button will generate a new random encounter, using the settings previously described.',
     params: {
       placement: 'bottom'
     }
