@@ -95,10 +95,10 @@ const columns: {
 const filterName = ref('');
 const levelRange = ref({ min: -1, max: 25 });
 const hpRange = ref({ min: 0, max: 600 });
-const filterFamily = ref('');
-const filterAlignment = ref('');
-const filterSize = ref('');
-const filterRarity = ref('');
+const filterFamily = ref();
+const filterAlignment = ref();
+const filterSize = ref();
+const filterRarity = ref();
 const filterAttacks = ref([false, false, false]);
 
 // ---- Filter function
@@ -125,25 +125,25 @@ const combineFilters = computed(() => {
   });
   let filteredFamily = filteredHp.filter((out) => {
     if (filterFamily.value && filterFamily.value.length) {
-      return out.family.includes(filterFamily.value);
+      return filterFamily.value.includes(out.family);
     }
     return out;
   });
   let filteredAlignment = filteredFamily.filter((out) => {
     if (filterAlignment.value && filterAlignment.value.length) {
-      return out.alignment.includes(filterAlignment.value);
+      return filterAlignment.value.includes(out.alignment);
     }
     return out;
   });
   let filteredSize = filteredAlignment.filter((out) => {
     if (filterSize.value && filterSize.value.length) {
-      return out.size.includes(filterSize.value);
+      return filterSize.value.includes(out.size);
     }
     return out;
   });
   let filteredRarity = filteredSize.filter((out) => {
     if (filterRarity.value && filterRarity.value.length) {
-      return out.rarity.includes(filterRarity.value);
+      return filterRarity.value.includes(out.rarity);
     }
     return out;
   });
@@ -167,10 +167,10 @@ const resetFilters = () => {
   levelRange.value.max = 25;
   hpRange.value.min = 0;
   hpRange.value.max = 600;
-  filterFamily.value = '';
-  filterAlignment.value = '';
-  filterSize.value = '';
-  filterRarity.value = '';
+  filterFamily.value = [];
+  filterAlignment.value = [];
+  filterSize.value = [];
+  filterRarity.value = [];
   filterAttacks.value = [false, false, false];
 };
 
@@ -423,6 +423,7 @@ const addCreature = debounce(function (creature: creature) {
           >
             <div class="col-grow">
               <q-select
+                multiple
                 dense
                 outlined
                 clearable
@@ -432,7 +433,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(filters.getFilters.family)"
                 label="Family"
                 :dropdown-icon="matArrowDropDown"
-                style="min-width: 125px"
+                style="min-width: 125px; max-width: 300px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -457,6 +458,7 @@ const addCreature = debounce(function (creature: creature) {
           >
             <div class="col-grow">
               <q-select
+                multiple
                 dense
                 outlined
                 clearable
@@ -466,7 +468,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(filters.getFilters.alignment)"
                 label="Alignment"
                 :dropdown-icon="matArrowDropDown"
-                style="min-width: 130px"
+                style="min-width: 130px; max-width: 300px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -491,6 +493,7 @@ const addCreature = debounce(function (creature: creature) {
           >
             <div class="col-grow">
               <q-select
+                multiple
                 dense
                 outlined
                 clearable
@@ -500,7 +503,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(filters.getFilters.size)"
                 label="Size"
                 :dropdown-icon="matArrowDropDown"
-                style="min-width: 100px"
+                style="min-width: 100px; max-width: 300px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -525,6 +528,7 @@ const addCreature = debounce(function (creature: creature) {
           >
             <div class="col-grow">
               <q-select
+                multiple
                 dense
                 outlined
                 clearable
@@ -534,7 +538,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(filters.getFilters.rarity)"
                 label="Rarity"
                 :dropdown-icon="matArrowDropDown"
-                style="min-width: 100px"
+                style="min-width: 100px; max-width: 300px"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -766,5 +770,13 @@ tr:nth-child(even) {
 
 .q-table--dark .q-table__bottom {
   border-color: #374151;
+}
+</style>
+
+<style scoped>
+.q-select:deep(.q-field__native) > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
