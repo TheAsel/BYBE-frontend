@@ -137,7 +137,7 @@ const unhide = debounce(function () {
               padding="sm"
               class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
               @click="$tours[currentPath].start()"
-              aria-label="Start tour"
+              aria-label="Start help tour"
             >
               HELP
             </q-btn>
