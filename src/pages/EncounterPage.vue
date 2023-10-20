@@ -172,7 +172,8 @@ const startTour = () => {
     is_melee: true,
     is_ranged: false,
     is_spell_caster: true,
-    sources: ['Bestiary']
+    sources: ['Bestiary'],
+    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274'
   };
   const tmpKoboldWarrior: creature = {
     id: 272,
@@ -186,7 +187,8 @@ const startTour = () => {
     is_melee: true,
     is_ranged: true,
     is_spell_caster: false,
-    sources: ['Bestiary']
+    sources: ['Bestiary'],
+    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272'
   };
   encounter.addToEncounter(tmpKoboldMage);
   encounter.addToEncounter(tmpKoboldWarrior);
