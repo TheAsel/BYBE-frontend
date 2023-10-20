@@ -21,9 +21,11 @@ const columns: {
   name: string;
   label: string;
   field: (row: creature) => string | number | boolean[];
-  required?: boolean | undefined;
-  align?: 'left' | 'right' | 'center' | undefined;
-  sortable?: boolean | undefined;
+  required?: boolean;
+  align?: 'left' | 'right' | 'center';
+  sortable?: boolean;
+  minwidth?: number;
+  maxwidth?: number;
 }[] = [
   {
     name: 'name',
@@ -31,7 +33,8 @@ const columns: {
     field: (row) => row.name,
     required: true,
     align: 'left',
-    sortable: true
+    sortable: true,
+    minwidth: 225
   },
   {
     name: 'level',
@@ -39,7 +42,8 @@ const columns: {
     field: (row) => row.level,
     required: false,
     align: 'left',
-    sortable: true
+    sortable: true,
+    minwidth: 80
   },
   {
     name: 'hp',
@@ -47,7 +51,8 @@ const columns: {
     field: (row) => row.hp,
     required: false,
     align: 'left',
-    sortable: true
+    sortable: true,
+    minwidth: 100
   },
   {
     name: 'family',
@@ -55,7 +60,9 @@ const columns: {
     field: (row) => row.family,
     required: false,
     align: 'left',
-    sortable: true
+    sortable: true,
+    minwidth: 125,
+    maxwidth: 300
   },
   {
     name: 'alignment',
@@ -63,7 +70,9 @@ const columns: {
     field: (row) => row.alignment,
     required: false,
     align: 'left',
-    sortable: true
+    sortable: true,
+    minwidth: 135,
+    maxwidth: 300
   },
   {
     name: 'size',
@@ -71,7 +80,9 @@ const columns: {
     field: (row) => row.size,
     required: false,
     align: 'left',
-    sortable: true
+    sortable: true,
+    minwidth: 100,
+    maxwidth: 300
   },
   {
     name: 'rarity',
@@ -79,7 +90,8 @@ const columns: {
     field: (row) => row.rarity,
     required: false,
     align: 'left',
-    sortable: true
+    sortable: true,
+    minwidth: 100
   },
   {
     name: 'attacks',
@@ -87,7 +99,8 @@ const columns: {
     field: (row) => [row.is_melee, row.is_ranged, row.is_spell_caster],
     required: false,
     align: 'left',
-    sortable: true
+    sortable: true,
+    minwidth: 80
   }
 ];
 
@@ -176,7 +189,7 @@ const resetFilters = () => {
 
 // ---- Table and visible columns
 const creatureTable = ref();
-const visibleColumns = ref(['level', 'family', 'alignment', 'size', 'attacks']);
+const visibleColumns = ref(['name', 'level', 'family', 'alignment', 'size', 'attacks']);
 
 // ---- Column sort function
 const sort = (col: string) => {
@@ -315,11 +328,11 @@ const addCreature = debounce(function (creature: creature) {
       <template v-slot:header-cell-name>
         <q-th>
           <div
-            style="min-width: 225px"
+            :style="'min-width: ' + columns[0].minwidth + 'px;'"
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col">
-              <q-input dense outlined v-model="filterName" label="Name" />
+              <q-input dense outlined v-model="filterName" :label="columns[0].label" />
             </div>
             <div class="col-shrink tw-mx-2">
               <q-btn
@@ -342,7 +355,7 @@ const addCreature = debounce(function (creature: creature) {
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
-              <q-field dense outlined label="Level" style="min-width: 80px" stack-label>
+              <q-field dense outlined :label="columns[1].label" style="min-width: 80px" stack-label>
                 <template v-slot:control> {{ levelRange.min }} to {{ levelRange.max }} </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -352,7 +365,7 @@ const addCreature = debounce(function (creature: creature) {
                         label-always
                         :min="-1"
                         :max="25"
-                        style="min-width: 200px"
+                        :style="'min-width: ' + columns[1].minwidth + 'px;'"
                         aria-label="Filter level"
                         role="menuitem"
                       />
@@ -382,7 +395,13 @@ const addCreature = debounce(function (creature: creature) {
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
-              <q-field dense outlined label="HP" style="min-width: 100px" stack-label>
+              <q-field
+                dense
+                outlined
+                :label="columns[2].label"
+                style="min-width: 100px"
+                stack-label
+              >
                 <template v-slot:control> {{ hpRange.min }} to {{ hpRange.max }} </template>
                 <q-popup-proxy>
                   <q-banner rounded style="min-width: 300px">
@@ -392,7 +411,7 @@ const addCreature = debounce(function (creature: creature) {
                         label-always
                         :min="0"
                         :max="600"
-                        style="min-width: 200px"
+                        :style="'min-width: ' + columns[2].minwidth + 'px;'"
                         aria-label="Filter HP"
                         role="menuitem"
                       />
@@ -431,9 +450,16 @@ const addCreature = debounce(function (creature: creature) {
                 options-dense
                 v-model="filterFamily"
                 :options="Object.freeze(filters.getFilters.family)"
-                label="Family"
+                :label="columns[3].label"
                 :dropdown-icon="matArrowDropDown"
-                style="min-width: 125px; max-width: 300px"
+                :style="
+                  'min-width: ' +
+                  columns[3].minwidth +
+                  'px; ' +
+                  'max-width: ' +
+                  columns[3].maxwidth +
+                  'px; '
+                "
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -466,9 +492,16 @@ const addCreature = debounce(function (creature: creature) {
                 options-dense
                 v-model="filterAlignment"
                 :options="Object.freeze(filters.getFilters.alignment)"
-                label="Alignment"
+                :label="columns[4].label"
                 :dropdown-icon="matArrowDropDown"
-                style="min-width: 130px; max-width: 300px"
+                :style="
+                  'min-width: ' +
+                  columns[4].minwidth +
+                  'px; ' +
+                  'max-width: ' +
+                  columns[4].maxwidth +
+                  'px; '
+                "
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -501,9 +534,16 @@ const addCreature = debounce(function (creature: creature) {
                 options-dense
                 v-model="filterSize"
                 :options="Object.freeze(filters.getFilters.size)"
-                label="Size"
+                :label="columns[5].label"
                 :dropdown-icon="matArrowDropDown"
-                style="min-width: 100px; max-width: 300px"
+                :style="
+                  'min-width: ' +
+                  columns[5].minwidth +
+                  'px; ' +
+                  'max-width: ' +
+                  columns[5].maxwidth +
+                  'px; '
+                "
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -536,9 +576,16 @@ const addCreature = debounce(function (creature: creature) {
                 options-dense
                 v-model="filterRarity"
                 :options="Object.freeze(filters.getFilters.rarity)"
-                label="Rarity"
+                :label="columns[6].label"
                 :dropdown-icon="matArrowDropDown"
-                style="min-width: 100px; max-width: 300px"
+                :style="
+                  'min-width: ' +
+                  columns[6].minwidth +
+                  'px; ' +
+                  'max-width: ' +
+                  columns[6].maxwidth +
+                  'px; '
+                "
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -565,8 +612,8 @@ const addCreature = debounce(function (creature: creature) {
               <q-field
                 dense
                 outlined
-                label="Attacks"
-                style="min-width: 80px"
+                :label="columns[7].label"
+                :style="'min-width: ' + columns[7].minwidth + 'px;'"
                 :stack-label="filterAttacks[0] || filterAttacks[1] || filterAttacks[2]"
               >
                 <template v-slot:control>
