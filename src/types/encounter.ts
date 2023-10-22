@@ -1,8 +1,9 @@
 import { creature } from './creature';
+import { challenges } from './filters';
 
 export type encounter = {
   experience: number;
-  challenge: 'Trivial' | 'Low' | 'Moderate' | 'Severe' | 'Extreme' | 'Impossible';
+  challenge: challenges;
   encounter_exp_levels: {
     Trivial: number;
     Low: number;

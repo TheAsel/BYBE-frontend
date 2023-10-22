@@ -4,16 +4,16 @@
 
 <p align="center">
   <a href="https://bybe.fly.dev/">
-    <img src="https://i.imgur.com/U9OWwDX.png" width="1080" alt="BYBE Encounter Builder">
+    <img src="https://i.imgur.com/psEJ1Y7.png" width="1080" alt="BYBE Encounter Builder">
   </a>
 </p>
 
 ## Features
 
-- Browse and filter a list of all creatures.
-- Balance encounters based on your party size and level.
-- Generate random encounters based on your requirements.
-- Mobile friendly, light/dark theme, accessible.
+- Browse and filter a list of all creatures
+- Balance encounters based on your party size and level
+- Generate random encounters based on your requirements
+- Mobile friendly, light/dark theme, accessible
 - More to come...
 
 ## Requirements

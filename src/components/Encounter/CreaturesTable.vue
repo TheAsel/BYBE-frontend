@@ -20,7 +20,7 @@ const encounter = encounterStore();
 const columns: {
   name: string;
   label: string;
-  field: (row: creature) => string | number | boolean[];
+  field: (row: creature) => string | number | string[] | boolean[];
   required?: boolean;
   align?: 'left' | 'right' | 'center';
   sortable?: boolean;
@@ -55,13 +55,13 @@ const columns: {
     minwidth: 100
   },
   {
-    name: 'family',
-    label: 'Family',
-    field: (row) => row.family,
+    name: 'traits',
+    label: 'Traits',
+    field: (row) => row.traits,
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 125,
+    minwidth: 110,
     maxwidth: 300
   },
   {
@@ -94,6 +94,25 @@ const columns: {
     minwidth: 100
   },
   {
+    name: 'family',
+    label: 'Family',
+    field: (row) => row.family,
+    required: false,
+    align: 'left',
+    sortable: true,
+    minwidth: 125,
+    maxwidth: 300
+  },
+  {
+    name: 'creature_type',
+    label: 'Creature Type',
+    field: (row) => row.creature_type,
+    required: false,
+    align: 'left',
+    sortable: true,
+    minwidth: 155
+  },
+  {
     name: 'attacks',
     label: 'Attacks',
     field: (row) => [row.is_melee, row.is_ranged, row.is_spell_caster],
@@ -105,13 +124,15 @@ const columns: {
 ];
 
 // ---- Filters
-const filterName = ref('');
+const filterName = ref<string>();
 const levelRange = ref({ min: -1, max: 25 });
 const hpRange = ref({ min: 0, max: 600 });
-const filterFamily = ref();
-const filterAlignment = ref();
-const filterSize = ref();
-const filterRarity = ref();
+const filterTraits = ref<string[]>();
+const filterAlignment = ref<string[]>();
+const filterSize = ref<string[]>();
+const filterRarity = ref<string[]>();
+const filterFamily = ref<string[]>();
+const filterType = ref<string>();
 const filterAttacks = ref([false, false, false]);
 
 // ---- Filter function
@@ -136,13 +157,13 @@ const combineFilters = computed(() => {
     }
     return out;
   });
-  let filteredFamily = filteredHp.filter((out) => {
-    if (filterFamily.value && filterFamily.value.length) {
-      return filterFamily.value.includes(out.family);
+  let filteredTraits = filteredHp.filter((out) => {
+    if (filterTraits.value && filterTraits.value.length) {
+      return filterTraits.value.some((v) => out.traits.includes(v));
     }
     return out;
   });
-  let filteredAlignment = filteredFamily.filter((out) => {
+  let filteredAlignment = filteredTraits.filter((out) => {
     if (filterAlignment.value && filterAlignment.value.length) {
       return filterAlignment.value.includes(out.alignment);
     }
@@ -160,7 +181,19 @@ const combineFilters = computed(() => {
     }
     return out;
   });
-  let filteredAttacks = filteredRarity.filter((out) => {
+  let filteredFamily = filteredRarity.filter((out) => {
+    if (filterFamily.value && filterFamily.value.length) {
+      return filterFamily.value.includes(out.family);
+    }
+    return out;
+  });
+  let filteredType = filteredFamily.filter((out) => {
+    if (filterType.value && filterType.value.length) {
+      return filterType.value.includes(out.creature_type);
+    }
+    return out;
+  });
+  let filteredAttacks = filteredType.filter((out) => {
     if (filterAttacks.value[0] || filterAttacks.value[1] || filterAttacks.value[2]) {
       return (
         out.is_melee === filterAttacks.value[0] &&
@@ -175,21 +208,23 @@ const combineFilters = computed(() => {
 
 // ---- Reset filters function
 const resetFilters = () => {
-  filterName.value = '';
+  filterName.value = undefined;
   levelRange.value.min = -1;
   levelRange.value.max = 25;
   hpRange.value.min = 0;
   hpRange.value.max = 600;
-  filterFamily.value = [];
+  filterTraits.value = [];
   filterAlignment.value = [];
   filterSize.value = [];
   filterRarity.value = [];
+  filterFamily.value = [];
+  filterType.value = undefined;
   filterAttacks.value = [false, false, false];
 };
 
 // ---- Table and visible columns
 const creatureTable = ref();
-const visibleColumns = ref(['name', 'level', 'family', 'alignment', 'size', 'attacks']);
+const visibleColumns = ref(['name', 'level', 'traits', 'alignment', 'size', 'attacks']);
 
 // ---- Column sort function
 const sort = (col: string) => {
@@ -355,7 +390,13 @@ const addCreature = debounce(function (creature: creature) {
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
-              <q-field dense outlined :label="columns[1].label" style="min-width: 80px" stack-label>
+              <q-field
+                dense
+                outlined
+                :label="columns[1].label"
+                :style="'min-width: ' + columns[1].minwidth + 'px;'"
+                stack-label
+              >
                 <template v-slot:control> {{ levelRange.min }} to {{ levelRange.max }} </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -365,7 +406,7 @@ const addCreature = debounce(function (creature: creature) {
                         label-always
                         :min="-1"
                         :max="25"
-                        :style="'min-width: ' + columns[1].minwidth + 'px;'"
+                        style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
                       />
@@ -399,19 +440,19 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 outlined
                 :label="columns[2].label"
-                style="min-width: 100px"
+                :style="'min-width: ' + columns[2].minwidth + 'px;'"
                 stack-label
               >
                 <template v-slot:control> {{ hpRange.min }} to {{ hpRange.max }} </template>
                 <q-popup-proxy>
-                  <q-banner rounded style="min-width: 300px">
+                  <q-banner rounded :style="'min-width: ' + columns[2].minwidth + 'px;'">
                     <div class="tw-pt-8 tw-px-1">
                       <q-range
                         v-model="hpRange"
                         label-always
                         :min="0"
                         :max="600"
-                        :style="'min-width: ' + columns[2].minwidth + 'px;'"
+                        style="min-width: 200px"
                         aria-label="Filter HP"
                         role="menuitem"
                       />
@@ -435,7 +476,7 @@ const addCreature = debounce(function (creature: creature) {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-family>
+      <template v-slot:header-cell-traits>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
@@ -448,8 +489,8 @@ const addCreature = debounce(function (creature: creature) {
                 clearable
                 :clear-icon="matCancel"
                 options-dense
-                v-model="filterFamily"
-                :options="Object.freeze(filters.getFilters.family)"
+                v-model="filterTraits"
+                :options="Object.freeze(filters.getFilters.traits)"
                 :label="columns[3].label"
                 :dropdown-icon="matArrowDropDown"
                 :style="
@@ -470,8 +511,8 @@ const addCreature = debounce(function (creature: creature) {
                 size="xs"
                 class="tw-p-2"
                 :icon="biArrowDownUp"
-                aria-label="Sort family column"
-                @click="sort('family')"
+                aria-label="Sort traits column"
+                @click="sort('traits')"
               />
             </div>
           </div>
@@ -603,6 +644,82 @@ const addCreature = debounce(function (creature: creature) {
           </div>
         </q-th>
       </template>
+      <template v-slot:header-cell-family>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                multiple
+                dense
+                outlined
+                clearable
+                :clear-icon="matCancel"
+                options-dense
+                v-model="filterFamily"
+                :options="Object.freeze(filters.getFilters.family)"
+                :label="columns[7].label"
+                :dropdown-icon="matArrowDropDown"
+                :style="
+                  'min-width: ' +
+                  columns[7].minwidth +
+                  'px; ' +
+                  'max-width: ' +
+                  columns[7].maxwidth +
+                  'px; '
+                "
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                rounded
+                dense
+                size="xs"
+                class="tw-p-2"
+                :icon="biArrowDownUp"
+                aria-label="Sort family column"
+                @click="sort('family')"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template v-slot:header-cell-creature_type>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                dense
+                outlined
+                clearable
+                :clear-icon="matCancel"
+                options-dense
+                v-model="filterType"
+                :options="Object.freeze(['Monster', 'NPC'])"
+                :label="columns[8].label"
+                :dropdown-icon="matArrowDropDown"
+                :style="'min-width: ' + columns[8].minwidth + 'px;'"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                rounded
+                dense
+                size="xs"
+                class="tw-p-2"
+                :icon="biArrowDownUp"
+                aria-label="Sort creature type column"
+                @click="sort('type')"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
       <template v-slot:header-cell-attacks>
         <q-th>
           <div
@@ -612,8 +729,8 @@ const addCreature = debounce(function (creature: creature) {
               <q-field
                 dense
                 outlined
-                :label="columns[7].label"
-                :style="'min-width: ' + columns[7].minwidth + 'px;'"
+                :label="columns[9].label"
+                :style="'min-width: ' + columns[9].minwidth + 'px;'"
                 :stack-label="filterAttacks[0] || filterAttacks[1] || filterAttacks[2]"
               >
                 <template v-slot:control>
@@ -708,10 +825,17 @@ const addCreature = debounce(function (creature: creature) {
         <q-td :props="name">
           <a :href="name.row.archive_link" target="_blank" rel="noopener">
             <span
-              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-block tw-max-w-[250px] tw-whitespace-normal"
               >{{ name.value }}</span
             >
           </a>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-traits="traits">
+        <q-td :props="traits">
+          <span v-if="traits.row.traits" class="tw-block tw-max-w-[250px] tw-whitespace-normal">
+            {{ traits.row.traits.join(', ') }}
+          </span>
         </q-td>
       </template>
       <template v-slot:body-cell-attacks="attacks">
