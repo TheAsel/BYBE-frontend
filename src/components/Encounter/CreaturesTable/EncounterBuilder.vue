@@ -6,6 +6,7 @@ import { matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
 import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
+import type { alignments, sizes, rarities, challenges } from 'src/types/filters';
 
 const $q = useQuasar();
 
@@ -15,28 +16,29 @@ const encounter = encounterStore();
 
 const dialog = ref(false);
 
-const challenges = ['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'];
-
-const family = ref();
-const alignment = ref();
-const size = ref();
-const rarity = ref();
-const challenge = ref();
+const traits = ref<string[]>();
+const alignment = ref<alignments>();
+const size = ref<sizes>();
+const rarity = ref<rarities>();
+const family = ref<string>();
+const challenge = ref<challenges>();
 
 const tmpFilters = ref({
-  family: family.value,
+  traits: traits.value,
   alignment: alignment.value,
   size: size.value,
   rarity: rarity.value,
+  family: family.value,
   challenge: challenge.value
 });
 
 const restoreSettings = () => {
   dialog.value = true;
-  tmpFilters.value.family = family.value;
+  tmpFilters.value.traits = traits.value;
   tmpFilters.value.alignment = alignment.value;
   tmpFilters.value.rarity = rarity.value;
   tmpFilters.value.size = size.value;
+  tmpFilters.value.family = family.value;
   tmpFilters.value.challenge = challenge.value;
 };
 
@@ -44,17 +46,16 @@ const generateEncounter = async () => {
   saveChanges();
   const partyLevels = party.getParty;
   const post = {
+    traits: tmpFilters.value.traits,
+    alignment: tmpFilters.value.alignment,
+    size: tmpFilters.value.size,
+    rarity: tmpFilters.value.rarity,
+    family: tmpFilters.value.family,
+    challenge: tmpFilters.value.challenge,
     party_levels: partyLevels
   };
   try {
-    const randomEncounter = await encounterGenerator(
-      post,
-      tmpFilters.value.family,
-      tmpFilters.value.alignment,
-      tmpFilters.value.size,
-      tmpFilters.value.rarity,
-      tmpFilters.value.challenge
-    );
+    const randomEncounter = await encounterGenerator(post);
     if (typeof randomEncounter != 'undefined') {
       if (randomEncounter.count > 0 && randomEncounter.results) {
         encounter.clearEncounter();
@@ -78,10 +79,11 @@ const generateEncounter = async () => {
 };
 
 const saveChanges = () => {
-  family.value = tmpFilters.value.family;
+  traits.value = tmpFilters.value.traits;
   alignment.value = tmpFilters.value.alignment;
   rarity.value = tmpFilters.value.rarity;
   size.value = tmpFilters.value.size;
+  family.value = tmpFilters.value.family;
   challenge.value = tmpFilters.value.challenge;
 };
 
@@ -112,14 +114,15 @@ defineExpose({ generateEncounter });
       <q-card-section style="max-height: 60vh" class="scroll">
         <div class="tw-space-y-4">
           <q-select
+            multiple
             dense
             outlined
             clearable
             :clear-icon="matCancel"
             options-dense
-            v-model="tmpFilters.family"
-            :options="Object.freeze(filters.getFilters.family)"
-            label="Family"
+            v-model="tmpFilters.traits"
+            :options="Object.freeze(filters.getFilters.traits)"
+            label="Traits"
             :dropdown-icon="matArrowDropDown"
           />
 
@@ -165,8 +168,22 @@ defineExpose({ generateEncounter });
             clearable
             :clear-icon="matCancel"
             options-dense
+            v-model="tmpFilters.family"
+            :options="Object.freeze(filters.getFilters.family)"
+            label="Family"
+            :dropdown-icon="matArrowDropDown"
+          />
+
+          <q-select
+            dense
+            outlined
+            clearable
+            :clear-icon="matCancel"
+            options-dense
             v-model="tmpFilters.challenge"
-            :options="Object.freeze(challenges)"
+            :options="
+              Object.freeze(['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'])
+            "
             label="Challenge"
             :dropdown-icon="matArrowDropDown"
           />

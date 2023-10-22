@@ -1,6 +1,7 @@
 import { backendUrl } from 'src/boot/globals';
 import { creature } from 'src/types/creature';
 import { encounter, randomEncounter } from 'src/types/encounter';
+import { alignments, sizes, rarities, challenges } from 'src/types/filters';
 
 export async function requestCreatures(start: number, end: number) {
   try {
@@ -27,7 +28,9 @@ export async function requestCreatures(start: number, end: number) {
   }
 }
 
-export async function requestFilters(filter: 'families' | 'alignments' | 'sizes' | 'rarities') {
+export async function requestFilters(
+  filter: 'traits' | 'alignments' | 'sizes' | 'rarities' | 'families'
+) {
   try {
     const requestOptions = {
       method: 'GET',
@@ -64,37 +67,22 @@ export async function encounterInfo(encounter: { enemy_levels: number[]; party_l
   }
 }
 
-export async function encounterGenerator(
-  party: { party_levels: number[] },
-  family?: string,
-  alignment?: 'Any' | 'CE' | 'CN' | 'CG' | 'NE' | 'N' | 'NG' | 'LE' | 'LN' | 'LG' | 'No Alignment',
-  size?: 'Tiny' | 'Small' | 'Medium' | 'Large' | 'Huge' | 'Gargantuan',
-  rarity?: 'Common' | 'Uncommon' | 'Rare' | 'Unique',
-  challenge?: 'Trivial' | 'Low' | 'Moderate' | 'Severe' | 'Extreme' | 'Impossible'
-) {
+export async function encounterGenerator(body: {
+  traits: string[] | undefined;
+  alignment: alignments | undefined;
+  size: sizes | undefined;
+  rarity: rarities | undefined;
+  family: string | undefined;
+  challenge: challenges | undefined;
+  party_levels: number[];
+}) {
   try {
     const requestOptions = {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(party)
+      body: JSON.stringify(body)
     };
-    let query = '';
-    if (family) {
-      query = query + 'family=' + family + '&';
-    }
-    if (alignment) {
-      query = query + 'alignment=' + alignment + '&';
-    }
-    if (size) {
-      query = query + 'size=' + size + '&';
-    }
-    if (rarity) {
-      query = query + 'rarity=' + rarity + '&';
-    }
-    if (challenge) {
-      query = query + 'challenge=' + challenge + '&';
-    }
-    const response = await fetch(backendUrl + '/encounter/generator?' + query, requestOptions);
+    const response = await fetch(backendUrl + '/encounter/generator', requestOptions);
     const data = await response.json();
     if (!response.ok) {
       const error = (data && data.message) || response.status;

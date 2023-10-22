@@ -33,24 +33,27 @@ import('src/components/Encounter/SkeletonTable.vue').then((module) => {
 // ---- API requests
 try {
   if (
-    filters.getFilters.family.length === 0 ||
+    filters.getFilters.traits.length === 0 ||
     filters.getFilters.alignment.length === 0 ||
     filters.getFilters.size.length === 0 ||
     filters.getFilters.rarity.length === 0 ||
+    filters.getFilters.family.length === 0 ||
     creatures.getCreatures.length === 0
   ) {
-    let [familyList, alignmentList, sizeList, rarityList, creatureList] = await Promise.all([
-      requestFilters('families'),
-      requestFilters('alignments'),
-      requestFilters('sizes'),
-      requestFilters('rarities'),
-      requestCreatures(0, -1)
-    ]);
+    let [traitsList, alignmentList, sizeList, rarityList, familyList, creatureList] =
+      await Promise.all([
+        requestFilters('traits'),
+        requestFilters('alignments'),
+        requestFilters('sizes'),
+        requestFilters('rarities'),
+        requestFilters('families'),
+        requestCreatures(0, -1)
+      ]);
 
-    if (typeof familyList != 'undefined') {
-      filters.updateFamilies(familyList);
+    if (typeof traitsList != 'undefined') {
+      filters.updateTraits(traitsList);
     } else {
-      throw 'Error loading families';
+      throw 'Error loading traits';
     }
 
     if (typeof alignmentList != 'undefined') {
@@ -69,6 +72,12 @@ try {
       filters.updateRarities(rarityList);
     } else {
       throw 'Error loading rarities';
+    }
+
+    if (typeof familyList != 'undefined') {
+      filters.updateFamilies(familyList);
+    } else {
+      throw 'Error loading families';
     }
 
     if (typeof creatureList != 'undefined') {
@@ -162,33 +171,37 @@ const options = {
 const startTour = () => {
   const tmpKoboldMage: creature = {
     id: 274,
+    sources: ['Bestiary'],
+    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
     name: 'Kobold Dragon Mage',
     level: 2,
     hp: 25,
-    family: 'Kobold',
+    traits: ['Humanoid', 'Kobold'],
     alignment: 'LE',
     size: 'Small',
     rarity: 'Common',
+    family: 'Kobold',
+    creature_type: 'Monster',
     is_melee: true,
     is_ranged: false,
-    is_spell_caster: true,
-    sources: ['Bestiary'],
-    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274'
+    is_spell_caster: true
   };
   const tmpKoboldWarrior: creature = {
     id: 272,
+    sources: ['Bestiary'],
+    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272',
     name: 'Kobold Warrior',
     level: -1,
     hp: 8,
-    family: 'Kobold',
+    traits: ['Humanoid', 'Kobold'],
     alignment: 'LE',
     size: 'Small',
     rarity: 'Common',
+    family: 'Kobold',
+    creature_type: 'Monster',
     is_melee: true,
     is_ranged: true,
-    is_spell_caster: false,
-    sources: ['Bestiary'],
-    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272'
+    is_spell_caster: false
   };
   encounter.addToEncounter(tmpKoboldMage);
   encounter.addToEncounter(tmpKoboldWarrior);

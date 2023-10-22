@@ -23,18 +23,19 @@ export const partyStore = defineStore('party', {
 export const filtersStore = defineStore('filters', {
   state: () => ({
     filters: {
-      family: [] as string[],
+      traits: [] as string[],
       alignment: [] as string[],
       size: [] as string[],
-      rarity: [] as string[]
+      rarity: [] as string[],
+      family: [] as string[]
     }
   }),
   getters: {
     getFilters: (state) => state.filters
   },
   actions: {
-    updateFamilies(newFamilies: string[]) {
-      this.filters.family = newFamilies;
+    updateTraits(newTraits: string[]) {
+      this.filters.traits = newTraits;
     },
     updateAlignments(newAlignments: string[]) {
       this.filters.alignment = newAlignments;
@@ -45,6 +46,9 @@ export const filtersStore = defineStore('filters', {
     },
     updateRarities(newRarities: string[]) {
       this.filters.rarity = newRarities;
+    },
+    updateFamilies(newFamilies: string[]) {
+      this.filters.family = newFamilies;
     }
   }
 });
