@@ -24,8 +24,7 @@ const columns: {
   required?: boolean;
   align?: 'left' | 'right' | 'center';
   sortable?: boolean;
-  minwidth?: number;
-  maxwidth?: number;
+  style?: string;
 }[] = [
   {
     name: 'name',
@@ -34,7 +33,7 @@ const columns: {
     required: true,
     align: 'left',
     sortable: true,
-    minwidth: 225
+    style: 'min-width: 225px;'
   },
   {
     name: 'level',
@@ -43,7 +42,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 80
+    style: 'min-width: 80px;'
   },
   {
     name: 'hp',
@@ -52,7 +51,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 100
+    style: 'min-width: 100px;'
   },
   {
     name: 'traits',
@@ -61,8 +60,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 110,
-    maxwidth: 300
+    style: 'min-width: 110px; max-width: 300px;'
   },
   {
     name: 'alignment',
@@ -71,8 +69,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 135,
-    maxwidth: 300
+    style: 'min-width: 135px; max-width: 300px;'
   },
   {
     name: 'size',
@@ -81,8 +78,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 100,
-    maxwidth: 300
+    style: 'min-width: 100px; max-width: 300px;'
   },
   {
     name: 'rarity',
@@ -91,7 +87,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 100
+    style: 'min-width: 100px;'
   },
   {
     name: 'family',
@@ -100,8 +96,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 125,
-    maxwidth: 300
+    style: 'min-width: 125px; max-width: 300px;'
   },
   {
     name: 'creature_type',
@@ -110,7 +105,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 155
+    style: 'min-width: 155px;'
   },
   {
     name: 'attacks',
@@ -119,7 +114,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    minwidth: 80
+    style: 'min-width: 80px;'
   }
 ];
 
@@ -363,7 +358,7 @@ const addCreature = debounce(function (creature: creature) {
       <template v-slot:header-cell-name>
         <q-th>
           <div
-            :style="'min-width: ' + columns[0].minwidth + 'px;'"
+            :style="columns[0].style"
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col">
@@ -394,7 +389,7 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 outlined
                 :label="columns[1].label"
-                :style="'min-width: ' + columns[1].minwidth + 'px;'"
+                :style="columns[1].style"
                 stack-label
               >
                 <template v-slot:control> {{ levelRange.min }} to {{ levelRange.max }} </template>
@@ -440,12 +435,12 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 outlined
                 :label="columns[2].label"
-                :style="'min-width: ' + columns[2].minwidth + 'px;'"
+                :style="columns[2].style"
                 stack-label
               >
                 <template v-slot:control> {{ hpRange.min }} to {{ hpRange.max }} </template>
                 <q-popup-proxy>
-                  <q-banner rounded :style="'min-width: ' + columns[2].minwidth + 'px;'">
+                  <q-banner rounded>
                     <div class="tw-pt-8 tw-px-1">
                       <q-range
                         v-model="hpRange"
@@ -493,14 +488,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(filters.getFilters.traits)"
                 :label="columns[3].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="
-                  'min-width: ' +
-                  columns[3].minwidth +
-                  'px; ' +
-                  'max-width: ' +
-                  columns[3].maxwidth +
-                  'px; '
-                "
+                :style="columns[3].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -535,14 +523,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(filters.getFilters.alignment)"
                 :label="columns[4].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="
-                  'min-width: ' +
-                  columns[4].minwidth +
-                  'px; ' +
-                  'max-width: ' +
-                  columns[4].maxwidth +
-                  'px; '
-                "
+                :style="columns[4].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -577,14 +558,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(filters.getFilters.size)"
                 :label="columns[5].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="
-                  'min-width: ' +
-                  columns[5].minwidth +
-                  'px; ' +
-                  'max-width: ' +
-                  columns[5].maxwidth +
-                  'px; '
-                "
+                :style="columns[5].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -619,14 +593,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(filters.getFilters.rarity)"
                 :label="columns[6].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="
-                  'min-width: ' +
-                  columns[6].minwidth +
-                  'px; ' +
-                  'max-width: ' +
-                  columns[6].maxwidth +
-                  'px; '
-                "
+                :style="columns[6].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -661,14 +628,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(filters.getFilters.family)"
                 :label="columns[7].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="
-                  'min-width: ' +
-                  columns[7].minwidth +
-                  'px; ' +
-                  'max-width: ' +
-                  columns[7].maxwidth +
-                  'px; '
-                "
+                :style="columns[7].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -702,7 +662,7 @@ const addCreature = debounce(function (creature: creature) {
                 :options="Object.freeze(['Monster', 'NPC'])"
                 :label="columns[8].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="'min-width: ' + columns[8].minwidth + 'px;'"
+                :style="columns[8].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -730,7 +690,7 @@ const addCreature = debounce(function (creature: creature) {
                 dense
                 outlined
                 :label="columns[9].label"
-                :style="'min-width: ' + columns[9].minwidth + 'px;'"
+                :style="columns[9].style"
                 :stack-label="filterAttacks[0] || filterAttacks[1] || filterAttacks[2]"
               >
                 <template v-slot:control>
