@@ -69,10 +69,10 @@ export async function encounterInfo(encounter: { enemy_levels: number[]; party_l
 
 export async function encounterGenerator(body: {
   traits: string[] | undefined;
-  alignment: alignments | undefined;
-  size: sizes | undefined;
-  rarity: rarities | undefined;
-  family: string | undefined;
+  alignment: alignments[] | undefined;
+  size: sizes[] | undefined;
+  rarity: rarities[] | undefined;
+  family: string[] | undefined;
   challenge: challenges | undefined;
   party_levels: number[];
 }) {

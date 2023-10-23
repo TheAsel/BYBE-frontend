@@ -17,10 +17,10 @@ const encounter = encounterStore();
 const dialog = ref(false);
 
 const traits = ref<string[]>();
-const alignment = ref<alignments>();
-const size = ref<sizes>();
-const rarity = ref<rarities>();
-const family = ref<string>();
+const alignment = ref<alignments[]>();
+const size = ref<sizes[]>();
+const rarity = ref<rarities[]>();
+const family = ref<string[]>();
 const challenge = ref<challenges>();
 
 const tmpFilters = ref({
@@ -124,9 +124,11 @@ defineExpose({ generateEncounter });
             :options="Object.freeze(filters.getFilters.traits)"
             label="Traits"
             :dropdown-icon="matArrowDropDown"
+            style="max-width: 270px"
           />
 
           <q-select
+            multiple
             dense
             outlined
             clearable
@@ -136,9 +138,11 @@ defineExpose({ generateEncounter });
             :options="Object.freeze(filters.getFilters.alignment)"
             label="Alignment"
             :dropdown-icon="matArrowDropDown"
+            style="max-width: 270px"
           />
 
           <q-select
+            multiple
             dense
             outlined
             clearable
@@ -148,9 +152,11 @@ defineExpose({ generateEncounter });
             :options="Object.freeze(filters.getFilters.size)"
             label="Size"
             :dropdown-icon="matArrowDropDown"
+            style="max-width: 270px"
           />
 
           <q-select
+            multiple
             dense
             outlined
             clearable
@@ -160,9 +166,11 @@ defineExpose({ generateEncounter });
             :options="Object.freeze(filters.getFilters.rarity)"
             label="Rarity"
             :dropdown-icon="matArrowDropDown"
+            style="max-width: 270px"
           />
 
           <q-select
+            multiple
             dense
             outlined
             clearable
@@ -172,6 +180,7 @@ defineExpose({ generateEncounter });
             :options="Object.freeze(filters.getFilters.family)"
             label="Family"
             :dropdown-icon="matArrowDropDown"
+            style="max-width: 270px"
           />
 
           <q-select
