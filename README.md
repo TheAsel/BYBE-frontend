@@ -1,12 +1,16 @@
 # BYBE - Frontend
 
-> Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
-
 <p align="center">
-  <a href="https://bybe.fly.dev/">
-    <img src="https://i.imgur.com/psEJ1Y7.png" width="1080" alt="BYBE Encounter Builder">
+  <a href="https://bybe.fly.dev/" target="_blank">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo-light.png">
+      <img alt="BYBE" src="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo-light.png" width="350" height="70" style="max-width: 100%;">
+    </picture>
   </a>
 </p>
+
+> Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
 
 ## Features
 
@@ -15,6 +19,8 @@
 - Generate random encounters based on your requirements
 - Mobile friendly, light/dark theme, accessible
 - More to come...
+
+![Screenshot of the Encounter Builder page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter-builder.png)
 
 ## Requirements
 
