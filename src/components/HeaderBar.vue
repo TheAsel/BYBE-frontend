@@ -25,9 +25,9 @@ const navigation = [
 ];
 
 const $q = useQuasar();
-let theme = localStorage.getItem('hs_theme');
+const theme = ref(localStorage.getItem('hs_theme'));
 
-switch (theme) {
+switch (theme.value) {
   case 'dark':
     $q.dark.set(true);
     break;
@@ -41,15 +41,17 @@ switch (theme) {
     break;
 }
 
-if (theme === 'dark') {
+if (theme.value === 'dark') {
   $q.dark.set(true);
 }
 
 const themeSwitch = () => {
   $q.dark.toggle();
   if ($q.dark.isActive) {
+    theme.value = 'dark';
     localStorage.setItem('hs_theme', 'dark');
   } else {
+    theme.value = 'light';
     localStorage.setItem('hs_theme', 'light');
   }
 };
@@ -65,12 +67,20 @@ const unhide = debounce(function () {
     class="tw-flex tw-flex-wrap sm:tw-justify-start sm:tw-flex-nowrap tw-z-50 tw-w-full tw-bg-white tw-border-b tw-border-gray-200 tw-text-sm tw-py-3 sm:tw-py-0 dark:tw-bg-gray-800 dark:tw-border-gray-700"
   >
     <nav
-      class="tw-relative tw-max-w-7xl tw-w-full tw-mx-auto tw-px-4 sm:tw-flex sm:tw-items-center sm:tw-justify-between sm:tw-px-6 lg:tw-px-8"
+      class="tw-relative tw-w-full tw-mx-auto tw-px-4 sm:tw-flex sm:tw-items-center sm:tw-justify-between sm:tw-px-6 lg:tw-px-8"
       aria-label="Global"
     >
       <div class="tw-flex tw-items-center tw-justify-between">
-        <router-link flat class="text-h6 tw-flex-none tw-font-xl dark:tw-text-white" to="/">
-          BYBE
+        <router-link
+          flat
+          class="text-h5 tw-flex tw-flex-nowrap dark:tw-text-white tw-my-auto"
+          to="/"
+        >
+          <q-avatar size="36px">
+            <img v-if="theme === 'light'" src="/favicon-64x64-light.png" />
+            <img v-else src="/favicon-64x64-dark.png" />
+          </q-avatar>
+          <div class="tw-my-auto tw-ml-4">BYBE</div>
         </router-link>
         <div class="sm:tw-hidden">
           <q-btn
@@ -141,6 +151,7 @@ const unhide = debounce(function () {
             >
               HELP
             </q-btn>
+            <div v-else class="tw-mr-[50px]"></div>
           </div>
         </div>
       </div>
