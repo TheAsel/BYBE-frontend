@@ -77,8 +77,8 @@ const unhide = debounce(function () {
           to="/"
         >
           <q-avatar size="36px">
-            <img v-if="theme === 'light'" src="/favicon-64x64-light.png" />
-            <img v-else src="/favicon-64x64-dark.png" />
+            <img v-if="theme === 'light'" src="/favicon-64x64-light.png" alt="Light BYBE logo" />
+            <img v-else src="/favicon-64x64-dark.png" alt="Dark BYBE logo" />
           </q-avatar>
           <div class="tw-my-auto tw-ml-4">BYBE</div>
         </router-link>
