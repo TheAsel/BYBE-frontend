@@ -14,15 +14,15 @@ const debouncedCall = debounce(async function () {
   const enemyLevels: number[] = [];
   for (var i = 0; i < encounterList.length; i++) {
     for (var j = 0; j < encounterList[i].quantity!; j++) {
-      enemyLevels.push(encounterList[i].level);
       switch (encounterList[i].variant) {
         case 'weak':
-          enemyLevels[j]--;
+          enemyLevels.push(encounterList[i].level - 1);
           break;
         case 'elite':
-          enemyLevels[j]++;
+          enemyLevels.push(encounterList[i].level + 1);
           break;
         default:
+          enemyLevels.push(encounterList[i].level);
           break;
       }
     }
