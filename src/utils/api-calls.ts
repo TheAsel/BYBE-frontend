@@ -29,7 +29,7 @@ export async function requestCreatures(start: number, end: number) {
 }
 
 export async function requestFilters(
-  filter: 'traits' | 'alignments' | 'sizes' | 'rarities' | 'families'
+  filter: 'traits' | 'alignments' | 'sizes' | 'rarities' | 'families' | 'creature_types'
 ) {
   try {
     const requestOptions = {

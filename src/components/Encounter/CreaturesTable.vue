@@ -105,7 +105,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 155px;'
+    style: 'min-width: 155px; max-width: 300px;'
   },
   {
     name: 'attacks',
@@ -127,7 +127,7 @@ const filterAlignment = ref<string[]>();
 const filterSize = ref<string[]>();
 const filterRarity = ref<string[]>();
 const filterFamily = ref<string[]>();
-const filterType = ref<string>();
+const filterType = ref<string[]>();
 const filterAttacks = ref([false, false, false]);
 
 // ---- Filter function
@@ -203,7 +203,7 @@ const combineFilters = computed(() => {
 
 // ---- Reset filters function
 const resetFilters = () => {
-  filterName.value = undefined;
+  filterName.value = '';
   levelRange.value.min = -1;
   levelRange.value.max = 25;
   hpRange.value.min = 0;
@@ -213,13 +213,21 @@ const resetFilters = () => {
   filterSize.value = [];
   filterRarity.value = [];
   filterFamily.value = [];
-  filterType.value = undefined;
+  filterType.value = [];
   filterAttacks.value = [false, false, false];
 };
 
 // ---- Table and visible columns
 const creatureTable = ref();
-const visibleColumns = ref(['name', 'level', 'traits', 'alignment', 'size', 'attacks']);
+const visibleColumns = ref([
+  'name',
+  'level',
+  'traits',
+  'alignment',
+  'size',
+  'creature_type',
+  'attacks'
+]);
 
 // ---- Column sort function
 const sort = (col: string) => {
@@ -236,7 +244,7 @@ const addCreature = debounce(function (creature: creature) {
 </script>
 
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[70%]">
+  <div class="q-pa-md tw-w-full md:tw-w-[73%]">
     <q-table
       ref="creatureTable"
       class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
@@ -653,13 +661,14 @@ const addCreature = debounce(function (creature: creature) {
           >
             <div class="col-grow">
               <q-select
+                multiple
                 dense
                 outlined
                 clearable
                 :clear-icon="matCancel"
                 options-dense
                 v-model="filterType"
-                :options="Object.freeze(['Monster', 'NPC'])"
+                :options="Object.freeze(filters.getFilters.creature_type)"
                 :label="columns[8].label"
                 :dropdown-icon="matArrowDropDown"
                 :style="columns[8].style"
@@ -674,7 +683,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort creature type column"
-                @click="sort('type')"
+                @click="sort('creature_type')"
               />
             </div>
           </div>

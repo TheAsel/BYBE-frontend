@@ -10,7 +10,7 @@ export type creature = {
   size: string;
   rarity: string;
   family: string;
-  creature_type: 'Monster' | 'NPC';
+  creature_type: string;
   is_melee: boolean;
   is_ranged: boolean;
   is_spell_caster: boolean;

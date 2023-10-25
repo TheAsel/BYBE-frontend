@@ -21,6 +21,7 @@ const alignment = ref<alignments[]>();
 const size = ref<sizes[]>();
 const rarity = ref<rarities[]>();
 const family = ref<string[]>();
+const creature_type = ref<string[]>();
 const challenge = ref<challenges>();
 
 const tmpFilters = ref({
@@ -29,6 +30,7 @@ const tmpFilters = ref({
   size: size.value,
   rarity: rarity.value,
   family: family.value,
+  creature_type: creature_type.value,
   challenge: challenge.value
 });
 
@@ -39,6 +41,7 @@ const restoreSettings = () => {
   tmpFilters.value.rarity = rarity.value;
   tmpFilters.value.size = size.value;
   tmpFilters.value.family = family.value;
+  tmpFilters.value.creature_type = creature_type.value;
   tmpFilters.value.challenge = challenge.value;
 };
 
@@ -51,6 +54,7 @@ const generateEncounter = async () => {
     size: tmpFilters.value.size,
     rarity: tmpFilters.value.rarity,
     family: tmpFilters.value.family,
+    creature_types: tmpFilters.value.creature_type,
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels
   };
@@ -84,6 +88,7 @@ const saveChanges = () => {
   rarity.value = tmpFilters.value.rarity;
   size.value = tmpFilters.value.size;
   family.value = tmpFilters.value.family;
+  creature_type.value = tmpFilters.value.creature_type;
   challenge.value = tmpFilters.value.challenge;
 };
 
@@ -111,7 +116,7 @@ defineExpose({ generateEncounter });
 
       <q-separator />
 
-      <q-card-section style="max-height: 60vh" class="scroll">
+      <q-card-section style="max-height: 62vh" class="scroll">
         <div class="tw-space-y-4">
           <q-select
             multiple
@@ -179,6 +184,20 @@ defineExpose({ generateEncounter });
             v-model="tmpFilters.family"
             :options="Object.freeze(filters.getFilters.family)"
             label="Family"
+            :dropdown-icon="matArrowDropDown"
+            style="max-width: 270px"
+          />
+
+          <q-select
+            multiple
+            dense
+            outlined
+            clearable
+            :clear-icon="matCancel"
+            options-dense
+            v-model="tmpFilters.creature_type"
+            :options="Object.freeze(filters.getFilters.creature_type)"
+            label="Creature Type"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
           />

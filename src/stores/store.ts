@@ -27,7 +27,8 @@ export const filtersStore = defineStore('filters', {
       alignment: [] as string[],
       size: [] as string[],
       rarity: [] as string[],
-      family: [] as string[]
+      family: [] as string[],
+      creature_type: [] as string[]
     }
   }),
   getters: {
@@ -49,6 +50,9 @@ export const filtersStore = defineStore('filters', {
     },
     updateFamilies(newFamilies: string[]) {
       this.filters.family = newFamilies;
+    },
+    updateCreatureType(newCreatureType: string[]) {
+      this.filters.creature_type = newCreatureType;
     }
   }
 });
