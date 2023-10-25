@@ -40,15 +40,23 @@ try {
     filters.getFilters.family.length === 0 ||
     creatures.getCreatures.length === 0
   ) {
-    let [traitsList, alignmentList, sizeList, rarityList, familyList, creatureList] =
-      await Promise.all([
-        requestFilters('traits'),
-        requestFilters('alignments'),
-        requestFilters('sizes'),
-        requestFilters('rarities'),
-        requestFilters('families'),
-        requestCreatures(0, -1)
-      ]);
+    let [
+      traitsList,
+      alignmentList,
+      sizeList,
+      rarityList,
+      familyList,
+      creatureTypeList,
+      creatureList
+    ] = await Promise.all([
+      requestFilters('traits'),
+      requestFilters('alignments'),
+      requestFilters('sizes'),
+      requestFilters('rarities'),
+      requestFilters('families'),
+      requestFilters('creature_types'),
+      requestCreatures(0, -1)
+    ]);
 
     if (typeof traitsList != 'undefined') {
       filters.updateTraits(traitsList);
@@ -78,6 +86,12 @@ try {
       filters.updateFamilies(familyList);
     } else {
       throw 'Error loading families';
+    }
+
+    if (typeof creatureTypeList != 'undefined') {
+      filters.updateCreatureType(creatureTypeList);
+    } else {
+      throw 'Error loading creature types';
     }
 
     if (typeof creatureList != 'undefined') {

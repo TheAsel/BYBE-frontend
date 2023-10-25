@@ -54,7 +54,7 @@ watch(party, () => {
 </script>
 
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[30%]">
+  <div class="q-pa-md tw-w-full md:tw-w-[27%]">
     <div
       style="height: calc(100vh - 135px)"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
