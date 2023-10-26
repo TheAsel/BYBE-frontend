@@ -792,9 +792,9 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">
-          <a :href="name.row.archive_link" target="_blank" rel="noopener">
+          <a :href="name.row.archive_link" target="_blank" rel="noopener" class="tw-inline">
             <span
-              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-block tw-max-w-[250px] tw-whitespace-normal"
+              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-max-w-[250px] tw-whitespace-normal"
               >{{ name.value }}</span
             >
           </a>
