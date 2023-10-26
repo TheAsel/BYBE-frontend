@@ -50,10 +50,10 @@ const generateEncounter = async () => {
   const partyLevels = party.getParty;
   const post = {
     traits: tmpFilters.value.traits,
-    alignment: tmpFilters.value.alignment,
-    size: tmpFilters.value.size,
-    rarity: tmpFilters.value.rarity,
-    family: tmpFilters.value.family,
+    alignments: tmpFilters.value.alignment,
+    sizes: tmpFilters.value.size,
+    rarities: tmpFilters.value.rarity,
+    families: tmpFilters.value.family,
     creature_types: tmpFilters.value.creature_type,
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels
