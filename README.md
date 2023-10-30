@@ -17,7 +17,7 @@
 - Browse and filter a list of all creatures
 - Balance encounters based on your party size and level
 - Generate random encounters based on your requirements
-- Mobile friendly, light/dark theme, accessible
+- Fast, mobile friendly, light/dark theme, accessible
 - More to come...
 
 ![Screenshot of the Encounter Builder page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter-builder.png)
