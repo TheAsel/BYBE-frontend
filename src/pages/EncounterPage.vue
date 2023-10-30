@@ -2,6 +2,7 @@
 import { shallowRef } from 'vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
+import { party } from 'src/types/party';
 import { creature } from 'src/types/creature';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 
@@ -11,19 +12,41 @@ const creatures = creaturesStore();
 const encounter = encounterStore();
 const currentComponent = shallowRef();
 
-const localParty = localStorage.getItem('party');
+const localParty = localStorage.getItem('parties');
 if (localParty) {
   try {
-    const parsedParty: number[] = JSON.parse(localParty);
-    if (parsedParty && parsedParty.every((player) => player >= 1 && player <= 20)) {
-      party.updateParty(parsedParty);
+    const parsedParties = JSON.parse(localParty);
+    if (Array.isArray(parsedParties)) {
+      const isCompatible = parsedParties.every((p) => {
+        return (
+          typeof p.name === 'string' &&
+          Array.isArray(p.members) &&
+          p.members.every((member: any) => typeof member === 'number')
+        );
+      });
+      if (isCompatible) {
+        const parties: party[] = parsedParties;
+        parties.forEach((p) => {
+          if (!p || !p.members.every((player) => player >= 1 && player <= 20)) {
+            throw 'Invalid saved party levels';
+          }
+        });
+        const partyNames = parties.map((p) => p.name);
+        if (new Set(partyNames).size !== partyNames.length) {
+          throw 'Duplicate saved party names';
+        }
+        party.updateParties(parties);
+      } else {
+        throw 'Invalid saved party format';
+      }
     } else {
-      throw 'Invalid saved party';
+      throw 'Invalid saved party format';
     }
-  } catch (_) {
-    console.error('Invalid saved party');
-    localStorage.setItem('party', JSON.stringify([1, 1, 1, 1]));
-    party.updateParty([1, 1, 1, 1]);
+  } catch (error) {
+    console.error(error);
+    const defaultParty = { name: 'Default', members: [1, 1, 1, 1] };
+    localStorage.setItem('parties', JSON.stringify([defaultParty]));
+    party.updateParties([defaultParty]);
   }
 }
 

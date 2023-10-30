@@ -1,21 +1,48 @@
+import { party } from 'src/types/party';
 import { creature } from 'src/types/creature';
 import { encounter } from 'src/types/encounter';
 import { defineStore } from 'pinia';
 
 export const partyStore = defineStore('party', {
-  state: () => ({ party: [1, 1, 1, 1] }),
+  state: () => ({
+    parties: [{ name: 'Default', members: [1, 1, 1, 1] }] as party[],
+    activeParty: 0
+  }),
   getters: {
-    getParty: (state) => state.party
+    getParties: (state) => state.parties,
+    getActive: (state) => state.activeParty,
+    getActiveParty: (state) => state.parties[state.activeParty]
   },
   actions: {
-    updateParty(newParty: number[]) {
-      this.party = newParty;
+    getPartyIndex(partyName: string): number {
+      return this.parties.map((party) => party.name).indexOf(partyName);
     },
-    addPlayer() {
-      this.party.push(1);
+    updateParty(partyName: string, newMembers: number[]) {
+      const partyIndex = this.getPartyIndex(partyName);
+      if (partyIndex >= 0) {
+        this.parties[partyIndex].members = newMembers;
+      }
     },
-    removePlayer(index: number) {
-      this.party.splice(index, 1);
+    updateParties(newParties: party[]) {
+      this.parties = newParties;
+    },
+    changeActiveParty(partyIndex: number) {
+      if (partyIndex >= this.parties.length || partyIndex < 0) {
+        this.activeParty = 0;
+      } else {
+        this.activeParty = partyIndex;
+      }
+    },
+    addParty(partyName: string) {
+      this.parties.push({ name: partyName, members: [1, 1, 1, 1] });
+      this.activeParty = this.parties.length - 1;
+    },
+    removeParty() {
+      this.parties.splice(this.activeParty, 1);
+      this.activeParty = 0;
+      if (this.parties.length <= 0) {
+        this.parties = [{ name: 'Default', members: [1, 1, 1, 1] }];
+      }
     }
   }
 });

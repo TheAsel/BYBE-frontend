@@ -47,7 +47,7 @@ const restoreSettings = () => {
 
 const generateEncounter = async () => {
   saveChanges();
-  const partyLevels = party.getParty;
+  const partyLevels = party.getActiveParty.members;
   const post = {
     traits: tmpFilters.value.traits,
     alignments: tmpFilters.value.alignment,
