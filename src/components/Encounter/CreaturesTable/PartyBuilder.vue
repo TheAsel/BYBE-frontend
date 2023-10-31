@@ -100,8 +100,8 @@ const saveChanges = () => {
   <q-dialog v-model="dialog" aria-label="Player builder">
     <q-card flat bordered>
       <q-card-section class="items-center">
-        <div class="row">
-          <div class="text-h6 tw-mr-4">Party Builder</div>
+        <div class="row tw-mb-2">
+          <div class="text-h6 tw-mr-4 tw-my-auto">Party Builder</div>
           <q-space />
           <q-btn
             :icon="biXLg"
@@ -162,12 +162,22 @@ const saveChanges = () => {
               </q-card-section>
 
               <q-card-actions align="center" class="text-primary">
-                <q-btn flat label="Cancel" @click="closeDialog" />
-                <q-btn flat label="Add party" @click="addParty" />
+                <q-btn
+                  flat
+                  label="Cancel"
+                  @click="closeDialog"
+                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                />
+                <q-btn
+                  flat
+                  label="Add party"
+                  @click="addParty"
+                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                />
               </q-card-actions>
             </q-card>
           </q-dialog>
-
+          <q-space />
           <q-btn
             class="tw-m-auto"
             :icon="biTrash"
@@ -189,8 +199,18 @@ const saveChanges = () => {
                 <div class="text-h6">Remove this party?</div>
               </q-card-section>
               <q-card-actions align="center" class="text-primary">
-                <q-btn flat label="Cancel" @click="closeDialog" />
-                <q-btn flat label="Remove" @click="removeParty" color="red" />
+                <q-btn
+                  flat
+                  label="Cancel"
+                  @click="closeDialog"
+                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                />
+                <q-btn
+                  flat
+                  label="Remove"
+                  @click="removeParty"
+                  class="tw-text-red-600 dark:tw-text-red-400"
+                />
               </q-card-actions>
             </q-card>
           </q-dialog>
@@ -248,7 +268,7 @@ const saveChanges = () => {
         <q-btn
           unelevated
           label="Save changes"
-          type="submit"
+          type="button"
           class="full-width tw-text-blue-600 dark:tw-text-blue-400"
           v-close-popup
           @click="saveChanges"
