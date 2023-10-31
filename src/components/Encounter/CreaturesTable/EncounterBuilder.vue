@@ -219,19 +219,20 @@ defineExpose({ generateEncounter });
       </q-card-section>
       <q-separator />
       <q-card-actions>
-        <q-btn-group>
+        <q-btn-group flat>
           <q-btn
-            unelevated
+            flat
             label="Save changes"
-            type="submit"
+            type="button"
             class="full-width tw-text-blue-600 dark:tw-text-blue-400"
             v-close-popup
             @click="saveChanges"
           />
+          <q-separator vertical />
           <q-btn
-            unelevated
+            flat
             label="Generate Encounter"
-            type="submit"
+            type="button"
             class="full-width tw-text-blue-600 dark:tw-text-blue-400"
             v-close-popup
             @click="generateEncounter"

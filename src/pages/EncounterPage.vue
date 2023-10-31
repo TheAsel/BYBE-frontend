@@ -142,7 +142,8 @@ const steps = [
   },
   {
     target: '#v-step-1',
-    content: 'You can change your party size and the level of the individual players here.',
+    content:
+      'Here you can change your party size and the level of the individual players. You can also add multiple parties and select the active one.',
     params: {
       placement: 'bottom'
     }
@@ -158,14 +159,14 @@ const steps = [
   {
     target: '#v-step-3',
     content:
-      'Clicking this button will generate a new random encounter, using the settings previously described.',
+      'Clicking this button will generate a new random encounter, based on the generator settings previously described and the currently active party.',
     params: {
       placement: 'bottom'
     }
   },
   {
     target: '#v-step-4',
-    content: 'From this dropdown you can select which colums to show and hide.',
+    content: 'From this dropdown you can select which colums of the table to show and hide.',
     params: {
       placement: 'bottom'
     }
@@ -180,7 +181,7 @@ const steps = [
   {
     target: '#v-step-6',
     content:
-      'This is the encounter list, where the creatures you added will be displayed. You can increase or decrease the number of creatures and change them to their Weak/Elite variant.',
+      'This is the encounter list, where the creatures you added will be displayed. You can increase or decrease the number of each creature and change them to their Weak/Elite variant.',
     params: {
       placement: 'auto'
     }
