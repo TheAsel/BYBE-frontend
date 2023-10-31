@@ -166,7 +166,7 @@ const steps = [
   },
   {
     target: '#v-step-4',
-    content: 'From this dropdown you can select which colums of the table to show and hide.',
+    content: 'From this dropdown you can select which columns of the table to show and hide.',
     params: {
       placement: 'bottom'
     }
