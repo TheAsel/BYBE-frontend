@@ -27,7 +27,7 @@ const debouncedCall = debounce(async function () {
       }
     }
   }
-  const partyLevels = party.getParty;
+  const partyLevels = party.getActiveParty.members;
   const post = {
     enemy_levels: enemyLevels,
     party_levels: partyLevels
