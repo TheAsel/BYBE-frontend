@@ -130,12 +130,11 @@ const saveChanges = () => {
         </div>
         <q-space />
         <q-btn
-          class="tw-my-auto"
+          class="tw-my-auto tw-ml-2 tw-p-2"
           :icon="biPlusLg"
           size="sm"
-          padding="sm"
           flat
-          round
+          rounded
           dense
           aria-label="Add new encounter"
           @click="newEncounterDialog = true"
@@ -183,12 +182,11 @@ const saveChanges = () => {
           </q-card>
         </q-dialog>
         <q-btn
-          class="tw-m-auto"
+          class="tw-my-auto tw-mx-2 tw-p-2"
           :icon="biTrash"
           size="sm"
-          padding="sm"
           flat
-          round
+          rounded
           dense
           aria-label="Remove current encounter"
           @click="removeEncounterDialog = true"
@@ -220,8 +218,8 @@ const saveChanges = () => {
         </q-dialog>
         <q-select
           dense
-          style="width: 145px"
-          class="tw-my-auto tw-mx-2"
+          style="min-width: 120px; max-width: 120px"
+          class="tw-my-auto tw-mr-2"
           outlined
           v-model="tmpEncounter.name"
           :options="encounters"
@@ -345,3 +343,11 @@ const saveChanges = () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.q-select:deep(.q-field__native) > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
