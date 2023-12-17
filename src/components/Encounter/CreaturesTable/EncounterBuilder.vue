@@ -22,6 +22,7 @@ const size = ref<sizes[]>();
 const rarity = ref<rarities[]>();
 const family = ref<string[]>();
 const creature_type = ref<string[]>();
+const creatureNumber = ref({ min: 1, max: 20 });
 const challenge = ref<challenges>();
 
 const tmpFilters = ref({
@@ -31,6 +32,7 @@ const tmpFilters = ref({
   rarity: rarity.value,
   family: family.value,
   creature_type: creature_type.value,
+  creatures: creatureNumber.value,
   challenge: challenge.value
 });
 
@@ -42,6 +44,7 @@ const restoreSettings = () => {
   tmpFilters.value.size = size.value;
   tmpFilters.value.family = family.value;
   tmpFilters.value.creature_type = creature_type.value;
+  tmpFilters.value.creatures = creatureNumber.value;
   tmpFilters.value.challenge = challenge.value;
 };
 
@@ -55,6 +58,8 @@ const generateEncounter = async () => {
     rarities: tmpFilters.value.rarity,
     families: tmpFilters.value.family,
     creature_types: tmpFilters.value.creature_type,
+    min_creatures: tmpFilters.value.creatures.min,
+    max_creatures: tmpFilters.value.creatures.max,
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels
   };
@@ -89,6 +94,7 @@ const saveChanges = () => {
   size.value = tmpFilters.value.size;
   family.value = tmpFilters.value.family;
   creature_type.value = tmpFilters.value.creature_type;
+  creatureNumber.value = tmpFilters.value.creatures;
   challenge.value = tmpFilters.value.challenge;
 };
 
@@ -117,7 +123,7 @@ defineExpose({ generateEncounter });
       <q-separator />
 
       <q-card-section style="max-height: 62vh" class="scroll">
-        <div class="tw-space-y-4">
+        <div class="tw-space-y-3">
           <q-select
             multiple
             dense
@@ -202,6 +208,23 @@ defineExpose({ generateEncounter });
             style="max-width: 270px"
           />
 
+          <div class="tw-pb-4">
+            <q-badge outline class="tw-text-sm"> Number of creatures: </q-badge>
+            <q-range
+              v-model="tmpFilters.creatures"
+              label-always
+              :min="1"
+              :max="20"
+              :left-label-value="'Min: ' + tmpFilters.creatures.min"
+              :right-label-value="'Max: ' + tmpFilters.creatures.max"
+              style="max-width: 270px"
+              class="tw-px-3 tw-pt-1"
+              aria-label="Creature numbers"
+              role="menuitem"
+              switch-label-side
+            />
+          </div>
+
           <q-select
             dense
             outlined
@@ -242,3 +265,15 @@ defineExpose({ generateEncounter });
     </q-card>
   </q-dialog>
 </template>
+
+<style scoped>
+.q-badge {
+  border-color: #ffffff;
+  color: #666666;
+}
+
+.q-dark .q-badge {
+  border-color: #1f2937;
+  color: #bcbfc3;
+}
+</style>
