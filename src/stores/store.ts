@@ -51,11 +51,12 @@ export const filtersStore = defineStore('filters', {
   state: () => ({
     filters: {
       traits: [] as string[],
-      alignment: [] as string[],
-      size: [] as string[],
-      rarity: [] as string[],
-      family: [] as string[],
-      creature_type: [] as string[]
+      alignments: [] as string[],
+      sizes: [] as string[],
+      rarities: [] as string[],
+      families: [] as string[],
+      creature_types: [] as string[],
+      sources: [] as string[]
     }
   }),
   getters: {
@@ -66,20 +67,23 @@ export const filtersStore = defineStore('filters', {
       this.filters.traits = newTraits;
     },
     updateAlignments(newAlignments: string[]) {
-      this.filters.alignment = newAlignments;
+      this.filters.alignments = newAlignments;
     },
     updateSizes(newSizes: string[]) {
       newSizes.reverse();
-      this.filters.size = newSizes;
+      this.filters.sizes = newSizes;
     },
     updateRarities(newRarities: string[]) {
-      this.filters.rarity = newRarities;
+      this.filters.rarities = newRarities;
     },
     updateFamilies(newFamilies: string[]) {
-      this.filters.family = newFamilies;
+      this.filters.families = newFamilies;
     },
     updateCreatureType(newCreatureType: string[]) {
-      this.filters.creature_type = newCreatureType;
+      this.filters.creature_types = newCreatureType;
+    },
+    updateSources(newSources: string[]) {
+      this.filters.sources = newSources;
     }
   }
 });
