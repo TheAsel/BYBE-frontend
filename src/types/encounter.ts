@@ -20,3 +20,8 @@ export type randomEncounter = {
   encounter_info: encounter;
   results?: creature[];
 };
+
+export type encounterList = {
+  name: string;
+  creatures: creature[];
+};
