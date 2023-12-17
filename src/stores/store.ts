@@ -1,6 +1,6 @@
 import { party } from 'src/types/party';
 import { creature } from 'src/types/creature';
-import { encounter } from 'src/types/encounter';
+import { encounter, encounterList } from 'src/types/encounter';
 import { defineStore } from 'pinia';
 
 export const partyStore = defineStore('party', {
@@ -98,20 +98,28 @@ export const creaturesStore = defineStore('creatures', {
 });
 
 export const encounterStore = defineStore('encounter', {
-  state: () => ({ encounter: [] as creature[] }),
+  state: () => ({
+    encounters: [{ name: 'Default', creatures: [] }] as encounterList[],
+    activeEncounter: 0
+  }),
   getters: {
-    getEncounter: (state) => state.encounter
+    getEncounters: (state) => state.encounters,
+    getActive: (state) => state.activeEncounter,
+    getActiveEncounter: (state) => state.encounters[state.activeEncounter]
   },
   actions: {
     clearEncounter() {
-      this.encounter.splice(0, this.encounter.length);
+      this.encounters[this.activeEncounter].creatures.splice(
+        0,
+        this.encounters[this.activeEncounter].creatures.length
+      );
     },
     clearCreature(creature: creature) {
-      const index = this.encounter.indexOf(creature);
-      this.encounter.splice(index, 1);
+      const index = this.encounters[this.activeEncounter].creatures.indexOf(creature);
+      this.encounters[this.activeEncounter].creatures.splice(index, 1);
     },
     changeVariant(index: number, variant: 'weak' | 'base' | 'elite') {
-      this.encounter[index].variant = variant;
+      this.encounters[this.activeEncounter].creatures[index].variant = variant;
     },
     addToEncounter(creature: creature, index?: number, variant?: 'weak' | 'base' | 'elite') {
       if (index! >= 0) {
@@ -120,20 +128,50 @@ export const encounterStore = defineStore('encounter', {
         } else {
           creature.quantity = 1;
         }
-        this.encounter.splice(index!, 1, creature);
+        this.encounters[this.activeEncounter].creatures.splice(index!, 1, creature);
       } else {
         const newCreature = { ...creature };
         newCreature.quantity = 1;
         newCreature.variant = variant || 'base';
-        this.encounter.push(newCreature);
+        this.encounters[this.activeEncounter].creatures.push(newCreature);
       }
     },
     removeFromEncounter(index: number) {
-      if (this.encounter[index].quantity! > 1) {
-        this.encounter[index].quantity!--;
+      if (this.encounters[this.activeEncounter].creatures[index].quantity! > 1) {
+        this.encounters[this.activeEncounter].creatures[index].quantity!--;
       } else {
-        this.encounter.splice(index, 1);
+        this.encounters[this.activeEncounter].creatures.splice(index, 1);
       }
+    },
+    changeActiveEncounter(encounterIndex: number) {
+      if (encounterIndex >= this.encounters.length || encounterIndex < 0) {
+        this.activeEncounter = 0;
+      } else {
+        this.activeEncounter = encounterIndex;
+      }
+    },
+    addEncounter(encounterName: string) {
+      this.encounters.push({ name: encounterName, creatures: [] });
+      this.activeEncounter = this.encounters.length - 1;
+    },
+    removeEncounter() {
+      this.encounters.splice(this.activeEncounter, 1);
+      this.activeEncounter = 0;
+      if (this.encounters.length <= 0) {
+        this.encounters = [{ name: 'Default', creatures: [] }];
+      }
+    },
+    getEncounterIndex(encounterName: string): number {
+      return this.encounters.map((encounter) => encounter.name).indexOf(encounterName);
+    },
+    updateEncounter(encounterName: string, newCreatures: creature[]) {
+      const encounterIndex = this.getEncounterIndex(encounterName);
+      if (encounterIndex >= 0) {
+        this.encounters[encounterIndex].creatures = newCreatures;
+      }
+    },
+    updateEncounters(newEncounters: encounterList[]) {
+      this.encounters = newEncounters;
     }
   }
 });
