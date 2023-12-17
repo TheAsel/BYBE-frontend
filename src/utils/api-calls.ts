@@ -76,6 +76,8 @@ export async function encounterGenerator(body: {
   creature_types: string[] | undefined;
   challenge: challenges | undefined;
   party_levels: number[];
+  min_creatures: number;
+  max_creatures: number;
 }) {
   try {
     const requestOptions = {
