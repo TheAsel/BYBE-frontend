@@ -380,7 +380,7 @@ const addCreature = debounce(function (creature: creature) {
         </div>
       </template>
       <template v-slot:header-cell-source>
-        <q-th>
+        <q-th class="tw-w-8">
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
@@ -399,18 +399,7 @@ const addCreature = debounce(function (creature: creature) {
                 :style="columns[0].style"
               />
             </div>
-            <div class="col-shrink tw-mx-2">
-              <q-btn
-                flat
-                rounded
-                dense
-                size="xs"
-                class="tw-p-2"
-                :icon="biArrowDownUp"
-                aria-label="Sort traits column"
-                @click="sort('source')"
-              />
-            </div>
+            <div class="col-shrink tw-mx-2"></div>
           </div>
         </q-th>
       </template>
@@ -829,7 +818,7 @@ const addCreature = debounce(function (creature: creature) {
         </q-th>
       </template>
       <template v-slot:body-cell-source="source">
-        <q-td>
+        <q-td class="text-center">
           <q-icon round unelevated v-if="source.row.sources.length > 0" :name="biBook" size="xs">
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
