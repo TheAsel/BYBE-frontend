@@ -140,7 +140,7 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.alignment"
-            :options="Object.freeze(filters.getFilters.alignment)"
+            :options="Object.freeze(filters.getFilters.alignments)"
             label="Alignment"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
@@ -154,7 +154,7 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.size"
-            :options="Object.freeze(filters.getFilters.size)"
+            :options="Object.freeze(filters.getFilters.sizes)"
             label="Size"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
@@ -168,7 +168,7 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.rarity"
-            :options="Object.freeze(filters.getFilters.rarity)"
+            :options="Object.freeze(filters.getFilters.rarities)"
             label="Rarity"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
@@ -182,7 +182,7 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.family"
-            :options="Object.freeze(filters.getFilters.family)"
+            :options="Object.freeze(filters.getFilters.families)"
             label="Family"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
@@ -196,7 +196,7 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.creature_type"
-            :options="Object.freeze(filters.getFilters.creature_type)"
+            :options="Object.freeze(filters.getFilters.creature_types)"
             label="Creature Type"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"

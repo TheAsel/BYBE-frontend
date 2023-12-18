@@ -88,10 +88,11 @@ import('src/components/Encounter/SkeletonTable.vue').then((module) => {
 try {
   if (
     filters.getFilters.traits.length === 0 ||
-    filters.getFilters.alignment.length === 0 ||
-    filters.getFilters.size.length === 0 ||
-    filters.getFilters.rarity.length === 0 ||
-    filters.getFilters.family.length === 0 ||
+    filters.getFilters.alignments.length === 0 ||
+    filters.getFilters.sizes.length === 0 ||
+    filters.getFilters.rarities.length === 0 ||
+    filters.getFilters.families.length === 0 ||
+    filters.getFilters.sources.length === 0 ||
     creatures.getCreatures.length === 0
   ) {
     let [
@@ -101,6 +102,7 @@ try {
       rarityList,
       familyList,
       creatureTypeList,
+      sourceList,
       creatureList
     ] = await Promise.all([
       requestFilters('traits'),
@@ -109,6 +111,7 @@ try {
       requestFilters('rarities'),
       requestFilters('families'),
       requestFilters('creature_types'),
+      requestFilters('sources'),
       requestCreatures(0, -1)
     ]);
 
@@ -146,6 +149,12 @@ try {
       filters.updateCreatureType(creatureTypeList);
     } else {
       throw 'Error loading creature types';
+    }
+
+    if (typeof sourceList != 'undefined') {
+      filters.updateSources(sourceList);
+    } else {
+      throw 'Error loading creature sources';
     }
 
     if (typeof creatureList != 'undefined') {
