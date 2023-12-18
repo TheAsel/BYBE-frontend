@@ -14,6 +14,12 @@ export type creature = {
   is_melee: boolean;
   is_ranged: boolean;
   is_spell_caster: boolean;
+};
+
+export type creature_encounter = {
+  archive_link: string;
+  name: string;
+  level: number;
   quantity?: number;
   variant?: 'weak' | 'base' | 'elite';
 };
