@@ -215,6 +215,7 @@ defineExpose({ generateEncounter });
               label-always
               :min="1"
               :max="20"
+              markers
               :left-label-value="'Min: ' + tmpFilters.creatures.min"
               :right-label-value="'Max: ' + tmpFilters.creatures.max"
               style="max-width: 270px"
