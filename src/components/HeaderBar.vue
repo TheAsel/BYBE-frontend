@@ -289,7 +289,21 @@ const downloadData = () => {
                   </q-card-actions>
                   <q-separator />
                   <q-card-actions>
-                    <q-toggle v-model="legacy" label="Legacy" @update:model-value="toggleLegacy" />
+                    <q-toggle
+                      disable
+                      v-model="legacy"
+                      label="Legacy"
+                      @update:model-value="toggleLegacy"
+                    >
+                      <q-tooltip
+                        class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Work in progress! <br />
+                        Waiting for the Monster Core
+                      </q-tooltip>
+                    </q-toggle>
                   </q-card-actions>
                 </q-card-section>
               </q-card>
