@@ -4,6 +4,7 @@ import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import { party } from 'src/types/party';
 import { creature } from 'src/types/creature';
+import { encounterList } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 
 const party = partyStore();
@@ -12,6 +13,7 @@ const creatures = creaturesStore();
 const encounter = encounterStore();
 const currentComponent = shallowRef();
 
+// read party local storage
 const localParty = localStorage.getItem('parties');
 if (localParty) {
   try {
@@ -47,6 +49,35 @@ if (localParty) {
     const defaultParty = { name: 'Default', members: [1, 1, 1, 1] };
     localStorage.setItem('parties', JSON.stringify([defaultParty]));
     party.updateParties([defaultParty]);
+  }
+}
+
+// read encounter local storage
+const localEncounters = localStorage.getItem('encounters');
+if (localEncounters) {
+  try {
+    const parsedEncounters = JSON.parse(localEncounters);
+    if (Array.isArray(parsedEncounters)) {
+      const isCompatible = parsedEncounters.every((p) => {
+        return typeof p.name === 'string' && Array.isArray(p.creatures);
+      });
+      if (isCompatible) {
+        const encounters: encounterList[] = parsedEncounters;
+        const encounterNames = encounters.map((p) => p.name);
+        if (new Set(encounterNames).size !== encounterNames.length) {
+          throw 'Duplicate saved encounter names';
+        }
+        encounter.updateEncounters(encounters);
+      } else {
+        throw 'Invalid saved encounter format';
+      }
+    } else {
+      throw 'Invalid saved encounter format';
+    }
+  } catch (error) {
+    const defaultEncounter = { name: 'Default', creatures: [] };
+    localStorage.setItem('encounters', JSON.stringify([defaultEncounter]));
+    encounter.updateEncounters([defaultEncounter]);
   }
 }
 

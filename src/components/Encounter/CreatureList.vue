@@ -1,16 +1,32 @@
 <script setup lang="ts">
-import { watch } from 'vue';
-import { biPlus, biDash, biTrash } from '@quasar/extras/bootstrap-icons';
+import { ref, watch } from 'vue';
+import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
+import { matArrowDropDown } from '@quasar/extras/material-icons';
 import debounce from 'lodash/debounce';
 import { partyStore, encounterStore, infoStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/api-calls';
+import { encounterList } from 'src/types/encounter';
 
 const party = partyStore();
 const encounter = encounterStore();
 const info = infoStore();
 
+const newEncounterDialog = ref(false);
+const encounterNameInput = ref();
+const newEncounterName = ref('');
+
+const removeEncounterDialog = ref(false);
+
+const tmpEncounter = ref<encounterList>(encounter.getActiveEncounter);
+const encounters = ref<string[]>(encounter.getEncounters.map((encounter) => encounter.name));
+
+tmpEncounter.value = {
+  name: encounter.getActiveEncounter.name,
+  creatures: encounter.getActiveEncounter.creatures
+};
+
 const debouncedCall = debounce(async function () {
-  const encounterList = encounter.getEncounter;
+  const encounterList = encounter.getActiveEncounter.creatures;
   const enemyLevels: number[] = [];
   for (var i = 0; i < encounterList.length; i++) {
     for (var j = 0; j < encounterList[i].quantity!; j++) {
@@ -45,12 +61,58 @@ const debouncedCall = debounce(async function () {
 }, 300);
 
 watch(encounter, () => {
+  saveChanges();
   debouncedCall();
 });
 
 watch(party, () => {
   debouncedCall();
 });
+
+const closeDialog = () => {
+  newEncounterDialog.value = false;
+  removeEncounterDialog.value = false;
+  newEncounterName.value = '';
+};
+
+const addEncounter = () => {
+  encounterNameInput.value.validate();
+  if (!encounterNameInput.value.hasError) {
+    encounter.addEncounter(newEncounterName.value);
+    encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
+    tmpEncounter.value = {
+      name: encounter.getActiveEncounter.name,
+      creatures: [...encounter.getActiveEncounter.creatures]
+    };
+    saveChanges();
+    newEncounterName.value = '';
+    newEncounterDialog.value = false;
+  }
+};
+
+const removeEncounter = () => {
+  encounter.removeEncounter();
+  encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
+  tmpEncounter.value = {
+    name: encounter.getActiveEncounter.name,
+    creatures: [...encounter.getActiveEncounter.creatures]
+  };
+  saveChanges();
+  removeEncounterDialog.value = false;
+};
+
+const changeActiveEncounter = (selected: string) => {
+  encounter.changeActiveEncounter(encounter.getEncounterIndex(selected));
+  tmpEncounter.value = {
+    name: encounter.getActiveEncounter.name,
+    creatures: [...encounter.getActiveEncounter.creatures]
+  };
+};
+
+const saveChanges = () => {
+  encounter.updateEncounter(tmpEncounter.value.name, tmpEncounter.value.creatures);
+  localStorage.setItem('encounters', JSON.stringify(encounter.getEncounters));
+};
 </script>
 
 <template>
@@ -67,11 +129,109 @@ watch(party, () => {
           Cost: {{ info.getInfo.experience }} XP
         </div>
         <q-space />
+        <q-btn
+          class="tw-my-auto tw-ml-2 tw-p-2"
+          :icon="biPlusLg"
+          size="sm"
+          flat
+          rounded
+          dense
+          aria-label="Add new encounter"
+          @click="newEncounterDialog = true"
+        />
+        <q-dialog
+          v-model="newEncounterDialog"
+          aria-label="New encounter dialog"
+          @escape-key="closeDialog"
+        >
+          <q-card flat bordered>
+            <q-card-section>
+              <div class="text-h6">New encounter name</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+              <q-input
+                ref="encounterNameInput"
+                dense
+                v-model="newEncounterName"
+                autofocus
+                @keyup.enter="addEncounter"
+                :rules="[
+                  (val) => !!val || 'Field is required',
+                  (val) =>
+                    !encounters.find((name) => name === val) || 'This encounter already exists'
+                ]"
+                :no-error-icon="true"
+              />
+            </q-card-section>
+
+            <q-card-actions align="center" class="text-primary">
+              <q-btn
+                flat
+                label="Cancel"
+                @click="closeDialog"
+                class="tw-text-blue-600 dark:tw-text-blue-400"
+              />
+              <q-btn
+                flat
+                label="Add encounter"
+                @click="addEncounter"
+                class="tw-text-blue-600 dark:tw-text-blue-400"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <q-btn
+          class="tw-my-auto tw-mx-2 tw-p-2"
+          :icon="biTrash"
+          size="sm"
+          flat
+          rounded
+          dense
+          aria-label="Remove current encounter"
+          @click="removeEncounterDialog = true"
+        />
+        <q-dialog
+          v-model="removeEncounterDialog"
+          aria-label="Remove encounter dialog"
+          @escape-key="closeDialog"
+        >
+          <q-card flat bordered>
+            <q-card-section>
+              <div class="text-h6">Remove this encounter?</div>
+            </q-card-section>
+            <q-card-actions align="center" class="text-primary">
+              <q-btn
+                flat
+                label="Cancel"
+                @click="closeDialog"
+                class="tw-text-blue-600 dark:tw-text-blue-400"
+              />
+              <q-btn
+                flat
+                label="Remove"
+                @click="removeEncounter"
+                class="tw-text-red-600 dark:tw-text-red-400"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <q-select
+          dense
+          style="min-width: 120px; max-width: 120px"
+          class="tw-my-auto tw-mr-2"
+          outlined
+          v-model="tmpEncounter.name"
+          :options="encounters"
+          label="Encounters"
+          :dropdown-icon="matArrowDropDown"
+          @update:model-value="changeActiveEncounter(tmpEncounter.name)"
+        />
         <q-btn flat dense @click="encounter.clearEncounter">CLEAR</q-btn>
       </div>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
       <q-scroll-area visible style="height: calc(100% - 103px)">
-        <div v-for="(item, index) in encounter.getEncounter" :key="index" dense>
+        <div v-for="(item, index) in encounter.getActiveEncounter.creatures" :key="index" dense>
           <div class="tw-flex tw-grow tw-flex-wrap justify-end">
             <div class="tw-flex-initial tw-w-12 tw-my-auto tw-mx-1">
               <q-btn
@@ -183,3 +343,11 @@ watch(party, () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.q-select:deep(.q-field__native) > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
