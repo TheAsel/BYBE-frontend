@@ -3,7 +3,7 @@ import { shallowRef } from 'vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import { party } from 'src/types/party';
-import { creature } from 'src/types/creature';
+import { creature_encounter } from 'src/types/creature';
 import { encounterList } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 
@@ -247,46 +247,23 @@ const options = {
 };
 
 const startTour = () => {
-  const tmpKoboldMage: creature = {
-    id: 274,
-    sources: ['Bestiary'],
+  const tmpKoboldMage: creature_encounter = {
     archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
     name: 'Kobold Dragon Mage',
-    level: 2,
-    hp: 25,
-    traits: ['Humanoid', 'Kobold'],
-    alignment: 'LE',
-    size: 'Small',
-    rarity: 'Common',
-    family: 'Kobold',
-    creature_type: 'Monster',
-    is_melee: true,
-    is_ranged: false,
-    is_spell_caster: true
+    level: 2
   };
-  const tmpKoboldWarrior: creature = {
-    id: 272,
-    sources: ['Bestiary'],
+  const tmpKoboldWarrior: creature_encounter = {
     archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272',
     name: 'Kobold Warrior',
-    level: -1,
-    hp: 8,
-    traits: ['Humanoid', 'Kobold'],
-    alignment: 'LE',
-    size: 'Small',
-    rarity: 'Common',
-    family: 'Kobold',
-    creature_type: 'Monster',
-    is_melee: true,
-    is_ranged: true,
-    is_spell_caster: false
+    level: -1
   };
   encounter.addToEncounter(tmpKoboldMage);
   encounter.addToEncounter(tmpKoboldWarrior);
 };
 
 const stopTour = () => {
-  encounter.clearEncounter();
+  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
 };
 
 const callbacks = {

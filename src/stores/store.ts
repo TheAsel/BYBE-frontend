@@ -1,5 +1,5 @@
 import { party } from 'src/types/party';
-import { creature } from 'src/types/creature';
+import { creature, creature_encounter } from 'src/types/creature';
 import { encounter, encounterList } from 'src/types/encounter';
 import { defineStore } from 'pinia';
 
@@ -118,14 +118,18 @@ export const encounterStore = defineStore('encounter', {
         this.encounters[this.activeEncounter].creatures.length
       );
     },
-    clearCreature(creature: creature) {
+    clearCreature(creature: creature_encounter) {
       const index = this.encounters[this.activeEncounter].creatures.indexOf(creature);
       this.encounters[this.activeEncounter].creatures.splice(index, 1);
     },
     changeVariant(index: number, variant: 'weak' | 'base' | 'elite') {
       this.encounters[this.activeEncounter].creatures[index].variant = variant;
     },
-    addToEncounter(creature: creature, index?: number, variant?: 'weak' | 'base' | 'elite') {
+    addToEncounter(
+      creature: creature_encounter,
+      index?: number,
+      variant?: 'weak' | 'base' | 'elite'
+    ) {
       if (index! >= 0) {
         if (creature.quantity) {
           creature.quantity!++;
@@ -168,7 +172,7 @@ export const encounterStore = defineStore('encounter', {
     getEncounterIndex(encounterName: string): number {
       return this.encounters.map((encounter) => encounter.name).indexOf(encounterName);
     },
-    updateEncounter(encounterName: string, newCreatures: creature[]) {
+    updateEncounter(encounterName: string, newCreatures: creature_encounter[]) {
       const encounterIndex = this.getEncounterIndex(encounterName);
       if (encounterIndex >= 0) {
         this.encounters[encounterIndex].creatures = newCreatures;
