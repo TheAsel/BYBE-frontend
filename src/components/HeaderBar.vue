@@ -12,8 +12,11 @@ import {
   biCloudArrowDown,
   biCloudArrowUp
 } from '@quasar/extras/bootstrap-icons';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 import debounce from 'lodash/debounce';
+import { party } from 'src/types/party';
+import { encounterList } from 'src/types/encounter';
 
 TailwindDarkFix();
 
@@ -104,13 +107,15 @@ const uploadData = () => {
         const result = event.target?.result as string;
         if (result) {
           try {
-            const parsedData = JSON.parse(result);
-            Object.keys(parsedData).forEach((key) => {
-              localStorage.setItem(key, parsedData[key]);
-              window.location.reload();
-            });
+            validateData(result);
           } catch (error) {
             console.error('Error parsing JSON file:', error);
+            $q.notify({
+              progress: true,
+              type: 'warning',
+              message: 'Error reading the uploaded file',
+              icon: matPriorityHigh
+            });
           }
         }
       };
@@ -120,9 +125,78 @@ const uploadData = () => {
   input.click();
 };
 
+const validateData = (result: string) => {
+  const parsedData = JSON.parse(result);
+  Object.keys(parsedData).forEach((key) => {
+    switch (key) {
+      case 'encounters':
+        const parsedEncounters = JSON.parse(parsedData[key]);
+        if (Array.isArray(parsedEncounters)) {
+          const isCompatible = parsedEncounters.every((p) => {
+            return typeof p.name === 'string' && Array.isArray(p.creatures);
+          });
+          if (isCompatible) {
+            const encounters: encounterList[] = parsedEncounters;
+            const encounterNames = encounters.map((p) => p.name);
+            if (new Set(encounterNames).size !== encounterNames.length) {
+              throw 'Duplicate loaded encounter names';
+            }
+          } else {
+            throw 'Invalid loaded encounter format';
+          }
+        } else {
+          throw 'Invalid loaded encounter format';
+        }
+        break;
+      case 'legacy':
+        if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+          throw 'Invalid loaded legacy value';
+        }
+        break;
+      case 'parties':
+        const parsedParties = JSON.parse(parsedData[key]);
+        if (Array.isArray(parsedParties)) {
+          const isCompatible = parsedParties.every((p) => {
+            return (
+              typeof p.name === 'string' &&
+              Array.isArray(p.members) &&
+              p.members.every((member: any) => typeof member === 'number')
+            );
+          });
+          if (isCompatible) {
+            const parties: party[] = parsedParties;
+            parties.forEach((p) => {
+              if (!p || !p.members.every((player) => player >= 1 && player <= 20)) {
+                throw 'Invalid loaded party levels';
+              }
+            });
+            const partyNames = parties.map((p) => p.name);
+            if (new Set(partyNames).size !== partyNames.length) {
+              throw 'Duplicate loaded party names';
+            }
+          } else {
+            throw 'Invalid loaded party format';
+          }
+        } else {
+          throw 'Invalid loaded party format';
+        }
+        break;
+      case 'theme':
+        if (parsedData[key] != 'light' && parsedData[key] != 'dark') {
+          throw 'Invalid loaded theme value';
+        }
+        break;
+      default:
+        throw 'Unknown loaded key';
+    }
+    localStorage.setItem(key, parsedData[key]);
+  });
+  window.location.reload();
+};
+
 const downloadData = () => {
   const localStorageData = { ...localStorage };
-  const jsonData = JSON.stringify(localStorageData, null, 4);
+  const jsonData = JSON.stringify(localStorageData, null, '\t');
   const blob = new Blob([jsonData], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

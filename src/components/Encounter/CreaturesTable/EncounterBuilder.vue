@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
+import { matPriorityHigh, matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
 import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
