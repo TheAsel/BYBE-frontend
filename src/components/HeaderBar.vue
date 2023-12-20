@@ -353,11 +353,11 @@ const downloadData = () => {
                       @click="uploadData"
                     >
                       <q-tooltip
-                        class="text-caption tw-bg-red-700 tw-text-grey-400 tw-rounded-md tw-shadow-sm dark:tw-bg-red-700"
+                        class="text-caption tw-bg-amber-400 tw-text-gray-800 tw-rounded-md tw-shadow-sm dark:tw-bg-amber-400"
                         anchor="top middle"
                         self="bottom middle"
                       >
-                        Backup your data by exporting first!
+                        Remember to backup your data by exporting first!
                       </q-tooltip>
                     </q-btn>
                   </q-card-actions>
