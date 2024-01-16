@@ -15,5 +15,5 @@ export type creature = {
   is_ranged: boolean;
   is_spell_caster: boolean;
   quantity?: number;
-  variant?: 'weak' | 'base' | 'elite';
+  variant?: 'Weak' | 'Base' | 'Elite';
 };

@@ -78,6 +78,8 @@ export async function encounterGenerator(body: {
   party_levels: number[];
   min_creatures: number;
   max_creatures: number;
+  allow_weak_variants: boolean;
+  allow_elite_variants: boolean;
 }) {
   try {
     const requestOptions = {
