@@ -1,7 +1,9 @@
 export type creature = {
+  aon_id: number;
   id: number;
   sources: string[];
   archive_link: string;
+  variant_archive_link: string;
   name: string;
   level: number;
   hp: number;
@@ -14,6 +16,7 @@ export type creature = {
   is_melee: boolean;
   is_ranged: boolean;
   is_spell_caster: boolean;
+  variant?: 'Weak' | 'Base' | 'Elite';
 };
 
 export type creature_encounter = {

@@ -258,7 +258,8 @@ const addCreature = debounce(function (creature: creature) {
     const min_creature: creature_encounter = {
       archive_link: selectedCreature.archive_link,
       name: selectedCreature.name,
-      level: selectedCreature.level
+      level: selectedCreature.level,
+      variant: 'Base'
     };
     encounter.addToEncounter(min_creature);
   }
