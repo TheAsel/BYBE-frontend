@@ -80,7 +80,8 @@ const generateEncounter = async () => {
           const min_creature: creature_encounter = {
             archive_link: randomEncounter.results[i].archive_link,
             name: randomEncounter.results[i].name,
-            level: randomEncounter.results[i].level
+            level: randomEncounter.results[i].level,
+            variant: randomEncounter.results[i].variant
           };
           encounter.addToEncounter(min_creature);
         }

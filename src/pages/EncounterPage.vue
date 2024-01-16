@@ -250,12 +250,14 @@ const startTour = () => {
   const tmpKoboldMage: creature_encounter = {
     archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
     name: 'Kobold Dragon Mage',
-    level: 2
+    level: 2,
+    variant: 'Base'
   };
   const tmpKoboldWarrior: creature_encounter = {
     archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272',
     name: 'Kobold Warrior',
-    level: -1
+    level: -1,
+    variant: 'Base'
   };
   encounter.addToEncounter(tmpKoboldMage);
   encounter.addToEncounter(tmpKoboldWarrior);
