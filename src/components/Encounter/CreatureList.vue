@@ -31,10 +31,10 @@ const debouncedCall = debounce(async function () {
   for (var i = 0; i < encounterList.length; i++) {
     for (var j = 0; j < encounterList[i].quantity!; j++) {
       switch (encounterList[i].variant) {
-        case 'weak':
+        case 'Weak':
           enemyLevels.push(encounterList[i].level - 1);
           break;
-        case 'elite':
+        case 'Elite':
           enemyLevels.push(encounterList[i].level + 1);
           break;
         default:
@@ -259,9 +259,9 @@ const saveChanges = () => {
                 :href="
                   item.archive_link +
                   '&Weak=' +
-                  (item.variant === 'weak') +
+                  (item.variant === 'Weak') +
                   '&Elite=' +
-                  (item.variant === 'elite')
+                  (item.variant === 'Elite')
                 "
                 target="_blank"
                 rel="noopener"
@@ -279,28 +279,28 @@ const saveChanges = () => {
                   flat
                   label="Weak"
                   size="15px"
-                  :color="item.variant === 'weak' ? 'positive' : 'grey-4'"
+                  :color="item.variant === 'Weak' ? 'positive' : 'grey-4'"
                   padding="xs"
                   class="text-weight-bold"
-                  @click="encounter.changeVariant(index, 'weak')"
+                  @click="encounter.changeVariant(index, 'Weak')"
                 />
                 <q-btn
                   flat
                   label="Base"
                   size="15px"
-                  :color="item.variant === 'base' ? 'primary' : 'grey-4'"
+                  :color="item.variant === 'Base' ? 'primary' : 'grey-4'"
                   padding="xs"
                   class="text-weight-bold"
-                  @click="encounter.changeVariant(index, 'base')"
+                  @click="encounter.changeVariant(index, 'Base')"
                 />
                 <q-btn
                   flat
                   label="Elite"
                   size="15px"
-                  :color="item.variant === 'elite' ? 'negative' : 'grey-4'"
+                  :color="item.variant === 'Elite' ? 'negative' : 'grey-4'"
                   padding="xs"
                   class="text-weight-bold"
-                  @click="encounter.changeVariant(index, 'elite')"
+                  @click="encounter.changeVariant(index, 'Elite')"
                 />
               </q-btn-group>
             </div>
