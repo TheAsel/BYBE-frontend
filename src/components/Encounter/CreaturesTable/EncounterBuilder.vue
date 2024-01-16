@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
+import { matPriorityHigh, matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
 import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
@@ -23,6 +22,8 @@ const size = ref<sizes[]>();
 const rarity = ref<rarities[]>();
 const family = ref<string[]>();
 const creature_type = ref<string[]>();
+const allow_weak_variants = ref<boolean>(true);
+const allow_elite_variants = ref<boolean>(true);
 const creatureNumber = ref({ min: 1, max: 20 });
 const challenge = ref<challenges>();
 
@@ -33,6 +34,8 @@ const tmpFilters = ref({
   rarity: rarity.value,
   family: family.value,
   creature_type: creature_type.value,
+  allow_weak_variants: allow_weak_variants.value,
+  allow_elite_variants: allow_elite_variants.value,
   creatures: creatureNumber.value,
   challenge: challenge.value
 });
@@ -45,6 +48,8 @@ const restoreSettings = () => {
   tmpFilters.value.size = size.value;
   tmpFilters.value.family = family.value;
   tmpFilters.value.creature_type = creature_type.value;
+  tmpFilters.value.allow_weak_variants = allow_weak_variants.value;
+  tmpFilters.value.allow_elite_variants = allow_elite_variants.value;
   tmpFilters.value.creatures = creatureNumber.value;
   tmpFilters.value.challenge = challenge.value;
 };
@@ -59,6 +64,8 @@ const generateEncounter = async () => {
     rarities: tmpFilters.value.rarity,
     families: tmpFilters.value.family,
     creature_types: tmpFilters.value.creature_type,
+    allow_weak_variants: tmpFilters.value.allow_weak_variants,
+    allow_elite_variants: tmpFilters.value.allow_elite_variants,
     min_creatures: tmpFilters.value.creatures.min,
     max_creatures: tmpFilters.value.creatures.max,
     challenge: tmpFilters.value.challenge,
@@ -100,6 +107,8 @@ const saveChanges = () => {
   size.value = tmpFilters.value.size;
   family.value = tmpFilters.value.family;
   creature_type.value = tmpFilters.value.creature_type;
+  allow_weak_variants.value = tmpFilters.value.allow_weak_variants;
+  allow_elite_variants.value = tmpFilters.value.allow_elite_variants;
   creatureNumber.value = tmpFilters.value.creatures;
   challenge.value = tmpFilters.value.challenge;
 };
@@ -213,6 +222,19 @@ defineExpose({ generateEncounter });
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
           />
+
+          <div class="q-gutter-sm tw-mx-auto">
+            <q-checkbox
+              v-model="tmpFilters.allow_weak_variants"
+              label="Allow Weak?"
+              class="tw-mx-1"
+            />
+            <q-checkbox
+              v-model="tmpFilters.allow_elite_variants"
+              label="Allow Elite?"
+              class="tw-mx-1"
+            />
+          </div>
 
           <div class="tw-pb-4">
             <q-badge outline class="tw-text-sm"> Number of creatures: </q-badge>

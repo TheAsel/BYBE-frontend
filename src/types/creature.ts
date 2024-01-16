@@ -21,5 +21,5 @@ export type creature_encounter = {
   name: string;
   level: number;
   quantity?: number;
-  variant?: 'weak' | 'base' | 'elite';
+  variant?: 'Weak' | 'Base' | 'Elite';
 };
