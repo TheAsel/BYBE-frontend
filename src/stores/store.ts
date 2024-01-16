@@ -122,14 +122,10 @@ export const encounterStore = defineStore('encounter', {
       const index = this.encounters[this.activeEncounter].creatures.indexOf(creature);
       this.encounters[this.activeEncounter].creatures.splice(index, 1);
     },
-    changeVariant(index: number, variant: 'weak' | 'base' | 'elite') {
+    changeVariant(index: number, variant: 'Weak' | 'Base' | 'Elite') {
       this.encounters[this.activeEncounter].creatures[index].variant = variant;
     },
-    addToEncounter(
-      creature: creature_encounter,
-      index?: number,
-      variant?: 'weak' | 'base' | 'elite'
-    ) {
+    addToEncounter(creature: creature_encounter, index?: number) {
       if (index! >= 0) {
         if (creature.quantity) {
           creature.quantity!++;
@@ -140,7 +136,6 @@ export const encounterStore = defineStore('encounter', {
       } else {
         const newCreature = { ...creature };
         newCreature.quantity = 1;
-        newCreature.variant = variant || 'base';
         this.encounters[this.activeEncounter].creatures.push(newCreature);
       }
     },
