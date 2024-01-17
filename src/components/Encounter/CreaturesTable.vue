@@ -47,7 +47,7 @@ const columns: {
   {
     name: 'level',
     label: 'Level',
-    field: (row) => row.level,
+    field: (row) => row.base_level,
     required: false,
     align: 'left',
     sortable: true,
@@ -158,7 +158,7 @@ const combineFilters = computed(() => {
   });
   let filteredLevel = filteredNames.filter((out) => {
     if (levelRange.value.max < 25 || levelRange.value.min > -1) {
-      return out.level <= levelRange.value.max && out.level >= levelRange.value.min;
+      return out.base_level <= levelRange.value.max && out.base_level >= levelRange.value.min;
     }
     return out;
   });
@@ -258,7 +258,7 @@ const addCreature = debounce(function (creature: creature) {
     const min_creature: creature_encounter = {
       archive_link: selectedCreature.archive_link,
       name: selectedCreature.name,
-      level: selectedCreature.level,
+      level: selectedCreature.base_level,
       variant: 'Base'
     };
     encounter.addToEncounter(min_creature);

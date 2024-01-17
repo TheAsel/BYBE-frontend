@@ -3,9 +3,8 @@ export type creature = {
   id: number;
   sources: string[];
   archive_link: string;
-  variant_archive_link: string;
   name: string;
-  level: number;
+  base_level: number;
   hp: number;
   traits: string[];
   alignment: string;
@@ -17,6 +16,8 @@ export type creature = {
   is_ranged: boolean;
   is_spell_caster: boolean;
   variant?: 'Weak' | 'Base' | 'Elite';
+  variant_archive_link: string;
+  variant_level: number;
 };
 
 export type creature_encounter = {
