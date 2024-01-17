@@ -60,14 +60,19 @@ const debouncedCall = debounce(async function () {
   }
 }, 300);
 
+// get info on creature list change
 watch(encounter, () => {
   saveChanges();
   debouncedCall();
 });
 
+// get info on party change
 watch(party, () => {
   debouncedCall();
 });
+
+// get info on page load
+debouncedCall();
 
 const closeDialog = () => {
   newEncounterDialog.value = false;
