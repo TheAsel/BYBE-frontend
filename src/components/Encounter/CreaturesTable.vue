@@ -4,7 +4,7 @@ import { matArrowDropDown, matCancel, matWarning } from '@quasar/extras/material
 import { biEraser, biArrowDownUp, biBook } from '@quasar/extras/bootstrap-icons';
 import { mdiSword, mdiBowArrow, mdiMagicStaff } from '@quasar/extras/mdi-v7';
 import debounce from 'lodash/debounce';
-import { creature } from 'src/types/creature';
+import { creature, creature_encounter } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
@@ -47,7 +47,7 @@ const columns: {
   {
     name: 'level',
     label: 'Level',
-    field: (row) => row.level,
+    field: (row) => row.base_level,
     required: false,
     align: 'left',
     sortable: true,
@@ -158,7 +158,7 @@ const combineFilters = computed(() => {
   });
   let filteredLevel = filteredNames.filter((out) => {
     if (levelRange.value.max < 25 || levelRange.value.min > -1) {
-      return out.level <= levelRange.value.max && out.level >= levelRange.value.min;
+      return out.base_level <= levelRange.value.max && out.base_level >= levelRange.value.min;
     }
     return out;
   });
@@ -255,7 +255,13 @@ const sort = (col: string) => {
 const addCreature = debounce(function (creature: creature) {
   const selectedCreature = creatures.getCreatureId(creature.id);
   if (selectedCreature) {
-    encounter.addToEncounter(selectedCreature);
+    const min_creature: creature_encounter = {
+      archive_link: selectedCreature.archive_link,
+      name: selectedCreature.name,
+      level: selectedCreature.base_level,
+      variant: 'Base'
+    };
+    encounter.addToEncounter(min_creature);
   }
 }, 50);
 </script>

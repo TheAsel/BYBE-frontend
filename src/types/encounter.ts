@@ -1,4 +1,4 @@
-import { creature } from './creature';
+import { creature, creature_encounter } from './creature';
 import { challenges } from './filters';
 
 export type encounter = {
@@ -23,5 +23,5 @@ export type randomEncounter = {
 
 export type encounterList = {
   name: string;
-  creatures: creature[];
+  creatures: creature_encounter[];
 };

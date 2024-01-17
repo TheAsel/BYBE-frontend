@@ -6,6 +6,7 @@ import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
 import type { alignments, sizes, rarities, challenges } from 'src/types/filters';
+import { creature_encounter } from 'src/types/creature';
 
 const $q = useQuasar();
 
@@ -76,7 +77,13 @@ const generateEncounter = async () => {
       if (randomEncounter.count > 0 && randomEncounter.results) {
         encounter.clearEncounter();
         for (var i = 0; i < randomEncounter.count; i++) {
-          encounter.addToEncounter(randomEncounter.results[i]);
+          const min_creature: creature_encounter = {
+            archive_link: randomEncounter.results[i].archive_link,
+            name: randomEncounter.results[i].name,
+            level: randomEncounter.results[i].base_level,
+            variant: randomEncounter.results[i].variant
+          };
+          encounter.addToEncounter(min_creature);
         }
       } else {
         $q.notify({
