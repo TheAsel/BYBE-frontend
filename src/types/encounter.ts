@@ -1,4 +1,4 @@
-import { creature } from './creature';
+import { creature, creature_encounter } from './creature';
 import { challenges } from './filters';
 
 export type encounter = {
@@ -19,4 +19,9 @@ export type randomEncounter = {
   count: number;
   encounter_info: encounter;
   results?: creature[];
+};
+
+export type encounterList = {
+  name: string;
+  creatures: creature_encounter[];
 };

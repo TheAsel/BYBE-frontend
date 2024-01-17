@@ -2,14 +2,47 @@
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { biList, biGithub, biSun, biMoon } from '@quasar/extras/bootstrap-icons';
+import {
+  biList,
+  biGithub,
+  biSun,
+  biMoon,
+  biGear,
+  biXLg,
+  biCloudArrowDown,
+  biCloudArrowUp
+} from '@quasar/extras/bootstrap-icons';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 import debounce from 'lodash/debounce';
+import { party } from 'src/types/party';
+import { encounterList } from 'src/types/encounter';
 
 TailwindDarkFix();
 
 const route = useRoute();
 const currentPath = ref(route.path);
+
+const settingsDialog = ref(false);
+const legacy = ref(false);
+const localLegacy = ref(localStorage.getItem('legacy'));
+
+switch (localLegacy.value) {
+  case 'true':
+    legacy.value = true;
+    break;
+  case 'false':
+    legacy.value = false;
+    break;
+  default:
+    legacy.value = false;
+    localStorage.setItem('legacy', 'false');
+    break;
+}
+
+const toggleLegacy = () => {
+  localStorage.setItem('legacy', JSON.stringify(legacy.value));
+};
 
 watch(
   () => route.path,
@@ -25,7 +58,7 @@ const navigation = [
 ];
 
 const $q = useQuasar();
-const theme = ref(localStorage.getItem('hs_theme'));
+const theme = ref(localStorage.getItem('theme'));
 
 switch (theme.value) {
   case 'dark':
@@ -36,7 +69,7 @@ switch (theme.value) {
     break;
 
   default:
-    localStorage.setItem('hs_theme', 'dark');
+    localStorage.setItem('theme', 'dark');
     $q.dark.set(true);
     break;
 }
@@ -49,10 +82,10 @@ const themeSwitch = () => {
   $q.dark.toggle();
   if ($q.dark.isActive) {
     theme.value = 'dark';
-    localStorage.setItem('hs_theme', 'dark');
+    localStorage.setItem('theme', 'dark');
   } else {
     theme.value = 'light';
-    localStorage.setItem('hs_theme', 'light');
+    localStorage.setItem('theme', 'light');
   }
 };
 
@@ -60,6 +93,118 @@ const hidden = ref(true);
 const unhide = debounce(function () {
   hidden.value = !hidden.value;
 }, 50);
+
+const uploadData = () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = (event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        if (result) {
+          try {
+            validateData(result);
+          } catch (error) {
+            console.error('Error parsing JSON file:', error);
+            $q.notify({
+              progress: true,
+              type: 'warning',
+              message: 'Error reading the uploaded file',
+              icon: matPriorityHigh
+            });
+          }
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+  input.click();
+};
+
+const validateData = (result: string) => {
+  const parsedData = JSON.parse(result);
+  Object.keys(parsedData).forEach((key) => {
+    switch (key) {
+      case 'encounters':
+        const parsedEncounters = JSON.parse(parsedData[key]);
+        if (Array.isArray(parsedEncounters)) {
+          const isCompatible = parsedEncounters.every((p) => {
+            return typeof p.name === 'string' && Array.isArray(p.creatures);
+          });
+          if (isCompatible) {
+            const encounters: encounterList[] = parsedEncounters;
+            const encounterNames = encounters.map((p) => p.name);
+            if (new Set(encounterNames).size !== encounterNames.length) {
+              throw 'Duplicate loaded encounter names';
+            }
+          } else {
+            throw 'Invalid loaded encounter format';
+          }
+        } else {
+          throw 'Invalid loaded encounter format';
+        }
+        break;
+      case 'legacy':
+        if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+          throw 'Invalid loaded legacy value';
+        }
+        break;
+      case 'parties':
+        const parsedParties = JSON.parse(parsedData[key]);
+        if (Array.isArray(parsedParties)) {
+          const isCompatible = parsedParties.every((p) => {
+            return (
+              typeof p.name === 'string' &&
+              Array.isArray(p.members) &&
+              p.members.every((member: any) => typeof member === 'number')
+            );
+          });
+          if (isCompatible) {
+            const parties: party[] = parsedParties;
+            parties.forEach((p) => {
+              if (!p || !p.members.every((player) => player >= 1 && player <= 20)) {
+                throw 'Invalid loaded party levels';
+              }
+            });
+            const partyNames = parties.map((p) => p.name);
+            if (new Set(partyNames).size !== partyNames.length) {
+              throw 'Duplicate loaded party names';
+            }
+          } else {
+            throw 'Invalid loaded party format';
+          }
+        } else {
+          throw 'Invalid loaded party format';
+        }
+        break;
+      case 'theme':
+        if (parsedData[key] != 'light' && parsedData[key] != 'dark') {
+          throw 'Invalid loaded theme value';
+        }
+        break;
+      default:
+        throw 'Unknown loaded key';
+    }
+    localStorage.setItem(key, parsedData[key]);
+  });
+  window.location.reload();
+};
+
+const downloadData = () => {
+  const localStorageData = { ...localStorage };
+  const jsonData = JSON.stringify(localStorageData, null, '\t');
+  const blob = new Blob([jsonData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'bybe_data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+};
 </script>
 
 <template>
@@ -153,6 +298,88 @@ const unhide = debounce(function () {
               :icon="$q.dark.isActive ? biSun : biMoon"
               aria-label="Toggle theme"
             />
+            <q-btn
+              flat
+              round
+              size="sm"
+              padding="sm"
+              class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              :icon="biGear"
+              target="_blank"
+              aria-label="Open settings"
+              @click="settingsDialog = true"
+            />
+            <q-dialog
+              v-model="settingsDialog"
+              aria-label="Settings dialog"
+              @escape-key="settingsDialog = false"
+            >
+              <q-card flat bordered>
+                <q-card-section>
+                  <div class="row">
+                    <div class="text-h6 tw-mr-4 tw-my-auto">Settings</div>
+                    <q-space />
+                    <q-btn
+                      :icon="biXLg"
+                      size="md"
+                      padding="sm"
+                      flat
+                      round
+                      dense
+                      v-close-popup
+                      aria-label="Close dialog"
+                    />
+                  </div>
+                </q-card-section>
+                <q-separator />
+                <q-card-section class="tw-space-y-3">
+                  <q-card-actions>
+                    <q-btn
+                      outline
+                      label="Export Data"
+                      no-caps
+                      :icon="biCloudArrowDown"
+                      @click="downloadData"
+                    />
+                  </q-card-actions>
+                  <q-card-actions>
+                    <q-btn
+                      outline
+                      label="Import Data"
+                      no-caps
+                      :icon="biCloudArrowUp"
+                      @click="uploadData"
+                    >
+                      <q-tooltip
+                        class="text-caption tw-bg-amber-400 tw-text-gray-800 tw-rounded-md tw-shadow-sm dark:tw-bg-amber-400"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Remember to backup your data by exporting first!
+                      </q-tooltip>
+                    </q-btn>
+                  </q-card-actions>
+                  <q-separator />
+                  <q-card-actions>
+                    <q-toggle
+                      disable
+                      v-model="legacy"
+                      label="Legacy"
+                      @update:model-value="toggleLegacy"
+                    >
+                      <q-tooltip
+                        class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Work in progress! <br />
+                        Waiting for the Monster Core
+                      </q-tooltip>
+                    </q-toggle>
+                  </q-card-actions>
+                </q-card-section>
+              </q-card>
+            </q-dialog>
             <q-btn
               v-if="currentPath === '/encounter/'"
               flat

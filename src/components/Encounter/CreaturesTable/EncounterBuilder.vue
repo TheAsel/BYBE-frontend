@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
+import { matPriorityHigh, matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
 import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
 import type { alignments, sizes, rarities, challenges } from 'src/types/filters';
+import { creature_encounter } from 'src/types/creature';
 
 const $q = useQuasar();
 
@@ -22,6 +22,9 @@ const size = ref<sizes[]>();
 const rarity = ref<rarities[]>();
 const family = ref<string[]>();
 const creature_type = ref<string[]>();
+const allow_weak_variants = ref<boolean>(true);
+const allow_elite_variants = ref<boolean>(true);
+const creatureNumber = ref({ min: 1, max: 20 });
 const challenge = ref<challenges>();
 
 const tmpFilters = ref({
@@ -31,6 +34,9 @@ const tmpFilters = ref({
   rarity: rarity.value,
   family: family.value,
   creature_type: creature_type.value,
+  allow_weak_variants: allow_weak_variants.value,
+  allow_elite_variants: allow_elite_variants.value,
+  creatures: creatureNumber.value,
   challenge: challenge.value
 });
 
@@ -42,6 +48,9 @@ const restoreSettings = () => {
   tmpFilters.value.size = size.value;
   tmpFilters.value.family = family.value;
   tmpFilters.value.creature_type = creature_type.value;
+  tmpFilters.value.allow_weak_variants = allow_weak_variants.value;
+  tmpFilters.value.allow_elite_variants = allow_elite_variants.value;
+  tmpFilters.value.creatures = creatureNumber.value;
   tmpFilters.value.challenge = challenge.value;
 };
 
@@ -55,6 +64,10 @@ const generateEncounter = async () => {
     rarities: tmpFilters.value.rarity,
     families: tmpFilters.value.family,
     creature_types: tmpFilters.value.creature_type,
+    allow_weak_variants: tmpFilters.value.allow_weak_variants,
+    allow_elite_variants: tmpFilters.value.allow_elite_variants,
+    min_creatures: tmpFilters.value.creatures.min,
+    max_creatures: tmpFilters.value.creatures.max,
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels
   };
@@ -64,7 +77,13 @@ const generateEncounter = async () => {
       if (randomEncounter.count > 0 && randomEncounter.results) {
         encounter.clearEncounter();
         for (var i = 0; i < randomEncounter.count; i++) {
-          encounter.addToEncounter(randomEncounter.results[i]);
+          const min_creature: creature_encounter = {
+            archive_link: randomEncounter.results[i].archive_link,
+            name: randomEncounter.results[i].name,
+            level: randomEncounter.results[i].base_level,
+            variant: randomEncounter.results[i].variant
+          };
+          encounter.addToEncounter(min_creature);
         }
       } else {
         $q.notify({
@@ -89,6 +108,9 @@ const saveChanges = () => {
   size.value = tmpFilters.value.size;
   family.value = tmpFilters.value.family;
   creature_type.value = tmpFilters.value.creature_type;
+  allow_weak_variants.value = tmpFilters.value.allow_weak_variants;
+  allow_elite_variants.value = tmpFilters.value.allow_elite_variants;
+  creatureNumber.value = tmpFilters.value.creatures;
   challenge.value = tmpFilters.value.challenge;
 };
 
@@ -117,7 +139,7 @@ defineExpose({ generateEncounter });
       <q-separator />
 
       <q-card-section style="max-height: 62vh" class="scroll">
-        <div class="tw-space-y-4">
+        <div class="tw-space-y-3">
           <q-select
             multiple
             dense
@@ -140,7 +162,7 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.alignment"
-            :options="Object.freeze(filters.getFilters.alignment)"
+            :options="Object.freeze(filters.getFilters.alignments)"
             label="Alignment"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
@@ -154,7 +176,7 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.size"
-            :options="Object.freeze(filters.getFilters.size)"
+            :options="Object.freeze(filters.getFilters.sizes)"
             label="Size"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
@@ -168,7 +190,7 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.rarity"
-            :options="Object.freeze(filters.getFilters.rarity)"
+            :options="Object.freeze(filters.getFilters.rarities)"
             label="Rarity"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
@@ -182,7 +204,7 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.family"
-            :options="Object.freeze(filters.getFilters.family)"
+            :options="Object.freeze(filters.getFilters.families)"
             label="Family"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
@@ -196,11 +218,42 @@ defineExpose({ generateEncounter });
             :clear-icon="matCancel"
             options-dense
             v-model="tmpFilters.creature_type"
-            :options="Object.freeze(filters.getFilters.creature_type)"
+            :options="Object.freeze(filters.getFilters.creature_types)"
             label="Creature Type"
             :dropdown-icon="matArrowDropDown"
             style="max-width: 270px"
           />
+
+          <div class="q-gutter-sm tw-mx-auto">
+            <q-checkbox
+              v-model="tmpFilters.allow_weak_variants"
+              label="Allow Weak?"
+              class="tw-mx-1"
+            />
+            <q-checkbox
+              v-model="tmpFilters.allow_elite_variants"
+              label="Allow Elite?"
+              class="tw-mx-1"
+            />
+          </div>
+
+          <div class="tw-pb-4">
+            <q-badge outline class="tw-text-sm"> Number of creatures: </q-badge>
+            <q-range
+              v-model="tmpFilters.creatures"
+              label-always
+              :min="1"
+              :max="20"
+              markers
+              :left-label-value="'Min: ' + tmpFilters.creatures.min"
+              :right-label-value="'Max: ' + tmpFilters.creatures.max"
+              style="max-width: 270px"
+              class="tw-px-3 tw-pt-1"
+              aria-label="Creature numbers"
+              role="menuitem"
+              switch-label-side
+            />
+          </div>
 
           <q-select
             dense
@@ -242,3 +295,15 @@ defineExpose({ generateEncounter });
     </q-card>
   </q-dialog>
 </template>
+
+<style scoped>
+.q-badge {
+  border-color: #ffffff;
+  color: #666666;
+}
+
+.q-dark .q-badge {
+  border-color: #1f2937;
+  color: #bcbfc3;
+}
+</style>

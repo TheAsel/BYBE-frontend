@@ -116,6 +116,7 @@ const saveChanges = () => {
         </div>
         <div class="row">
           <q-select
+            dense
             style="width: 180px"
             outlined
             v-model="tmpParty.name"

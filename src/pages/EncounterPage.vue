@@ -3,7 +3,8 @@ import { shallowRef } from 'vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import { party } from 'src/types/party';
-import { creature } from 'src/types/creature';
+import { creature_encounter } from 'src/types/creature';
+import { encounterList } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 
 const party = partyStore();
@@ -12,6 +13,7 @@ const creatures = creaturesStore();
 const encounter = encounterStore();
 const currentComponent = shallowRef();
 
+// read party local storage
 const localParty = localStorage.getItem('parties');
 if (localParty) {
   try {
@@ -50,6 +52,35 @@ if (localParty) {
   }
 }
 
+// read encounter local storage
+const localEncounters = localStorage.getItem('encounters');
+if (localEncounters) {
+  try {
+    const parsedEncounters = JSON.parse(localEncounters);
+    if (Array.isArray(parsedEncounters)) {
+      const isCompatible = parsedEncounters.every((p) => {
+        return typeof p.name === 'string' && Array.isArray(p.creatures);
+      });
+      if (isCompatible) {
+        const encounters: encounterList[] = parsedEncounters;
+        const encounterNames = encounters.map((p) => p.name);
+        if (new Set(encounterNames).size !== encounterNames.length) {
+          throw 'Duplicate saved encounter names';
+        }
+        encounter.updateEncounters(encounters);
+      } else {
+        throw 'Invalid saved encounter format';
+      }
+    } else {
+      throw 'Invalid saved encounter format';
+    }
+  } catch (error) {
+    const defaultEncounter = { name: 'Default', creatures: [] };
+    localStorage.setItem('encounters', JSON.stringify([defaultEncounter]));
+    encounter.updateEncounters([defaultEncounter]);
+  }
+}
+
 import('src/components/Encounter/SkeletonTable.vue').then((module) => {
   currentComponent.value = module.default;
 });
@@ -57,10 +88,11 @@ import('src/components/Encounter/SkeletonTable.vue').then((module) => {
 try {
   if (
     filters.getFilters.traits.length === 0 ||
-    filters.getFilters.alignment.length === 0 ||
-    filters.getFilters.size.length === 0 ||
-    filters.getFilters.rarity.length === 0 ||
-    filters.getFilters.family.length === 0 ||
+    filters.getFilters.alignments.length === 0 ||
+    filters.getFilters.sizes.length === 0 ||
+    filters.getFilters.rarities.length === 0 ||
+    filters.getFilters.families.length === 0 ||
+    filters.getFilters.sources.length === 0 ||
     creatures.getCreatures.length === 0
   ) {
     let [
@@ -70,6 +102,7 @@ try {
       rarityList,
       familyList,
       creatureTypeList,
+      sourceList,
       creatureList
     ] = await Promise.all([
       requestFilters('traits'),
@@ -78,6 +111,7 @@ try {
       requestFilters('rarities'),
       requestFilters('families'),
       requestFilters('creature_types'),
+      requestFilters('sources'),
       requestCreatures(0, -1)
     ]);
 
@@ -115,6 +149,12 @@ try {
       filters.updateCreatureType(creatureTypeList);
     } else {
       throw 'Error loading creature types';
+    }
+
+    if (typeof sourceList != 'undefined') {
+      filters.updateSources(sourceList);
+    } else {
+      throw 'Error loading creature sources';
     }
 
     if (typeof creatureList != 'undefined') {
@@ -207,46 +247,25 @@ const options = {
 };
 
 const startTour = () => {
-  const tmpKoboldMage: creature = {
-    id: 274,
-    sources: ['Bestiary'],
+  const tmpKoboldMage: creature_encounter = {
     archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
     name: 'Kobold Dragon Mage',
     level: 2,
-    hp: 25,
-    traits: ['Humanoid', 'Kobold'],
-    alignment: 'LE',
-    size: 'Small',
-    rarity: 'Common',
-    family: 'Kobold',
-    creature_type: 'Monster',
-    is_melee: true,
-    is_ranged: false,
-    is_spell_caster: true
+    variant: 'Base'
   };
-  const tmpKoboldWarrior: creature = {
-    id: 272,
-    sources: ['Bestiary'],
+  const tmpKoboldWarrior: creature_encounter = {
     archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272',
     name: 'Kobold Warrior',
     level: -1,
-    hp: 8,
-    traits: ['Humanoid', 'Kobold'],
-    alignment: 'LE',
-    size: 'Small',
-    rarity: 'Common',
-    family: 'Kobold',
-    creature_type: 'Monster',
-    is_melee: true,
-    is_ranged: true,
-    is_spell_caster: false
+    variant: 'Base'
   };
   encounter.addToEncounter(tmpKoboldMage);
   encounter.addToEncounter(tmpKoboldWarrior);
 };
 
 const stopTour = () => {
-  encounter.clearEncounter();
+  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
 };
 
 const callbacks = {

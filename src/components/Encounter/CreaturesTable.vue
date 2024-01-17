@@ -4,7 +4,7 @@ import { matArrowDropDown, matCancel, matWarning } from '@quasar/extras/material
 import { biEraser, biArrowDownUp, biBook } from '@quasar/extras/bootstrap-icons';
 import { mdiSword, mdiBowArrow, mdiMagicStaff } from '@quasar/extras/mdi-v7';
 import debounce from 'lodash/debounce';
-import { creature } from 'src/types/creature';
+import { creature, creature_encounter } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
@@ -27,6 +27,15 @@ const columns: {
   style?: string;
 }[] = [
   {
+    name: 'source',
+    label: 'Source',
+    field: (row) => row.sources,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 120px; max-width: 120px;'
+  },
+  {
     name: 'name',
     label: 'Name',
     field: (row) => row.name,
@@ -38,7 +47,7 @@ const columns: {
   {
     name: 'level',
     label: 'Level',
-    field: (row) => row.level,
+    field: (row) => row.base_level,
     required: false,
     align: 'left',
     sortable: true,
@@ -119,6 +128,7 @@ const columns: {
 ];
 
 // ---- Filters
+const filterSource = ref<string[]>();
 const filterName = ref<string>();
 const levelRange = ref({ min: -1, max: 25 });
 const hpRange = ref({ min: 0, max: 600 });
@@ -134,7 +144,13 @@ const filterAttacks = ref([false, false, false]);
 // combines all filters
 const combineFilters = computed(() => {
   let filteredItems = creatures.getCreatures;
-  let filteredNames = filteredItems.filter((out) => {
+  let filteredSources = filteredItems.filter((out) => {
+    if (filterSource.value && filterSource.value.length) {
+      return filterSource.value.some((v) => out.sources.includes(v));
+    }
+    return out;
+  });
+  let filteredNames = filteredSources.filter((out) => {
     if (filterName.value && filterName.value.length) {
       return out.name.toLowerCase().includes(filterName.value.toLowerCase());
     }
@@ -142,7 +158,7 @@ const combineFilters = computed(() => {
   });
   let filteredLevel = filteredNames.filter((out) => {
     if (levelRange.value.max < 25 || levelRange.value.min > -1) {
-      return out.level <= levelRange.value.max && out.level >= levelRange.value.min;
+      return out.base_level <= levelRange.value.max && out.base_level >= levelRange.value.min;
     }
     return out;
   });
@@ -203,6 +219,7 @@ const combineFilters = computed(() => {
 
 // ---- Reset filters function
 const resetFilters = () => {
+  filterSource.value = [];
   filterName.value = '';
   levelRange.value.min = -1;
   levelRange.value.max = 25;
@@ -223,8 +240,8 @@ const visibleColumns = ref([
   'name',
   'level',
   'traits',
-  'alignment',
   'size',
+  'family',
   'creature_type',
   'attacks'
 ]);
@@ -238,7 +255,13 @@ const sort = (col: string) => {
 const addCreature = debounce(function (creature: creature) {
   const selectedCreature = creatures.getCreatureId(creature.id);
   if (selectedCreature) {
-    encounter.addToEncounter(selectedCreature);
+    const min_creature: creature_encounter = {
+      archive_link: selectedCreature.archive_link,
+      name: selectedCreature.name,
+      level: selectedCreature.base_level,
+      variant: 'Base'
+    };
+    encounter.addToEncounter(min_creature);
   }
 }, 50);
 </script>
@@ -254,7 +277,6 @@ const addCreature = debounce(function (creature: creature) {
       title="Creatures"
       :rows="combineFilters"
       :columns="columns"
-      selection="single"
       :pagination="{ rowsPerPage: 0 }"
       :rows-per-page-options="[0]"
       :visible-columns="visibleColumns"
@@ -363,14 +385,38 @@ const addCreature = debounce(function (creature: creature) {
           </div>
         </div>
       </template>
+      <template v-slot:header-cell-source>
+        <q-th class="tw-w-8">
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                multiple
+                dense
+                outlined
+                clearable
+                :clear-icon="matCancel"
+                options-dense
+                v-model="filterSource"
+                :options="Object.freeze(filters.getFilters.sources)"
+                :label="columns[0].label"
+                :dropdown-icon="matArrowDropDown"
+                :style="columns[0].style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2"></div>
+          </div>
+        </q-th>
+      </template>
       <template v-slot:header-cell-name>
         <q-th>
           <div
-            :style="columns[0].style"
+            :style="columns[1].style"
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col">
-              <q-input dense outlined v-model="filterName" :label="columns[0].label" />
+              <q-input dense outlined v-model="filterName" :label="columns[1].label" />
             </div>
             <div class="col-shrink tw-mx-2">
               <q-btn
@@ -396,8 +442,8 @@ const addCreature = debounce(function (creature: creature) {
               <q-field
                 dense
                 outlined
-                :label="columns[1].label"
-                :style="columns[1].style"
+                :label="columns[2].label"
+                :style="columns[2].style"
                 stack-label
               >
                 <template v-slot:control> {{ levelRange.min }} to {{ levelRange.max }} </template>
@@ -442,8 +488,8 @@ const addCreature = debounce(function (creature: creature) {
               <q-field
                 dense
                 outlined
-                :label="columns[2].label"
-                :style="columns[2].style"
+                :label="columns[3].label"
+                :style="columns[3].style"
                 stack-label
               >
                 <template v-slot:control> {{ hpRange.min }} to {{ hpRange.max }} </template>
@@ -494,9 +540,9 @@ const addCreature = debounce(function (creature: creature) {
                 options-dense
                 v-model="filterTraits"
                 :options="Object.freeze(filters.getFilters.traits)"
-                :label="columns[3].label"
+                :label="columns[4].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="columns[3].style"
+                :style="columns[4].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -528,10 +574,10 @@ const addCreature = debounce(function (creature: creature) {
                 :clear-icon="matCancel"
                 options-dense
                 v-model="filterAlignment"
-                :options="Object.freeze(filters.getFilters.alignment)"
-                :label="columns[4].label"
+                :options="Object.freeze(filters.getFilters.alignments)"
+                :label="columns[5].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="columns[4].style"
+                :style="columns[5].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -563,10 +609,10 @@ const addCreature = debounce(function (creature: creature) {
                 :clear-icon="matCancel"
                 options-dense
                 v-model="filterSize"
-                :options="Object.freeze(filters.getFilters.size)"
-                :label="columns[5].label"
+                :options="Object.freeze(filters.getFilters.sizes)"
+                :label="columns[6].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="columns[5].style"
+                :style="columns[6].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -598,10 +644,10 @@ const addCreature = debounce(function (creature: creature) {
                 :clear-icon="matCancel"
                 options-dense
                 v-model="filterRarity"
-                :options="Object.freeze(filters.getFilters.rarity)"
-                :label="columns[6].label"
+                :options="Object.freeze(filters.getFilters.rarities)"
+                :label="columns[7].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="columns[6].style"
+                :style="columns[7].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -633,10 +679,10 @@ const addCreature = debounce(function (creature: creature) {
                 :clear-icon="matCancel"
                 options-dense
                 v-model="filterFamily"
-                :options="Object.freeze(filters.getFilters.family)"
-                :label="columns[7].label"
+                :options="Object.freeze(filters.getFilters.families)"
+                :label="columns[8].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="columns[7].style"
+                :style="columns[8].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -668,10 +714,10 @@ const addCreature = debounce(function (creature: creature) {
                 :clear-icon="matCancel"
                 options-dense
                 v-model="filterType"
-                :options="Object.freeze(filters.getFilters.creature_type)"
-                :label="columns[8].label"
+                :options="Object.freeze(filters.getFilters.creature_types)"
+                :label="columns[9].label"
                 :dropdown-icon="matArrowDropDown"
-                :style="columns[8].style"
+                :style="columns[9].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -698,8 +744,8 @@ const addCreature = debounce(function (creature: creature) {
               <q-field
                 dense
                 outlined
-                :label="columns[9].label"
-                :style="columns[9].style"
+                :label="columns[10].label"
+                :style="columns[10].style"
                 :stack-label="filterAttacks[0] || filterAttacks[1] || filterAttacks[2]"
               >
                 <template v-slot:control>
@@ -777,18 +823,20 @@ const addCreature = debounce(function (creature: creature) {
           </div>
         </q-th>
       </template>
-      <template v-slot:body-selection="source">
-        <q-icon round unelevated v-if="source.row.sources.length > 0" :name="biBook" size="xs">
-          <q-tooltip
-            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-            anchor="top middle"
-            self="bottom middle"
-          >
-            <i class="tw-whitespace-nowrap" v-for="item in source.row.sources" :key="item">
-              {{ item }}
-            </i>
-          </q-tooltip>
-        </q-icon>
+      <template v-slot:body-cell-source="source">
+        <q-td class="text-center">
+          <q-icon round unelevated v-if="source.row.sources.length > 0" :name="biBook" size="xs">
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              <i class="tw-whitespace-nowrap" v-for="item in source.row.sources" :key="item">
+                {{ item }}
+              </i>
+            </q-tooltip>
+          </q-icon>
+        </q-td>
       </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">

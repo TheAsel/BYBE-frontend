@@ -29,7 +29,7 @@ export async function requestCreatures(start: number, end: number) {
 }
 
 export async function requestFilters(
-  filter: 'traits' | 'alignments' | 'sizes' | 'rarities' | 'families' | 'creature_types'
+  filter: 'traits' | 'alignments' | 'sizes' | 'rarities' | 'families' | 'creature_types' | 'sources'
 ) {
   try {
     const requestOptions = {
@@ -76,6 +76,10 @@ export async function encounterGenerator(body: {
   creature_types: string[] | undefined;
   challenge: challenges | undefined;
   party_levels: number[];
+  min_creatures: number;
+  max_creatures: number;
+  allow_weak_variants: boolean;
+  allow_elite_variants: boolean;
 }) {
   try {
     const requestOptions = {
