@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { shallowRef } from 'vue';
+import { useHead } from '@unhead/vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import { party } from 'src/types/party';
 import { creature_encounter } from 'src/types/creature';
 import { encounterList } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
+
+useHead({
+  title: 'Encounter Builder - BYBE'
+});
 
 const party = partyStore();
 const filters = filtersStore();
