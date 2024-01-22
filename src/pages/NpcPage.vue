@@ -1,3 +1,11 @@
+<script lang="ts">
+import { useHead } from '@unhead/vue';
+
+useHead({
+  title: 'NPC Generator - BYBE'
+});
+</script>
+
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
     <div class="tw-text-center tw-py-10 tw-px-4 sm:tw-px-6 lg:tw-px-8">
