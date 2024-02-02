@@ -337,6 +337,7 @@ const downloadData = () => {
               target="_blank"
               aria-label="Open settings"
               @click="settingsDialog = true"
+              id="v-step-8"
             />
             <q-dialog
               v-model="settingsDialog"
@@ -406,7 +407,7 @@ const downloadData = () => {
                       <q-toggle
                         disable
                         v-model="legacy"
-                        label="Legacy"
+                        label="Legacy version"
                         @update:model-value="toggleLegacy"
                         class="tw-mx-auto"
                       >
@@ -415,7 +416,7 @@ const downloadData = () => {
                           anchor="top middle"
                           self="bottom middle"
                         >
-                          Work in progress! <br />
+                          <b>Work in progress!</b> <br />
                           Waiting for the Monster Core
                         </q-tooltip>
                       </q-toggle>
