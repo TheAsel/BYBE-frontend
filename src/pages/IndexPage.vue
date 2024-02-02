@@ -1,10 +1,15 @@
 <script setup>
+import { useHead } from '@unhead/vue';
 import {
   biCalculator,
   biShop,
   biPersonVcard,
   biArrowRightShort
 } from '@quasar/extras/bootstrap-icons';
+
+useHead({
+  title: 'BYBE - Pathfinder 2e GM Tools'
+});
 
 const cards = [
   {
