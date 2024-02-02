@@ -44,9 +44,24 @@ const debouncedCall = debounce(async function () {
     }
   }
   const partyLevels = party.getActiveParty.members;
+  const is_pwl_on = ref(false);
+  const localPwl = ref(localStorage.getItem('is_pwl_on'));
+  switch (localPwl.value) {
+    case 'true':
+      is_pwl_on.value = true;
+      break;
+    case 'false':
+      is_pwl_on.value = false;
+      break;
+    default:
+      is_pwl_on.value = false;
+      localStorage.setItem('is_pwl_on', 'false');
+      break;
+  }
   const post = {
     enemy_levels: enemyLevels,
-    party_levels: partyLevels
+    party_levels: partyLevels,
+    is_pwl_on: is_pwl_on.value
   };
   try {
     const returnedEncounterInfo = await encounterInfo(post);

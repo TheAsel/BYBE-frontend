@@ -10,13 +10,17 @@ import {
   biGear,
   biXLg,
   biCloudArrowDown,
-  biCloudArrowUp
+  biCloudArrowUp,
+  biQuestionCircle
 } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 import debounce from 'lodash/debounce';
 import { party } from 'src/types/party';
 import { encounterList } from 'src/types/encounter';
+import { encounterStore } from 'stores/store';
+
+const encounter = encounterStore();
 
 TailwindDarkFix();
 
@@ -24,6 +28,7 @@ const route = useRoute();
 const currentPath = ref(route.path);
 
 const settingsDialog = ref(false);
+const tab = ref('General');
 const legacy = ref(false);
 const localLegacy = ref(localStorage.getItem('legacy'));
 
@@ -42,6 +47,30 @@ switch (localLegacy.value) {
 
 const toggleLegacy = () => {
   localStorage.setItem('legacy', JSON.stringify(legacy.value));
+};
+
+const is_pwl_on = ref(false);
+const localPwl = ref(localStorage.getItem('is_pwl_on'));
+
+switch (localPwl.value) {
+  case 'true':
+    is_pwl_on.value = true;
+    encounter.setPwL(true);
+    break;
+  case 'false':
+    is_pwl_on.value = false;
+    encounter.setPwL(false);
+    break;
+  default:
+    is_pwl_on.value = false;
+    localStorage.setItem('is_pwl_on', 'false');
+    encounter.setPwL(false);
+    break;
+}
+
+const togglePwL = () => {
+  localStorage.setItem('is_pwl_on', JSON.stringify(is_pwl_on.value));
+  encounter.setPwL(is_pwl_on.value);
 };
 
 watch(
@@ -314,7 +343,7 @@ const downloadData = () => {
               aria-label="Settings dialog"
               @escape-key="settingsDialog = false"
             >
-              <q-card flat bordered>
+              <q-card flat bordered style="min-height: 360px; min-width: 270px">
                 <q-card-section>
                   <div class="row">
                     <div class="text-h6 tw-mr-4 tw-my-auto">Settings</div>
@@ -332,52 +361,96 @@ const downloadData = () => {
                   </div>
                 </q-card-section>
                 <q-separator />
-                <q-card-section class="tw-space-y-3">
-                  <q-card-actions>
-                    <q-btn
-                      outline
-                      label="Export Data"
-                      no-caps
-                      :icon="biCloudArrowDown"
-                      @click="downloadData"
-                    />
-                  </q-card-actions>
-                  <q-card-actions>
-                    <q-btn
-                      outline
-                      label="Import Data"
-                      no-caps
-                      :icon="biCloudArrowUp"
-                      @click="uploadData"
-                    >
-                      <q-tooltip
-                        class="text-caption tw-bg-amber-400 tw-text-gray-800 tw-rounded-md tw-shadow-sm dark:tw-bg-amber-400"
-                        anchor="top middle"
-                        self="bottom middle"
+                <q-tabs
+                  v-model="tab"
+                  class="text-grey"
+                  active-color="primary"
+                  indicator-color="primary"
+                  narrow-indicator
+                >
+                  <q-tab name="General" label="General" />
+                  <q-tab name="Encounter" label="Encounter" />
+                </q-tabs>
+                <q-tab-panels v-model="tab" animated>
+                  <q-tab-panel name="General" class="tw-space-y-3">
+                    <q-card-actions>
+                      <q-btn
+                        outline
+                        label="Export Data"
+                        no-caps
+                        :icon="biCloudArrowDown"
+                        @click="downloadData"
+                        class="tw-mx-auto"
+                      />
+                    </q-card-actions>
+                    <q-card-actions>
+                      <q-btn
+                        outline
+                        label="Import Data"
+                        no-caps
+                        :icon="biCloudArrowUp"
+                        @click="uploadData"
+                        class="tw-mx-auto"
                       >
-                        Remember to backup your data by exporting first!
-                      </q-tooltip>
-                    </q-btn>
-                  </q-card-actions>
-                  <q-separator />
-                  <q-card-actions>
-                    <q-toggle
-                      disable
-                      v-model="legacy"
-                      label="Legacy"
-                      @update:model-value="toggleLegacy"
-                    >
-                      <q-tooltip
-                        class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                        anchor="top middle"
-                        self="bottom middle"
+                        <q-tooltip
+                          class="text-caption tw-bg-amber-400 tw-text-gray-800 tw-rounded-md tw-shadow-sm dark:tw-bg-amber-400"
+                          anchor="top middle"
+                          self="bottom middle"
+                        >
+                          Remember to backup your data by exporting first!
+                        </q-tooltip>
+                      </q-btn>
+                    </q-card-actions>
+                    <q-separator />
+                    <q-card-actions>
+                      <q-toggle
+                        disable
+                        v-model="legacy"
+                        label="Legacy"
+                        @update:model-value="toggleLegacy"
+                        class="tw-mx-auto"
                       >
-                        Work in progress! <br />
-                        Waiting for the Monster Core
-                      </q-tooltip>
-                    </q-toggle>
-                  </q-card-actions>
-                </q-card-section>
+                        <q-tooltip
+                          class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                          anchor="top middle"
+                          self="bottom middle"
+                        >
+                          Work in progress! <br />
+                          Waiting for the Monster Core
+                        </q-tooltip>
+                      </q-toggle>
+                    </q-card-actions>
+                  </q-tab-panel>
+                  <q-tab-panel name="Encounter" class="tw-space-y-3">
+                    <q-card-actions>
+                      <q-toggle
+                        v-model="is_pwl_on"
+                        label="Prof. without Level"
+                        @update:model-value="togglePwL"
+                        class="tw-mx-auto"
+                      >
+                      </q-toggle>
+                      <q-btn
+                        flat
+                        round
+                        size="sm"
+                        :icon="biQuestionCircle"
+                        href="https://2e.aonprd.com/Rules.aspx?ID=1370"
+                        target="_blank"
+                        class="tw-ml-2"
+                      >
+                        <q-tooltip
+                          class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                          anchor="top middle"
+                          self="bottom middle"
+                        >
+                          <b>Proficiency without Level</b> <br />
+                          Click to learn more
+                        </q-tooltip>
+                      </q-btn>
+                    </q-card-actions>
+                  </q-tab-panel>
+                </q-tab-panels>
               </q-card>
             </q-dialog>
             <q-btn
