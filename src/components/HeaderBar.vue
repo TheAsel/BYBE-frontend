@@ -24,6 +24,10 @@ const encounter = encounterStore();
 
 TailwindDarkFix();
 
+const supportButton = ref(
+  document.querySelectorAll('[id^=kofi-widget-overlay-]').item(0) as HTMLElement
+);
+
 const route = useRoute();
 const currentPath = ref(route.path);
 
@@ -47,6 +51,34 @@ switch (localLegacy.value) {
 
 const toggleLegacy = () => {
   localStorage.setItem('legacy', JSON.stringify(legacy.value));
+};
+
+const hideSupport = ref(false);
+const localSupport = ref(localStorage.getItem('hideSupport'));
+
+switch (localSupport.value) {
+  case 'true':
+    hideSupport.value = true;
+    supportButton.value.style.visibility = 'hidden';
+    break;
+  case 'false':
+    hideSupport.value = false;
+    supportButton.value.style.visibility = '';
+    break;
+  default:
+    hideSupport.value = false;
+    supportButton.value.style.visibility = '';
+    localStorage.setItem('hideSupport', 'false');
+    break;
+}
+
+const toggleSupport = () => {
+  localStorage.setItem('hideSupport', JSON.stringify(hideSupport.value));
+  if (hideSupport.value) {
+    supportButton.value.style.visibility = 'hidden';
+  } else {
+    supportButton.value.style.visibility = '';
+  }
 };
 
 const is_pwl_on = ref(false);
@@ -344,7 +376,7 @@ const downloadData = () => {
               aria-label="Settings dialog"
               @escape-key="settingsDialog = false"
             >
-              <q-card flat bordered style="min-height: 360px; min-width: 270px">
+              <q-card flat bordered style="min-height: 400px; min-width: 270px">
                 <q-card-section>
                   <div class="row">
                     <div class="text-h6 tw-mr-4 tw-my-auto">Settings</div>
@@ -404,22 +436,28 @@ const downloadData = () => {
                     </q-card-actions>
                     <q-separator />
                     <q-card-actions>
-                      <q-toggle
-                        disable
-                        v-model="legacy"
-                        label="Legacy version"
-                        @update:model-value="toggleLegacy"
-                        class="tw-mx-auto"
-                      >
-                        <q-tooltip
-                          class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                          anchor="top middle"
-                          self="bottom middle"
+                      <div class="q-gutter-y-sm column tw-mx-auto">
+                        <q-toggle
+                          disable
+                          v-model="legacy"
+                          label="Legacy version"
+                          @update:model-value="toggleLegacy"
                         >
-                          <b>Work in progress!</b> <br />
-                          Waiting for the Monster Core
-                        </q-tooltip>
-                      </q-toggle>
+                          <q-tooltip
+                            class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                            anchor="top middle"
+                            self="bottom middle"
+                          >
+                            <b>Work in progress!</b> <br />
+                            Waiting for the Monster Core
+                          </q-tooltip>
+                        </q-toggle>
+                        <q-toggle
+                          v-model="hideSupport"
+                          label="Hide support button"
+                          @update:model-value="toggleSupport"
+                        />
+                      </div>
                     </q-card-actions>
                   </q-tab-panel>
                   <q-tab-panel name="Encounter" class="tw-space-y-3">
