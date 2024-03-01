@@ -2,12 +2,12 @@
 FROM node:20.11.1-alpine AS develop-stage
 WORKDIR /bybe
 COPY package.json ./
-RUN npm install -g @quasar/cli
+RUN npm install -g @quasar/cli --ignore-scripts
 COPY . .
 
 # build stage
 FROM develop-stage AS build-stage
-RUN npm install
+RUN npm install --ignore-scripts
 RUN npm run build
 
 # production stage
