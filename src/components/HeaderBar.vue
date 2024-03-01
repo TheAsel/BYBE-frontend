@@ -19,7 +19,6 @@ import debounce from 'lodash/debounce';
 import { party } from 'src/types/party';
 import { encounterList } from 'src/types/encounter';
 import { encounterStore } from 'stores/store';
-import { tour } from 'src/boot/globals';
 
 const encounter = encounterStore();
 
@@ -267,12 +266,6 @@ const downloadData = () => {
   a.click();
   URL.revokeObjectURL(url);
 };
-
-const startTour = () => {
-  tour.value.startTour();
-};
-
-localStorage.removeItem('vjt-encounter');
 </script>
 
 <template>
@@ -366,19 +359,18 @@ localStorage.removeItem('vjt-encounter');
               :icon="$q.dark.isActive ? biSun : biMoon"
               aria-label="Toggle theme"
             />
-            <div id="v-step-8">
-              <q-btn
-                flat
-                round
-                size="sm"
-                padding="sm"
-                class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
-                :icon="biGear"
-                target="_blank"
-                aria-label="Open settings"
-                @click="settingsDialog = true"
-              />
-            </div>
+            <q-btn
+              flat
+              round
+              size="sm"
+              padding="sm"
+              class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              :icon="biGear"
+              target="_blank"
+              aria-label="Open settings"
+              @click="settingsDialog = true"
+              id="v-step-8"
+            />
             <q-dialog
               v-model="settingsDialog"
               aria-label="Settings dialog"
@@ -504,126 +496,16 @@ localStorage.removeItem('vjt-encounter');
               v-if="currentPath === '/encounter/'"
               flat
               padding="sm"
-              class="sm:tw-ml-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
-              @click="startTour"
+              class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              @click="$tours[currentPath].start()"
               aria-label="Start help tour"
             >
               HELP
             </q-btn>
-            <div v-else class="tw-mr-[58px]"></div>
+            <div v-else class="tw-mr-[50px]"></div>
           </div>
         </div>
       </div>
     </nav>
   </header>
 </template>
-
-<style lang="scss">
-@use 'sass:math';
-$vjt__tooltip_color: #fff;
-$vjt__tooltip_z_index: 9999;
-$vjt__tooltip_font_size: 13px;
-$vjt__tooltip_arrow_size: 8px;
-$vjt__tooltip_background: #333;
-$vjt__tooltip_border_radius: 4px;
-$vjt__tooltip_max_width: 300px;
-
-$vjt__highlight_offset: 4px !default;
-$vjt__highlight_color: rgba(255, 0, 0, 0.6) !default;
-$vjt__highlight_outline_radius: 4px !default;
-$vjt__highlight_outline: 4px solid $vjt__highlight_color !default;
-
-$vjt__action_button_color: #fff;
-$vjt__action_button_font_size: 13px;
-$vjt__action_button_color_hover: #fff;
-$vjt__action_button_padding: 4px 16px;
-$vjt__action_button_border_radius: 4px;
-$vjt__action_button_background_hover: #000;
-$vjt__action_button_border: 1px solid #fff;
-$vjt__action_button_background: transparent;
-
-[data-hidden] {
-  display: none;
-}
-
-#vjt-tooltip {
-  background-color: $vjt__tooltip_background;
-  color: $vjt__tooltip_color;
-  padding: 0.5rem;
-  border-radius: $vjt__tooltip_border_radius;
-  font-size: $vjt__tooltip_font_size;
-  z-index: $vjt__tooltip_z_index;
-  max-width: $vjt__tooltip_max_width;
-}
-
-#vjt-tooltip[data-popper-placement^='top'] {
-  #vjt-arrow {
-    bottom: math.div(-$vjt--tooltip-arrow-size, 2);
-  }
-}
-
-#vjt-tooltip[data-popper-placement^='bottom'] {
-  #vjt-arrow {
-    top: math.div(-$vjt--tooltip-arrow-size, 2);
-  }
-}
-
-#vjt-tooltip[data-popper-placement^='left'] {
-  #vjt-arrow {
-    right: math.div(-$vjt--tooltip-arrow-size, 2);
-  }
-}
-
-#vjt-tooltip[data-popper-placement^='right'] {
-  #vjt-arrow {
-    left: math.div(-$vjt--tooltip-arrow-size, 2);
-  }
-}
-
-#vjt-arrow {
-  width: $vjt__tooltip_arrow_size;
-  height: $vjt__tooltip_arrow_size;
-  position: absolute;
-  z-index: -1;
-
-  &::before {
-    content: '';
-    width: $vjt__tooltip_arrow_size;
-    height: $vjt__tooltip_arrow_size;
-    background-color: $vjt__tooltip_background;
-    transform: rotate(45deg);
-    position: absolute;
-  }
-}
-
-.vjt-highlight {
-  outline: $vjt__highlight_outline;
-  outline-offset: $vjt__highlight_offset;
-  border-radius: $vjt__highlight_outline_radius;
-}
-
-.vjt-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.5rem;
-  gap: 0.5rem;
-
-  button {
-    width: 100%;
-    padding: 0.25rem 1rem;
-    border: $vjt__action_button_border;
-    border-radius: $vjt__action_button_border_radius;
-    background-color: $vjt__action_button_background;
-    color: $vjt__action_button_color;
-    font-size: $vjt__action_button_font_size;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-
-    &:hover {
-      background-color: $vjt__action_button_background_hover;
-      color: $vjt__action_button_color_hover;
-    }
-  }
-}
-</style>

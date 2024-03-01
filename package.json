@@ -1,6 +1,6 @@
 {
   "name": "bybe-frontend",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "description": "Beyond Your Bestiary Explorer (BYBE) is a one-stop shop for the most useful tools for Pathfinder Second Edition GMs",
   "productName": "BYBE - Pathfinder 2e GM Tools",
   "author": "TheAsel",
@@ -18,29 +18,28 @@
     "@unhead/vue": "^1.8.10",
     "lodash": "^4.17.21",
     "pinia": "^2.1.7",
-    "quasar": "^2.14.4",
-    "vue": "^3.4.19",
-    "vue-router": "^4.2.5",
-    "@globalhive/vuejs-tour": "^1.5.0"
+    "quasar": "^2.14.6",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "vue3-tour": "^0.3.4"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.7.3",
     "@quasar/cli": "^2.3.0",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^20.11.19",
+    "@types/node": "^20.11.24",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "autoprefixer": "^10.4.17",
-    "eslint": "^8.56.0",
+    "autoprefixer": "^10.4.18",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-vue": "^9.21.1",
+    "eslint-plugin-vue": "^9.22.0",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3"
   },
   "engines": {
-    "node": "^18 || ^16 || ^14.19",
-    "npm": ">= 6.13.4",
-    "yarn": ">= 1.21.1"
+    "node": ">= 20.11.1",
+    "npm": ">= 10.2.4"
   }
 }

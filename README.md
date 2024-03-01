@@ -26,14 +26,14 @@
 
 Built using:
 
-- [Bun](https://bun.sh/)
+- [Node.js](https://nodejs.org/)
 - [Vue.js](https://vuejs.org/)
 - [Quasar](https://quasar.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
 ## Installation guide - Local
 
-1. Install [Bun](https://bun.sh/) on your machine.
+1. Install [Node.js](https://nodejs.org/) on your machine.
 2. Download the [latest release](https://github.com/TheAsel/BYBE-frontend/releases/latest) or clone this repository:
 
 ```
@@ -44,19 +44,19 @@ git clone https://github.com/TheAsel/BYBE-frontend
 4. Install the dependencies:
 
 ```
-bun install
+npm install
 ```
 
 5. Run the webpage in development mode:
 
 ```
-bun run dev
+npm run dev
 ```
 
-6. To instead deploy the production build with Quasar (needs [Node.js](https://nodejs.org/it) and [Quasar CLI](https://quasar.dev/start/quasar-cli/)), run:
+6. To instead deploy the production build with Quasar (needs [Node.js](https://nodejs.org/) and [Quasar CLI](https://quasar.dev/start/quasar-cli/)), run:
 
 ```
-bun run build
+npm run build
 ```
 
 ```
