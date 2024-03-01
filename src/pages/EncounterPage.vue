@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, shallowRef } from 'vue';
+import { shallowRef } from 'vue';
 import { useHead } from '@unhead/vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
@@ -7,7 +7,6 @@ import { party } from 'src/types/party';
 import { creature_encounter } from 'src/types/creature';
 import { encounterList } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
-import { tour } from 'src/boot/globals';
 
 useHead({
   title: 'Encounter Builder - BYBE'
@@ -182,81 +181,85 @@ const steps = [
     target: '#v-step-0',
     content:
       'This is the creature list. Double click on a row to add it to the encounter list to the right.',
-    placement: 'auto'
+    params: {
+      placement: 'auto'
+    }
   },
   {
     target: '#v-step-1',
     content:
       'Here you can change your party size and the level of the individual players. You can also add multiple parties and select the active one.',
     params: {
-      placement: 'auto'
+      placement: 'bottom'
     }
   },
   {
     target: '#v-step-2',
     content:
       'From this window you can define your preferred settings for the random encounter generator.',
-    placement: 'auto'
+    params: {
+      placement: 'bottom'
+    }
   },
   {
     target: '#v-step-3',
     content:
       'Clicking this button will generate a new random encounter, based on the generator settings previously described and the currently active party.',
-    placement: 'auto'
+    params: {
+      placement: 'bottom'
+    }
   },
   {
     target: '#v-step-4',
     content: 'From this dropdown you can select which columns of the table to show and hide.',
-    placement: 'auto'
+    params: {
+      placement: 'bottom'
+    }
   },
   {
     target: '.v-step-5',
     content: 'Here you can sort the columns and narrow your search with the various filters.',
-    placement: 'auto'
+    params: {
+      placement: 'auto'
+    }
   },
   {
     target: '#v-step-6',
     content:
       'This is the encounter list, where the creatures you added will be displayed. You can increase or decrease the number of each creature and change them to their Weak/Elite variant.',
-    placement: 'auto'
+    params: {
+      placement: 'auto'
+    }
   },
   {
     target: '#v-step-7',
     content:
       'This is where the challenge of the encounter will be displayed, adjusted according to your party level and size.',
-    placement: 'auto'
+    params: {
+      placement: 'top'
+    }
   },
   {
     target: '#v-step-8',
     content:
       'You can change some settings from here, like enabling Proficiency without Level or switching to the Legacy version.',
-    placement: 'auto'
+    params: {
+      placement: 'top'
+    }
   }
 ];
 
-const labels = {
-  skip: 'Close',
-  prev: 'Previous',
-  next: 'Next',
-  finish: 'Finish'
+const options = {
+  highlight: true,
+  labels: {
+    buttonSkip: 'Close Help',
+    buttonPrevious: 'Previous',
+    buttonNext: 'Next',
+    buttonStop: 'Finish'
+  }
 };
 
-function logKey(e: KeyboardEvent) {
-  if (`${e.code}` == 'ArrowRight') {
-    tour.value.nextStep();
-  }
-  if (`${e.code}` == 'ArrowLeft') {
-    tour.value.prevStep();
-  }
-  if (`${e.code}` == 'Escape') {
-    tour.value.endTour();
-    localStorage.removeItem('vjt-encounter');
-  }
-}
-
 const startTour = () => {
-  tour.value.resetTour();
-  document.addEventListener('keydown', logKey);
   const tmpKoboldMage: creature_encounter = {
     archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
     name: 'Kobold Dragon Mage',
@@ -273,42 +276,20 @@ const startTour = () => {
   encounter.addToEncounter(tmpKoboldWarrior);
 };
 
-const endTour = () => {
-  tour.value.resetTour();
-  localStorage.removeItem('vjt-encounter');
-  document.removeEventListener('keydown', logKey);
-  try {
-    encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
-    encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
-  } catch (error) {
-    console.error('Encounter list not empty');
-  }
+const stopTour = () => {
+  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
 };
 
-const encounterTour = ref(null);
-
-onMounted(() => {
-  tour.value = encounterTour.value;
-});
-
-onUnmounted(() => {
-  tour.value.resetTour();
-  localStorage.removeItem('vjt-encounter');
-  document.removeEventListener('keydown', logKey);
-});
+const callbacks = {
+  onStart: startTour,
+  onStop: stopTour
+};
 </script>
 
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
-    <VTour
-      ref="encounterTour"
-      name="encounter"
-      :steps="steps"
-      :buttonLabels="labels"
-      :highlight="true"
-      @onTourStart="startTour"
-      @onTourEnd="endTour"
-    />
+    <v-tour name="/encounter/" :steps="steps" :options="options" :callbacks="callbacks" />
     <component :is="currentComponent" />
     <CreatureList />
   </q-page>
