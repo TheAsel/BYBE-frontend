@@ -57,6 +57,20 @@ const restoreSettings = () => {
 const generateEncounter = async () => {
   saveChanges();
   const partyLevels = party.getActiveParty.members;
+  const is_pwl_on = ref(false);
+  const localPwl = ref(localStorage.getItem('is_pwl_on'));
+  switch (localPwl.value) {
+    case 'true':
+      is_pwl_on.value = true;
+      break;
+    case 'false':
+      is_pwl_on.value = false;
+      break;
+    default:
+      is_pwl_on.value = false;
+      localStorage.setItem('is_pwl_on', 'false');
+      break;
+  }
   const post = {
     traits: tmpFilters.value.traits,
     alignments: tmpFilters.value.alignment,
@@ -69,7 +83,8 @@ const generateEncounter = async () => {
     min_creatures: tmpFilters.value.creatures.min,
     max_creatures: tmpFilters.value.creatures.max,
     challenge: tmpFilters.value.challenge,
-    party_levels: partyLevels
+    party_levels: partyLevels,
+    is_pwl_on: is_pwl_on.value
   };
   try {
     const randomEncounter = await encounterGenerator(post);

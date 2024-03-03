@@ -104,7 +104,8 @@ export const creaturesStore = defineStore('creatures', {
 export const encounterStore = defineStore('encounter', {
   state: () => ({
     encounters: [{ name: 'Default', creatures: [] }] as encounterList[],
-    activeEncounter: 0
+    activeEncounter: 0,
+    is_pwl_on: false
   }),
   getters: {
     getEncounters: (state) => state.encounters,
@@ -175,6 +176,9 @@ export const encounterStore = defineStore('encounter', {
     },
     updateEncounters(newEncounters: encounterList[]) {
       this.encounters = newEncounters;
+    },
+    setPwL(newPwl: boolean) {
+      this.is_pwl_on = newPwl;
     }
   }
 });

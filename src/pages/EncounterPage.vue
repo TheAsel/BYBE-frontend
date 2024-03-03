@@ -196,7 +196,7 @@ const steps = [
   {
     target: '#v-step-2',
     content:
-      'From this dialog you can define your preferred settings for the random encounter generator.',
+      'From this window you can define your preferred settings for the random encounter generator.',
     params: {
       placement: 'bottom'
     }
@@ -235,6 +235,14 @@ const steps = [
     target: '#v-step-7',
     content:
       'This is where the challenge of the encounter will be displayed, adjusted according to your party level and size.',
+    params: {
+      placement: 'top'
+    }
+  },
+  {
+    target: '#v-step-8',
+    content:
+      'You can change some settings from here, like enabling Proficiency without Level or switching to the Legacy version.',
     params: {
       placement: 'top'
     }
