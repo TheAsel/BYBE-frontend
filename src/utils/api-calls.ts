@@ -48,7 +48,11 @@ export async function requestFilters(
   }
 }
 
-export async function encounterInfo(encounter: { enemy_levels: number[]; party_levels: number[] }) {
+export async function encounterInfo(encounter: {
+  enemy_levels: number[];
+  is_pwl_on: boolean;
+  party_levels: number[];
+}) {
   try {
     const requestOptions = {
       method: 'POST',
@@ -76,6 +80,7 @@ export async function encounterGenerator(body: {
   creature_types: string[] | undefined;
   challenge: challenges | undefined;
   party_levels: number[];
+  is_pwl_on: boolean;
   min_creatures: number;
   max_creatures: number;
   allow_weak_variants: boolean;
