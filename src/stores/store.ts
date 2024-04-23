@@ -92,7 +92,8 @@ export const creaturesStore = defineStore('creatures', {
   state: () => ({ creatures: [] as creature[] }),
   getters: {
     getCreatures: (state) => state.creatures,
-    getCreatureId: (state) => (id: number) => state.creatures.find((creature) => creature.id === id)
+    getCreatureId: (state) => (id: number) =>
+      state.creatures.find((creature) => creature.core_data.id === id)
   },
   actions: {
     updateCreatures(newCreatures: creature[]) {

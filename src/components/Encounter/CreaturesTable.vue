@@ -29,7 +29,7 @@ const columns: {
   {
     name: 'source',
     label: 'Source',
-    field: (row) => row.sources,
+    field: (row) => row.core_data.publication_info.source,
     required: false,
     align: 'center',
     sortable: true,
@@ -38,7 +38,7 @@ const columns: {
   {
     name: 'name',
     label: 'Name',
-    field: (row) => row.name,
+    field: (row) => row.core_data.name,
     required: true,
     align: 'left',
     sortable: true,
@@ -47,7 +47,7 @@ const columns: {
   {
     name: 'level',
     label: 'Level',
-    field: (row) => row.base_level,
+    field: (row) => row.core_data.base_level,
     required: false,
     align: 'left',
     sortable: true,
@@ -56,7 +56,7 @@ const columns: {
   {
     name: 'hp',
     label: 'HP',
-    field: (row) => row.hp,
+    field: (row) => row.core_data.hp,
     required: false,
     align: 'left',
     sortable: true,
@@ -65,7 +65,7 @@ const columns: {
   {
     name: 'traits',
     label: 'Traits',
-    field: (row) => row.traits,
+    field: (row) => row.core_data.traits,
     required: false,
     align: 'left',
     sortable: true,
@@ -74,7 +74,7 @@ const columns: {
   {
     name: 'alignment',
     label: 'Alignment',
-    field: (row) => row.alignment,
+    field: (row) => row.core_data.alignment,
     required: false,
     align: 'left',
     sortable: true,
@@ -83,7 +83,7 @@ const columns: {
   {
     name: 'size',
     label: 'Size',
-    field: (row) => row.size,
+    field: (row) => row.core_data.size,
     required: false,
     align: 'left',
     sortable: true,
@@ -92,7 +92,7 @@ const columns: {
   {
     name: 'rarity',
     label: 'Rarity',
-    field: (row) => row.rarity,
+    field: (row) => row.core_data.rarity,
     required: false,
     align: 'left',
     sortable: true,
@@ -101,7 +101,7 @@ const columns: {
   {
     name: 'family',
     label: 'Family',
-    field: (row) => row.family,
+    field: (row) => row.core_data.family,
     required: false,
     align: 'left',
     sortable: true,
@@ -110,7 +110,7 @@ const columns: {
   {
     name: 'creature_type',
     label: 'Creature Type',
-    field: (row) => row.creature_type,
+    field: (row) => row.core_data.creature_type,
     required: false,
     align: 'left',
     sortable: true,
@@ -119,7 +119,11 @@ const columns: {
   {
     name: 'attacks',
     label: 'Attacks',
-    field: (row) => [row.is_melee, row.is_ranged, row.is_spell_caster],
+    field: (row) => [
+      row.core_data.is_melee,
+      row.core_data.is_ranged,
+      row.core_data.is_spell_caster
+    ],
     required: false,
     align: 'left',
     sortable: true,
@@ -146,70 +150,73 @@ const combineFilters = computed(() => {
   let filteredItems = creatures.getCreatures;
   let filteredSources = filteredItems.filter((out) => {
     if (filterSource.value && filterSource.value.length) {
-      return filterSource.value.some((v) => out.sources.includes(v));
+      return filterSource.value.some((v) => out.core_data.publication_info.source.includes(v));
     }
     return out;
   });
   let filteredNames = filteredSources.filter((out) => {
     if (filterName.value && filterName.value.length) {
-      return out.name.toLowerCase().includes(filterName.value.toLowerCase());
+      return out.core_data.name.toLowerCase().includes(filterName.value.toLowerCase());
     }
     return out;
   });
   let filteredLevel = filteredNames.filter((out) => {
     if (levelRange.value.max < 25 || levelRange.value.min > -1) {
-      return out.base_level <= levelRange.value.max && out.base_level >= levelRange.value.min;
+      return (
+        out.core_data.base_level <= levelRange.value.max &&
+        out.core_data.base_level >= levelRange.value.min
+      );
     }
     return out;
   });
   let filteredHp = filteredLevel.filter((out) => {
     if (hpRange.value.max < 600 || hpRange.value.min > 0) {
-      return out.hp <= hpRange.value.max && out.hp >= hpRange.value.min;
+      return out.core_data.hp <= hpRange.value.max && out.core_data.hp >= hpRange.value.min;
     }
     return out;
   });
   let filteredTraits = filteredHp.filter((out) => {
     if (filterTraits.value && filterTraits.value.length) {
-      return filterTraits.value.some((v) => out.traits.includes(v));
+      return filterTraits.value.some((v) => out.core_data.traits.includes(v));
     }
     return out;
   });
   let filteredAlignment = filteredTraits.filter((out) => {
     if (filterAlignment.value && filterAlignment.value.length) {
-      return filterAlignment.value.includes(out.alignment);
+      return filterAlignment.value.includes(out.core_data.alignment);
     }
     return out;
   });
   let filteredSize = filteredAlignment.filter((out) => {
     if (filterSize.value && filterSize.value.length) {
-      return filterSize.value.includes(out.size);
+      return filterSize.value.includes(out.core_data.size);
     }
     return out;
   });
   let filteredRarity = filteredSize.filter((out) => {
     if (filterRarity.value && filterRarity.value.length) {
-      return filterRarity.value.includes(out.rarity);
+      return filterRarity.value.includes(out.core_data.rarity);
     }
     return out;
   });
   let filteredFamily = filteredRarity.filter((out) => {
     if (filterFamily.value && filterFamily.value.length) {
-      return filterFamily.value.includes(out.family);
+      return filterFamily.value.includes(out.core_data.family);
     }
     return out;
   });
   let filteredType = filteredFamily.filter((out) => {
     if (filterType.value && filterType.value.length) {
-      return filterType.value.includes(out.creature_type);
+      return filterType.value.includes(out.core_data.creature_type);
     }
     return out;
   });
   let filteredAttacks = filteredType.filter((out) => {
     if (filterAttacks.value[0] || filterAttacks.value[1] || filterAttacks.value[2]) {
       return (
-        out.is_melee === filterAttacks.value[0] &&
-        out.is_ranged === filterAttacks.value[1] &&
-        out.is_spell_caster === filterAttacks.value[2]
+        out.core_data.is_melee === filterAttacks.value[0] &&
+        out.core_data.is_ranged === filterAttacks.value[1] &&
+        out.core_data.is_spell_caster === filterAttacks.value[2]
       );
     }
     return out;
@@ -253,12 +260,12 @@ const sort = (col: string) => {
 
 // ---- Add creature to encounter function
 const addCreature = debounce(function (creature: creature) {
-  const selectedCreature = creatures.getCreatureId(creature.id);
+  const selectedCreature = creatures.getCreatureId(creature.core_data.id);
   if (selectedCreature) {
     const min_creature: creature_encounter = {
-      archive_link: selectedCreature.archive_link,
-      name: selectedCreature.name,
-      level: selectedCreature.base_level,
+      archive_link: selectedCreature.core_data.archive_link,
+      name: selectedCreature.core_data.name,
+      level: selectedCreature.core_data.base_level,
       variant: 'Base'
     };
     encounter.addToEncounter(min_creature);
