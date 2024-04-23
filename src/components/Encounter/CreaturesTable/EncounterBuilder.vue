@@ -26,6 +26,7 @@ const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
 const creatureNumber = ref({ min: 1, max: 20 });
 const challenge = ref<challenges>();
+const creatures_roles = ref<string[]>();
 
 const tmpFilters = ref({
   traits: traits.value,
@@ -37,7 +38,8 @@ const tmpFilters = ref({
   allow_weak_variants: allow_weak_variants.value,
   allow_elite_variants: allow_elite_variants.value,
   creatures: creatureNumber.value,
-  challenge: challenge.value
+  challenge: challenge.value,
+  creatures_roles: creatures_roles.value
 });
 
 const restoreSettings = () => {
@@ -52,6 +54,7 @@ const restoreSettings = () => {
   tmpFilters.value.allow_elite_variants = allow_elite_variants.value;
   tmpFilters.value.creatures = creatureNumber.value;
   tmpFilters.value.challenge = challenge.value;
+  tmpFilters.value.creatures_roles = creatures_roles.value;
 };
 
 const generateEncounter = async () => {
@@ -84,7 +87,8 @@ const generateEncounter = async () => {
     max_creatures: tmpFilters.value.creatures.max,
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels,
-    is_pwl_on: is_pwl_on.value
+    is_pwl_on: is_pwl_on.value,
+    creatures_roles: creatures_roles.value
   };
   try {
     const randomEncounter = await encounterGenerator(post);
@@ -93,10 +97,10 @@ const generateEncounter = async () => {
         encounter.clearEncounter();
         for (var i = 0; i < randomEncounter.count; i++) {
           const min_creature: creature_encounter = {
-            archive_link: randomEncounter.results[i].archive_link,
-            name: randomEncounter.results[i].name,
-            level: randomEncounter.results[i].base_level,
-            variant: randomEncounter.results[i].variant
+            archive_link: randomEncounter.results[i].core_data.archive_link,
+            name: randomEncounter.results[i].core_data.name,
+            level: randomEncounter.results[i].core_data.base_level,
+            variant: randomEncounter.results[i].core_data.variant
           };
           encounter.addToEncounter(min_creature);
         }
