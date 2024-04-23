@@ -12,7 +12,7 @@ useHead({
   title: 'Encounter Builder - BYBE'
 });
 
-const party = partyStore();
+const partyStores = partyStore();
 const filters = filtersStore();
 const creatures = creaturesStore();
 const encounter = encounterStore();
@@ -42,7 +42,7 @@ if (localParty) {
         if (new Set(partyNames).size !== partyNames.length) {
           throw 'Duplicate saved party names';
         }
-        party.updateParties(parties);
+        partyStores.updateParties(parties);
       } else {
         throw 'Invalid saved party format';
       }
@@ -53,7 +53,7 @@ if (localParty) {
     console.error(error);
     const defaultParty = { name: 'Default', members: [1, 1, 1, 1] };
     localStorage.setItem('parties', JSON.stringify([defaultParty]));
-    party.updateParties([defaultParty]);
+    partyStores.updateParties([defaultParty]);
   }
 }
 
