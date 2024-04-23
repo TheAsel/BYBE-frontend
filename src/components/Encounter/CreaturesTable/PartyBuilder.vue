@@ -6,12 +6,12 @@ import { matArrowDropDown } from '@quasar/extras/material-icons';
 
 import { partyStore } from 'stores/store';
 
-const party = partyStore();
+const partyStores = partyStore();
 const tmpParty = ref<party>({
-  name: party.getActiveParty.name,
-  members: [...party.getActiveParty.members]
+  name: partyStores.getActiveParty.name,
+  members: [...partyStores.getActiveParty.members]
 });
-const parties = ref(party.getParties.map((party) => party.name));
+const parties = ref(partyStores.getParties.map((party) => party.name));
 
 const dialog = ref(false);
 
@@ -24,8 +24,8 @@ const removePartyDialog = ref(false);
 const restoreParty = () => {
   dialog.value = true;
   tmpParty.value = {
-    name: party.getActiveParty.name,
-    members: [...party.getActiveParty.members]
+    name: partyStores.getActiveParty.name,
+    members: [...partyStores.getActiveParty.members]
   };
 };
 
@@ -58,11 +58,11 @@ const closeDialog = () => {
 const addParty = () => {
   partyNameInput.value.validate();
   if (!partyNameInput.value.hasError) {
-    party.addParty(newPartyName.value);
-    parties.value = party.getParties.map((party) => party.name);
+    partyStores.addParty(newPartyName.value);
+    parties.value = partyStores.getParties.map((party) => party.name);
     tmpParty.value = {
-      name: party.getActiveParty.name,
-      members: [...party.getActiveParty.members]
+      name: partyStores.getActiveParty.name,
+      members: [...partyStores.getActiveParty.members]
     };
     saveChanges();
     newPartyName.value = '';
@@ -71,27 +71,27 @@ const addParty = () => {
 };
 
 const removeParty = () => {
-  party.removeParty();
-  parties.value = party.getParties.map((party) => party.name);
+  partyStores.removeParty();
+  parties.value = partyStores.getParties.map((party) => party.name);
   tmpParty.value = {
-    name: party.getActiveParty.name,
-    members: [...party.getActiveParty.members]
+    name: partyStores.getActiveParty.name,
+    members: [...partyStores.getActiveParty.members]
   };
   saveChanges();
   removePartyDialog.value = false;
 };
 
 const changeActiveParty = (selected: string) => {
-  party.changeActiveParty(party.getPartyIndex(selected));
+  partyStores.changeActiveParty(partyStores.getPartyIndex(selected));
   tmpParty.value = {
-    name: party.getActiveParty.name,
-    members: [...party.getActiveParty.members]
+    name: partyStores.getActiveParty.name,
+    members: [...partyStores.getActiveParty.members]
   };
 };
 
 const saveChanges = () => {
-  party.updateParty(tmpParty.value.name, tmpParty.value.members);
-  localStorage.setItem('parties', JSON.stringify(party.getParties));
+  partyStores.updateParty(tmpParty.value.name, tmpParty.value.members);
+  localStorage.setItem('parties', JSON.stringify(partyStores.getParties));
 };
 </script>
 
