@@ -88,7 +88,8 @@ const generateEncounter = async () => {
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels,
     is_pwl_on: is_pwl_on.value,
-    creatures_roles: creatures_roles.value
+    creatures_roles: creatures_roles.value,
+    response_data: { core_data: true } // may be removed
   };
   try {
     const randomEncounter = await encounterGenerator(post);

@@ -837,14 +837,20 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:body-cell-source="source">
         <q-td :props="source">
-          <q-icon round unelevated v-if="source.row.sources.length > 0" :name="biBook" size="xs">
+          <q-icon
+            round
+            unelevated
+            v-if="source.row.core_data.publication_info.source"
+            :name="biBook"
+            size="xs"
+          >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
               anchor="top middle"
               self="bottom middle"
             >
-              <i class="tw-whitespace-nowrap" v-for="item in source.row.sources" :key="item">
-                {{ item }}
+              <i class="tw-whitespace-nowrap">
+                {{ source.row.core_data.publication_info.source }}
               </i>
             </q-tooltip>
           </q-icon>
@@ -852,12 +858,19 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">
-          <a :href="name.row.archive_link" target="_blank" rel="noopener" class="tw-inline">
+          <a
+            v-if="name.row.core_data.archive_link"
+            :href="name.row.core_data.archive_link"
+            target="_blank"
+            rel="noopener"
+            class="tw-inline"
+          >
             <span
               class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-max-w-[250px] tw-whitespace-normal"
               >{{ name.value }}</span
             >
           </a>
+          <span v-else>{{ name.value }}</span>
         </q-td>
       </template>
       <template v-slot:body-cell-traits="traits">
