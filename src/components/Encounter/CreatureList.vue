@@ -276,6 +276,7 @@ const saveChanges = () => {
             <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
               {{ item.quantity }}
               <a
+                v-if="item.archive_link"
                 :href="
                   item.archive_link +
                   '&Weak=' +
@@ -291,6 +292,7 @@ const saveChanges = () => {
                   >{{ item.name }}</span
                 >
               </a>
+              <span v-else>{{ item.name }}</span>
               — Lv. {{ item.level }}
             </div>
             <div class="tw-flex-initial tw-my-auto tw-mx-1">

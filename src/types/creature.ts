@@ -116,9 +116,13 @@ export type creature = {
   info?: {
     locale: string[];
     roles: {
-      additionalProp1: number;
-      additionalProp2: number;
-      additionalProp3: number;
+      Brute: number;
+      'Magical Striker': number;
+      'Skill Paragon': number;
+      Skirmisher: number;
+      Sniper: number;
+      Soldier: number;
+      SpellCaster: number;
     };
   };
   spell_caster_data?: {
