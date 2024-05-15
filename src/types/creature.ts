@@ -49,27 +49,35 @@ export type creature = {
     ];
   };
   core_data: {
-    alignment: string;
-    aon_id: number;
-    archive_link: string;
-    base_level: number;
-    creature_type: string;
-    family: string;
-    hp: number;
-    id: number;
-    is_melee: boolean;
-    is_ranged: boolean;
-    is_spell_caster: boolean;
-    name: string;
-    publication_info: {
+    essential: {
+      id: number;
+      aon_id: number;
+      name: string;
+      hp: number;
+      level: number;
+      size: string;
+      family: string;
+      rarity: string;
       license: string;
       remaster: boolean;
       source: string;
+      cr_type: string;
     };
-    rarity: string;
-    size: string;
+    derived: {
+      archive_link: string;
+      is_melee: boolean;
+      is_ranged: boolean;
+      is_spell_caster: boolean;
+      brute_percentage: number;
+      magical_striker_percentage: number;
+      skill_paragon_percentage: number;
+      skirmisher_percentage: number;
+      sniper_percentage: number;
+      soldier_percentage: number;
+      spell_caster_percentage: number;
+    };
     traits: string[];
-    variant: 'Weak' | 'Base' | 'Elite';
+    alignment: string;
   };
   extra_data?: {
     ability_scores: {
@@ -160,6 +168,7 @@ export type creature = {
   variant_data?: {
     archive_link: string;
     level: number;
+    variant: 'Weak' | 'Base' | 'Elite';
   };
 };
 

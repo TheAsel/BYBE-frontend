@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef } from 'vue';
+import { ref, shallowRef } from 'vue';
 import { useHead } from '@unhead/vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
@@ -17,6 +17,7 @@ const filters = filtersStore();
 const creatures = creaturesStore();
 const encounter = encounterStore();
 const currentComponent = shallowRef();
+const tourActive = ref(false);
 
 // read party local storage
 const localParty = localStorage.getItem('parties');
@@ -260,6 +261,7 @@ const options = {
 };
 
 const startTour = () => {
+  tourActive.value = true;
   const tmpKoboldMage: creature_encounter = {
     archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
     name: 'Kobold Dragon Mage',
@@ -277,8 +279,11 @@ const startTour = () => {
 };
 
 const stopTour = () => {
-  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
-  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+  if (tourActive.value) {
+    encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+    encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+    tourActive.value = false;
+  }
 };
 
 const callbacks = {

@@ -14,8 +14,7 @@ export async function requestCreatures(start: number, end: number) {
         '/bestiary/list?sort_key=Name&order_by=Ascending&cursor=' +
         start +
         '&page_size=' +
-        end +
-        '&core_data=true',
+        end,
       requestOptions
     );
     const data = await response.json();

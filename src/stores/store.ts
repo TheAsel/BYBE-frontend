@@ -2,6 +2,7 @@ import { party } from 'src/types/party';
 import { creature, creature_encounter } from 'src/types/creature';
 import { encounter, encounterList } from 'src/types/encounter';
 import { defineStore } from 'pinia';
+import { capitalize } from 'lodash';
 
 export const partyStore = defineStore('party', {
   state: () => ({
@@ -64,7 +65,9 @@ export const filtersStore = defineStore('filters', {
   },
   actions: {
     updateTraits(newTraits: string[]) {
-      this.filters.traits = newTraits;
+      this.filters.traits = newTraits.map((trait) => {
+        return capitalize(trait);
+      });
     },
     updateAlignments(newAlignments: string[]) {
       this.filters.alignments = newAlignments;
@@ -93,7 +96,7 @@ export const creaturesStore = defineStore('creatures', {
   getters: {
     getCreatures: (state) => state.creatures,
     getCreatureId: (state) => (id: number) =>
-      state.creatures.find((creature) => creature.core_data.id === id)
+      state.creatures.find((creature) => creature.core_data.essential.id === id)
   },
   actions: {
     updateCreatures(newCreatures: creature[]) {
@@ -106,12 +109,14 @@ export const encounterStore = defineStore('encounter', {
   state: () => ({
     encounters: [{ name: 'Default', creatures: [] }] as encounterList[],
     activeEncounter: 0,
-    is_pwl_on: false
+    is_pwl_on: false,
+    generating: false
   }),
   getters: {
     getEncounters: (state) => state.encounters,
     getActive: (state) => state.activeEncounter,
-    getActiveEncounter: (state) => state.encounters[state.activeEncounter]
+    getActiveEncounter: (state) => state.encounters[state.activeEncounter],
+    getGenerating: (state) => state.generating
   },
   actions: {
     clearEncounter() {
@@ -180,6 +185,9 @@ export const encounterStore = defineStore('encounter', {
     },
     setPwL(newPwl: boolean) {
       this.is_pwl_on = newPwl;
+    },
+    setGenerating(newGenerating: boolean) {
+      this.generating = newGenerating;
     }
   }
 });
