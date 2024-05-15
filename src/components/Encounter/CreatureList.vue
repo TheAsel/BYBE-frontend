@@ -349,7 +349,7 @@ const saveChanges = () => {
       </q-scroll-area>
       <div v-else class="tw-flex" style="height: calc(100% - 103px)">
         <div class="tw-m-auto">
-          <q-spinner class="tw-mx-auto" color="white" size="5em" />
+          <q-spinner-gears class="tw-mx-auto" color="white" size="5em" />
         </div>
       </div>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
