@@ -7,6 +7,7 @@ import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
 import type { alignments, sizes, rarities, challenges } from 'src/types/filters';
 import { creature_encounter } from 'src/types/creature';
+import { debounce } from 'lodash';
 
 const $q = useQuasar();
 
@@ -57,7 +58,8 @@ const restoreSettings = () => {
   tmpFilters.value.creatures_roles = creatures_roles.value;
 };
 
-const generateEncounter = async () => {
+const generateEncounter = debounce(async function () {
+  encounter.setGenerating(true);
   saveChanges();
   const partyLevels = party.getActiveParty.members;
   const is_pwl_on = ref(false);
@@ -88,8 +90,7 @@ const generateEncounter = async () => {
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels,
     is_pwl_on: is_pwl_on.value,
-    creatures_roles: creatures_roles.value,
-    response_data: { core_data: true } // may be removed
+    creatures_roles: creatures_roles.value
   };
   try {
     const randomEncounter = await encounterGenerator(post);
@@ -98,10 +99,10 @@ const generateEncounter = async () => {
         encounter.clearEncounter();
         for (var i = 0; i < randomEncounter.count; i++) {
           const min_creature: creature_encounter = {
-            archive_link: randomEncounter.results[i].core_data.archive_link,
-            name: randomEncounter.results[i].core_data.name,
-            level: randomEncounter.results[i].core_data.base_level,
-            variant: randomEncounter.results[i].core_data.variant
+            archive_link: randomEncounter.results[i].core_data.derived.archive_link,
+            name: randomEncounter.results[i].core_data.essential.name,
+            level: randomEncounter.results[i].core_data.essential.level,
+            variant: randomEncounter.results[i].variant_data?.variant
           };
           encounter.addToEncounter(min_creature);
         }
@@ -119,7 +120,8 @@ const generateEncounter = async () => {
   } catch (error) {
     console.error(error);
   }
-};
+  encounter.setGenerating(false);
+}, 300);
 
 const saveChanges = () => {
   traits.value = tmpFilters.value.traits;
