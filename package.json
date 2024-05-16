@@ -21,7 +21,7 @@
     "quasar": "^2.16.4",
     "vue": "^3.4.27",
     "vue-router": "^4.3.2",
-    "vue3-tour": "0.3.4"
+    "vue3-tour": "1.0.0"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.9.3",

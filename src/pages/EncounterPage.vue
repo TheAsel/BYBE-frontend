@@ -7,9 +7,16 @@ import { party } from 'src/types/party';
 import { creature_encounter } from 'src/types/creature';
 import { encounterList } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
+import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
 useHead({
-  title: 'Encounter Builder - BYBE'
+  title: 'Encounter Builder - BYBE',
+  link: [
+    {
+      rel: 'canonical',
+      href: 'https://bybe.fly.dev/encounter/'
+    }
+  ]
 });
 
 const partyStores = partyStore();
@@ -29,7 +36,7 @@ if (localParty) {
         return (
           typeof p.name === 'string' &&
           Array.isArray(p.members) &&
-          p.members.every((member: any) => typeof member === 'number')
+          p.members.every((member) => typeof member === 'number')
         );
       });
       if (isCompatible) {
@@ -177,7 +184,7 @@ try {
   console.error(error);
 }
 
-const steps = [
+const steps: Step[] = [
   {
     target: '#v-step-0',
     content:
@@ -250,7 +257,7 @@ const steps = [
   }
 ];
 
-const options = {
+const options: VTourOptions = {
   highlight: true,
   labels: {
     buttonSkip: 'Close Help',
@@ -286,7 +293,7 @@ const stopTour = () => {
   }
 };
 
-const callbacks = {
+const callbacks: VTourCallbacks = {
   onStart: startTour,
   onStop: stopTour
 };

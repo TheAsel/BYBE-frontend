@@ -2,7 +2,13 @@
 import { useHead } from '@unhead/vue';
 
 useHead({
-  title: 'NPC Generator - BYBE'
+  title: 'NPC Generator - BYBE',
+  link: [
+    {
+      rel: 'canonical',
+      href: 'https://bybe.fly.dev/npc/'
+    }
+  ]
 });
 </script>
 

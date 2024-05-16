@@ -221,7 +221,7 @@ const validateData = (result: string) => {
             return (
               typeof p.name === 'string' &&
               Array.isArray(p.members) &&
-              p.members.every((member: any) => typeof member === 'number')
+              p.members.every((member) => typeof member === 'number')
             );
           });
           if (isCompatible) {
