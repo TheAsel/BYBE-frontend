@@ -8,7 +8,13 @@ import {
 } from '@quasar/extras/bootstrap-icons';
 
 useHead({
-  title: 'BYBE - Pathfinder 2e GM Tools'
+  title: 'BYBE - Pathfinder 2e GM Tools',
+  link: [
+    {
+      rel: 'canonical',
+      href: 'https://bybe.fly.dev'
+    }
+  ]
 });
 
 const cards = [
