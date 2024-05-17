@@ -5,7 +5,7 @@ import { matArrowDropDown } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash';
 import { partyStore, encounterStore, infoStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/api-calls';
-import { encounterList } from 'src/types/encounter';
+import type { encounterList } from 'src/types/encounter';
 
 const party = partyStore();
 const encounter = encounterStore();

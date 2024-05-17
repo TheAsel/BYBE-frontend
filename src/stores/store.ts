@@ -1,8 +1,9 @@
-import { party } from 'src/types/party';
-import { creature, creature_encounter } from 'src/types/creature';
-import { encounter, encounterList } from 'src/types/encounter';
+import type { party } from 'src/types/party';
+import type { creature, creature_encounter } from 'src/types/creature';
+import type { encounter, encounterList } from 'src/types/encounter';
 import { defineStore } from 'pinia';
 import { capitalize } from 'lodash';
+import type { alignments, rarities, roles, sizes } from 'src/types/filters';
 
 export const partyStore = defineStore('party', {
   state: () => ({
@@ -52,12 +53,13 @@ export const filtersStore = defineStore('filters', {
   state: () => ({
     filters: {
       traits: [] as string[],
-      alignments: [] as string[],
-      sizes: [] as string[],
-      rarities: [] as string[],
+      alignments: [] as alignments[],
+      sizes: [] as sizes[],
+      rarities: [] as rarities[],
       families: [] as string[],
       creature_types: [] as string[],
-      sources: [] as string[]
+      sources: [] as string[],
+      creature_roles: [] as roles[]
     }
   }),
   getters: {
@@ -69,14 +71,14 @@ export const filtersStore = defineStore('filters', {
         return capitalize(trait);
       });
     },
-    updateAlignments(newAlignments: string[]) {
+    updateAlignments(newAlignments: alignments[]) {
       this.filters.alignments = newAlignments;
     },
-    updateSizes(newSizes: string[]) {
+    updateSizes(newSizes: sizes[]) {
       newSizes.reverse();
       this.filters.sizes = newSizes;
     },
-    updateRarities(newRarities: string[]) {
+    updateRarities(newRarities: rarities[]) {
       this.filters.rarities = newRarities;
     },
     updateFamilies(newFamilies: string[]) {
@@ -87,6 +89,9 @@ export const filtersStore = defineStore('filters', {
     },
     updateSources(newSources: string[]) {
       this.filters.sources = newSources;
+    },
+    updateRoles(newRoles: roles[]) {
+      this.filters.creature_roles = newRoles;
     }
   }
 });
@@ -100,6 +105,32 @@ export const creaturesStore = defineStore('creatures', {
   },
   actions: {
     updateCreatures(newCreatures: creature[]) {
+      // calculate the role of the creature, by picking the highest percentage that is at least over 50%
+      newCreatures.forEach((creature) => {
+        const rolePercentages: { role: roles; percentage: number }[] = [
+          { role: 'Brute', percentage: creature.core_data.derived.brute_percentage },
+          {
+            role: 'Magical Striker',
+            percentage: creature.core_data.derived.magical_striker_percentage
+          },
+          {
+            role: 'Skill Paragon',
+            percentage: creature.core_data.derived.skill_paragon_percentage
+          },
+          { role: 'Skirmisher', percentage: creature.core_data.derived.skirmisher_percentage },
+          { role: 'Sniper', percentage: creature.core_data.derived.sniper_percentage },
+          { role: 'Soldier', percentage: creature.core_data.derived.soldier_percentage },
+          { role: 'SpellCaster', percentage: creature.core_data.derived.spell_caster_percentage }
+        ];
+        const highestRole = rolePercentages.reduce((prev, current) => {
+          return prev.percentage > current.percentage ? prev : current;
+        });
+        if (highestRole.percentage >= 50) {
+          creature.core_data.derived.creature_role = highestRole.role;
+        } else {
+          creature.core_data.derived.creature_role = 'None';
+        }
+      });
       this.creatures = newCreatures;
     }
   }

@@ -3,9 +3,9 @@ import { ref, shallowRef } from 'vue';
 import { useHead } from '@unhead/vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
-import { party } from 'src/types/party';
-import { creature_encounter } from 'src/types/creature';
-import { encounterList } from 'src/types/encounter';
+import type { party } from 'src/types/party';
+import type { creature_encounter } from 'src/types/creature';
+import type { encounterList } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
@@ -106,6 +106,7 @@ try {
     filters.getFilters.rarities.length === 0 ||
     filters.getFilters.families.length === 0 ||
     filters.getFilters.sources.length === 0 ||
+    filters.getFilters.creature_roles.length === 0 ||
     creatures.getCreatures.length === 0
   ) {
     let [
@@ -116,6 +117,7 @@ try {
       familyList,
       creatureTypeList,
       sourceList,
+      roleList,
       creatureList
     ] = await Promise.all([
       requestFilters('traits'),
@@ -125,6 +127,7 @@ try {
       requestFilters('families'),
       requestFilters('creature_types'),
       requestFilters('sources'),
+      requestFilters('creature_roles'),
       requestCreatures(0, -1)
     ]);
 
@@ -168,6 +171,12 @@ try {
       filters.updateSources(sourceList);
     } else {
       throw 'Error loading creature sources';
+    }
+
+    if (typeof roleList != 'undefined') {
+      filters.updateRoles(roleList);
+    } else {
+      throw 'Error loading creature roles';
     }
 
     if (typeof creatureList != 'undefined') {
