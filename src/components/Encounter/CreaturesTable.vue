@@ -119,12 +119,12 @@ const columns: {
   },
   {
     name: 'creature_type',
-    label: 'Creature Type',
+    label: 'Type',
     field: (row) => row.core_data.essential.cr_type,
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 155px; max-width: 300px;'
+    style: 'min-width: 100px'
   },
   {
     name: 'attacks',
@@ -144,9 +144,9 @@ const columns: {
     label: 'Role',
     field: (row) => row.core_data.derived.creature_role!,
     required: false,
-    align: 'center',
+    align: 'left',
     sortable: true,
-    style: 'min-width: 90px;'
+    style: 'min-width: 90px; max-width: 200px;'
   }
 ];
 

@@ -144,7 +144,7 @@ defineExpose({ generateEncounter });
 <template>
   <q-btn push label="Generator Settings" @click="restoreSettings" id="v-step-2" />
   <q-dialog v-model="dialog" aria-label="Generator Settings">
-    <q-card flat bordered style="max-height: 650px; min-width: 320px">
+    <q-card flat bordered>
       <q-card-section class="row items-center">
         <div class="text-h6 tw-mr-4">Generator Settings</div>
         <q-space />
@@ -173,7 +173,7 @@ defineExpose({ generateEncounter });
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="General">
-          <q-card-section style="max-height: 423px">
+          <q-card-section style="max-height: 46rem">
             <div class="tw-space-y-3">
               <q-select
                 multiple
@@ -279,8 +279,8 @@ defineExpose({ generateEncounter });
             </div>
           </q-card-section>
         </q-tab-panel>
-        <q-tab-panel name="Advanced" class="tw-space-y-3">
-          <q-card-section style="max-height: 423px; min-height: 423px">
+        <q-tab-panel name="Advanced">
+          <q-card-section class="tw-flex" style="max-height: 46rem">
             <div class="tw-space-y-3">
               <q-select
                 multiple
@@ -310,7 +310,7 @@ defineExpose({ generateEncounter });
                 style="max-width: 270px"
               />
 
-              <div class="q-gutter-sm tw-mx-auto">
+              <div class="q-gutter-sm tw-pb-[239px]">
                 <q-checkbox
                   v-model="tmpFilters.allow_weak_variants"
                   label="Allow Weak?"
