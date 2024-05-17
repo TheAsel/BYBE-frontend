@@ -5,8 +5,8 @@ import { matPriorityHigh, matArrowDropDown, matCancel } from '@quasar/extras/mat
 import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
-import type { alignments, sizes, rarities, challenges } from 'src/types/filters';
-import { creature_encounter } from 'src/types/creature';
+import type { alignments, sizes, rarities, challenges, roles } from 'src/types/filters';
+import type { creature_encounter } from 'src/types/creature';
 import { debounce } from 'lodash';
 
 const $q = useQuasar();
@@ -27,7 +27,7 @@ const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
 const creatureNumber = ref({ min: 1, max: 20 });
 const challenge = ref<challenges>();
-const creatures_roles = ref<string[]>();
+const creatures_roles = ref<roles[]>();
 
 const tmpFilters = ref({
   traits: traits.value,

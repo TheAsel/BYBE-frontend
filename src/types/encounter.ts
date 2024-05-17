@@ -1,5 +1,5 @@
-import { creature, creature_encounter } from './creature';
-import { challenges } from './filters';
+import type { creature, creature_encounter } from './creature';
+import type { challenges } from './filters';
 
 export type encounter = {
   experience: number;

@@ -16,8 +16,8 @@ import {
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 import { debounce } from 'lodash';
-import { party } from 'src/types/party';
-import { encounterList } from 'src/types/encounter';
+import type { party } from 'src/types/party';
+import type { encounterList } from 'src/types/encounter';
 import { encounterStore } from 'stores/store';
 
 const encounter = encounterStore();

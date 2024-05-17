@@ -1,4 +1,4 @@
-import { rarities } from './filters';
+import type { alignments, rarities, roles, sizes } from './filters';
 
 export type creature = {
   combat_data?: {
@@ -55,9 +55,9 @@ export type creature = {
       name: string;
       hp: number;
       level: number;
-      size: string;
+      size: sizes;
       family: string;
-      rarity: string;
+      rarity: rarities;
       license: string;
       remaster: boolean;
       source: string;
@@ -75,9 +75,10 @@ export type creature = {
       sniper_percentage: number;
       soldier_percentage: number;
       spell_caster_percentage: number;
+      creature_role?: roles;
     };
     traits: string[];
-    alignment: string;
+    alignment: alignments;
   };
   extra_data?: {
     ability_scores: {
@@ -120,18 +121,6 @@ export type creature = {
       }
     ];
     speeds: number[];
-  };
-  info?: {
-    locale: string[];
-    roles: {
-      Brute: number;
-      'Magical Striker': number;
-      'Skill Paragon': number;
-      Skirmisher: number;
-      Sniper: number;
-      Soldier: number;
-      SpellCaster: number;
-    };
   };
   spell_caster_data?: {
     spell_caster_entry: {

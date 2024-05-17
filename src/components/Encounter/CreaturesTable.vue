@@ -3,11 +3,21 @@ import { ref, computed } from 'vue';
 import { matArrowDropDown, matCancel, matWarning } from '@quasar/extras/material-icons';
 import { biEraser, biArrowDownUp, biBook } from '@quasar/extras/bootstrap-icons';
 import { mdiSword, mdiBowArrow, mdiMagicStaff } from '@quasar/extras/mdi-v7';
+import {
+  fasHandFist,
+  fasMeteor,
+  fasFlag,
+  fasCrosshairs,
+  fasMedal,
+  fasHatWizard,
+  fasGlasses
+} from '@quasar/extras/fontawesome-v6';
 import { capitalize, debounce } from 'lodash';
-import { creature, creature_encounter } from 'src/types/creature';
+import type { creature, creature_encounter } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
+import type { roles } from 'src/types/filters';
 
 const encounterBuilderRef = ref();
 
@@ -128,6 +138,15 @@ const columns: {
     align: 'left',
     sortable: true,
     style: 'min-width: 80px;'
+  },
+  {
+    name: 'creature_role',
+    label: 'Role',
+    field: (row) => row.core_data.derived.creature_role!,
+    required: false,
+    align: 'center',
+    sortable: true,
+    style: 'min-width: 90px;'
   }
 ];
 
@@ -143,6 +162,7 @@ const filterRarity = ref<string[]>();
 const filterFamily = ref<string[]>();
 const filterType = ref<string[]>();
 const filterAttacks = ref([false, false, false]);
+const filterRole = ref<roles[]>();
 
 // ---- Filter function
 // combines all filters
@@ -224,7 +244,13 @@ const combineFilters = computed(() => {
     }
     return out;
   });
-  return filteredAttacks;
+  let filteredRole = filteredAttacks.filter((out) => {
+    if (filterRole.value && filterRole.value.length) {
+      return filterRole.value.includes(out.core_data.derived.creature_role!);
+    }
+    return out;
+  });
+  return filteredRole;
 });
 
 // ---- Reset filters function
@@ -242,6 +268,7 @@ const resetFilters = () => {
   filterFamily.value = [];
   filterType.value = [];
   filterAttacks.value = [false, false, false];
+  filterRole.value = [];
 };
 
 // ---- Table and visible columns
@@ -251,9 +278,9 @@ const visibleColumns = ref([
   'level',
   'traits',
   'size',
-  'family',
   'creature_type',
-  'attacks'
+  'attacks',
+  'creature_role'
 ]);
 
 // ---- Column sort function
@@ -838,6 +865,41 @@ const addCreature = debounce(function (creature: creature) {
           </div>
         </q-th>
       </template>
+      <template v-slot:header-cell-creature_role>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                multiple
+                dense
+                outlined
+                clearable
+                :clear-icon="matCancel"
+                options-dense
+                v-model="filterRole"
+                :options="Object.freeze(filters.getFilters.creature_roles)"
+                :label="columns[11].label"
+                :dropdown-icon="matArrowDropDown"
+                :style="columns[11].style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                rounded
+                dense
+                size="xs"
+                class="tw-p-2"
+                :icon="biArrowDownUp"
+                aria-label="Sort creature role column"
+                @click="sort('creature_role')"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
       <template v-slot:body-cell-source="source">
         <q-td :props="source">
           <q-icon
@@ -924,6 +986,101 @@ const addCreature = debounce(function (creature: creature) {
               self="bottom middle"
             >
               Spells
+            </q-tooltip>
+          </q-icon>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-creature_role="roles">
+        <q-td :props="roles">
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role === 'Brute'"
+            :name="fasHandFist"
+            size="sm"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Brute
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role === 'Magical Striker'"
+            :name="fasMeteor"
+            size="sm"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Magical Striker
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role === 'Skill Paragon'"
+            :name="fasGlasses"
+            size="sm"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Skill Paragon
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role === 'Skirmisher'"
+            :name="fasFlag"
+            size="sm"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Skirmisher
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role === 'Sniper'"
+            :name="fasCrosshairs"
+            size="sm"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Sniper
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role === 'Soldier'"
+            :name="fasMedal"
+            size="sm"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Soldier
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role === 'SpellCaster'"
+            :name="fasHatWizard"
+            size="sm"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              SpellCaster
             </q-tooltip>
           </q-icon>
         </q-td>

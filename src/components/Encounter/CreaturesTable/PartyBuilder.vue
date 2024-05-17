@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { party } from 'src/types/party';
+import type { party } from 'src/types/party';
 import { biXLg, biPlusLg, biDashLg, biTrash } from '@quasar/extras/bootstrap-icons';
 import { matArrowDropDown } from '@quasar/extras/material-icons';
 

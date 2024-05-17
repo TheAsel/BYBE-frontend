@@ -1,7 +1,7 @@
 import { backendUrl } from 'src/boot/globals';
-import { creature } from 'src/types/creature';
-import { encounter, randomEncounter } from 'src/types/encounter';
-import { alignments, sizes, rarities, challenges } from 'src/types/filters';
+import type { creature } from 'src/types/creature';
+import type { encounter, randomEncounter } from 'src/types/encounter';
+import type { alignments, sizes, rarities, challenges, roles } from 'src/types/filters';
 
 export async function requestCreatures(start: number, end: number) {
   try {
@@ -29,7 +29,15 @@ export async function requestCreatures(start: number, end: number) {
 }
 
 export async function requestFilters(
-  filter: 'traits' | 'alignments' | 'sizes' | 'rarities' | 'families' | 'creature_types' | 'sources'
+  filter:
+    | 'traits'
+    | 'alignments'
+    | 'sizes'
+    | 'rarities'
+    | 'families'
+    | 'creature_types'
+    | 'sources'
+    | 'creature_roles'
 ) {
   try {
     const requestOptions = {
@@ -85,7 +93,7 @@ export async function encounterGenerator(body: {
   max_creatures: number;
   allow_weak_variants: boolean;
   allow_elite_variants: boolean;
-  creatures_roles: string[] | undefined;
+  creatures_roles: roles[] | undefined;
 }) {
   try {
     const requestOptions = {
