@@ -3,7 +3,7 @@ import type { creature, creature_encounter } from 'src/types/creature';
 import type { encounter, encounterList } from 'src/types/encounter';
 import { defineStore } from 'pinia';
 import { capitalize } from 'lodash';
-import type { alignments, rarities, roles, sizes } from 'src/types/filters';
+import type { roles } from 'src/types/filters';
 
 export const partyStore = defineStore('party', {
   state: () => ({
@@ -53,13 +53,13 @@ export const filtersStore = defineStore('filters', {
   state: () => ({
     filters: {
       traits: [] as string[],
-      alignments: [] as alignments[],
-      sizes: [] as sizes[],
-      rarities: [] as rarities[],
+      alignments: [] as string[],
+      sizes: [] as string[],
+      rarities: [] as string[],
       families: [] as string[],
       creature_types: [] as string[],
       sources: [] as string[],
-      creature_roles: [] as roles[]
+      creature_roles: [] as string[]
     }
   }),
   getters: {
@@ -71,14 +71,14 @@ export const filtersStore = defineStore('filters', {
         return capitalize(trait);
       });
     },
-    updateAlignments(newAlignments: alignments[]) {
+    updateAlignments(newAlignments: string[]) {
       this.filters.alignments = newAlignments;
     },
-    updateSizes(newSizes: sizes[]) {
+    updateSizes(newSizes: string[]) {
       newSizes.reverse();
       this.filters.sizes = newSizes;
     },
-    updateRarities(newRarities: rarities[]) {
+    updateRarities(newRarities: string[]) {
       this.filters.rarities = newRarities;
     },
     updateFamilies(newFamilies: string[]) {
@@ -90,7 +90,7 @@ export const filtersStore = defineStore('filters', {
     updateSources(newSources: string[]) {
       this.filters.sources = newSources;
     },
-    updateRoles(newRoles: roles[]) {
+    updateRoles(newRoles: string[]) {
       this.filters.creature_roles = newRoles;
     }
   }
