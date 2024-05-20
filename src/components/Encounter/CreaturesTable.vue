@@ -6,11 +6,11 @@ import { mdiSword, mdiBowArrow, mdiMagicStaff } from '@quasar/extras/mdi-v7';
 import {
   fasHandFist,
   fasMeteor,
-  fasFlag,
+  fasUserNinja,
   fasCrosshairs,
-  fasMedal,
+  fasUserShield,
   fasHatWizard,
-  fasGlasses
+  fasGraduationCap
 } from '@quasar/extras/fontawesome-v6';
 import { capitalize, debounce } from 'lodash';
 import type { creature, creature_encounter } from 'src/types/creature';
@@ -1020,7 +1020,7 @@ const addCreature = debounce(function (creature: creature) {
           </q-icon>
           <q-icon
             v-if="roles.row.core_data.derived.creature_role === 'Skill Paragon'"
-            :name="fasGlasses"
+            :name="fasGraduationCap"
             size="sm"
           >
             <q-tooltip
@@ -1033,7 +1033,7 @@ const addCreature = debounce(function (creature: creature) {
           </q-icon>
           <q-icon
             v-if="roles.row.core_data.derived.creature_role === 'Skirmisher'"
-            :name="fasFlag"
+            :name="fasUserNinja"
             size="sm"
           >
             <q-tooltip
@@ -1059,7 +1059,7 @@ const addCreature = debounce(function (creature: creature) {
           </q-icon>
           <q-icon
             v-if="roles.row.core_data.derived.creature_role === 'Soldier'"
-            :name="fasMedal"
+            :name="fasUserShield"
             size="sm"
           >
             <q-tooltip
