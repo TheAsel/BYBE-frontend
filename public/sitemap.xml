@@ -6,17 +6,17 @@
 		<priority>0.8</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/encounter/</loc>
+		<loc>https://bybe.fly.dev/encounter</loc>
 		<lastmod>2024-01-22</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/npc/</loc>
+		<loc>https://bybe.fly.dev/npc</loc>
 		<lastmod>2024-01-22</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/shop/</loc>
+		<loc>https://bybe.fly.dev/shop</loc>
 		<lastmod>2024-01-22</lastmod>
 		<priority>1.0</priority>
 	</url>

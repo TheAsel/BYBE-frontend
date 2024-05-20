@@ -6,7 +6,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/npc/'
+      href: 'https://bybe.fly.dev/npc'
     }
   ]
 });

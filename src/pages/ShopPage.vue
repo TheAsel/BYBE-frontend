@@ -6,7 +6,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/shop/'
+      href: 'https://bybe.fly.dev/shop'
     }
   ]
 });
