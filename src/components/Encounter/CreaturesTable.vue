@@ -469,7 +469,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort name column"
-                @click="sort('name')"
+                @click="sort(columns[1].name)"
               />
             </div>
           </div>
@@ -515,7 +515,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort level column"
-                @click="sort('level')"
+                @click="sort(columns[2].name)"
               />
             </div>
           </div>
@@ -561,7 +561,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort hp column"
-                @click="sort('hp')"
+                @click="sort(columns[3].name)"
               />
             </div>
           </div>
@@ -596,7 +596,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort traits column"
-                @click="sort('traits')"
+                @click="sort(columns[4].name)"
               />
             </div>
           </div>
@@ -631,7 +631,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort alignment column"
-                @click="sort('alignment')"
+                @click="sort(columns[5].name)"
               />
             </div>
           </div>
@@ -666,7 +666,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort size column"
-                @click="sort('size')"
+                @click="sort(columns[6].name)"
               />
             </div>
           </div>
@@ -701,7 +701,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort rarity column"
-                @click="sort('rarity')"
+                @click="sort(columns[7].name)"
               />
             </div>
           </div>
@@ -736,7 +736,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort family column"
-                @click="sort('family')"
+                @click="sort(columns[8].name)"
               />
             </div>
           </div>
@@ -771,7 +771,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort creature type column"
-                @click="sort('creature_type')"
+                @click="sort(columns[9].name)"
               />
             </div>
           </div>
@@ -859,7 +859,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort attacks column"
-                @click="sort('attacks')"
+                @click="sort(columns[10].name)"
               />
             </div>
           </div>
@@ -894,7 +894,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort creature role column"
-                @click="sort('creature_role')"
+                @click="sort(columns[11].name)"
               />
             </div>
           </div>
