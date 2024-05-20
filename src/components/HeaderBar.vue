@@ -113,9 +113,9 @@ watch(
 );
 
 const navigation = [
-  { name: 'Encounter Builder', to: '/encounter/' },
-  { name: 'Shop Generator', to: '/shop/' },
-  { name: 'NPC Generator', to: '/npc/' }
+  { name: 'Encounter Builder', to: '/encounter' },
+  { name: 'Shop Generator', to: '/shop' },
+  { name: 'NPC Generator', to: '/npc' }
 ];
 
 const $q = useQuasar();
@@ -487,7 +487,7 @@ const downloadData = () => {
               </q-card>
             </q-dialog>
             <q-btn
-              v-if="currentPath === '/encounter/'"
+              v-if="currentPath === '/encounter'"
               flat
               padding="sm"
               class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"

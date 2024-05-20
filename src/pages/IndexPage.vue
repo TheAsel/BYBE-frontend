@@ -20,21 +20,21 @@ useHead({
 const cards = [
   {
     name: 'Encounter Builder',
-    to: '/encounter/',
+    to: '/encounter',
     description: 'Balance or randomly create combat encounters.',
     subtext: 'Try it out',
     icon: biCalculator
   },
   {
     name: 'Shop Generator',
-    to: '/shop/',
+    to: '/shop',
     description: 'Create various types of shops of a specific level.',
     subtext: 'Work in progress...',
     icon: biShop
   },
   {
     name: 'NPC Generator',
-    to: '/npc/',
+    to: '/npc',
     description: "Quickly generate an NPC's name, ancestry, background and quirks.",
     subtext: 'Work in progress...',
     icon: biPersonVcard

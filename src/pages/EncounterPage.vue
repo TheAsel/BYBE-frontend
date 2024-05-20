@@ -14,7 +14,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/encounter/'
+      href: 'https://bybe.fly.dev/encounter'
     }
   ]
 });
@@ -310,7 +310,7 @@ const callbacks: VTourCallbacks = {
 
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
-    <v-tour name="/encounter/" :steps="steps" :options="options" :callbacks="callbacks" />
+    <v-tour name="/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
     <component :is="currentComponent" />
     <CreatureList />
   </q-page>
