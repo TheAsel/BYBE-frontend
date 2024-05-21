@@ -2,12 +2,14 @@
 FROM node:20.11.1-alpine AS develop-stage
 WORKDIR /bybe
 COPY package.json ./
-RUN npm install --ignore-scripts -g @quasar/cli 
+RUN npm install --ignore-scripts -g @quasar/cli
 COPY . .
 
 # build stage
 FROM develop-stage AS build-stage
 RUN npm install --ignore-scripts
+# Temporary vue3-tour fix until https://github.com/alexandreDavid/vue3-tour/pull/27 is merged
+RUN sed -i 's/"module": "dist\/vue3-tour\.es\.js",/"module": "dist\/vue3-tour\.js",/' ./node_modules/vue3-tour/package.json
 RUN npm run build
 
 # production stage
