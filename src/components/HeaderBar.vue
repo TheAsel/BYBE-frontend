@@ -15,9 +15,9 @@ import {
 } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
-import debounce from 'lodash/debounce';
-import { party } from 'src/types/party';
-import { encounterList } from 'src/types/encounter';
+import { debounce } from 'lodash';
+import type { party } from 'src/types/party';
+import type { encounterList } from 'src/types/encounter';
 import { encounterStore } from 'stores/store';
 
 const encounter = encounterStore();
@@ -113,9 +113,9 @@ watch(
 );
 
 const navigation = [
-  { name: 'Encounter Builder', to: '/encounter/' },
-  { name: 'Shop Generator', to: '/shop/' },
-  { name: 'NPC Generator', to: '/npc/' }
+  { name: 'Encounter Builder', to: '/encounter' },
+  { name: 'Shop Generator', to: '/shop' },
+  { name: 'NPC Generator', to: '/npc' }
 ];
 
 const $q = useQuasar();
@@ -221,7 +221,7 @@ const validateData = (result: string) => {
             return (
               typeof p.name === 'string' &&
               Array.isArray(p.members) &&
-              p.members.every((member: any) => typeof member === 'number')
+              p.members.every((member) => typeof member === 'number')
             );
           });
           if (isCompatible) {
@@ -321,8 +321,6 @@ const downloadData = () => {
           class="tw-flex tw-flex-col tw-gap-y-4 tw-gap-x-0 tw-mt-5 sm:tw-flex-row sm:tw-items-center sm:tw-justify-end sm:tw-gap-y-0 sm:tw-gap-x-7 sm:tw-mt-0 sm:tw-pl-7"
         >
           <router-link
-            flat
-            no-caps
             v-for="item in navigation"
             :key="item.name"
             :to="item.to"
@@ -371,11 +369,7 @@ const downloadData = () => {
               @click="settingsDialog = true"
               id="v-step-8"
             />
-            <q-dialog
-              v-model="settingsDialog"
-              aria-label="Settings dialog"
-              @escape-key="settingsDialog = false"
-            >
+            <q-dialog v-model="settingsDialog" aria-label="Settings dialog">
               <q-card flat bordered style="min-height: 400px; min-width: 270px">
                 <q-card-section>
                   <div class="row">
@@ -474,7 +468,7 @@ const downloadData = () => {
                         round
                         size="sm"
                         :icon="biQuestionCircle"
-                        href="https://2e.aonprd.com/Rules.aspx?ID=1370"
+                        href="https://2e.aonprd.com/Rules.aspx?ID=2762"
                         target="_blank"
                         class="tw-ml-2"
                       >
@@ -493,7 +487,7 @@ const downloadData = () => {
               </q-card>
             </q-dialog>
             <q-btn
-              v-if="currentPath === '/encounter/'"
+              v-if="currentPath === '/encounter'"
               flat
               padding="sm"
               class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"

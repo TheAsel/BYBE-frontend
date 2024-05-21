@@ -2,10 +2,10 @@
 import { ref, watch } from 'vue';
 import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
 import { matArrowDropDown } from '@quasar/extras/material-icons';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 import { partyStore, encounterStore, infoStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/api-calls';
-import { encounterList } from 'src/types/encounter';
+import type { encounterList } from 'src/types/encounter';
 
 const party = partyStore();
 const encounter = encounterStore();
@@ -64,11 +64,13 @@ const debouncedCall = debounce(async function () {
     is_pwl_on: is_pwl_on.value
   };
   try {
-    const returnedEncounterInfo = await encounterInfo(post);
-    if (typeof returnedEncounterInfo != 'undefined') {
-      info.setInfo(returnedEncounterInfo);
-    } else {
-      throw 'Error calculating encounter challenge';
+    if (encounter.getGenerating == false) {
+      const returnedEncounterInfo = await encounterInfo(post);
+      if (typeof returnedEncounterInfo != 'undefined') {
+        info.setInfo(returnedEncounterInfo);
+      } else {
+        throw 'Error calculating encounter challenge';
+      }
     }
   } catch (error) {
     console.error(error);
@@ -250,8 +252,12 @@ const saveChanges = () => {
         <q-btn flat dense @click="encounter.clearEncounter">CLEAR</q-btn>
       </div>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
-      <q-scroll-area visible style="height: calc(100% - 103px)">
-        <div v-for="(item, index) in encounter.getActiveEncounter.creatures" :key="index" dense>
+      <q-scroll-area
+        v-if="encounter.getGenerating == false"
+        visible
+        style="height: calc(100% - 103px)"
+      >
+        <div v-for="(item, index) in encounter.getActiveEncounter.creatures" :key="index">
           <div class="tw-flex tw-grow tw-flex-wrap justify-end">
             <div class="tw-flex-initial tw-w-12 tw-my-auto tw-mx-1">
               <q-btn
@@ -276,6 +282,7 @@ const saveChanges = () => {
             <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
               {{ item.quantity }}
               <a
+                v-if="item.archive_link"
                 :href="
                   item.archive_link +
                   '&Weak=' +
@@ -291,6 +298,7 @@ const saveChanges = () => {
                   >{{ item.name }}</span
                 >
               </a>
+              <span v-else>{{ item.name }}</span>
               — Lv. {{ item.level }}
             </div>
             <div class="tw-flex-initial tw-my-auto tw-mx-1">
@@ -339,6 +347,11 @@ const saveChanges = () => {
           <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
         </div>
       </q-scroll-area>
+      <div v-else class="tw-flex" style="height: calc(100% - 103px)">
+        <div class="tw-m-auto">
+          <q-spinner-gears class="tw-mx-auto" color="white" size="5em" />
+        </div>
+      </div>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
       <div class="tw-flex tw-mx-4 tw-my-1.5">
         <q-linear-progress

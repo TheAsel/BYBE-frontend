@@ -1,7 +1,9 @@
-import { party } from 'src/types/party';
-import { creature, creature_encounter } from 'src/types/creature';
-import { encounter, encounterList } from 'src/types/encounter';
+import type { party } from 'src/types/party';
+import type { creature, creature_encounter } from 'src/types/creature';
+import type { encounter, encounterList } from 'src/types/encounter';
 import { defineStore } from 'pinia';
+import { capitalize } from 'lodash';
+import type { roles } from 'src/types/filters';
 
 export const partyStore = defineStore('party', {
   state: () => ({
@@ -56,7 +58,8 @@ export const filtersStore = defineStore('filters', {
       rarities: [] as string[],
       families: [] as string[],
       creature_types: [] as string[],
-      sources: [] as string[]
+      sources: [] as string[],
+      creature_roles: [] as string[]
     }
   }),
   getters: {
@@ -64,7 +67,9 @@ export const filtersStore = defineStore('filters', {
   },
   actions: {
     updateTraits(newTraits: string[]) {
-      this.filters.traits = newTraits;
+      this.filters.traits = newTraits.map((trait) => {
+        return capitalize(trait);
+      });
     },
     updateAlignments(newAlignments: string[]) {
       this.filters.alignments = newAlignments;
@@ -84,6 +89,9 @@ export const filtersStore = defineStore('filters', {
     },
     updateSources(newSources: string[]) {
       this.filters.sources = newSources;
+    },
+    updateRoles(newRoles: string[]) {
+      this.filters.creature_roles = newRoles;
     }
   }
 });
@@ -92,10 +100,40 @@ export const creaturesStore = defineStore('creatures', {
   state: () => ({ creatures: [] as creature[] }),
   getters: {
     getCreatures: (state) => state.creatures,
-    getCreatureId: (state) => (id: number) => state.creatures.find((creature) => creature.id === id)
+    getCreatureId: (state) => (id: number) =>
+      state.creatures.find((creature) => creature.core_data.essential.id === id)
   },
   actions: {
     updateCreatures(newCreatures: creature[]) {
+      // calculate the roles of the creature, by picking the percentages that are at least over 50%
+      newCreatures.forEach((creature) => {
+        const rolePercentages: { role: roles; percentage: number }[] = [
+          { role: 'Brute', percentage: creature.core_data.derived.brute_percentage },
+          {
+            role: 'Magical Striker',
+            percentage: creature.core_data.derived.magical_striker_percentage
+          },
+          {
+            role: 'Skill Paragon',
+            percentage: creature.core_data.derived.skill_paragon_percentage
+          },
+          { role: 'Skirmisher', percentage: creature.core_data.derived.skirmisher_percentage },
+          { role: 'Sniper', percentage: creature.core_data.derived.sniper_percentage },
+          { role: 'Soldier', percentage: creature.core_data.derived.soldier_percentage },
+          { role: 'SpellCaster', percentage: creature.core_data.derived.spell_caster_percentage }
+        ];
+        const rolesList: roles[] = [];
+        rolePercentages.forEach((role) => {
+          if (role.percentage >= 50) {
+            rolesList.push(role.role);
+          }
+        });
+        if (rolePercentages.length > 0) {
+          creature.core_data.derived.creature_role = rolesList;
+        } else {
+          creature.core_data.derived.creature_role = ['None'];
+        }
+      });
       this.creatures = newCreatures;
     }
   }
@@ -105,12 +143,14 @@ export const encounterStore = defineStore('encounter', {
   state: () => ({
     encounters: [{ name: 'Default', creatures: [] }] as encounterList[],
     activeEncounter: 0,
-    is_pwl_on: false
+    is_pwl_on: false,
+    generating: false
   }),
   getters: {
     getEncounters: (state) => state.encounters,
     getActive: (state) => state.activeEncounter,
-    getActiveEncounter: (state) => state.encounters[state.activeEncounter]
+    getActiveEncounter: (state) => state.encounters[state.activeEncounter],
+    getGenerating: (state) => state.generating
   },
   actions: {
     clearEncounter() {
@@ -179,6 +219,9 @@ export const encounterStore = defineStore('encounter', {
     },
     setPwL(newPwl: boolean) {
       this.is_pwl_on = newPwl;
+    },
+    setGenerating(newGenerating: boolean) {
+      this.generating = newGenerating;
     }
   }
 });
