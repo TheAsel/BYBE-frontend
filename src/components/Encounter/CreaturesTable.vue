@@ -10,7 +10,8 @@ import {
   fasCrosshairs,
   fasUserShield,
   fasHatWizard,
-  fasGraduationCap
+  fasGraduationCap,
+  fasScroll
 } from '@quasar/extras/fontawesome-v6';
 import { capitalize, debounce } from 'lodash';
 import type { creature, creature_encounter } from 'src/types/creature';
@@ -18,8 +19,10 @@ import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
 import type { roles } from 'src/types/filters';
+import { useRouter } from 'vue-router';
 
 const encounterBuilderRef = ref();
+const router = useRouter();
 
 // ---- Stores declaration
 const filters = filtersStore();
@@ -301,6 +304,11 @@ const addCreature = debounce(function (creature: creature) {
     encounter.addToEncounter(min_creature);
   }
 }, 50);
+
+const openCreatureSheet = (id: number) => {
+  const routeData = router.resolve({ name: 'bestiary', query: { id: id } });
+  window.open(routeData.href, '_blank');
+};
 </script>
 
 <template>
@@ -923,6 +931,15 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">
+          <q-btn
+            round
+            unelevated
+            :icon="fasScroll"
+            size="sm"
+            class="tw-mr-1"
+            @click="openCreatureSheet(name.row.core_data.essential.id)"
+            target="_blank"
+          />
           <a
             v-if="name.row.core_data.derived.archive_link"
             :href="name.row.core_data.derived.archive_link"

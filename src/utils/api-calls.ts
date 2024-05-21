@@ -56,6 +56,30 @@ export async function requestFilters(
   }
 }
 
+export async function requestCreatureId(creature_id: number) {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    };
+    const response = await fetch(
+      backendUrl +
+        '/bestiary/base/' +
+        creature_id +
+        '?extra_data=true&combat_data=true&spell_casting_data=true',
+      requestOptions
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      const error = (data && data.message) || response.status;
+      throw error;
+    }
+    return data.results as creature;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function encounterInfo(encounter: {
   enemy_levels: number[];
   is_pwl_on: boolean;
