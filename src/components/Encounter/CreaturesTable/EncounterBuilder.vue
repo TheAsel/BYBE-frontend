@@ -28,7 +28,7 @@ const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
 const creatureNumber = ref({ min: 1, max: 20 });
 const challenge = ref<challenges>();
-const creatures_roles = ref<roles[]>();
+const creature_roles = ref<roles[]>();
 
 const tmpFilters = ref({
   traits: traits.value,
@@ -41,7 +41,7 @@ const tmpFilters = ref({
   allow_elite_variants: allow_elite_variants.value,
   creatures: creatureNumber.value,
   challenge: challenge.value,
-  creatures_roles: creatures_roles.value
+  creature_roles: creature_roles.value
 });
 
 const restoreSettings = () => {
@@ -56,7 +56,7 @@ const restoreSettings = () => {
   tmpFilters.value.allow_elite_variants = allow_elite_variants.value;
   tmpFilters.value.creatures = creatureNumber.value;
   tmpFilters.value.challenge = challenge.value;
-  tmpFilters.value.creatures_roles = creatures_roles.value;
+  tmpFilters.value.creature_roles = creature_roles.value;
 };
 
 const generateEncounter = debounce(async function () {
@@ -91,7 +91,7 @@ const generateEncounter = debounce(async function () {
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels,
     is_pwl_on: is_pwl_on.value,
-    creatures_roles: creatures_roles.value
+    creature_roles: creature_roles.value
   };
   try {
     const randomEncounter = await encounterGenerator(post);
@@ -135,7 +135,7 @@ const saveChanges = () => {
   allow_elite_variants.value = tmpFilters.value.allow_elite_variants;
   creatureNumber.value = tmpFilters.value.creatures;
   challenge.value = tmpFilters.value.challenge;
-  creatures_roles.value = tmpFilters.value.creatures_roles;
+  creature_roles.value = tmpFilters.value.creature_roles;
 };
 
 defineExpose({ generateEncounter });
@@ -303,7 +303,7 @@ defineExpose({ generateEncounter });
                 clearable
                 :clear-icon="matCancel"
                 options-dense
-                v-model="tmpFilters.creatures_roles"
+                v-model="tmpFilters.creature_roles"
                 :options="Object.freeze(filters.getFilters.creature_roles)"
                 label="Roles"
                 :dropdown-icon="matArrowDropDown"

@@ -277,21 +277,23 @@ const options: VTourOptions = {
 };
 
 const startTour = () => {
-  tourActive.value = true;
-  const tmpKoboldMage: creature_encounter = {
-    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
-    name: 'Kobold Dragon Mage',
-    level: 2,
-    variant: 'Base'
-  };
-  const tmpKoboldWarrior: creature_encounter = {
-    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272',
-    name: 'Kobold Warrior',
-    level: -1,
-    variant: 'Base'
-  };
-  encounter.addToEncounter(tmpKoboldMage);
-  encounter.addToEncounter(tmpKoboldWarrior);
+  if (!tourActive.value) {
+    tourActive.value = true;
+    const tmpKoboldMage: creature_encounter = {
+      archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
+      name: 'Kobold Dragon Mage',
+      level: 2,
+      variant: 'Base'
+    };
+    const tmpKoboldWarrior: creature_encounter = {
+      archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272',
+      name: 'Kobold Warrior',
+      level: -1,
+      variant: 'Base'
+    };
+    encounter.addToEncounter(tmpKoboldMage);
+    encounter.addToEncounter(tmpKoboldWarrior);
+  }
 };
 
 const stopTour = () => {

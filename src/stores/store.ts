@@ -105,7 +105,7 @@ export const creaturesStore = defineStore('creatures', {
   },
   actions: {
     updateCreatures(newCreatures: creature[]) {
-      // calculate the role of the creature, by picking the highest percentage that is at least over 50%
+      // calculate the roles of the creature, by picking the percentages that are at least over 50%
       newCreatures.forEach((creature) => {
         const rolePercentages: { role: roles; percentage: number }[] = [
           { role: 'Brute', percentage: creature.core_data.derived.brute_percentage },
@@ -122,14 +122,18 @@ export const creaturesStore = defineStore('creatures', {
           { role: 'Soldier', percentage: creature.core_data.derived.soldier_percentage },
           { role: 'SpellCaster', percentage: creature.core_data.derived.spell_caster_percentage }
         ];
-        const highestRole = rolePercentages.reduce((prev, current) => {
-          return prev.percentage > current.percentage ? prev : current;
+        const rolesList: roles[] = [];
+        rolePercentages.forEach((role) => {
+          if (role.percentage >= 50) {
+            rolesList.push(role.role);
+          }
         });
-        if (highestRole.percentage >= 50) {
-          creature.core_data.derived.creature_role = highestRole.role;
+        if (rolePercentages.length > 0) {
+          creature.core_data.derived.creature_role = rolesList;
         } else {
-          creature.core_data.derived.creature_role = 'None';
+          creature.core_data.derived.creature_role = ['None'];
         }
+        console.log(creature.core_data.derived.creature_role);
       });
       this.creatures = newCreatures;
     }

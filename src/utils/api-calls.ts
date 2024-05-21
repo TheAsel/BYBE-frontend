@@ -93,7 +93,7 @@ export async function encounterGenerator(body: {
   max_creatures: number;
   allow_weak_variants: boolean;
   allow_elite_variants: boolean;
-  creatures_roles: roles[] | undefined;
+  creature_roles: roles[] | undefined;
 }) {
   try {
     const requestOptions = {

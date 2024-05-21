@@ -84,7 +84,7 @@ const columns: {
   {
     name: 'alignment',
     label: 'Alignment',
-    field: (row) => row.core_data.alignment,
+    field: (row) => row.core_data.essential.alignment,
     required: false,
     align: 'left',
     sortable: true,
@@ -206,7 +206,7 @@ const combineFilters = computed(() => {
   });
   let filteredAlignment = filteredTraits.filter((out) => {
     if (filterAlignment.value && filterAlignment.value.length) {
-      return filterAlignment.value.includes(out.core_data.alignment);
+      return filterAlignment.value.includes(out.core_data.essential.alignment);
     }
     return out;
   });
@@ -246,7 +246,7 @@ const combineFilters = computed(() => {
   });
   let filteredRole = filteredAttacks.filter((out) => {
     if (filterRole.value && filterRole.value.length) {
-      return filterRole.value.includes(out.core_data.derived.creature_role!);
+      return filterRole.value.some((v) => out.core_data.derived.creature_role!.includes(v));
     }
     return out;
   });
@@ -993,9 +993,10 @@ const addCreature = debounce(function (creature: creature) {
       <template v-slot:body-cell-creature_role="roles">
         <q-td :props="roles">
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role === 'Brute'"
+            v-if="roles.row.core_data.derived.creature_role.includes('Brute')"
             :name="fasHandFist"
             size="sm"
+            left
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -1006,9 +1007,10 @@ const addCreature = debounce(function (creature: creature) {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role === 'Magical Striker'"
+            v-if="roles.row.core_data.derived.creature_role.includes('Magical Striker')"
             :name="fasMeteor"
             size="sm"
+            left
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -1019,9 +1021,10 @@ const addCreature = debounce(function (creature: creature) {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role === 'Skill Paragon'"
+            v-if="roles.row.core_data.derived.creature_role.includes('Skill Paragon')"
             :name="fasGraduationCap"
             size="sm"
+            left
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -1032,9 +1035,10 @@ const addCreature = debounce(function (creature: creature) {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role === 'Skirmisher'"
+            v-if="roles.row.core_data.derived.creature_role.includes('Skirmisher')"
             :name="fasUserNinja"
             size="sm"
+            left
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -1045,9 +1049,10 @@ const addCreature = debounce(function (creature: creature) {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role === 'Sniper'"
+            v-if="roles.row.core_data.derived.creature_role.includes('Sniper')"
             :name="fasCrosshairs"
             size="sm"
+            left
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -1058,9 +1063,10 @@ const addCreature = debounce(function (creature: creature) {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role === 'Soldier'"
+            v-if="roles.row.core_data.derived.creature_role.includes('Soldier')"
             :name="fasUserShield"
             size="sm"
+            left
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -1071,9 +1077,10 @@ const addCreature = debounce(function (creature: creature) {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role === 'SpellCaster'"
+            v-if="roles.row.core_data.derived.creature_role.includes('SpellCaster')"
             :name="fasHatWizard"
             size="sm"
+            left
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"

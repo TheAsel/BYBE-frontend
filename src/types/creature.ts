@@ -58,6 +58,7 @@ export type creature = {
       size: sizes;
       family: string;
       rarity: rarities;
+      alignment: alignments;
       license: string;
       remaster: boolean;
       source: string;
@@ -75,10 +76,9 @@ export type creature = {
       sniper_percentage: number;
       soldier_percentage: number;
       spell_caster_percentage: number;
-      creature_role?: roles;
+      creature_role?: roles[];
     };
     traits: string[];
-    alignment: alignments;
   };
   extra_data?: {
     ability_scores: {
