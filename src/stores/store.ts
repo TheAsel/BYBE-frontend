@@ -133,7 +133,6 @@ export const creaturesStore = defineStore('creatures', {
         } else {
           creature.core_data.derived.creature_role = ['None'];
         }
-        console.log(creature.core_data.derived.creature_role);
       });
       this.creatures = newCreatures;
     }
