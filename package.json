@@ -21,15 +21,15 @@
     "quasar": "^2.16.4",
     "vue": "^3.4.27",
     "vue-router": "^4.3.2",
-    "vue3-tour": "1.0.0"
+    "vue3-tour": "1.0.1"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.9.3",
     "@quasar/cli": "^2.4.1",
-    "@types/lodash": "^4.17.1",
+    "@types/lodash": "^4.17.4",
     "@types/node": "^20.12.12",
-    "@typescript-eslint/eslint-plugin": "^7.9.0",
-    "@typescript-eslint/parser": "^7.9.0",
+    "@typescript-eslint/eslint-plugin": "^7.10.0",
+    "@typescript-eslint/parser": "^7.10.0",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
