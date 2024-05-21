@@ -3,11 +3,21 @@ import { ref, computed } from 'vue';
 import { matArrowDropDown, matCancel, matWarning } from '@quasar/extras/material-icons';
 import { biEraser, biArrowDownUp, biBook } from '@quasar/extras/bootstrap-icons';
 import { mdiSword, mdiBowArrow, mdiMagicStaff } from '@quasar/extras/mdi-v7';
-import debounce from 'lodash/debounce';
-import { creature, creature_encounter } from 'src/types/creature';
+import {
+  fasHandFist,
+  fasMeteor,
+  fasUserNinja,
+  fasCrosshairs,
+  fasUserShield,
+  fasHatWizard,
+  fasGraduationCap
+} from '@quasar/extras/fontawesome-v6';
+import { capitalize, debounce } from 'lodash';
+import type { creature, creature_encounter } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
+import type { roles } from 'src/types/filters';
 
 const encounterBuilderRef = ref();
 
@@ -29,7 +39,7 @@ const columns: {
   {
     name: 'source',
     label: 'Source',
-    field: (row) => row.sources,
+    field: (row) => row.core_data.essential.source,
     required: false,
     align: 'center',
     sortable: true,
@@ -38,7 +48,7 @@ const columns: {
   {
     name: 'name',
     label: 'Name',
-    field: (row) => row.name,
+    field: (row) => row.core_data.essential.name,
     required: true,
     align: 'left',
     sortable: true,
@@ -47,7 +57,7 @@ const columns: {
   {
     name: 'level',
     label: 'Level',
-    field: (row) => row.base_level,
+    field: (row) => row.core_data.essential.level,
     required: false,
     align: 'left',
     sortable: true,
@@ -56,7 +66,7 @@ const columns: {
   {
     name: 'hp',
     label: 'HP',
-    field: (row) => row.hp,
+    field: (row) => row.core_data.essential.hp,
     required: false,
     align: 'left',
     sortable: true,
@@ -65,7 +75,7 @@ const columns: {
   {
     name: 'traits',
     label: 'Traits',
-    field: (row) => row.traits,
+    field: (row) => row.core_data.traits,
     required: false,
     align: 'left',
     sortable: true,
@@ -74,7 +84,7 @@ const columns: {
   {
     name: 'alignment',
     label: 'Alignment',
-    field: (row) => row.alignment,
+    field: (row) => row.core_data.essential.alignment,
     required: false,
     align: 'left',
     sortable: true,
@@ -83,7 +93,7 @@ const columns: {
   {
     name: 'size',
     label: 'Size',
-    field: (row) => row.size,
+    field: (row) => row.core_data.essential.size,
     required: false,
     align: 'left',
     sortable: true,
@@ -92,7 +102,7 @@ const columns: {
   {
     name: 'rarity',
     label: 'Rarity',
-    field: (row) => row.rarity,
+    field: (row) => row.core_data.essential.rarity,
     required: false,
     align: 'left',
     sortable: true,
@@ -101,7 +111,7 @@ const columns: {
   {
     name: 'family',
     label: 'Family',
-    field: (row) => row.family,
+    field: (row) => row.core_data.essential.family,
     required: false,
     align: 'left',
     sortable: true,
@@ -109,21 +119,34 @@ const columns: {
   },
   {
     name: 'creature_type',
-    label: 'Creature Type',
-    field: (row) => row.creature_type,
+    label: 'Type',
+    field: (row) => row.core_data.essential.cr_type,
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 155px; max-width: 300px;'
+    style: 'min-width: 100px'
   },
   {
     name: 'attacks',
     label: 'Attacks',
-    field: (row) => [row.is_melee, row.is_ranged, row.is_spell_caster],
+    field: (row) => [
+      row.core_data.derived.is_melee,
+      row.core_data.derived.is_ranged,
+      row.core_data.derived.is_spell_caster
+    ],
     required: false,
     align: 'left',
     sortable: true,
     style: 'min-width: 80px;'
+  },
+  {
+    name: 'creature_role',
+    label: 'Role',
+    field: (row) => row.core_data.derived.creature_role!,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 90px; max-width: 200px;'
   }
 ];
 
@@ -139,6 +162,7 @@ const filterRarity = ref<string[]>();
 const filterFamily = ref<string[]>();
 const filterType = ref<string[]>();
 const filterAttacks = ref([false, false, false]);
+const filterRole = ref<roles[]>();
 
 // ---- Filter function
 // combines all filters
@@ -146,75 +170,87 @@ const combineFilters = computed(() => {
   let filteredItems = creatures.getCreatures;
   let filteredSources = filteredItems.filter((out) => {
     if (filterSource.value && filterSource.value.length) {
-      return filterSource.value.some((v) => out.sources.includes(v));
+      return filterSource.value.some((v) => out.core_data.essential.source.includes(v));
     }
     return out;
   });
   let filteredNames = filteredSources.filter((out) => {
     if (filterName.value && filterName.value.length) {
-      return out.name.toLowerCase().includes(filterName.value.toLowerCase());
+      return out.core_data.essential.name.toLowerCase().includes(filterName.value.toLowerCase());
     }
     return out;
   });
   let filteredLevel = filteredNames.filter((out) => {
     if (levelRange.value.max < 25 || levelRange.value.min > -1) {
-      return out.base_level <= levelRange.value.max && out.base_level >= levelRange.value.min;
+      return (
+        out.core_data.essential.level <= levelRange.value.max &&
+        out.core_data.essential.level >= levelRange.value.min
+      );
     }
     return out;
   });
   let filteredHp = filteredLevel.filter((out) => {
     if (hpRange.value.max < 600 || hpRange.value.min > 0) {
-      return out.hp <= hpRange.value.max && out.hp >= hpRange.value.min;
+      return (
+        out.core_data.essential.hp <= hpRange.value.max &&
+        out.core_data.essential.hp >= hpRange.value.min
+      );
     }
     return out;
   });
   let filteredTraits = filteredHp.filter((out) => {
     if (filterTraits.value && filterTraits.value.length) {
-      return filterTraits.value.some((v) => out.traits.includes(v));
+      return filterTraits.value.some((v) => out.core_data.traits.includes(v.toLowerCase()));
     }
     return out;
   });
   let filteredAlignment = filteredTraits.filter((out) => {
     if (filterAlignment.value && filterAlignment.value.length) {
-      return filterAlignment.value.includes(out.alignment);
+      return filterAlignment.value.includes(out.core_data.essential.alignment);
     }
     return out;
   });
   let filteredSize = filteredAlignment.filter((out) => {
     if (filterSize.value && filterSize.value.length) {
-      return filterSize.value.includes(out.size);
+      return filterSize.value.includes(out.core_data.essential.size);
     }
     return out;
   });
   let filteredRarity = filteredSize.filter((out) => {
     if (filterRarity.value && filterRarity.value.length) {
-      return filterRarity.value.includes(out.rarity);
+      return filterRarity.value.includes(out.core_data.essential.rarity);
     }
     return out;
   });
   let filteredFamily = filteredRarity.filter((out) => {
     if (filterFamily.value && filterFamily.value.length) {
-      return filterFamily.value.includes(out.family);
+      return filterFamily.value.includes(out.core_data.essential.family);
     }
     return out;
   });
   let filteredType = filteredFamily.filter((out) => {
     if (filterType.value && filterType.value.length) {
-      return filterType.value.includes(out.creature_type);
+      return filterType.value.includes(out.core_data.essential.cr_type);
     }
     return out;
   });
   let filteredAttacks = filteredType.filter((out) => {
     if (filterAttacks.value[0] || filterAttacks.value[1] || filterAttacks.value[2]) {
       return (
-        out.is_melee === filterAttacks.value[0] &&
-        out.is_ranged === filterAttacks.value[1] &&
-        out.is_spell_caster === filterAttacks.value[2]
+        out.core_data.derived.is_melee === filterAttacks.value[0] &&
+        out.core_data.derived.is_ranged === filterAttacks.value[1] &&
+        out.core_data.derived.is_spell_caster === filterAttacks.value[2]
       );
     }
     return out;
   });
-  return filteredAttacks;
+  let filteredRole = filteredAttacks.filter((out) => {
+    if (filterRole.value && filterRole.value.length) {
+      return filterRole.value.some((v) => out.core_data.derived.creature_role!.includes(v));
+    }
+    return out;
+  });
+  return filteredRole;
 });
 
 // ---- Reset filters function
@@ -232,6 +268,7 @@ const resetFilters = () => {
   filterFamily.value = [];
   filterType.value = [];
   filterAttacks.value = [false, false, false];
+  filterRole.value = [];
 };
 
 // ---- Table and visible columns
@@ -241,9 +278,9 @@ const visibleColumns = ref([
   'level',
   'traits',
   'size',
-  'family',
   'creature_type',
-  'attacks'
+  'attacks',
+  'creature_role'
 ]);
 
 // ---- Column sort function
@@ -253,12 +290,12 @@ const sort = (col: string) => {
 
 // ---- Add creature to encounter function
 const addCreature = debounce(function (creature: creature) {
-  const selectedCreature = creatures.getCreatureId(creature.id);
+  const selectedCreature = creatures.getCreatureId(creature.core_data.essential.id);
   if (selectedCreature) {
     const min_creature: creature_encounter = {
-      archive_link: selectedCreature.archive_link,
-      name: selectedCreature.name,
-      level: selectedCreature.base_level,
+      archive_link: selectedCreature.core_data.derived.archive_link,
+      name: selectedCreature.core_data.essential.name,
+      level: selectedCreature.core_data.essential.level,
       variant: 'Base'
     };
     encounter.addToEncounter(min_creature);
@@ -432,7 +469,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort name column"
-                @click="sort('name')"
+                @click="sort(columns[1].name)"
               />
             </div>
           </div>
@@ -478,7 +515,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort level column"
-                @click="sort('level')"
+                @click="sort(columns[2].name)"
               />
             </div>
           </div>
@@ -524,7 +561,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort hp column"
-                @click="sort('hp')"
+                @click="sort(columns[3].name)"
               />
             </div>
           </div>
@@ -559,7 +596,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort traits column"
-                @click="sort('traits')"
+                @click="sort(columns[4].name)"
               />
             </div>
           </div>
@@ -594,7 +631,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort alignment column"
-                @click="sort('alignment')"
+                @click="sort(columns[5].name)"
               />
             </div>
           </div>
@@ -629,7 +666,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort size column"
-                @click="sort('size')"
+                @click="sort(columns[6].name)"
               />
             </div>
           </div>
@@ -664,7 +701,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort rarity column"
-                @click="sort('rarity')"
+                @click="sort(columns[7].name)"
               />
             </div>
           </div>
@@ -699,7 +736,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort family column"
-                @click="sort('family')"
+                @click="sort(columns[8].name)"
               />
             </div>
           </div>
@@ -734,7 +771,7 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort creature type column"
-                @click="sort('creature_type')"
+                @click="sort(columns[9].name)"
               />
             </div>
           </div>
@@ -822,7 +859,42 @@ const addCreature = debounce(function (creature: creature) {
                 class="tw-p-2"
                 :icon="biArrowDownUp"
                 aria-label="Sort attacks column"
-                @click="sort('attacks')"
+                @click="sort(columns[10].name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template v-slot:header-cell-creature_role>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                multiple
+                dense
+                outlined
+                clearable
+                :clear-icon="matCancel"
+                options-dense
+                v-model="filterRole"
+                :options="Object.freeze(filters.getFilters.creature_roles)"
+                :label="columns[11].label"
+                :dropdown-icon="matArrowDropDown"
+                :style="columns[11].style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                rounded
+                dense
+                size="xs"
+                class="tw-p-2"
+                :icon="biArrowDownUp"
+                aria-label="Sort creature role column"
+                @click="sort(columns[11].name)"
               />
             </div>
           </div>
@@ -830,14 +902,20 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:body-cell-source="source">
         <q-td :props="source">
-          <q-icon round unelevated v-if="source.row.sources.length > 0" :name="biBook" size="xs">
+          <q-icon
+            round
+            unelevated
+            v-if="source.row.core_data.essential.source"
+            :name="biBook"
+            size="xs"
+          >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
               anchor="top middle"
               self="bottom middle"
             >
-              <i class="tw-whitespace-nowrap" v-for="item in source.row.sources" :key="item">
-                {{ item }}
+              <i class="tw-whitespace-nowrap">
+                {{ source.row.core_data.essential.source }}
               </i>
             </q-tooltip>
           </q-icon>
@@ -845,24 +923,40 @@ const addCreature = debounce(function (creature: creature) {
       </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">
-          <a :href="name.row.archive_link" target="_blank" rel="noopener" class="tw-inline">
+          <a
+            v-if="name.row.core_data.derived.archive_link"
+            :href="name.row.core_data.derived.archive_link"
+            target="_blank"
+            rel="noopener"
+            class="tw-inline"
+          >
             <span
               class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-max-w-[250px] tw-whitespace-normal"
               >{{ name.value }}</span
             >
           </a>
+          <span v-else>{{ name.value }}</span>
         </q-td>
       </template>
       <template v-slot:body-cell-traits="traits">
         <q-td :props="traits">
-          <span v-if="traits.row.traits" class="tw-block tw-max-w-[250px] tw-whitespace-normal">
-            {{ traits.row.traits.join(', ') }}
+          <span
+            v-if="traits.row.core_data.traits"
+            class="tw-block tw-max-w-[250px] tw-whitespace-normal"
+          >
+            {{
+              traits.row.core_data.traits
+                .map((trait: string) => {
+                  return capitalize(trait);
+                })
+                .join(', ')
+            }}
           </span>
         </q-td>
       </template>
       <template v-slot:body-cell-attacks="attacks">
         <q-td :props="attacks">
-          <q-icon v-if="attacks.row.is_melee" :name="mdiSword" size="sm" left>
+          <q-icon v-if="attacks.row.core_data.derived.is_melee" :name="mdiSword" size="sm" left>
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
               anchor="top middle"
@@ -871,7 +965,7 @@ const addCreature = debounce(function (creature: creature) {
               Melee
             </q-tooltip>
           </q-icon>
-          <q-icon v-if="attacks.row.is_ranged" :name="mdiBowArrow" size="sm" left>
+          <q-icon v-if="attacks.row.core_data.derived.is_ranged" :name="mdiBowArrow" size="sm" left>
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
               anchor="top middle"
@@ -880,13 +974,120 @@ const addCreature = debounce(function (creature: creature) {
               Ranged
             </q-tooltip>
           </q-icon>
-          <q-icon v-if="attacks.row.is_spell_caster" :name="mdiMagicStaff" size="sm" left>
+          <q-icon
+            v-if="attacks.row.core_data.derived.is_spell_caster"
+            :name="mdiMagicStaff"
+            size="sm"
+            left
+          >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
               anchor="top middle"
               self="bottom middle"
             >
               Spells
+            </q-tooltip>
+          </q-icon>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-creature_role="roles">
+        <q-td :props="roles">
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role.includes('Brute')"
+            :name="fasHandFist"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Brute
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role.includes('Magical Striker')"
+            :name="fasMeteor"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Magical Striker
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role.includes('Skill Paragon')"
+            :name="fasGraduationCap"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Skill Paragon
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role.includes('Skirmisher')"
+            :name="fasUserNinja"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Skirmisher
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role.includes('Sniper')"
+            :name="fasCrosshairs"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Sniper
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role.includes('Soldier')"
+            :name="fasUserShield"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Soldier
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="roles.row.core_data.derived.creature_role.includes('SpellCaster')"
+            :name="fasHatWizard"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              SpellCaster
             </q-tooltip>
           </q-icon>
         </q-td>

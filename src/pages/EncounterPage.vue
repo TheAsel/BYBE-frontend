@@ -1,22 +1,30 @@
 <script setup lang="ts">
-import { shallowRef } from 'vue';
+import { ref, shallowRef } from 'vue';
 import { useHead } from '@unhead/vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
 import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
-import { party } from 'src/types/party';
-import { creature_encounter } from 'src/types/creature';
-import { encounterList } from 'src/types/encounter';
+import type { party } from 'src/types/party';
+import type { creature_encounter } from 'src/types/creature';
+import type { encounterList } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
+import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
 useHead({
-  title: 'Encounter Builder - BYBE'
+  title: 'Encounter Builder - BYBE',
+  link: [
+    {
+      rel: 'canonical',
+      href: 'https://bybe.fly.dev/encounter'
+    }
+  ]
 });
 
-const party = partyStore();
+const partyStores = partyStore();
 const filters = filtersStore();
 const creatures = creaturesStore();
 const encounter = encounterStore();
 const currentComponent = shallowRef();
+const tourActive = ref(false);
 
 // read party local storage
 const localParty = localStorage.getItem('parties');
@@ -28,7 +36,7 @@ if (localParty) {
         return (
           typeof p.name === 'string' &&
           Array.isArray(p.members) &&
-          p.members.every((member: any) => typeof member === 'number')
+          p.members.every((member) => typeof member === 'number')
         );
       });
       if (isCompatible) {
@@ -42,7 +50,7 @@ if (localParty) {
         if (new Set(partyNames).size !== partyNames.length) {
           throw 'Duplicate saved party names';
         }
-        party.updateParties(parties);
+        partyStores.updateParties(parties);
       } else {
         throw 'Invalid saved party format';
       }
@@ -53,7 +61,7 @@ if (localParty) {
     console.error(error);
     const defaultParty = { name: 'Default', members: [1, 1, 1, 1] };
     localStorage.setItem('parties', JSON.stringify([defaultParty]));
-    party.updateParties([defaultParty]);
+    partyStores.updateParties([defaultParty]);
   }
 }
 
@@ -98,6 +106,7 @@ try {
     filters.getFilters.rarities.length === 0 ||
     filters.getFilters.families.length === 0 ||
     filters.getFilters.sources.length === 0 ||
+    filters.getFilters.creature_roles.length === 0 ||
     creatures.getCreatures.length === 0
   ) {
     let [
@@ -108,6 +117,7 @@ try {
       familyList,
       creatureTypeList,
       sourceList,
+      roleList,
       creatureList
     ] = await Promise.all([
       requestFilters('traits'),
@@ -117,6 +127,7 @@ try {
       requestFilters('families'),
       requestFilters('creature_types'),
       requestFilters('sources'),
+      requestFilters('creature_roles'),
       requestCreatures(0, -1)
     ]);
 
@@ -162,6 +173,12 @@ try {
       throw 'Error loading creature sources';
     }
 
+    if (typeof roleList != 'undefined') {
+      filters.updateRoles(roleList);
+    } else {
+      throw 'Error loading creature roles';
+    }
+
     if (typeof creatureList != 'undefined') {
       creatures.updateCreatures(creatureList);
     } else {
@@ -176,7 +193,7 @@ try {
   console.error(error);
 }
 
-const steps = [
+const steps: Step[] = [
   {
     target: '#v-step-0',
     content:
@@ -249,7 +266,7 @@ const steps = [
   }
 ];
 
-const options = {
+const options: VTourOptions = {
   highlight: true,
   labels: {
     buttonSkip: 'Close Help',
@@ -260,28 +277,34 @@ const options = {
 };
 
 const startTour = () => {
-  const tmpKoboldMage: creature_encounter = {
-    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
-    name: 'Kobold Dragon Mage',
-    level: 2,
-    variant: 'Base'
-  };
-  const tmpKoboldWarrior: creature_encounter = {
-    archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272',
-    name: 'Kobold Warrior',
-    level: -1,
-    variant: 'Base'
-  };
-  encounter.addToEncounter(tmpKoboldMage);
-  encounter.addToEncounter(tmpKoboldWarrior);
+  if (!tourActive.value) {
+    tourActive.value = true;
+    const tmpKoboldMage: creature_encounter = {
+      archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
+      name: 'Kobold Dragon Mage',
+      level: 2,
+      variant: 'Base'
+    };
+    const tmpKoboldWarrior: creature_encounter = {
+      archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272',
+      name: 'Kobold Warrior',
+      level: -1,
+      variant: 'Base'
+    };
+    encounter.addToEncounter(tmpKoboldMage);
+    encounter.addToEncounter(tmpKoboldWarrior);
+  }
 };
 
 const stopTour = () => {
-  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
-  encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+  if (tourActive.value) {
+    encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+    encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+    tourActive.value = false;
+  }
 };
 
-const callbacks = {
+const callbacks: VTourCallbacks = {
   onStart: startTour,
   onStop: stopTour
 };
@@ -289,7 +312,7 @@ const callbacks = {
 
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
-    <v-tour name="/encounter/" :steps="steps" :options="options" :callbacks="callbacks" />
+    <v-tour name="/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
     <component :is="currentComponent" />
     <CreatureList />
   </q-page>

@@ -2,7 +2,13 @@
 import { useHead } from '@unhead/vue';
 
 useHead({
-  title: 'Shop Generator - BYBE'
+  title: 'Shop Generator - BYBE',
+  link: [
+    {
+      rel: 'canonical',
+      href: 'https://bybe.fly.dev/shop'
+    }
+  ]
 });
 </script>
 
