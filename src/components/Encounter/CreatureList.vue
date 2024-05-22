@@ -28,8 +28,8 @@ tmpEncounter.value = {
 const debouncedCall = debounce(async function () {
   const encounterList = encounter.getActiveEncounter.creatures;
   const enemyLevels: number[] = [];
-  for (var i = 0; i < encounterList.length; i++) {
-    for (var j = 0; j < encounterList[i].quantity!; j++) {
+  for (let i = 0; i < encounterList.length; i++) {
+    for (let j = 0; j < encounterList[i].quantity!; j++) {
       switch (encounterList[i].variant) {
         case 'Weak':
           enemyLevels.push(encounterList[i].level - 1);

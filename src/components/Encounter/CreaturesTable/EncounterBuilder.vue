@@ -98,7 +98,7 @@ const generateEncounter = debounce(async function () {
     if (typeof randomEncounter != 'undefined') {
       if (randomEncounter.count > 0 && randomEncounter.results) {
         encounter.clearEncounter();
-        for (var i = 0; i < randomEncounter.count; i++) {
+        for (let i = 0; i < randomEncounter.count; i++) {
           const min_creature: creature_encounter = {
             archive_link: randomEncounter.results[i].core_data.derived.archive_link,
             name: randomEncounter.results[i].core_data.essential.name,

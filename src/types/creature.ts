@@ -1,11 +1,15 @@
 import type { alignments, rarities, roles, sizes } from './filters';
 
+interface keyValue {
+  [key: string]: number;
+}
+
 export type creature = {
   combat_data?: {
     ac: number;
     immunities: string[];
-    resistances: string[];
-    weaknesses: string[];
+    resistances: keyValue;
+    weaknesses: keyValue;
     saving_throws: {
       fortitude: number;
       fortitude_detail: string;
@@ -120,7 +124,7 @@ export type creature = {
         proficiency: number;
       }
     ];
-    speeds: number[];
+    speeds: keyValue;
   };
   spell_caster_data?: {
     spell_caster_entry: {
