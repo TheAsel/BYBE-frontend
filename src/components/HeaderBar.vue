@@ -496,6 +496,7 @@ const downloadData = () => {
                         :icon="biQuestionCircle"
                         href="https://2e.aonprd.com/Rules.aspx?ID=2762"
                         target="_blank"
+                        rel="noopener"
                         class="tw-ml-2"
                       >
                         <q-tooltip

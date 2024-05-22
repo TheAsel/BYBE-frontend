@@ -360,9 +360,21 @@ const spellString = computed(() => {
           <div
             class="tw-flex tw-flex-row tw-font-bold tw-text-lg tw-text-gray-800 dark:tw-text-white"
           >
-            <div class="tw-flex-none tw-mr-2">
-              {{ creatureData?.core_data.essential.name.toUpperCase() }}
-            </div>
+            <a
+              v-if="creatureData?.core_data.derived.archive_link"
+              class="tw-flex-none tw-mr-2"
+              :href="creatureData?.core_data.derived.archive_link"
+              target="_blank"
+              rel="noopener"
+            >
+              <span
+                class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-max-w-[250px] tw-whitespace-normal"
+                >{{ creatureData?.core_data.essential.name.toUpperCase() }}</span
+              >
+            </a>
+            <span v-else class="tw-align-middle">{{
+              creatureData?.core_data.essential.name.toUpperCase()
+            }}</span>
             <div class="tw-flex-grow"></div>
             <div class="tw-flex-none">
               {{ creatureData?.core_data.essential.cr_type.toUpperCase() }}
