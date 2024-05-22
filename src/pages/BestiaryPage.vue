@@ -355,7 +355,7 @@ const spellString = computed(() => {
       flat
       class="tw-items-center tw-max-w-[50rem] tw-mx-auto tw-mt-4 tw-p-4 tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700"
     >
-      <q-scroll-area style="height: calc(100vh - 150px); width: auto">
+      <q-scroll-area style="height: calc(100vh - 155px); width: auto">
         <div class="q-gutter-y-xs">
           <div
             class="tw-flex tw-flex-row tw-font-bold tw-text-lg tw-text-gray-800 dark:tw-text-white"
