@@ -15,7 +15,7 @@ import {
 } from '@quasar/extras/fontawesome-v6';
 import { capitalize, debounce } from 'lodash';
 import type { creature, creature_encounter } from 'src/types/creature';
-import { filtersStore, creaturesStore, encounterStore } from 'stores/store';
+import { filtersStore, creaturesStore, encounterStore, settingsStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
 import type { roles } from 'src/types/filters';
@@ -25,6 +25,7 @@ const encounterBuilderRef = ref();
 const router = useRouter();
 
 // ---- Stores declaration
+const settings = settingsStore();
 const filters = filtersStore();
 const creatures = creaturesStore();
 const encounter = encounterStore();
@@ -932,6 +933,7 @@ const openCreatureSheet = (id: number) => {
       <template v-slot:body-cell-name="name">
         <q-td :props="name">
           <q-btn
+            v-if="settings.getCreatureSheets"
             round
             unelevated
             :icon="fasScroll"

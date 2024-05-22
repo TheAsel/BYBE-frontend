@@ -5,6 +5,20 @@ import { defineStore } from 'pinia';
 import { capitalize } from 'lodash';
 import type { roles } from 'src/types/filters';
 
+export const settingsStore = defineStore('settings', {
+  state: () => ({
+    is_creature_sheet_on: false
+  }),
+  getters: {
+    getCreatureSheets: (state) => state.is_creature_sheet_on
+  },
+  actions: {
+    setCreatureSheets(newCreatureSheets: boolean) {
+      this.is_creature_sheet_on = newCreatureSheets;
+    }
+  }
+});
+
 export const partyStore = defineStore('party', {
   state: () => ({
     parties: [{ name: 'Default', members: [1, 1, 1, 1] }] as party[],

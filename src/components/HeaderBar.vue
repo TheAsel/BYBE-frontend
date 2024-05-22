@@ -14,13 +14,15 @@ import {
   biQuestionCircle
 } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
+import { fasFlaskVial } from '@quasar/extras/fontawesome-v6';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 import { debounce } from 'lodash';
 import type { party } from 'src/types/party';
 import type { encounterList } from 'src/types/encounter';
-import { encounterStore } from 'stores/store';
+import { encounterStore, settingsStore } from 'stores/store';
 
 const encounter = encounterStore();
+const settings = settingsStore();
 
 TailwindDarkFix();
 
@@ -103,6 +105,30 @@ switch (localPwl.value) {
 const togglePwL = () => {
   localStorage.setItem('is_pwl_on', JSON.stringify(is_pwl_on.value));
   encounter.setPwL(is_pwl_on.value);
+};
+
+const is_creature_sheets_on = ref(false);
+const localCreatureSheets = ref(localStorage.getItem('is_creature_sheets_on'));
+
+switch (localCreatureSheets.value) {
+  case 'true':
+    is_creature_sheets_on.value = true;
+    settings.setCreatureSheets(true);
+    break;
+  case 'false':
+    is_creature_sheets_on.value = false;
+    settings.setCreatureSheets(false);
+    break;
+  default:
+    is_creature_sheets_on.value = false;
+    localStorage.setItem('is_creature_sheets_on', 'false');
+    settings.setCreatureSheets(false);
+    break;
+}
+
+const toggleCreatureSheets = () => {
+  localStorage.setItem('is_creature_sheets_on', JSON.stringify(is_creature_sheets_on.value));
+  settings.setCreatureSheets(is_creature_sheets_on.value);
 };
 
 watch(
@@ -442,7 +468,7 @@ const downloadData = () => {
                             anchor="top middle"
                             self="bottom middle"
                           >
-                            <b>Work in progress!</b> <br />
+                            <strong>Work in progress!</strong> <br />
                             Waiting for the Monster Core
                           </q-tooltip>
                         </q-toggle>
@@ -477,8 +503,41 @@ const downloadData = () => {
                           anchor="top middle"
                           self="bottom middle"
                         >
-                          <b>Proficiency without Level</b> <br />
+                          <strong>Proficiency without Level</strong> <br />
                           Click to learn more
+                        </q-tooltip>
+                      </q-btn>
+                    </q-card-actions>
+                    <q-separator />
+                    <q-card-actions>
+                      <div class="tw-mx-auto">
+                        <q-icon :name="fasFlaskVial" size="sm" class="tw-mr-2"></q-icon>
+                        Experimental features
+                      </div>
+                    </q-card-actions>
+                    <q-card-actions>
+                      <q-toggle
+                        v-model="is_creature_sheets_on"
+                        label="Creature sheets"
+                        @update:model-value="toggleCreatureSheets"
+                        class="tw-mx-auto"
+                      >
+                      </q-toggle>
+                      <q-btn
+                        flat
+                        round
+                        size="sm"
+                        :icon="biQuestionCircle"
+                        target="_blank"
+                        class="tw-ml-2"
+                      >
+                        <q-tooltip
+                          class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                          anchor="top middle"
+                          self="bottom middle"
+                        >
+                          <strong>Click on the scroll beside the creature's name</strong> <br />
+                          It will show a creature sheet showing it's attributes
                         </q-tooltip>
                       </q-btn>
                     </q-card-actions>
