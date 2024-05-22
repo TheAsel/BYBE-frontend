@@ -248,7 +248,7 @@ const speedString = () => {
 const spellString = computed(() => {
   const spells = creatureData?.spell_caster_data?.spells;
   let finalString = '';
-  const spellLevels = [false, false, false, false, false, false, false, false, false, false];
+  const spellLevels: boolean[] = new Array(10).fill(false);
   finalString +=
     '<strong>' +
     creatureData?.spell_caster_data?.spell_caster_entry.spell_casting_name +
@@ -259,7 +259,6 @@ const spellString = computed(() => {
     '; ';
   if (spells != undefined && spells.length > 0) {
     spells.forEach((spell) => {
-      console.log(spell.level);
       switch (spell.level) {
         case 10:
           if (!spellLevels[10]) {
