@@ -34,3 +34,11 @@
   font-display: swap;
 }
 /* END Bold Italic */
+@font-face {
+  font-family: 'Pathfinder2eActions';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local('font'),
+    url('./fonts/Pathfinder2eActions.ttf') format('truetype');
+}
