@@ -947,14 +947,14 @@ const openCreatureSheet = (id: number) => {
             :href="name.row.core_data.derived.archive_link"
             target="_blank"
             rel="noopener"
-            class="tw-inline"
+            class="tw-inline tw-align-middle"
           >
             <span
               class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-max-w-[250px] tw-whitespace-normal"
               >{{ name.value }}</span
             >
           </a>
-          <span v-else>{{ name.value }}</span>
+          <span v-else class="tw-align-middle">{{ name.value }}</span>
         </q-td>
       </template>
       <template v-slot:body-cell-traits="traits">
