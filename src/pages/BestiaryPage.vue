@@ -3,10 +3,11 @@ import { ref, computed } from 'vue';
 import { useHead } from '@unhead/vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
+import { matPriorityHigh, matArrowDropDown } from '@quasar/extras/material-icons';
 import type { creature } from 'src/types/creature';
 import { requestCreatureId } from 'src/utils/api-calls';
 import _, { isNull } from 'lodash';
+import { variants } from 'src/types/filters';
 
 const title = ref('Creature Sheet - BYBE');
 
@@ -25,10 +26,26 @@ const router = useRouter();
 const $q = useQuasar();
 
 const creatureId = Number(route.query.id);
+const queryVariant: string = String(route.query.variant).toLowerCase();
+const creatureVariant = ref<variants>('Base');
+
 let creatureData: creature | undefined;
 try {
   if (creatureId !== undefined && !isNaN(creatureId)) {
-    creatureData = await requestCreatureId(creatureId);
+    switch (queryVariant) {
+      case 'weak':
+        creatureVariant.value = 'Weak';
+        creatureData = await requestCreatureId(creatureId, 'Weak');
+        break;
+      case 'elite':
+        creatureVariant.value = 'Elite';
+        creatureData = await requestCreatureId(creatureId, 'Elite');
+        break;
+      default:
+        creatureVariant.value = 'Base';
+        creatureData = await requestCreatureId(creatureId, 'Base');
+        break;
+    }
     if (isNull(creatureData) || creatureData === undefined) {
       console.error('Missing creature ID');
       $q.notify({
@@ -39,7 +56,12 @@ try {
       });
       router.push({ name: 'encounter' });
     } else {
-      title.value = creatureData?.core_data.essential.name + ' - BYBE';
+      if (creatureVariant.value === 'Base') {
+        title.value = creatureData?.core_data.essential.name + ' - BYBE';
+      } else {
+        title.value =
+          creatureVariant.value + ' ' + creatureData?.core_data.essential.name + ' - BYBE';
+      }
     }
   } else {
     console.error('Invalid creature ID');
@@ -55,6 +77,22 @@ try {
   console.error(error);
 }
 
+const changeVariant = (variant: variants) => {
+  if (creatureVariant.value === 'Base') {
+    const routeData = router.resolve({
+      name: 'bestiary',
+      query: { id: creatureId }
+    });
+    window.open(routeData.href, '_self');
+  } else {
+    const routeData = router.resolve({
+      name: 'bestiary',
+      query: { id: creatureId, variant: variant.toLowerCase() }
+    });
+    window.open(routeData.href, '_self');
+  }
+};
+
 const addPlus = (value: number | undefined) => {
   if (value != undefined && value > 0) {
     return '+' + value;
@@ -62,6 +100,92 @@ const addPlus = (value: number | undefined) => {
     return value;
   }
 };
+
+const cleanDescription = (description: string) => {
+  let finalString = '';
+  const cleanRegex = /<\/?(p)>|<hr\ ?\/>|@Localize\[.+\]/g;
+  const compendiumRegex =
+    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\](?:{([\w\d\s]*)})?/g;
+  const damageRegex =
+    /@Damage\[\(?([\d]*d[\d]*\+?[\d]*)\+?([\d]*)?\)?\[([\w]*)\],?\(?(?:([\d]*d[\d]*\+?[\d]*)?\)?\[([\w]*)\])?([|\w\-:]*)?\](?:{([\w\d\s\-]*)})?/g;
+  const templateRegex = /@Template\[type:([\w]*)\|distance:([\d]*)\](?:{([\w\d\s\-]*)})?/g;
+  const checkRegex = /@Check\[type:([\w]*)\|dc:([\d]*)(\|basic:([\w]*))?(\|traits:([\w\-]*))?\]/g;
+  const roundsRegex = /\[\[.*\]\](?:{([\w\d\s]*)})/g;
+  const rollRegex = /\[\[\/r\ ([\d]*d[\w]*)(\[([\w]*)\])?\]\]/g;
+
+  finalString = description.replace(cleanRegex, '');
+
+  const compendium = finalString.matchAll(compendiumRegex);
+  for (let i of compendium) {
+    if (i) {
+      if (i[i.length - 1]) {
+        finalString = finalString.replace(i[0], i[i.length - 1]);
+      } else {
+        finalString = finalString.replace(i[0], i[i.length - 2]);
+      }
+    }
+  }
+
+  const damage = finalString.matchAll(damageRegex);
+  for (let i of damage) {
+    if (i) {
+      if (i[i.length - 1] && i[i.length - 1].match(/([\w\d]*[\s]+)/)) {
+        finalString = finalString.replace(i[0], i[i.length - 1]);
+      } else {
+        if (i[4]) {
+          finalString = finalString.replace(i[0], i[1] + ' ' + i[3] + ' plus ' + i[4] + ' ' + i[5]);
+        } else {
+          finalString = finalString.replace(i[0], i[1] + ' ' + i[3]);
+        }
+      }
+    }
+  }
+
+  const template = finalString.matchAll(templateRegex);
+  for (let i of template) {
+    if (i) {
+      finalString = finalString.replace(i[0], i[2] + '-foot ' + i[1]);
+    }
+  }
+
+  const save = finalString.matchAll(checkRegex);
+  for (let i of save) {
+    if (i) {
+      if (i[3] === 'true') {
+        finalString = finalString.replace(i[0], 'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]));
+      } else {
+        finalString = finalString.replace(i[0], 'DC ' + i[2] + ' ' + _.upperFirst(i[1]));
+      }
+    }
+  }
+
+  const rounds = finalString.matchAll(roundsRegex);
+  for (let i of rounds) {
+    if (i) {
+      finalString = finalString.replace(i[0], i[1]);
+    }
+  }
+
+  const rolls = finalString.matchAll(rollRegex);
+  for (let i of rolls) {
+    if (i) {
+      finalString = finalString.replace(i[0], i[1]);
+    }
+  }
+
+  return finalString;
+};
+
+const nameString = computed(() => {
+  let finalString = '';
+  if (creatureVariant.value === 'Weak') {
+    finalString += 'weak ';
+  } else if (creatureVariant.value === 'Elite') {
+    finalString += 'elite ';
+  }
+  finalString += creatureData?.core_data.essential.name;
+  return finalString.toUpperCase();
+});
 
 const perceptionString = computed(() => {
   const perception = creatureData?.extra_data?.perception;
@@ -229,7 +353,7 @@ const healthString = computed(() => {
   return finalString;
 });
 
-const speedString = () => {
+const speedString = computed(() => {
   const speeds = creatureData?.extra_data?.speeds;
   const speedKeys = Object.keys(speeds!);
   let finalString = '';
@@ -243,7 +367,7 @@ const speedString = () => {
     }
   }
   return finalString.substring(0, finalString.length - 2);
-};
+});
 
 const spellString = computed(() => {
   const spells = creatureData?.spell_caster_data?.spells;
@@ -352,36 +476,48 @@ const spellString = computed(() => {
   <div class="creature-sheet">
     <q-card
       flat
-      class="tw-items-center tw-max-w-[50rem] tw-mx-auto tw-mt-4 tw-p-4 tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      class="tw-items-center tw-text-justify tw-max-w-[55rem] tw-mx-auto tw-mt-4 tw-p-4 tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700"
     >
-      <q-scroll-area style="height: calc(100vh - 155px); width: auto">
+      <q-scroll-area style="height: calc(100vh - 155px)">
         <div class="q-gutter-y-xs">
-          <div
-            class="tw-flex tw-flex-row tw-font-bold tw-text-lg tw-text-gray-800 dark:tw-text-white"
-          >
+          <div class="tw-flex tw-font-bold tw-text-lg tw-text-gray-800 dark:tw-text-white">
             <a
               v-if="creatureData?.core_data.derived.archive_link"
-              class="tw-flex-none tw-mr-2"
-              :href="creatureData?.core_data.derived.archive_link"
+              class="tw-my-auto"
+              :href="
+                creatureData.core_data.derived.archive_link +
+                '&Weak=' +
+                (creatureVariant === 'Weak') +
+                '&Elite=' +
+                (creatureVariant === 'Elite')
+              "
               target="_blank"
               rel="noopener"
             >
               <span
-                class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-max-w-[250px] tw-whitespace-normal"
-                >{{ creatureData?.core_data.essential.name.toUpperCase() }}</span
+                class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                >{{ nameString }}</span
               >
             </a>
-            <span v-else class="tw-align-middle">{{
-              creatureData?.core_data.essential.name.toUpperCase()
-            }}</span>
-            <div class="tw-flex-grow"></div>
-            <div class="tw-flex-none">
+            <span v-else class="tw-my-auto">{{ nameString }}</span>
+            <q-space />
+            <q-select
+              class="tw-mx-4 tw-my-auto tw-text-lg tw-font-bold"
+              v-model="creatureVariant"
+              :options="Object.freeze(['Weak', 'Base', 'Elite'])"
+              :dropdown-icon="matArrowDropDown"
+              borderless
+              dense
+              options-dense
+              @update:model-value="changeVariant(creatureVariant)"
+            />
+            <div class="tw-my-auto">
               {{ creatureData?.core_data.essential.cr_type.toUpperCase() }}
               {{ creatureData?.core_data.essential.level }}
             </div>
           </div>
-          <q-separator class="tw-flex" style="height: 2px" />
-          <div class="tw-flex tw-flex-rows tw-flex-wrap tw-font-bold tw-text-xs tw-text-white">
+          <q-separator style="height: 2px" />
+          <div class="tw-flex tw-flex-wrap tw-font-bold tw-text-xs tw-text-white">
             <div v-if="creatureData?.core_data.essential.rarity === 'Common'"></div>
             <div
               v-else-if="creatureData?.core_data.essential.rarity === 'Uncommon'"
@@ -415,9 +551,24 @@ const spellString = computed(() => {
               {{ item.toUpperCase() }}
             </div>
           </div>
-          <div class="tw-flex tw-flex-row tw-text-sm tw-text-gray-800 dark:tw-text-white">
-            <strong>Source</strong> &nbsp;
-            <i class="tw-text-[#60a5fa]"> {{ creatureData?.core_data.essential.source }} </i>
+          <div
+            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
+            v-if="creatureData?.core_data.essential.source"
+          >
+            <strong>Source </strong>
+            <a
+              :href="
+                'https://paizo.com/search?q=' +
+                encodeURIComponent(creatureData?.core_data.essential.source) +
+                '&what=products&includeUnrated=true&includeUnavailable=true'
+              "
+              target="_blank"
+              rel="noopener"
+            >
+              <i class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400">
+                {{ creatureData?.core_data.essential.source }}
+              </i>
+            </a>
           </div>
           <div
             class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
@@ -439,19 +590,19 @@ const spellString = computed(() => {
             class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
             v-html="skillString"
           ></div>
-          <div class="tw-flex tw-flex-row tw-text-sm tw-text-gray-800 dark:tw-text-white">
-            <strong>Str</strong> &nbsp;
-            <div>{{ addPlus(creatureData?.extra_data?.ability_scores.strength) }},&nbsp;</div>
-            <strong>Dex</strong> &nbsp;
-            <div>{{ addPlus(creatureData?.extra_data?.ability_scores.dexterity) }},&nbsp;</div>
-            <strong>Con</strong> &nbsp;
-            <div>{{ addPlus(creatureData?.extra_data?.ability_scores.constitution) }},&nbsp;</div>
-            <strong>Int</strong> &nbsp;
-            <div>{{ addPlus(creatureData?.extra_data?.ability_scores.intelligence) }},&nbsp;</div>
-            <strong>Wis</strong> &nbsp;
-            <div>{{ addPlus(creatureData?.extra_data?.ability_scores.wisdom) }},&nbsp;</div>
-            <strong>Cha</strong> &nbsp;
-            <div>{{ addPlus(creatureData?.extra_data?.ability_scores.charisma) }}</div>
+          <div class="tw-text-sm tw-text-gray-800 dark:tw-text-white">
+            <strong>Str</strong>
+            {{ addPlus(creatureData?.extra_data?.ability_scores.strength) }},
+            <strong>Dex</strong>
+            {{ addPlus(creatureData?.extra_data?.ability_scores.dexterity) }},
+            <strong>Con</strong>
+            {{ addPlus(creatureData?.extra_data?.ability_scores.constitution) }},
+            <strong>Int</strong>
+            {{ addPlus(creatureData?.extra_data?.ability_scores.intelligence) }},
+            <strong>Wis</strong>
+            {{ addPlus(creatureData?.extra_data?.ability_scores.wisdom) }},
+            <strong>Cha</strong>
+            {{ addPlus(creatureData?.extra_data?.ability_scores.charisma) }}
           </div>
           <div
             v-if="
@@ -461,7 +612,7 @@ const spellString = computed(() => {
             class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
             v-html="weaponString"
           ></div>
-          <q-separator class="tw-flex tw-my-2" style="height: 2px" />
+          <q-separator class="tw-my-2" style="height: 2px" />
           <div class="tw-text-sm tw-text-gray-800 dark:tw-text-white" v-html="defenceString"></div>
           <div class="tw-text-sm tw-text-gray-800 dark:tw-text-white" v-html="healthString"></div>
           <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
@@ -476,35 +627,32 @@ const spellString = computed(() => {
               >
                 5
               </span>
-              {{ item.description }}
+              <span v-html="' ' + cleanDescription(item.description)"></span>
             </div>
           </div>
-          <q-separator class="tw-flex tw-my-2" style="height: 2px" />
+          <q-separator class="tw-my-2" style="height: 2px" />
           <div
             v-if="
               creatureData?.extra_data?.speeds != undefined &&
               Object.keys(creatureData?.extra_data?.speeds).length > 0
             "
-            class="tw-flex tw-flex-row tw-text-sm tw-text-gray-800 dark:tw-text-white"
+            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
           >
-            <strong>Speed</strong> &nbsp;
-            <div>
-              {{ speedString() }}
-            </div>
+            <strong>Speed</strong>
+            {{ speedString }}
           </div>
 
           <div
             v-for="item in creatureData?.combat_data?.weapons"
             :key="item.name"
-            class="tw-flex tw-flex-row tw-text-sm tw-text-gray-800 dark:tw-text-white"
+            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
           >
-            <strong v-if="item.wp_type === 'melee'">Melee</strong>
-            <strong v-if="item.wp_type === 'ranged'">Ranged</strong>
-            &nbsp;
-            <div style="font-family: Pathfinder2eActions; font-size: x-large">1</div>
-            &nbsp; <i>{{ item.name.toLowerCase() }}&nbsp; </i>
-            {{ addPlus(item.to_hit_bonus) }},&nbsp; <strong>Damage&nbsp;</strong>
-            {{ item.n_of_dices }}{{ item.die_size }}+{{ item.bonus_dmg }}
+            <strong v-if="item.wp_type === 'melee'">Melee </strong>
+            <strong v-if="item.wp_type === 'ranged'">Ranged </strong>
+            <span style="font-family: Pathfinder2eActions; font-size: x-large">1 </span>
+            <i>{{ item.name.toLowerCase() }} </i>
+            {{ addPlus(item.to_hit_bonus) }}, <strong>Damage</strong> {{ item.n_of_dices
+            }}{{ item.die_size }}+{{ item.bonus_dmg }}
             {{ item.dmg_type }}
           </div>
           <div
@@ -536,7 +684,7 @@ const spellString = computed(() => {
               >
                 3
               </span>
-              {{ item.description }}
+              <span v-html="' ' + cleanDescription(item.description)"></span>
             </div>
           </div>
         </div>
@@ -548,5 +696,9 @@ const spellString = computed(() => {
 <style scoped>
 .creature-sheet {
   min-height: calc(100vh - 119px) !important;
+}
+
+.q-select:deep(.q-field__native) > span {
+  font-weight: bold;
 }
 </style>

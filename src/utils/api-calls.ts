@@ -1,7 +1,7 @@
 import { backendUrl } from 'src/boot/globals';
 import type { creature } from 'src/types/creature';
 import type { encounter, randomEncounter } from 'src/types/encounter';
-import type { alignments, sizes, rarities, challenges, roles } from 'src/types/filters';
+import type { alignments, sizes, rarities, challenges, roles, variants } from 'src/types/filters';
 
 export async function requestCreatures(start: number, end: number) {
   try {
@@ -56,7 +56,7 @@ export async function requestFilters(
   }
 }
 
-export async function requestCreatureId(creature_id: number) {
+export async function requestCreatureId(creature_id: number, variant: variants) {
   try {
     const requestOptions = {
       method: 'GET',
@@ -64,7 +64,9 @@ export async function requestCreatureId(creature_id: number) {
     };
     const response = await fetch(
       backendUrl +
-        '/bestiary/base/' +
+        '/bestiary/' +
+        variant.toLowerCase() +
+        '/' +
         creature_id +
         '?extra_data=true&combat_data=true&spell_casting_data=true',
       requestOptions

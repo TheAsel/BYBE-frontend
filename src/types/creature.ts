@@ -1,4 +1,4 @@
-import type { alignments, rarities, roles, sizes } from './filters';
+import type { alignments, rarities, roles, sizes, variants } from './filters';
 
 interface keyValue {
   [key: string]: number;
@@ -161,7 +161,7 @@ export type creature = {
   variant_data?: {
     archive_link: string;
     level: number;
-    variant: 'Weak' | 'Base' | 'Elite';
+    variant: variants;
   };
 };
 
@@ -170,5 +170,5 @@ export type creature_encounter = {
   name: string;
   level: number;
   quantity?: number;
-  variant?: 'Weak' | 'Base' | 'Elite';
+  variant?: variants;
 };

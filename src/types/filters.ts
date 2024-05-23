@@ -26,3 +26,5 @@ export type roles =
   | 'Sniper'
   | 'Soldier'
   | 'SpellCaster';
+
+export type variants = 'Weak' | 'Base' | 'Elite';

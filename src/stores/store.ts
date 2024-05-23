@@ -3,7 +3,7 @@ import type { creature, creature_encounter } from 'src/types/creature';
 import type { encounter, encounterList } from 'src/types/encounter';
 import { defineStore } from 'pinia';
 import { capitalize } from 'lodash';
-import type { roles } from 'src/types/filters';
+import type { roles, variants } from 'src/types/filters';
 
 export const settingsStore = defineStore('settings', {
   state: () => ({
@@ -177,7 +177,7 @@ export const encounterStore = defineStore('encounter', {
       const index = this.encounters[this.activeEncounter].creatures.indexOf(creature);
       this.encounters[this.activeEncounter].creatures.splice(index, 1);
     },
-    changeVariant(index: number, variant: 'Weak' | 'Base' | 'Elite') {
+    changeVariant(index: number, variant: variants) {
       this.encounters[this.activeEncounter].creatures[index].variant = variant;
     },
     addToEncounter(creature: creature_encounter, index?: number) {
