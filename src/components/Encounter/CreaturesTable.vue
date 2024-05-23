@@ -911,12 +911,20 @@ const openCreatureSheet = (id: number) => {
       </template>
       <template v-slot:body-cell-source="source">
         <q-td :props="source">
-          <q-icon
+          <q-btn
             round
             unelevated
             v-if="source.row.core_data.essential.source"
-            :name="biBook"
-            size="xs"
+            :icon="biBook"
+            size="sm"
+            padding="sm"
+            :href="
+              'https://paizo.com/search?q=' +
+              encodeURIComponent(source.row.core_data.essential.source) +
+              '&what=products&includeUnrated=true&includeUnavailable=true'
+            "
+            target="_blank"
+            rel="noopener"
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -927,7 +935,7 @@ const openCreatureSheet = (id: number) => {
                 {{ source.row.core_data.essential.source }}
               </i>
             </q-tooltip>
-          </q-icon>
+          </q-btn>
         </q-td>
       </template>
       <template v-slot:body-cell-name="name">
