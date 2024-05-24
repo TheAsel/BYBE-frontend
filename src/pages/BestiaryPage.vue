@@ -101,6 +101,16 @@ const addPlus = (value: number | undefined) => {
   }
 };
 
+const variantStyle = (value: number | undefined) => {
+  let valueStr = '';
+  if (value && creatureVariant.value != 'Base') {
+    valueStr = value.toString();
+    valueStr = '<span class="tw-text-red-600"><b>' + value + '</b></span>';
+    return valueStr;
+  }
+  return value;
+};
+
 const cleanDescription = (description: string) => {
   let finalString = '';
   const cleanRegex = /<\/?(p)>|<hr\ ?\/>|@Localize\[.+\]/g;
@@ -338,7 +348,7 @@ const healthString = computed(() => {
   const hp = creatureData?.core_data.essential.hp;
   let finalString = '';
   if (hp != undefined) {
-    finalString += '<strong>HP&nbsp;</strong>' + creatureData?.core_data.essential.hp;
+    finalString += '<strong>HP&nbsp;</strong>' + variantStyle(creatureData?.core_data.essential.hp);
   }
   if (
     creatureData?.combat_data?.immunities != undefined &&
@@ -547,7 +557,10 @@ const spellString = computed(() => {
             >
               {{ creatureData?.core_data.essential.rarity.toUpperCase() }}
             </div>
-            <div class="tw-bg-[#4287f5] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1">
+            <div
+              v-if="creatureData?.core_data.essential.alignment != 'No Alignment'"
+              class="tw-bg-[#4287f5] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
+            >
               {{ creatureData?.core_data.essential.alignment.toUpperCase() }}
             </div>
             <div class="tw-bg-[#478c42] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1">
