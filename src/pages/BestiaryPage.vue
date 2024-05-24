@@ -105,23 +105,28 @@ const cleanDescription = (description: string) => {
   let finalString = '';
   const cleanRegex = /<\/?(p)>|<hr\ ?\/>|@Localize\[.+\]/g;
   const compendiumRegex =
-    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\](?:{([\w\d\s]*)})?/g;
+    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s'\(\)]*)\](?:{([\w\d\s']*)})?/g;
+  const effectRegex =
+    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*): ([\w\s-\'\(\)]*)\](?:{([\w\d\s']*)})?/g;
   const damageRegex =
-    /@Damage\[\(?([\d]*d[\d]*\+?[\d]*)\+?([\d]*)?\)?\[([\w]*)\],?\(?(?:([\d]*d[\d]*\+?[\d]*)?\)?\[([\w]*)\])?([|\w\-:]*)?\](?:{([\w\d\s\-]*)})?/g;
-  const templateRegex = /@Template\[type:([\w]*)\|distance:([\d]*)\](?:{([\w\d\s\-]*)})?/g;
-  const checkRegex = /@Check\[type:([\w]*)\|dc:([\d]*)(\|basic:([\w]*))?(\|traits:([\w\-]*))?\]/g;
-  const roundsRegex = /\[\[.*\]\](?:{([\w\d\s]*)})/g;
-  const rollRegex = /\[\[\/r\ ([\d]*d[\w]*)(\[([\w]*)\])?\]\]/g;
+    /@Damage\[\(?([\d]*d?[\d]*\+?[\d]*)\+?([\d]*)?\)?\[([\w]*),?([\w]*)\],?\(?(?:([\d]*d[\d]*\+?[\d]*)?\)?\[([\w]*)\])?([|\w\-:]*)?\](?:{([\w\d\s\-]*)})?/g;
+  const templateRegex =
+    /@Template\[type:([\w]*)\|distance:([\d]*)\|?(?:traits:([\w\-,]*))?\](?:{([\w\d\s\-]*)})?/g;
+  const checkRegex =
+    /@Check\[type:([\w]*)(?:[\w\d\s\-,:\|]*dc:([\d]*))?(?:[\w\d\s\-,:\|]*basic:([\w]*))?[\w\d\s\-,:\|]*\]/g;
+  const rollRegex =
+    /\[\[\/b?r {?([\d]*d?[\d\+\-]*[\d]*),?[\d]*}?[\w\s]*\[?#?[\w\s]*\]\]\]?(?:{([\w\d\s\+\-]*)})?/g;
 
   finalString = description.replace(cleanRegex, '');
+  finalString = finalString.replace(effectRegex, '');
 
   const compendium = finalString.matchAll(compendiumRegex);
   for (let i of compendium) {
     if (i) {
       if (i[i.length - 1]) {
-        finalString = finalString.replace(i[0], i[i.length - 1]);
+        finalString = finalString.replace(i[0], i[i.length - 1].toLowerCase());
       } else {
-        finalString = finalString.replace(i[0], i[i.length - 2]);
+        finalString = finalString.replace(i[0], i[i.length - 2].toLowerCase());
       }
     }
   }
@@ -132,8 +137,10 @@ const cleanDescription = (description: string) => {
       if (i[i.length - 1] && i[i.length - 1].match(/([\w\d]*[\s]+)/)) {
         finalString = finalString.replace(i[0], i[i.length - 1]);
       } else {
-        if (i[4]) {
-          finalString = finalString.replace(i[0], i[1] + ' ' + i[3] + ' plus ' + i[4] + ' ' + i[5]);
+        if (i[5]) {
+          finalString = finalString.replace(i[0], i[1] + ' ' + i[3] + ' plus ' + i[5] + ' ' + i[6]);
+        } else if (i[4]) {
+          finalString = finalString.replace(i[0], i[1] + ' ' + i[3] + ' ' + i[4]);
         } else {
           finalString = finalString.replace(i[0], i[1] + ' ' + i[3]);
         }
@@ -151,25 +158,26 @@ const cleanDescription = (description: string) => {
   const save = finalString.matchAll(checkRegex);
   for (let i of save) {
     if (i) {
-      if (i[3] === 'true') {
-        finalString = finalString.replace(i[0], 'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]));
+      if (i[2]) {
+        if (i[3] === 'true') {
+          finalString = finalString.replace(i[0], 'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]));
+        } else {
+          finalString = finalString.replace(i[0], 'DC ' + i[2] + ' ' + _.upperFirst(i[1]));
+        }
       } else {
-        finalString = finalString.replace(i[0], 'DC ' + i[2] + ' ' + _.upperFirst(i[1]));
+        finalString = finalString.replace(i[0], _.upperFirst(i[1]));
       }
     }
   }
 
-  const rounds = finalString.matchAll(roundsRegex);
-  for (let i of rounds) {
+  const roll = finalString.matchAll(rollRegex);
+  for (let i of roll) {
     if (i) {
-      finalString = finalString.replace(i[0], i[1]);
-    }
-  }
-
-  const rolls = finalString.matchAll(rollRegex);
-  for (let i of rolls) {
-    if (i) {
-      finalString = finalString.replace(i[0], i[1]);
+      if (i[2]) {
+        finalString = finalString.replace(i[0], i[2]);
+      } else {
+        finalString = finalString.replace(i[0], i[2]);
+      }
     }
   }
 
@@ -360,7 +368,9 @@ const speedString = computed(() => {
   if (speedKeys.length > 0) {
     for (const speed of speedKeys) {
       if (`${speed}` === 'Base') {
-        finalString += `${creatureData?.extra_data?.speeds[speed]}` + ' feet, ';
+        if (`${creatureData?.extra_data?.speeds[speed]}` != '0') {
+          finalString += `${creatureData?.extra_data?.speeds[speed]}` + ' feet, ';
+        }
       } else {
         finalString += `${speed}` + ' ' + `${creatureData?.extra_data?.speeds[speed]}` + ' feet, ';
       }
