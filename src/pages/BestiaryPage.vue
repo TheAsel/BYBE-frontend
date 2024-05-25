@@ -113,19 +113,19 @@ const variantStyle = (value: number | undefined) => {
 
 const cleanDescription = (description: string) => {
   let finalString = '';
-  const cleanRegex = /<\/?(p)>|<hr\ ?\/>|@Localize\[.+\]/g;
+  const cleanRegex = /<\/?[p|li|ul]*>|<hr\ ?\/>|@Localize\[.+\]/g;
   const compendiumRegex =
-    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s'\(\)]*)\](?:{([\w\d\s']*)})?/g;
+    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s'()+]*)\](?:{([\w\d\s'+]*)})?/g;
   const effectRegex =
-    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*): ([\w\s-\'\(\)]*)\](?:{([\w\d\s']*)})?/g;
+    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*): ([\w\s\-'()]*)\](?:{([\w\d\s']*)})?/g;
   const damageRegex =
-    /@Damage\[\(?([\d]*d?[\d]*\+?[\d]*)\+?([\d]*)?\)?\[([\w]*),?([\w]*)\],?\(?(?:([\d]*d[\d]*\+?[\d]*)?\)?\[([\w]*)\])?([|\w\-:]*)?\](?:{([\w\d\s\-]*)})?/g;
+    /@Damage\[\(?([\d]*d?[\d]*\+?[\d]*)\+?([\d]*)?\)?\[([\w]*),?([\w]*)\](?:,?\(?(?:([\d]*d[\d]*\+?[\d]*)?\)?\[([\w]*)\])?([|\w\-:]*)?)*\](?:{([\w\d\s\-+,]*)})?/g;
   const templateRegex =
     /@Template\[type:([\w]*)\|distance:([\d]*)\|?(?:traits:([\w\-,]*))?\](?:{([\w\d\s\-]*)})?/g;
   const checkRegex =
-    /@Check\[type:([\w]*)(?:[\w\d\s\-,:\|]*dc:([\d]*))?(?:[\w\d\s\-,:\|]*basic:([\w]*))?[\w\d\s\-,:\|]*\]/g;
+    /@Check\[type:([\w]*)(?:[\w\d\s\-|]*dc:([\w\d\s,:+@.()]*))?(?:[\w\d\s\-,:|()]*basic:([\w]*))?[\w\d\s\-,:|()]*\](?:{([\w\d\s'+()]*)})?/g;
   const rollRegex =
-    /\[\[\/b?r {?([\d]*d?[\d\+\-]*[\d]*),?[\d]*}?[\w\s]*\[?#?[\w\s]*\]\]\]?(?:{([\w\d\s\+\-]*)})?/g;
+    /\[\[\/b?r \(?{?([\d\*]*[\d]*d?[\d\s\-+]*[\d]*),?[\d]*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\d\s\-+;]*)})?/g;
 
   finalString = description.replace(cleanRegex, '');
   finalString = finalString.replace(effectRegex, '');
@@ -133,10 +133,10 @@ const cleanDescription = (description: string) => {
   const compendium = finalString.matchAll(compendiumRegex);
   for (let i of compendium) {
     if (i) {
-      if (i[i.length - 1]) {
-        finalString = finalString.replace(i[0], i[i.length - 1].toLowerCase());
+      if (i[5]) {
+        finalString = finalString.replace(i[0], i[5].toLowerCase());
       } else {
-        finalString = finalString.replace(i[0], i[i.length - 2].toLowerCase());
+        finalString = finalString.replace(i[0], i[4].toLowerCase());
       }
     }
   }
@@ -144,8 +144,8 @@ const cleanDescription = (description: string) => {
   const damage = finalString.matchAll(damageRegex);
   for (let i of damage) {
     if (i) {
-      if (i[i.length - 1] && i[i.length - 1].match(/([\w\d]*[\s]+)/)) {
-        finalString = finalString.replace(i[0], i[i.length - 1]);
+      if (i[8] && i[8].match(/([\w\d]*[\s]+)/)) {
+        finalString = finalString.replace(i[0], i[8]);
       } else {
         if (i[5]) {
           finalString = finalString.replace(i[0], i[1] + ' ' + i[3] + ' plus ' + i[5] + ' ' + i[6]);
@@ -168,14 +168,32 @@ const cleanDescription = (description: string) => {
   const save = finalString.matchAll(checkRegex);
   for (let i of save) {
     if (i) {
-      if (i[2]) {
+      if (i[2] && Number(i[2])) {
         if (i[3] === 'true') {
-          finalString = finalString.replace(i[0], 'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]));
+          if (i[4]) {
+            finalString = finalString.replace(
+              i[0],
+              'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]) + ' ' + i[4]
+            );
+          } else {
+            finalString = finalString.replace(i[0], 'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]));
+          }
         } else {
-          finalString = finalString.replace(i[0], 'DC ' + i[2] + ' ' + _.upperFirst(i[1]));
+          if (i[4]) {
+            finalString = finalString.replace(
+              i[0],
+              'DC ' + i[2] + ' ' + _.upperFirst(i[1]) + ' ' + i[4]
+            );
+          } else {
+            finalString = finalString.replace(i[0], 'DC ' + i[2] + ' ' + _.upperFirst(i[1]));
+          }
         }
       } else {
-        finalString = finalString.replace(i[0], _.upperFirst(i[1]));
+        if (i[4]) {
+          finalString = finalString.replace(i[0], _.upperFirst(i[1]) + ' ' + i[4]);
+        } else {
+          finalString = finalString.replace(i[0], _.upperFirst(i[1]));
+        }
       }
     }
   }
@@ -186,7 +204,7 @@ const cleanDescription = (description: string) => {
       if (i[2]) {
         finalString = finalString.replace(i[0], i[2]);
       } else {
-        finalString = finalString.replace(i[0], i[2]);
+        finalString = finalString.replace(i[0], i[1]);
       }
     }
   }
@@ -208,18 +226,26 @@ const nameString = computed(() => {
 const perceptionString = computed(() => {
   const perception = creatureData?.extra_data?.perception;
   const senses = creatureData?.extra_data?.senses;
+  const spells = creatureData?.spell_caster_data?.spells;
   let finalString = '';
   if (perception != undefined) {
     finalString += finalString += '<strong>Perception&nbsp;</strong>' + addPlus(perception) + '; ';
   }
   if (senses != undefined && senses.length > 0) {
     senses.forEach((sense) => {
-      return creatureData?.extra_data?.actions.forEach((action) => {
+      creatureData?.extra_data?.actions.forEach((action) => {
         if (action.slug === sense) {
           finalString += action.name.toLowerCase() + ', ';
         }
       });
     });
+    if (spells != undefined && spells.length > 0) {
+      spells.forEach((spell) => {
+        if (spell.name === 'True Seeing (Constant)') {
+          finalString += 'true seeing' + ', ';
+        }
+      });
+    }
     if (creatureData?.extra_data?.perception_detail) {
       finalString += creatureData?.extra_data?.perception_detail;
     } else {
@@ -266,10 +292,17 @@ const weaponString = computed(() => {
   if (weapons != undefined && weapons.length > 0) {
     finalString += '<strong>Items&nbsp;</strong>';
     weapons.forEach((weapon) => {
-      finalString += weapon.name.toLowerCase() + ', ';
+      // TODO: wait for DB fix
+      if (weapon.wp_type != 'melee' && weapon.wp_type != 'ranged') {
+        finalString += weapon.name.toLowerCase() + ', ';
+      }
     });
   }
-  return finalString.substring(0, finalString.length - 2);
+  if (finalString === '<strong>Items&nbsp;</strong>') {
+    return '';
+  } else {
+    return finalString.substring(0, finalString.length - 2);
+  }
 });
 
 const defenceString = computed(() => {
@@ -346,9 +379,13 @@ const weaknessString = () => {
 
 const healthString = computed(() => {
   const hp = creatureData?.core_data.essential.hp;
+  const hpDetail = creatureData?.extra_data?.hp_detail;
   let finalString = '';
   if (hp != undefined) {
     finalString += '<strong>HP&nbsp;</strong>' + variantStyle(creatureData?.core_data.essential.hp);
+    if (hpDetail) {
+      finalString += ', ' + hpDetail;
+    }
   }
   if (
     creatureData?.combat_data?.immunities != undefined &&
@@ -407,9 +444,9 @@ const spellString = computed(() => {
         case 10:
           if (!spellLevels[10]) {
             spellLevels[10] = true;
-            finalString += '<strong>10th</strong>&nbsp;';
+            finalString = finalString.substring(0, finalString.length - 2);
+            finalString += '; <strong>10th</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         case 9:
           if (!spellLevels[9]) {
@@ -417,7 +454,6 @@ const spellString = computed(() => {
             finalString = finalString.substring(0, finalString.length - 2);
             finalString += ';&nbsp;<strong>9th</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         case 8:
           if (!spellLevels[8]) {
@@ -425,7 +461,6 @@ const spellString = computed(() => {
             finalString = finalString.substring(0, finalString.length - 2);
             finalString += ';&nbsp;<strong>8th</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         case 7:
           if (!spellLevels[7]) {
@@ -433,7 +468,6 @@ const spellString = computed(() => {
             finalString = finalString.substring(0, finalString.length - 2);
             finalString += ';&nbsp;<strong>7th</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         case 6:
           if (!spellLevels[6]) {
@@ -441,7 +475,6 @@ const spellString = computed(() => {
             finalString = finalString.substring(0, finalString.length - 2);
             finalString += ';&nbsp;<strong>6th</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         case 5:
           if (!spellLevels[5]) {
@@ -449,7 +482,6 @@ const spellString = computed(() => {
             finalString = finalString.substring(0, finalString.length - 2);
             finalString += ';&nbsp;<strong>5th</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         case 4:
           if (!spellLevels[4]) {
@@ -457,35 +489,32 @@ const spellString = computed(() => {
             finalString = finalString.substring(0, finalString.length - 2);
             finalString += ';&nbsp;<strong>4th</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         case 3:
           if (!spellLevels[3]) {
             spellLevels[3] = true;
             finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>3th</strong> &nbsp;';
+            finalString += ';&nbsp;<strong>3rd</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         case 2:
           if (!spellLevels[2]) {
             spellLevels[2] = true;
             finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>2th</strong>&nbsp;';
+            finalString += ';&nbsp;<strong>2nd</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         case 1:
           if (!spellLevels[1]) {
             spellLevels[1] = true;
             finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>1th</strong>&nbsp;';
+            finalString += ';&nbsp;<strong>1st</strong>&nbsp;';
           }
-          finalString += spell.name.toLowerCase() + ', ';
           break;
         default:
           break;
       }
+      finalString += spell.name.toLowerCase() + ', ';
     });
   }
   return finalString.substring(0, finalString.length - 2);
@@ -627,6 +656,21 @@ const spellString = computed(() => {
             <strong>Cha</strong>
             {{ addPlus(creatureData?.extra_data?.ability_scores.charisma) }}
           </div>
+          <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+            <div
+              v-if="item.category === 'interaction' && item.slug === null"
+              class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
+            >
+              <strong>{{ item.name }}</strong>
+              <span
+                v-if="item.action_type === 'reaction'"
+                style="font-family: Pathfinder2eActions; font-size: x-large"
+              >
+                5
+              </span>
+              <span v-html="' ' + cleanDescription(item.description)"></span>
+            </div>
+          </div>
           <div
             v-if="
               creatureData?.combat_data?.weapons != undefined &&
@@ -640,7 +684,13 @@ const spellString = computed(() => {
           <div class="tw-text-sm tw-text-gray-800 dark:tw-text-white" v-html="healthString"></div>
           <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
             <div
-              v-if="item.description != '' && item.category === 'defensive'"
+              v-if="
+                item.slug != 'regeneration' &&
+                item.slug != 'fast-healing' &&
+                item.slug != 'negative-healing' &&
+                item.description != '' &&
+                item.category === 'defensive'
+              "
               class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
             >
               <strong>{{ item.name }}</strong>
@@ -706,6 +756,18 @@ const spellString = computed(() => {
                 style="font-family: Pathfinder2eActions; font-size: x-large"
               >
                 3
+              </span>
+              <span
+                v-else-if="item.action_type === 'free'"
+                style="font-family: Pathfinder2eActions; font-size: x-large"
+              >
+                4
+              </span>
+              <span
+                v-else-if="item.action_type === 'reaction'"
+                style="font-family: Pathfinder2eActions; font-size: x-large"
+              >
+                5
               </span>
               <span v-html="' ' + cleanDescription(item.description)"></span>
             </div>
