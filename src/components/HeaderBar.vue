@@ -211,31 +211,32 @@ const validateData = (result: string) => {
   try {
     Object.keys(parsedData).forEach((key) => {
       switch (key) {
-        case 'encounters':
-          const parsedEncounters = JSON.parse(parsedData[key]);
-          if (Array.isArray(parsedEncounters)) {
-            const isCompatible = parsedEncounters.every((p) => {
+        case 'encounters': {
+          const parsedEncounter = JSON.parse(parsedData[key]);
+          if (Array.isArray(parsedEncounter)) {
+            const isCompatible = parsedEncounter.every((p) => {
               return typeof p.name === 'string' && Array.isArray(p.creatures);
             });
             if (isCompatible) {
-              const encounters: encounterList[] = parsedEncounters;
+              const encounters: encounterList[] = parsedEncounter;
               const encounterNames = encounters.map((p) => p.name);
               if (new Set(encounterNames).size !== encounterNames.length) {
-                throw 'Duplicate loaded encounter names';
+                throw new Error('Duplicate loaded encounter names');
               }
             } else {
-              throw 'Invalid loaded encounter format';
+              throw new Error('Invalid loaded encounter format');
             }
           } else {
-            throw 'Invalid loaded encounter format';
+            throw new Error('Invalid loaded encounter format');
           }
           break;
+        }
         case 'pf_version':
           if (!['any', 'legacy', 'remaster'].includes(parsedData[key].toLowerCase())) {
-            throw 'Invalid loaded pathfinder version value';
+            throw new Error('Invalid loaded pathfinder version value');
           }
           break;
-        case 'parties':
+        case 'parties': {
           const parsedParties = JSON.parse(parsedData[key]);
           if (Array.isArray(parsedParties)) {
             const isCompatible = parsedParties.every((p) => {
@@ -249,42 +250,43 @@ const validateData = (result: string) => {
               const parties: party[] = parsedParties;
               parties.forEach((p) => {
                 if (!p || !p.members.every((player) => player >= 1 && player <= 20)) {
-                  throw 'Invalid loaded party levels';
+                  throw new Error('Invalid loaded party levels');
                 }
               });
               const partyNames = parties.map((p) => p.name);
               if (new Set(partyNames).size !== partyNames.length) {
-                throw 'Duplicate loaded party names';
+                throw new Error('Duplicate loaded party names');
               }
             } else {
-              throw 'Invalid loaded party format';
+              throw new Error('Invalid loaded party format');
             }
           } else {
-            throw 'Invalid loaded party format';
+            throw new Error('Invalid loaded party format');
           }
           break;
+        }
         case 'theme':
           if (parsedData[key] != 'light' && parsedData[key] != 'dark') {
-            throw 'Invalid loaded theme value';
+            throw new Error('Invalid loaded theme value');
           }
           break;
         case 'is_creature_sheets_on':
           if (parsedData[key] != 'true' && parsedData[key] != 'false') {
-            throw 'Invalid loaded creature sheets value';
+            throw new Error('Invalid loaded creature sheets value');
           }
           break;
         case 'is_pwl_on':
           if (parsedData[key] != 'true' && parsedData[key] != 'false') {
-            throw 'Invalid loaded pwl value';
+            throw new Error('Invalid loaded pwl value');
           }
           break;
         case 'hide_support':
           if (parsedData[key] != 'true' && parsedData[key] != 'false') {
-            throw 'Invalid loaded hide support value';
+            throw new Error('Invalid loaded hide support value');
           }
           break;
         default:
-          throw 'Unknown loaded key';
+          throw new Error('Unknown loaded key');
       }
       localStorage.setItem(key, parsedData[key]);
     });

@@ -107,7 +107,7 @@ const generateEncounter = debounce(async function () {
         });
       }
     } else {
-      throw 'Error generating random encounter';
+      throw new Error('Error generating random encounter');
     }
   } catch (error) {
     console.error(error);

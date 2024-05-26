@@ -28,17 +28,17 @@ tmpEncounter.value = {
 const debouncedCall = debounce(async function () {
   const encounterList = encounter.getActiveEncounter.creatures;
   const enemyLevels: number[] = [];
-  for (let i = 0; i < encounterList.length; i++) {
-    for (let j = 0; j < encounterList[i].quantity!; j++) {
-      switch (encounterList[i].variant) {
+  for (const creature of encounterList) {
+    for (let j = 0; j < creature.quantity!; j++) {
+      switch (creature.variant) {
         case 'Weak':
-          enemyLevels.push(encounterList[i].level - 1);
+          enemyLevels.push(creature.level - 1);
           break;
         case 'Elite':
-          enemyLevels.push(encounterList[i].level + 1);
+          enemyLevels.push(creature.level + 1);
           break;
         default:
-          enemyLevels.push(encounterList[i].level);
+          enemyLevels.push(creature.level);
           break;
       }
     }
@@ -64,12 +64,12 @@ const debouncedCall = debounce(async function () {
     is_pwl_on: is_pwl_on.value
   };
   try {
-    if (encounter.getGenerating == false) {
+    if (!encounter.getGenerating) {
       const returnedEncounterInfo = await encounterInfo(post);
       if (typeof returnedEncounterInfo != 'undefined') {
         info.setInfo(returnedEncounterInfo);
       } else {
-        throw 'Error calculating encounter challenge';
+        throw new Error('Error calculating encounter challenge');
       }
     }
   } catch (error) {

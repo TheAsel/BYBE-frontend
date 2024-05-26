@@ -812,6 +812,7 @@ const openCreatureSheet = (id: number) => {
                         v-model="filterAttacks[0]"
                         size="xl"
                         role="menuitemcheckbox"
+                        aria-checked="false"
                       >
                         <q-tooltip
                           class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -828,6 +829,7 @@ const openCreatureSheet = (id: number) => {
                         v-model="filterAttacks[1]"
                         size="xl"
                         role="menuitemcheckbox"
+                        aria-checked="false"
                       >
                         <q-tooltip
                           class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -844,6 +846,7 @@ const openCreatureSheet = (id: number) => {
                         v-model="filterAttacks[2]"
                         size="xl"
                         role="menuitemcheckbox"
+                        aria-checked="false"
                       >
                         <q-tooltip
                           class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"

@@ -50,19 +50,19 @@ if (localParty) {
         const parties: party[] = parsedParties;
         parties.forEach((p) => {
           if (!p || !p.members.every((player) => player >= 1 && player <= 20)) {
-            throw 'Invalid saved party levels';
+            throw new Error('Invalid saved party levels');
           }
         });
         const partyNames = parties.map((p) => p.name);
         if (new Set(partyNames).size !== partyNames.length) {
-          throw 'Duplicate saved party names';
+          throw new Error('Duplicate saved party names');
         }
         partyStores.updateParties(parties);
       } else {
-        throw 'Invalid saved party format';
+        throw new Error('Invalid saved party format');
       }
     } else {
-      throw 'Invalid saved party format';
+      throw new Error('Invalid saved party format');
     }
   } catch (error) {
     console.error(error);
@@ -85,14 +85,14 @@ if (localEncounters) {
         const encounters: encounterList[] = parsedEncounters;
         const encounterNames = encounters.map((p) => p.name);
         if (new Set(encounterNames).size !== encounterNames.length) {
-          throw 'Duplicate saved encounter names';
+          throw new Error('Duplicate saved encounter names');
         }
         encounter.updateEncounters(encounters);
       } else {
-        throw 'Invalid saved encounter format';
+        throw new Error('Invalid saved encounter format');
       }
     } else {
-      throw 'Invalid saved encounter format';
+      throw new Error('Invalid saved encounter format');
     }
   } catch (error) {
     const defaultEncounter = { name: 'Default', creatures: [] };
@@ -141,55 +141,55 @@ try {
     if (typeof traitsList != 'undefined') {
       filters.updateTraits(traitsList);
     } else {
-      throw 'Error loading traits';
+      throw new Error('Error loading traits');
     }
 
     if (typeof alignmentList != 'undefined') {
       filters.updateAlignments(alignmentList);
     } else {
-      throw 'Error loading alignments';
+      throw new Error('Error loading alignments');
     }
 
     if (typeof sizeList != 'undefined') {
       filters.updateSizes(sizeList);
     } else {
-      throw 'Error loading sizes';
+      throw new Error('Error loading sizes');
     }
 
     if (typeof rarityList != 'undefined') {
       filters.updateRarities(rarityList);
     } else {
-      throw 'Error loading rarities';
+      throw new Error('Error loading rarities');
     }
 
     if (typeof familyList != 'undefined') {
       filters.updateFamilies(familyList);
     } else {
-      throw 'Error loading families';
+      throw new Error('Error loading families');
     }
 
     if (typeof creatureTypeList != 'undefined') {
       filters.updateCreatureType(creatureTypeList);
     } else {
-      throw 'Error loading creature types';
+      throw new Error('Error loading creature types');
     }
 
     if (typeof sourceList != 'undefined') {
       filters.updateSources(sourceList);
     } else {
-      throw 'Error loading creature sources';
+      throw new Error('Error loading creature sources');
     }
 
     if (typeof roleList != 'undefined') {
       filters.updateRoles(roleList);
     } else {
-      throw 'Error loading creature roles';
+      throw new Error('Error loading creature roles');
     }
 
     if (typeof creatureList != 'undefined') {
       creatures.updateCreatures(creatureList);
     } else {
-      throw 'Error loading creatures';
+      throw new Error('Error loading creatures');
     }
   }
 
