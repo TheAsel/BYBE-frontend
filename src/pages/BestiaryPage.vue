@@ -108,7 +108,6 @@ const variantStyle = (value: number | undefined) => {
 };
 
 const cleanDescription = (description: string) => {
-  console.log(description);
   let finalString = '';
   const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
   const compendiumRegex =
@@ -440,45 +439,15 @@ const spellString = computed(() => {
           }
           break;
         case 9:
-          if (!spellLevels[9]) {
-            spellLevels[9] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>9th</strong>&nbsp;';
-          }
-          break;
         case 8:
-          if (!spellLevels[8]) {
-            spellLevels[8] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>8th</strong>&nbsp;';
-          }
-          break;
         case 7:
-          if (!spellLevels[7]) {
-            spellLevels[7] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>7th</strong>&nbsp;';
-          }
-          break;
         case 6:
-          if (!spellLevels[6]) {
-            spellLevels[6] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>6th</strong>&nbsp;';
-          }
-          break;
         case 5:
-          if (!spellLevels[5]) {
-            spellLevels[5] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>5th</strong>&nbsp;';
-          }
-          break;
         case 4:
-          if (!spellLevels[4]) {
-            spellLevels[4] = true;
+          if (!spellLevels[spell.level]) {
+            spellLevels[spell.level] = true;
             finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>4th</strong>&nbsp;';
+            finalString += ';&nbsp;<strong>' + spell.level + 'th</strong>&nbsp;';
           }
           break;
         case 3:
