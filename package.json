@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.11",
-    "@unhead/vue": "^1.9.10",
+    "@unhead/vue": "^1.9.11",
     "lodash": "^4.17.21",
     "pinia": "^2.1.7",
     "quasar": "^2.16.4",

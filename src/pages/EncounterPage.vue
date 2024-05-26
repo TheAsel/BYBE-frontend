@@ -2,7 +2,13 @@
 import { ref, shallowRef } from 'vue';
 import { useHead } from '@unhead/vue';
 import { requestCreatures, requestFilters } from 'src/utils/api-calls';
-import { partyStore, filtersStore, creaturesStore, encounterStore } from 'stores/store';
+import {
+  partyStore,
+  filtersStore,
+  creaturesStore,
+  encounterStore,
+  settingsStore
+} from 'stores/store';
 import type { party } from 'src/types/party';
 import type { creature_encounter } from 'src/types/creature';
 import type { encounterList } from 'src/types/encounter';
@@ -19,6 +25,7 @@ useHead({
   ]
 });
 
+const settings = settingsStore();
 const partyStores = partyStore();
 const filters = filtersStore();
 const creatures = creaturesStore();
@@ -128,7 +135,7 @@ try {
       requestFilters('creature_types'),
       requestFilters('sources'),
       requestFilters('creature_roles'),
-      requestCreatures(0, -1)
+      requestCreatures(0, -1, settings.getPfVersion)
     ]);
 
     if (typeof traitsList != 'undefined') {
@@ -259,7 +266,7 @@ const steps: Step[] = [
   {
     target: '#v-step-8',
     content:
-      'You can change some settings from here, like enabling Proficiency without Level or switching to the Legacy version.',
+      'You can change some settings from here, like enabling Proficiency without Level or experimental features.',
     params: {
       placement: 'top'
     }
