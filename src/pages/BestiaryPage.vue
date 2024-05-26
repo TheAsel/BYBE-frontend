@@ -55,13 +55,11 @@ try {
         icon: matPriorityHigh
       });
       router.push({ name: 'encounter' });
+    } else if (creatureVariant.value === 'Base') {
+      title.value = creatureData?.core_data.essential.name + ' - BYBE';
     } else {
-      if (creatureVariant.value === 'Base') {
-        title.value = creatureData?.core_data.essential.name + ' - BYBE';
-      } else {
-        title.value =
-          creatureVariant.value + ' ' + creatureData?.core_data.essential.name + ' - BYBE';
-      }
+      title.value =
+        creatureVariant.value + ' ' + creatureData?.core_data.essential.name + ' - BYBE';
     }
   } else {
     console.error('Invalid creature ID');
@@ -102,9 +100,8 @@ const addPlus = (value: number | undefined) => {
 };
 
 const variantStyle = (value: number | undefined) => {
-  let valueStr = '';
   if (value && creatureVariant.value != 'Base') {
-    valueStr = value.toString();
+    let valueStr = value.toString();
     valueStr = '<span class="tw-text-red-600"><b>' + value + '</b></span>';
     return valueStr;
   }
@@ -113,19 +110,19 @@ const variantStyle = (value: number | undefined) => {
 
 const cleanDescription = (description: string) => {
   let finalString = '';
-  const cleanRegex = /<\/?[p|li|ul]*>|<hr\ ?\/>|@Localize\[.+\]/g;
+  const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr\ ?\/>|@Localize\[.+\]/g;
   const compendiumRegex =
-    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s'()+]*)\](?:{([\w\d\s'+]*)})?/g;
+    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s'()+]*)\](?:{([\w\s'+]*)})?/g;
   const effectRegex =
-    /@UUID\[Compendium\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*)\.([\w\d\-\s]*): ([\w\s\-'()]*)\](?:{([\w\d\s']*)})?/g;
+    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*): ([\w\s\-'()]*)\](?:{([\w\s']*)})?/g;
   const damageRegex =
-    /@Damage\[\(?([\d]*d?[\d]*\+?[\d]*)\+?([\d]*)?\)?\[([\w]*),?([\w]*)\](?:,?\(?(?:([\d]*d[\d]*\+?[\d]*)?\)?\[([\w]*)\])?([|\w\-:]*)?)*\](?:{([\w\d\s\-+,]*)})?/g;
+    /@Damage\[\(?([\d]*d?[\d]*\+?[\d]*)\)?\[([\w]*),?([\w]*)\](?:,?\(?(?:([\d]*d[\d]*\+?[\d]*)?\)?\[([\w]*)\])?[\w\-:|]?)+\](?:{([\w\s\-+,]*)})?/g;
   const templateRegex =
-    /@Template\[type:([\w]*)\|distance:([\d]*)\|?(?:traits:([\w\-,]*))?\](?:{([\w\d\s\-]*)})?/g;
+    /@Template\[type:([\w]*)\|distance:([\d]*)\|?(?:traits:([\w\-,]*))?\](?:{([\w\s\-]*)})?/g;
   const checkRegex =
-    /@Check\[type:([\w]*)(?:[\w\d\s\-|]*dc:([\w\d\s,:+@.()]*))?(?:[\w\d\s\-,:|()]*basic:([\w]*))?[\w\d\s\-,:|()]*\](?:{([\w\d\s'+()]*)})?/g;
+    /@Check\[type:([\w]*)(?:[\w\s\-|]*dc:([\w\s,:+@.()]*))?(?:[\w\s\-,:|()]*basic:([\w]*))?[\w\s\-,:|()]*\](?:{([\w\s'+()]*)})?/g;
   const rollRegex =
-    /\[\[\/b?r \(?{?([\d\*]*[\d]*d?[\d\s\-+]*[\d]*),?[\d]*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\d\s\-+;]*)})?/g;
+    /\[\[\/b?r \(?{?([\d*]*[\d]*d?[\d\s\-+]*[\d]*),?[\d]*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\s\-+;]*)})?/g;
 
   finalString = description.replace(cleanRegex, '');
   finalString = finalString.replace(effectRegex, '');
@@ -144,16 +141,14 @@ const cleanDescription = (description: string) => {
   const damage = finalString.matchAll(damageRegex);
   for (let i of damage) {
     if (i) {
-      if (i[8] && i[8].match(/([\w\d]*[\s]+)/)) {
-        finalString = finalString.replace(i[0], i[8]);
+      if (i[6]) {
+        finalString = finalString.replace(i[0], i[6]);
+      } else if (i[4]) {
+        finalString = finalString.replace(i[0], i[1] + ' ' + i[2] + ' plus ' + i[4] + ' ' + i[5]);
+      } else if (i[3]) {
+        finalString = finalString.replace(i[0], i[1] + ' ' + i[2] + ' ' + i[3]);
       } else {
-        if (i[5]) {
-          finalString = finalString.replace(i[0], i[1] + ' ' + i[3] + ' plus ' + i[5] + ' ' + i[6]);
-        } else if (i[4]) {
-          finalString = finalString.replace(i[0], i[1] + ' ' + i[3] + ' ' + i[4]);
-        } else {
-          finalString = finalString.replace(i[0], i[1] + ' ' + i[3]);
-        }
+        finalString = finalString.replace(i[0], i[1] + ' ' + i[2]);
       }
     }
   }
@@ -178,22 +173,18 @@ const cleanDescription = (description: string) => {
           } else {
             finalString = finalString.replace(i[0], 'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]));
           }
+        } else if (i[4]) {
+          finalString = finalString.replace(
+            i[0],
+            'DC ' + i[2] + ' ' + _.upperFirst(i[1]) + ' ' + i[4]
+          );
         } else {
-          if (i[4]) {
-            finalString = finalString.replace(
-              i[0],
-              'DC ' + i[2] + ' ' + _.upperFirst(i[1]) + ' ' + i[4]
-            );
-          } else {
-            finalString = finalString.replace(i[0], 'DC ' + i[2] + ' ' + _.upperFirst(i[1]));
-          }
+          finalString = finalString.replace(i[0], 'DC ' + i[2] + ' ' + _.upperFirst(i[1]));
         }
+      } else if (i[4]) {
+        finalString = finalString.replace(i[0], _.upperFirst(i[1]) + ' ' + i[4]);
       } else {
-        if (i[4]) {
-          finalString = finalString.replace(i[0], _.upperFirst(i[1]) + ' ' + i[4]);
-        } else {
-          finalString = finalString.replace(i[0], _.upperFirst(i[1]));
-        }
+        finalString = finalString.replace(i[0], _.upperFirst(i[1]));
       }
     }
   }
@@ -664,7 +655,7 @@ const spellString = computed(() => {
               <strong>{{ item.name }}</strong>
               <span
                 v-if="item.action_type === 'reaction'"
-                style="font-family: Pathfinder2eActions; font-size: x-large"
+                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
               >
                 5
               </span>
@@ -696,7 +687,7 @@ const spellString = computed(() => {
               <strong>{{ item.name }}</strong>
               <span
                 v-if="item.action_type === 'reaction'"
-                style="font-family: Pathfinder2eActions; font-size: x-large"
+                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
               >
                 5
               </span>
@@ -722,7 +713,7 @@ const spellString = computed(() => {
           >
             <strong v-if="item.wp_type === 'melee'">Melee </strong>
             <strong v-if="item.wp_type === 'ranged'">Ranged </strong>
-            <span style="font-family: Pathfinder2eActions; font-size: x-large">1 </span>
+            <span style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large">1 </span>
             <i>{{ item.name.toLowerCase() }} </i>
             {{ addPlus(item.to_hit_bonus) }}, <strong>Damage</strong> {{ item.n_of_dices
             }}{{ item.die_size }}+{{ item.bonus_dmg }}
@@ -741,31 +732,31 @@ const spellString = computed(() => {
               <strong>{{ item.name }}</strong>
               <span
                 v-if="item.n_of_actions === 1"
-                style="font-family: Pathfinder2eActions; font-size: x-large"
+                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
               >
                 1
               </span>
               <span
                 v-else-if="item.n_of_actions === 2"
-                style="font-family: Pathfinder2eActions; font-size: x-large"
+                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
               >
                 2
               </span>
               <span
                 v-else-if="item.n_of_actions === 3"
-                style="font-family: Pathfinder2eActions; font-size: x-large"
+                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
               >
                 3
               </span>
               <span
                 v-else-if="item.action_type === 'free'"
-                style="font-family: Pathfinder2eActions; font-size: x-large"
+                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
               >
                 4
               </span>
               <span
                 v-else-if="item.action_type === 'reaction'"
-                style="font-family: Pathfinder2eActions; font-size: x-large"
+                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
               >
                 5
               </span>
