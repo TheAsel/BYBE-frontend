@@ -3,7 +3,7 @@ import type { creature } from 'src/types/creature';
 import type { encounter, randomEncounter } from 'src/types/encounter';
 import type { alignments, sizes, rarities, challenges, roles, variants } from 'src/types/filters';
 
-export async function requestCreatures(start: number, end: number) {
+export async function requestCreatures(start: number, end: number, version: string) {
   try {
     const requestOptions = {
       method: 'GET',
@@ -14,7 +14,9 @@ export async function requestCreatures(start: number, end: number) {
         '/bestiary/list?sort_key=Name&order_by=Ascending&cursor=' +
         start +
         '&page_size=' +
-        end,
+        end +
+        '&pathfinder_version=' +
+        version,
       requestOptions
     );
     const data = await response.json();
@@ -114,12 +116,13 @@ export async function encounterGenerator(body: {
   creature_types: string[] | undefined;
   challenge: challenges | undefined;
   party_levels: number[];
-  is_pwl_on: boolean;
   min_creatures: number;
   max_creatures: number;
   allow_weak_variants: boolean;
   allow_elite_variants: boolean;
   creature_roles: roles[] | undefined;
+  is_pwl_on: boolean;
+  pathfinder_versions: string;
 }) {
   try {
     const requestOptions = {

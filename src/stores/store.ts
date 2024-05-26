@@ -7,14 +7,19 @@ import type { roles, variants } from 'src/types/filters';
 
 export const settingsStore = defineStore('settings', {
   state: () => ({
-    is_creature_sheet_on: false
+    is_creature_sheet_on: false,
+    pf_version: 'Any'
   }),
   getters: {
-    getCreatureSheets: (state) => state.is_creature_sheet_on
+    getCreatureSheets: (state) => state.is_creature_sheet_on,
+    getPfVersion: (state) => state.pf_version
   },
   actions: {
     setCreatureSheets(newCreatureSheets: boolean) {
       this.is_creature_sheet_on = newCreatureSheets;
+    },
+    setPfVersion(newPfVersion: string) {
+      this.pf_version = newPfVersion;
     }
   }
 });
@@ -164,6 +169,7 @@ export const encounterStore = defineStore('encounter', {
     getEncounters: (state) => state.encounters,
     getActive: (state) => state.activeEncounter,
     getActiveEncounter: (state) => state.encounters[state.activeEncounter],
+    getPwl: (state) => state.is_pwl_on,
     getGenerating: (state) => state.generating
   },
   actions: {

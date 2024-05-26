@@ -13,7 +13,7 @@ import {
   biCloudArrowUp,
   biQuestionCircle
 } from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
+import { matPriorityHigh, matArrowDropDown } from '@quasar/extras/material-icons';
 import { fasFlaskVial } from '@quasar/extras/fontawesome-v6';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 import { debounce } from 'lodash';
@@ -35,28 +35,34 @@ const currentPath = ref(route.path);
 
 const settingsDialog = ref(false);
 const tab = ref('General');
-const legacy = ref(false);
-const localLegacy = ref(localStorage.getItem('legacy'));
+const pfVersion = ref('Any');
+const localPfVersion = ref(localStorage.getItem('pf_version'));
 
-switch (localLegacy.value) {
-  case 'true':
-    legacy.value = true;
+switch (localPfVersion.value?.toLowerCase()) {
+  case 'any':
+    pfVersion.value = 'Any';
     break;
-  case 'false':
-    legacy.value = false;
+  case 'legacy':
+    pfVersion.value = 'Legacy';
+    break;
+  case 'remaster':
+    pfVersion.value = 'Remaster';
     break;
   default:
-    legacy.value = false;
-    localStorage.setItem('legacy', 'false');
+    pfVersion.value = 'Any';
+    localStorage.setItem('pf_version', 'Any');
     break;
 }
 
-const toggleLegacy = () => {
-  localStorage.setItem('legacy', JSON.stringify(legacy.value));
+settings.setPfVersion(pfVersion.value);
+
+const togglePfVersion = () => {
+  localStorage.setItem('pf_version', pfVersion.value);
+  window.location.reload();
 };
 
 const hideSupport = ref(false);
-const localSupport = ref(localStorage.getItem('hideSupport'));
+const localSupport = ref(localStorage.getItem('hide_support'));
 
 switch (localSupport.value) {
   case 'true':
@@ -70,12 +76,12 @@ switch (localSupport.value) {
   default:
     hideSupport.value = false;
     supportButton.value.style.visibility = '';
-    localStorage.setItem('hideSupport', 'false');
+    localStorage.setItem('hide_support', 'false');
     break;
 }
 
 const toggleSupport = () => {
-  localStorage.setItem('hideSupport', JSON.stringify(hideSupport.value));
+  localStorage.setItem('hide_support', JSON.stringify(hideSupport.value));
   if (hideSupport.value) {
     supportButton.value.style.visibility = 'hidden';
   } else {
@@ -89,18 +95,17 @@ const localPwl = ref(localStorage.getItem('is_pwl_on'));
 switch (localPwl.value) {
   case 'true':
     is_pwl_on.value = true;
-    encounter.setPwL(true);
     break;
   case 'false':
     is_pwl_on.value = false;
-    encounter.setPwL(false);
     break;
   default:
     is_pwl_on.value = false;
     localStorage.setItem('is_pwl_on', 'false');
-    encounter.setPwL(false);
     break;
 }
+
+encounter.setPwL(is_pwl_on.value);
 
 const togglePwL = () => {
   localStorage.setItem('is_pwl_on', JSON.stringify(is_pwl_on.value));
@@ -113,18 +118,17 @@ const localCreatureSheets = ref(localStorage.getItem('is_creature_sheets_on'));
 switch (localCreatureSheets.value) {
   case 'true':
     is_creature_sheets_on.value = true;
-    settings.setCreatureSheets(true);
     break;
   case 'false':
     is_creature_sheets_on.value = false;
-    settings.setCreatureSheets(false);
     break;
   default:
     is_creature_sheets_on.value = false;
     localStorage.setItem('is_creature_sheets_on', 'false');
-    settings.setCreatureSheets(false);
     break;
 }
+
+settings.setCreatureSheets(is_creature_sheets_on.value);
 
 const toggleCreatureSheets = () => {
   localStorage.setItem('is_creature_sheets_on', JSON.stringify(is_creature_sheets_on.value));
@@ -235,9 +239,9 @@ const validateData = (result: string) => {
           throw 'Invalid loaded encounter format';
         }
         break;
-      case 'legacy':
-        if (parsedData[key] != 'true' && parsedData[key] != 'false') {
-          throw 'Invalid loaded legacy value';
+      case 'pf_version':
+        if (!['any', 'legacy', 'remaster'].includes(parsedData[key].toLowerCase())) {
+          throw 'Invalid loaded pathfinder version value';
         }
         break;
       case 'parties':
@@ -271,6 +275,21 @@ const validateData = (result: string) => {
       case 'theme':
         if (parsedData[key] != 'light' && parsedData[key] != 'dark') {
           throw 'Invalid loaded theme value';
+        }
+        break;
+      case 'is_creature_sheets_on':
+        if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+          throw 'Invalid loaded creature sheets value';
+        }
+        break;
+      case 'is_pwl_on':
+        if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+          throw 'Invalid loaded pwl value';
+        }
+        break;
+      case 'hide_support':
+        if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+          throw 'Invalid loaded hide support value';
         }
         break;
       default:
@@ -396,7 +415,7 @@ const downloadData = () => {
               id="v-step-8"
             />
             <q-dialog v-model="settingsDialog" aria-label="Settings dialog">
-              <q-card flat bordered style="min-height: 400px; min-width: 270px">
+              <q-card flat bordered style="min-height: 405px; min-width: 270px">
                 <q-card-section>
                   <div class="row">
                     <div class="text-h6 tw-mr-4 tw-my-auto">Settings</div>
@@ -457,21 +476,16 @@ const downloadData = () => {
                     <q-separator />
                     <q-card-actions>
                       <div class="q-gutter-y-sm column tw-mx-auto">
-                        <q-toggle
-                          disable
-                          v-model="legacy"
-                          label="Legacy version"
-                          @update:model-value="toggleLegacy"
-                        >
-                          <q-tooltip
-                            class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                            anchor="top middle"
-                            self="bottom middle"
-                          >
-                            <strong>Work in progress!</strong> <br />
-                            Waiting for the Monster Core
-                          </q-tooltip>
-                        </q-toggle>
+                        <q-select
+                          outlined
+                          dense
+                          options-dense
+                          v-model="pfVersion"
+                          :options="['Any', 'Legacy', 'Remaster']"
+                          label="Pathfinder Version"
+                          :dropdown-icon="matArrowDropDown"
+                          @update:model-value="togglePfVersion"
+                        />
                         <q-toggle
                           v-model="hideSupport"
                           label="Hide support button"
@@ -489,6 +503,7 @@ const downloadData = () => {
                         class="tw-mx-auto"
                       >
                       </q-toggle>
+                      <q-space />
                       <q-btn
                         flat
                         round
@@ -497,7 +512,6 @@ const downloadData = () => {
                         href="https://2e.aonprd.com/Rules.aspx?ID=2762"
                         target="_blank"
                         rel="noopener"
-                        class="tw-ml-2"
                       >
                         <q-tooltip
                           class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -512,7 +526,7 @@ const downloadData = () => {
                     <q-separator />
                     <q-card-actions>
                       <div class="tw-mx-auto">
-                        <q-icon :name="fasFlaskVial" size="sm" class="tw-mr-2"></q-icon>
+                        <q-icon :name="fasFlaskVial" size="sm" class="tw-mr-2" />
                         Experimental features
                       </div>
                     </q-card-actions>
@@ -521,17 +535,10 @@ const downloadData = () => {
                         v-model="is_creature_sheets_on"
                         label="Creature sheets"
                         @update:model-value="toggleCreatureSheets"
-                        class="tw-mx-auto"
                       >
                       </q-toggle>
-                      <q-btn
-                        flat
-                        round
-                        size="sm"
-                        :icon="biQuestionCircle"
-                        target="_blank"
-                        class="tw-ml-2"
-                      >
+                      <q-space />
+                      <q-icon flat round size="xs" :name="biQuestionCircle" class="tw-mr-1.5">
                         <q-tooltip
                           class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
                           anchor="top middle"
@@ -540,7 +547,7 @@ const downloadData = () => {
                           <strong>Click on the scroll beside the creature's name</strong> <br />
                           It will show a creature sheet showing it's attributes
                         </q-tooltip>
-                      </q-btn>
+                      </q-icon>
                     </q-card-actions>
                   </q-tab-panel>
                 </q-tab-panels>

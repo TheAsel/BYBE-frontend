@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
 import { biXLg } from '@quasar/extras/bootstrap-icons';
-import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
+import { partyStore, filtersStore, encounterStore, settingsStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
 import type { alignments, sizes, rarities, challenges, roles } from 'src/types/filters';
 import type { creature_encounter } from 'src/types/creature';
@@ -11,6 +11,7 @@ import { debounce } from 'lodash';
 
 const $q = useQuasar();
 
+const settings = settingsStore();
 const party = partyStore();
 const filters = filtersStore();
 const encounter = encounterStore();
@@ -63,20 +64,9 @@ const generateEncounter = debounce(async function () {
   encounter.setGenerating(true);
   saveChanges();
   const partyLevels = party.getActiveParty.members;
-  const is_pwl_on = ref(false);
-  const localPwl = ref(localStorage.getItem('is_pwl_on'));
-  switch (localPwl.value) {
-    case 'true':
-      is_pwl_on.value = true;
-      break;
-    case 'false':
-      is_pwl_on.value = false;
-      break;
-    default:
-      is_pwl_on.value = false;
-      localStorage.setItem('is_pwl_on', 'false');
-      break;
-  }
+  const is_pwl_on = encounter.getPwl;
+  const pf_version = settings.getPfVersion;
+
   const post = {
     traits: tmpFilters.value.traits,
     alignments: tmpFilters.value.alignment,
@@ -90,8 +80,9 @@ const generateEncounter = debounce(async function () {
     max_creatures: tmpFilters.value.creatures.max,
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels,
-    is_pwl_on: is_pwl_on.value,
-    creature_roles: creature_roles.value
+    creature_roles: creature_roles.value,
+    is_pwl_on: is_pwl_on,
+    pathfinder_versions: pf_version
   };
   try {
     const randomEncounter = await encounterGenerator(post);
