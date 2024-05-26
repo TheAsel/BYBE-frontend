@@ -101,34 +101,34 @@ const addPlus = (value: number | undefined) => {
 
 const variantStyle = (value: number | undefined) => {
   if (value && creatureVariant.value != 'Base') {
-    let valueStr = value.toString();
-    valueStr = '<span class="tw-text-red-600"><b>' + value + '</b></span>';
+    let valueStr = '<span class="tw-text-red-600"><b>' + value.toString() + '</b></span>';
     return valueStr;
   }
   return value;
 };
 
 const cleanDescription = (description: string) => {
+  console.log(description);
   let finalString = '';
-  const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr\ ?\/>|@Localize\[.+\]/g;
+  const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
   const compendiumRegex =
     /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s'()+]*)\](?:{([\w\s'+]*)})?/g;
   const effectRegex =
     /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*): ([\w\s\-'()]*)\](?:{([\w\s']*)})?/g;
   const damageRegex =
-    /@Damage\[\(?([\d]*d?[\d]*\+?[\d]*)\)?\[([\w]*),?([\w]*)\](?:,?\(?(?:([\d]*d[\d]*\+?[\d]*)?\)?\[([\w]*)\])?[\w\-:|]?)+\](?:{([\w\s\-+,]*)})?/g;
+    /@Damage\[\(?([\w+]*)\)?\[(\w*),?(\w+)?\]?,?(\w+)?\[?(\w+)?\]?(?:[\w|:,[\]-]+)?\](?:\{([\w\s,+]*)\})?/g;
   const templateRegex =
-    /@Template\[type:([\w]*)\|distance:([\d]*)\|?(?:traits:([\w\-,]*))?\](?:{([\w\s\-]*)})?/g;
+    /@Template\[type:(\w*)\|distance:(\d*)\|?(?:traits:([\w\-,]*))?\](?:{([\w\s-]*)})?/g;
   const checkRegex =
-    /@Check\[type:([\w]*)(?:[\w\s\-|]*dc:([\w\s,:+@.()]*))?(?:[\w\s\-,:|()]*basic:([\w]*))?[\w\s\-,:|()]*\](?:{([\w\s'+()]*)})?/g;
+    /@Check\[type:(\w*)(?:[\w\s\-|]*dc:([\w\s,:+@.()]*))?(?:[\w\s\-,:|()]*basic:(\w*))?[\w\s\-,:|()]*\](?:{([\w\s'+()]*)})?/g;
   const rollRegex =
-    /\[\[\/b?r \(?{?([\d*]*[\d]*d?[\d\s\-+]*[\d]*),?[\d]*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\s\-+;]*)})?/g;
+    /\[\[\/b?r \(?{?(\d\*?\d*d?[\d\s\-+]*\d*),?\d*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\s\-+;]*)})?/g;
 
   finalString = description.replace(cleanRegex, '');
   finalString = finalString.replace(effectRegex, '');
 
   const compendium = finalString.matchAll(compendiumRegex);
-  for (let i of compendium) {
+  for (const i of compendium) {
     if (i) {
       if (i[5]) {
         finalString = finalString.replace(i[0], i[5].toLowerCase());
@@ -139,7 +139,7 @@ const cleanDescription = (description: string) => {
   }
 
   const damage = finalString.matchAll(damageRegex);
-  for (let i of damage) {
+  for (const i of damage) {
     if (i) {
       if (i[6]) {
         finalString = finalString.replace(i[0], i[6]);
@@ -154,14 +154,14 @@ const cleanDescription = (description: string) => {
   }
 
   const template = finalString.matchAll(templateRegex);
-  for (let i of template) {
+  for (const i of template) {
     if (i) {
       finalString = finalString.replace(i[0], i[2] + '-foot ' + i[1]);
     }
   }
 
   const save = finalString.matchAll(checkRegex);
-  for (let i of save) {
+  for (const i of save) {
     if (i) {
       if (i[2] && Number(i[2])) {
         if (i[3] === 'true') {
@@ -190,7 +190,7 @@ const cleanDescription = (description: string) => {
   }
 
   const roll = finalString.matchAll(rollRegex);
-  for (let i of roll) {
+  for (const i of roll) {
     if (i) {
       if (i[2]) {
         finalString = finalString.replace(i[0], i[2]);

@@ -21,8 +21,8 @@ export async function requestCreatures(start: number, end: number, version: stri
     );
     const data = await response.json();
     if (!response.ok) {
-      const error = (data && data.message) || response.status;
-      throw error;
+      const error = data?.message || response.status;
+      throw new Error(error);
     }
     return data.results as creature[];
   } catch (error) {
@@ -49,8 +49,8 @@ export async function requestFilters(
     const response = await fetch(backendUrl + '/bestiary/' + filter, requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = (data && data.message) || response.status;
-      throw error;
+      const error = data?.message || response.status;
+      throw new Error(error);
     }
     return data as string[];
   } catch (error) {
@@ -76,7 +76,7 @@ export async function requestCreatureId(creature_id: number, variant: variants) 
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
-      throw error;
+      throw new Error(error);
     }
     return data.results as creature;
   } catch (error) {
@@ -98,8 +98,8 @@ export async function encounterInfo(encounter: {
     const response = await fetch(backendUrl + '/encounter/info', requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = (data && data.message) || response.status;
-      throw error;
+      const error = data?.message || response.status;
+      throw new Error(error);
     }
     return data as encounter;
   } catch (error) {
@@ -133,8 +133,8 @@ export async function encounterGenerator(body: {
     const response = await fetch(backendUrl + '/encounter/generator', requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = (data && data.message) || response.status;
-      throw error;
+      const error = data?.message || response.status;
+      throw new Error(error);
     }
     return data as randomEncounter;
   } catch (error) {
