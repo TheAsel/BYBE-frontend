@@ -75,7 +75,7 @@ export async function requestCreatureId(creature_id: number, variant: variants) 
     );
     const data = await response.json();
     if (!response.ok) {
-      const error = (data && data.message) || response.status;
+      const error = data?.message || response.status;
       throw error;
     }
     return data.results as creature;

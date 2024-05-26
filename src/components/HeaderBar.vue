@@ -197,17 +197,7 @@ const uploadData = () => {
       reader.onload = (event) => {
         const result = event.target?.result as string;
         if (result) {
-          try {
-            validateData(result);
-          } catch (error) {
-            console.error('Error parsing JSON file:', error);
-            $q.notify({
-              progress: true,
-              type: 'warning',
-              message: 'Error reading the uploaded file',
-              icon: matPriorityHigh
-            });
-          }
+          validateData(result);
         }
       };
       reader.readAsText(file);
@@ -218,86 +208,96 @@ const uploadData = () => {
 
 const validateData = (result: string) => {
   const parsedData = JSON.parse(result);
-  Object.keys(parsedData).forEach((key) => {
-    switch (key) {
-      case 'encounters':
-        const parsedEncounters = JSON.parse(parsedData[key]);
-        if (Array.isArray(parsedEncounters)) {
-          const isCompatible = parsedEncounters.every((p) => {
-            return typeof p.name === 'string' && Array.isArray(p.creatures);
-          });
-          if (isCompatible) {
-            const encounters: encounterList[] = parsedEncounters;
-            const encounterNames = encounters.map((p) => p.name);
-            if (new Set(encounterNames).size !== encounterNames.length) {
-              throw 'Duplicate loaded encounter names';
+  try {
+    Object.keys(parsedData).forEach((key) => {
+      switch (key) {
+        case 'encounters':
+          const parsedEncounters = JSON.parse(parsedData[key]);
+          if (Array.isArray(parsedEncounters)) {
+            const isCompatible = parsedEncounters.every((p) => {
+              return typeof p.name === 'string' && Array.isArray(p.creatures);
+            });
+            if (isCompatible) {
+              const encounters: encounterList[] = parsedEncounters;
+              const encounterNames = encounters.map((p) => p.name);
+              if (new Set(encounterNames).size !== encounterNames.length) {
+                throw 'Duplicate loaded encounter names';
+              }
+            } else {
+              throw 'Invalid loaded encounter format';
             }
           } else {
             throw 'Invalid loaded encounter format';
           }
-        } else {
-          throw 'Invalid loaded encounter format';
-        }
-        break;
-      case 'pf_version':
-        if (!['any', 'legacy', 'remaster'].includes(parsedData[key].toLowerCase())) {
-          throw 'Invalid loaded pathfinder version value';
-        }
-        break;
-      case 'parties':
-        const parsedParties = JSON.parse(parsedData[key]);
-        if (Array.isArray(parsedParties)) {
-          const isCompatible = parsedParties.every((p) => {
-            return (
-              typeof p.name === 'string' &&
-              Array.isArray(p.members) &&
-              p.members.every((member) => typeof member === 'number')
-            );
-          });
-          if (isCompatible) {
-            const parties: party[] = parsedParties;
-            parties.forEach((p) => {
-              if (!p || !p.members.every((player) => player >= 1 && player <= 20)) {
-                throw 'Invalid loaded party levels';
-              }
+          break;
+        case 'pf_version':
+          if (!['any', 'legacy', 'remaster'].includes(parsedData[key].toLowerCase())) {
+            throw 'Invalid loaded pathfinder version value';
+          }
+          break;
+        case 'parties':
+          const parsedParties = JSON.parse(parsedData[key]);
+          if (Array.isArray(parsedParties)) {
+            const isCompatible = parsedParties.every((p) => {
+              return (
+                typeof p.name === 'string' &&
+                Array.isArray(p.members) &&
+                p.members.every((member) => typeof member === 'number')
+              );
             });
-            const partyNames = parties.map((p) => p.name);
-            if (new Set(partyNames).size !== partyNames.length) {
-              throw 'Duplicate loaded party names';
+            if (isCompatible) {
+              const parties: party[] = parsedParties;
+              parties.forEach((p) => {
+                if (!p || !p.members.every((player) => player >= 1 && player <= 20)) {
+                  throw 'Invalid loaded party levels';
+                }
+              });
+              const partyNames = parties.map((p) => p.name);
+              if (new Set(partyNames).size !== partyNames.length) {
+                throw 'Duplicate loaded party names';
+              }
+            } else {
+              throw 'Invalid loaded party format';
             }
           } else {
             throw 'Invalid loaded party format';
           }
-        } else {
-          throw 'Invalid loaded party format';
-        }
-        break;
-      case 'theme':
-        if (parsedData[key] != 'light' && parsedData[key] != 'dark') {
-          throw 'Invalid loaded theme value';
-        }
-        break;
-      case 'is_creature_sheets_on':
-        if (parsedData[key] != 'true' && parsedData[key] != 'false') {
-          throw 'Invalid loaded creature sheets value';
-        }
-        break;
-      case 'is_pwl_on':
-        if (parsedData[key] != 'true' && parsedData[key] != 'false') {
-          throw 'Invalid loaded pwl value';
-        }
-        break;
-      case 'hide_support':
-        if (parsedData[key] != 'true' && parsedData[key] != 'false') {
-          throw 'Invalid loaded hide support value';
-        }
-        break;
-      default:
-        throw 'Unknown loaded key';
-    }
-    localStorage.setItem(key, parsedData[key]);
-  });
-  window.location.reload();
+          break;
+        case 'theme':
+          if (parsedData[key] != 'light' && parsedData[key] != 'dark') {
+            throw 'Invalid loaded theme value';
+          }
+          break;
+        case 'is_creature_sheets_on':
+          if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+            throw 'Invalid loaded creature sheets value';
+          }
+          break;
+        case 'is_pwl_on':
+          if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+            throw 'Invalid loaded pwl value';
+          }
+          break;
+        case 'hide_support':
+          if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+            throw 'Invalid loaded hide support value';
+          }
+          break;
+        default:
+          throw 'Unknown loaded key';
+      }
+      localStorage.setItem(key, parsedData[key]);
+    });
+    window.location.reload();
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error reading the uploaded file',
+      icon: matPriorityHigh
+    });
+  }
 };
 
 const downloadData = () => {
