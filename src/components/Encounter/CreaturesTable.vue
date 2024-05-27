@@ -928,6 +928,7 @@ const openCreatureSheet = (id: number) => {
             "
             target="_blank"
             rel="noopener"
+            aria-label="Search source on Paizo store"
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -952,6 +953,7 @@ const openCreatureSheet = (id: number) => {
             class="tw-mr-1"
             @click="openCreatureSheet(name.row.core_data.essential.id)"
             target="_blank"
+            aria-label="Open creature sheet"
           />
           <a
             v-if="name.row.core_data.derived.archive_link"

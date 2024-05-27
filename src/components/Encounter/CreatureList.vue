@@ -193,12 +193,14 @@ const saveChanges = () => {
                 label="Cancel"
                 @click="closeDialog"
                 class="tw-text-blue-600 dark:tw-text-blue-400"
+                aria-label="Close dialog"
               />
               <q-btn
                 flat
                 label="Add encounter"
                 @click="addEncounter"
                 class="tw-text-blue-600 dark:tw-text-blue-400"
+                aria-label="Add encounter"
               />
             </q-card-actions>
           </q-card>
@@ -228,12 +230,14 @@ const saveChanges = () => {
                 label="Cancel"
                 @click="closeDialog"
                 class="tw-text-blue-600 dark:tw-text-blue-400"
+                aria-label="Close dialog"
               />
               <q-btn
                 flat
                 label="Remove"
                 @click="removeEncounter"
                 class="tw-text-red-600 dark:tw-text-red-400"
+                aria-label="Remove encounter"
               />
             </q-card-actions>
           </q-card>
@@ -249,7 +253,9 @@ const saveChanges = () => {
           :dropdown-icon="matArrowDropDown"
           @update:model-value="changeActiveEncounter(tmpEncounter.name)"
         />
-        <q-btn flat dense @click="encounter.clearEncounter">CLEAR</q-btn>
+        <q-btn flat dense @click="encounter.clearEncounter" aria-label="Clear encounter"
+          >CLEAR</q-btn
+        >
       </div>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
       <q-scroll-area
