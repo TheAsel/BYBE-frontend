@@ -347,7 +347,11 @@ const defenceString = computed(() => {
   if (actions != undefined && actions.length > 0) {
     finalString += '; ';
     actions.forEach((action) => {
-      if (action.action_type === 'passive' && action.category === 'defensive') {
+      if (
+        action.action_type === 'passive' &&
+        action.category === 'defensive' &&
+        action.description === ''
+      ) {
         finalString += action.name.toLowerCase() + ', ';
       }
     });
@@ -512,7 +516,7 @@ const spellString = computed(() => {
   <div class="creature-sheet">
     <q-card
       flat
-      class="tw-items-center tw-text-justify tw-max-w-[55rem] tw-mx-auto tw-mt-4 tw-p-4 tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-mx-auto tw-mt-4 tw-p-4 tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700"
     >
       <q-scroll-area style="height: calc(100vh - 155px)">
         <div class="q-gutter-y-xs">

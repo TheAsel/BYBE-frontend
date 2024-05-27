@@ -492,6 +492,7 @@ const downloadData = () => {
                           v-model="hideSupport"
                           label="Hide support button"
                           @update:model-value="toggleSupport"
+                          aria-label="Toggle support button visibility"
                         />
                       </div>
                     </q-card-actions>
@@ -503,6 +504,7 @@ const downloadData = () => {
                         label="Prof. without Level"
                         @update:model-value="togglePwL"
                         class="tw-mx-auto"
+                        aria-label="Toggle proficiency without level"
                       >
                       </q-toggle>
                       <q-space />
@@ -514,6 +516,7 @@ const downloadData = () => {
                         href="https://2e.aonprd.com/Rules.aspx?ID=2762"
                         target="_blank"
                         rel="noopener"
+                        aria-label="Link to explanation for proficiency without level"
                       >
                         <q-tooltip
                           class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -537,6 +540,7 @@ const downloadData = () => {
                         v-model="is_creature_sheets_on"
                         label="Creature sheets"
                         @update:model-value="toggleCreatureSheets"
+                        aria-label="Toggle experimental creature sheets"
                       >
                       </q-toggle>
                       <q-space />
