@@ -218,6 +218,12 @@ body.v-tour--active {
     padding-right: 30vh;
     padding-left: 5vh;
   }
+
+  html,
+  body {
+    height: 99%;
+    overflow: hidden;
+  }
 }
 
 @-moz-document url-prefix() {
@@ -225,6 +231,11 @@ body.v-tour--active {
     body {
       padding-right: 0;
       padding-left: 0;
+    }
+
+    html,
+    body {
+      height: 120vh !important;
     }
   }
 }
