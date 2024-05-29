@@ -516,11 +516,14 @@ const spellString = computed(() => {
   <div class="creature-sheet">
     <q-card
       flat
-      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-mx-auto tw-mt-4 tw-p-4 tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-mx-auto tw-mt-4 tw-p-4 tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
     >
       <q-scroll-area style="height: calc(100vh - 155px)">
-        <div class="q-gutter-y-xs">
-          <div class="tw-flex tw-font-bold tw-text-lg tw-text-gray-800 dark:tw-text-white">
+        <div class="q-gutter-y-xs show-print">
+          <div
+            class="tw-flex tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white"
+            style="font-family: 'Good Pro Condensed', sans-serif"
+          >
             <a
               v-if="creatureData?.core_data.derived.archive_link"
               class="tw-my-auto"
@@ -542,7 +545,7 @@ const spellString = computed(() => {
             <span v-else class="tw-my-auto">{{ nameString }}</span>
             <q-space />
             <q-select
-              class="tw-mx-4 tw-my-auto tw-text-lg tw-font-bold"
+              class="tw-mx-4 tw-my-auto tw-text-2xl only-screen"
               v-model="creatureVariant"
               :options="Object.freeze(['Weak', 'Base', 'Elite'])"
               :dropdown-icon="matArrowDropDown"
@@ -556,8 +559,12 @@ const spellString = computed(() => {
               {{ creatureData?.core_data.essential.level }}
             </div>
           </div>
-          <q-separator style="height: 2px" />
-          <div class="tw-flex tw-flex-wrap tw-font-bold tw-text-xs tw-text-white">
+          <q-separator class="tw-my-2" style="height: 2px" />
+          <hr
+            class="only-print"
+            style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+          />
+          <div class="tw-flex tw-flex-wrap tw-font-bold tw-text-sm tw-text-white">
             <div v-if="creatureData?.core_data.essential.rarity === 'Common'"></div>
             <div
               v-else-if="creatureData?.core_data.essential.rarity === 'Uncommon'"
@@ -594,173 +601,197 @@ const spellString = computed(() => {
               {{ item.toUpperCase() }}
             </div>
           </div>
-          <div
-            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
-            v-if="creatureData?.core_data.essential.source"
-          >
-            <strong>Source </strong>
-            <a
-              :href="
-                'https://paizo.com/search?q=' +
-                encodeURIComponent(creatureData?.core_data.essential.source) +
-                '&what=products&includeUnrated=true&includeUnavailable=true'
-              "
-              target="_blank"
-              rel="noopener"
-            >
-              <i class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400">
-                {{ creatureData?.core_data.essential.source }}
-              </i>
-            </a>
-          </div>
-          <div
-            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
-            v-html="perceptionString"
-          ></div>
-          <div
-            v-if="
-              creatureData?.extra_data?.languages != undefined &&
-              creatureData?.extra_data?.languages.length > 0
-            "
-            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
-            v-html="languageString"
-          ></div>
-          <div
-            v-if="
-              creatureData?.extra_data?.skills != undefined &&
-              creatureData?.extra_data?.skills.length > 0
-            "
-            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
-            v-html="skillString"
-          ></div>
-          <div class="tw-text-sm tw-text-gray-800 dark:tw-text-white">
-            <strong>Str</strong>
-            {{ addPlus(creatureData?.extra_data?.ability_scores.strength) }},
-            <strong>Dex</strong>
-            {{ addPlus(creatureData?.extra_data?.ability_scores.dexterity) }},
-            <strong>Con</strong>
-            {{ addPlus(creatureData?.extra_data?.ability_scores.constitution) }},
-            <strong>Int</strong>
-            {{ addPlus(creatureData?.extra_data?.ability_scores.intelligence) }},
-            <strong>Wis</strong>
-            {{ addPlus(creatureData?.extra_data?.ability_scores.wisdom) }},
-            <strong>Cha</strong>
-            {{ addPlus(creatureData?.extra_data?.ability_scores.charisma) }}
-          </div>
-          <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+          <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
             <div
-              v-if="item.category === 'interaction' && item.slug === null"
-              class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              v-if="creatureData?.core_data.essential.source"
             >
-              <strong>{{ item.name }}</strong>
-              <span
-                v-if="item.action_type === 'reaction'"
-                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
+              <strong>Source </strong>
+              <a
+                :href="
+                  'https://paizo.com/search?q=' +
+                  encodeURIComponent(creatureData?.core_data.essential.source) +
+                  '&what=products&includeUnrated=true&includeUnavailable=true'
+                "
+                target="_blank"
+                rel="noopener"
               >
-                5
-              </span>
-              <span v-html="' ' + cleanDescription(item.description)"></span>
+                <i
+                  class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                >
+                  {{ creatureData?.core_data.essential.source }}
+                </i>
+              </a>
             </div>
-          </div>
-          <div
-            v-if="
-              creatureData?.combat_data?.weapons != undefined &&
-              creatureData?.combat_data?.weapons.length > 0
-            "
-            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
-            v-html="weaponString"
-          ></div>
-          <q-separator class="tw-my-2" style="height: 2px" />
-          <div class="tw-text-sm tw-text-gray-800 dark:tw-text-white" v-html="defenceString"></div>
-          <div class="tw-text-sm tw-text-gray-800 dark:tw-text-white" v-html="healthString"></div>
-          <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+            <div
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              v-html="perceptionString"
+            ></div>
             <div
               v-if="
-                item.slug != 'regeneration' &&
-                item.slug != 'fast-healing' &&
-                item.slug != 'negative-healing' &&
-                item.description != '' &&
-                item.category === 'defensive'
+                creatureData?.extra_data?.languages != undefined &&
+                creatureData?.extra_data?.languages.length > 0
               "
-              class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
-            >
-              <strong>{{ item.name }}</strong>
-              <span
-                v-if="item.action_type === 'reaction'"
-                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              v-html="languageString"
+            ></div>
+            <div
+              v-if="
+                creatureData?.extra_data?.skills != undefined &&
+                creatureData?.extra_data?.skills.length > 0
+              "
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              v-html="skillString"
+            ></div>
+            <div class="tw-text-base tw-text-gray-800 dark:tw-text-white">
+              <strong>Str</strong>
+              {{ addPlus(creatureData?.extra_data?.ability_scores.strength) }},
+              <strong>Dex</strong>
+              {{ addPlus(creatureData?.extra_data?.ability_scores.dexterity) }},
+              <strong>Con</strong>
+              {{ addPlus(creatureData?.extra_data?.ability_scores.constitution) }},
+              <strong>Int</strong>
+              {{ addPlus(creatureData?.extra_data?.ability_scores.intelligence) }},
+              <strong>Wis</strong>
+              {{ addPlus(creatureData?.extra_data?.ability_scores.wisdom) }},
+              <strong>Cha</strong>
+              {{ addPlus(creatureData?.extra_data?.ability_scores.charisma) }}
+            </div>
+            <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+              <div
+                v-if="item.category === 'interaction' && item.slug === null"
+                class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               >
-                5
-              </span>
-              <span v-html="' ' + cleanDescription(item.description)"></span>
+                <strong>{{ item.name + ' ' }}</strong>
+                <span
+                  v-if="item.action_type === 'reaction'"
+                  style="font-family: Pathfinder2eActions, sans-serif"
+                  class="tw-text-2xl"
+                  >5</span
+                >
+                <span v-html="' ' + cleanDescription(item.description)"></span>
+              </div>
+            </div>
+            <div
+              v-if="
+                creatureData?.combat_data?.weapons != undefined &&
+                creatureData?.combat_data?.weapons.length > 0
+              "
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              v-html="weaponString"
+            ></div>
+          </div>
+          <q-separator class="tw-my-2" style="height: 2px" />
+          <hr
+            class="only-print"
+            style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+          />
+          <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
+            <div
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              v-html="defenceString"
+            ></div>
+            <div
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              v-html="healthString"
+            ></div>
+            <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+              <div
+                v-if="
+                  item.slug != 'regeneration' &&
+                  item.slug != 'fast-healing' &&
+                  item.slug != 'negative-healing' &&
+                  item.description != '' &&
+                  item.category === 'defensive'
+                "
+                class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              >
+                <strong>{{ item.name + ' ' }}</strong>
+                <span
+                  v-if="item.action_type === 'reaction'"
+                  style="font-family: Pathfinder2eActions, sans-serif"
+                  class="tw-text-2xl"
+                  >5</span
+                >
+                <span v-html="' ' + cleanDescription(item.description)"></span>
+              </div>
             </div>
           </div>
           <q-separator class="tw-my-2" style="height: 2px" />
-          <div
-            v-if="
-              creatureData?.extra_data?.speeds != undefined &&
-              Object.keys(creatureData?.extra_data?.speeds).length > 0
-            "
-            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
-          >
-            <strong>Speed</strong>
-            {{ speedString }}
-          </div>
-
-          <div
-            v-for="item in creatureData?.combat_data?.weapons"
-            :key="item.name"
-            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
-          >
-            <strong v-if="item.wp_type === 'melee'">Melee </strong>
-            <strong v-if="item.wp_type === 'ranged'">Ranged </strong>
-            <span style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large">1 </span>
-            <i>{{ item.name.toLowerCase() }} </i>
-            {{ addPlus(item.to_hit_bonus) }}, <strong>Damage</strong> {{ item.n_of_dices
-            }}{{ item.die_size }}+{{ item.bonus_dmg }}
-            {{ item.dmg_type }}
-          </div>
-          <div
-            v-if="creatureData?.spell_caster_data?.spell_caster_entry.spell_casting_name != null"
-            class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
-            v-html="spellString"
-          ></div>
-          <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+          <hr
+            class="only-print"
+            style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+          />
+          <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
             <div
-              v-if="item.category === 'offensive'"
-              class="tw-text-sm tw-text-gray-800 dark:tw-text-white"
+              v-if="
+                creatureData?.extra_data?.speeds != undefined &&
+                Object.keys(creatureData?.extra_data?.speeds).length > 0
+              "
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
             >
-              <strong>{{ item.name }}</strong>
-              <span
-                v-if="item.n_of_actions === 1"
-                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
+              <strong>Speed</strong>
+              {{ speedString }}
+            </div>
+
+            <div
+              v-for="item in creatureData?.combat_data?.weapons"
+              :key="item.name"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+            >
+              <strong v-if="item.wp_type === 'melee'">Melee </strong>
+              <strong v-if="item.wp_type === 'ranged'">Ranged </strong>
+              <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                >1</span
               >
-                1
-              </span>
-              <span
-                v-else-if="item.n_of_actions === 2"
-                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
+              <i>{{ ' ' + item.name.toLowerCase() }} </i>
+              {{ addPlus(item.to_hit_bonus) }}, <strong>Damage</strong> {{ item.n_of_dices
+              }}{{ item.die_size }}+{{ item.bonus_dmg }}
+              {{ item.dmg_type }}
+            </div>
+            <div
+              v-if="creatureData?.spell_caster_data?.spell_caster_entry.spell_casting_name != null"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              v-html="spellString"
+            ></div>
+            <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+              <div
+                v-if="item.category === 'offensive'"
+                class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               >
-                2
-              </span>
-              <span
-                v-else-if="item.n_of_actions === 3"
-                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
-              >
-                3
-              </span>
-              <span
-                v-else-if="item.action_type === 'free'"
-                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
-              >
-                4
-              </span>
-              <span
-                v-else-if="item.action_type === 'reaction'"
-                style="font-family: Pathfinder2eActions, sans-serif; font-size: x-large"
-              >
-                5
-              </span>
-              <span v-html="' ' + cleanDescription(item.description)"></span>
+                <strong>{{ item.name + ' ' }}</strong>
+                <span
+                  v-if="item.n_of_actions === 1"
+                  style="font-family: Pathfinder2eActions, sans-serif"
+                  class="tw-text-2xl"
+                  >1</span
+                >
+                <span
+                  v-else-if="item.n_of_actions === 2"
+                  style="font-family: Pathfinder2eActions, sans-serif"
+                  class="tw-text-2xl"
+                  >2</span
+                >&nbsp;
+                <span
+                  v-else-if="item.n_of_actions === 3"
+                  style="font-family: Pathfinder2eActions, sans-serif"
+                  class="tw-text-2xl"
+                  >3</span
+                >
+                <span
+                  v-else-if="item.action_type === 'free'"
+                  style="font-family: Pathfinder2eActions, sans-serif"
+                  class="tw-text-2xl"
+                  >4</span
+                >
+                <span
+                  v-else-if="item.action_type === 'reaction'"
+                  style="font-family: Pathfinder2eActions, sans-serif"
+                  class="tw-text-2xl"
+                  >5</span
+                >
+                <span v-html="' ' + cleanDescription(item.description)"></span>
+              </div>
             </div>
           </div>
         </div>
@@ -772,6 +803,7 @@ const spellString = computed(() => {
 <style scoped>
 .creature-sheet {
   min-height: calc(100vh - 119px) !important;
+  font-family: 'Good Pro', sans-serif;
 }
 
 .q-select:deep(.q-field__native) > span {
