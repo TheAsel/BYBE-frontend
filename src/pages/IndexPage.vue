@@ -45,12 +45,12 @@ const cards = [
 <template>
   <div class="tw-max-w-[85rem] tw-px-4 tw-pb-10 sm:tw-px-6 lg:tw-px-8 lg:tw-py-14 tw-mx-auto">
     <div class="tw-max-w-2xl tw-mx-auto tw-text-center tw-my-4 lg:tw-mb-14">
-      <h2 class="tw-block text-h4 text-bold tw-text-gray-800 dark:tw-text-white sm:tw-text-4xl">
+      <h1 class="tw-block text-h4 text-bold tw-text-gray-800 dark:tw-text-white sm:tw-text-4xl">
         Welcome to BYBE
-      </h2>
-      <p class="tw-mt-3 text-h6 tw-text-gray-600 dark:tw-text-gray-300">
+      </h1>
+      <h2 class="tw-mt-3 text-h6 tw-text-gray-600 dark:tw-text-gray-300">
         BYBE provides tools to help Pathfinder 2e Game Masters.
-      </p>
+      </h2>
     </div>
     <div class="tw-grid sm:tw-grid-cols-2 lg:tw-grid-cols-3 tw-gap-6">
       <!-- Cards -->

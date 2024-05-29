@@ -29,7 +29,7 @@ TailwindDarkFix();
 const supportButton = ref(
   document.querySelectorAll('[id^=kofi-widget-overlay-]').item(0) as HTMLElement
 );
-supportButton.value.classList.add('only-screen');
+supportButton.value.classList.add('hide-print');
 
 const route = useRoute();
 const currentPath = ref(route.path);
@@ -68,15 +68,15 @@ const localSupport = ref(localStorage.getItem('hide_support'));
 switch (localSupport.value) {
   case 'true':
     hideSupport.value = true;
-    supportButton.value.style.visibility = 'hidden';
+    supportButton.value.style.display = 'none';
     break;
   case 'false':
     hideSupport.value = false;
-    supportButton.value.style.visibility = '';
+    supportButton.value.style.display = 'block';
     break;
   default:
     hideSupport.value = false;
-    supportButton.value.style.visibility = '';
+    supportButton.value.style.display = 'block';
     localStorage.setItem('hide_support', 'false');
     break;
 }
@@ -84,9 +84,9 @@ switch (localSupport.value) {
 const toggleSupport = () => {
   localStorage.setItem('hide_support', JSON.stringify(hideSupport.value));
   if (hideSupport.value) {
-    supportButton.value.style.visibility = 'hidden';
+    supportButton.value.style.display = 'none';
   } else {
-    supportButton.value.style.visibility = '';
+    supportButton.value.style.display = 'block';
   }
 };
 
