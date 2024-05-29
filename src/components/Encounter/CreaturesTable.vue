@@ -335,11 +335,9 @@ const openCreatureSheet = (id: number) => {
       <template v-slot:top>
         <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
           <div class="tw-flex tw-flex-shrink">
-            <q-item-label
-              class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200"
-            >
+            <h1 class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
               Creatures
-            </q-item-label>
+            </h1>
           </div>
           <div class="tw-flex tw-flex-grow tw-justify-center">
             <q-btn-group push>
@@ -800,9 +798,24 @@ const openCreatureSheet = (id: number) => {
                 :stack-label="filterAttacks[0] || filterAttacks[1] || filterAttacks[2]"
               >
                 <template v-slot:control>
-                  <q-icon v-if="filterAttacks[0]" :name="mdiSword" size="xs" />
-                  <q-icon v-if="filterAttacks[1]" :name="mdiBowArrow" size="xs" />
-                  <q-icon v-if="filterAttacks[2]" :name="mdiMagicStaff" size="xs" />
+                  <q-icon
+                    v-if="filterAttacks[0]"
+                    :name="mdiSword"
+                    size="xs"
+                    aria-label="Melee attacks"
+                  />
+                  <q-icon
+                    v-if="filterAttacks[1]"
+                    :name="mdiBowArrow"
+                    size="xs"
+                    aria-label="Ranged attacks"
+                  />
+                  <q-icon
+                    v-if="filterAttacks[2]"
+                    :name="mdiMagicStaff"
+                    size="xs"
+                    aria-label="Spell attacks"
+                  />
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded style="min-width: 100px">

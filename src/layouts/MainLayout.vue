@@ -143,11 +143,11 @@ body.v-tour--active {
 
 @media screen {
   .only-print {
-    display: none;
+    display: none !important;
   }
 
   .only-screen {
-    display: block;
+    display: block !important;
   }
 }
 
@@ -159,25 +159,26 @@ body.v-tour--active {
 
   .q-scrollarea {
     height: 120vh !important;
-    padding-top: 3vh;
+    padding-top: 3vh !important;
   }
 
   .hide-print {
-    visibility: hidden;
+    visibility: hidden !important;
   }
 
   .show-print {
-    visibility: visible;
+    visibility: visible !important;
   }
 
   .only-print {
-    display: block;
+    display: block !important;
   }
 
   .only-screen {
-    display: none;
+    display: none !important;
   }
 
+  h1,
   span,
   i {
     color: black !important;
@@ -215,22 +216,22 @@ body.v-tour--active {
 
   body {
     width: 95vh !important;
-    padding-right: 30vh;
-    padding-left: 5vh;
+    padding-right: 30vh !important;
+    padding-left: 5vh !important;
   }
 
   html,
   body {
-    height: 99%;
-    overflow: hidden;
+    height: 99% !important;
+    overflow: hidden !important;
   }
 }
 
 @-moz-document url-prefix() {
   @media print {
     body {
-      padding-right: 0;
-      padding-left: 0;
+      padding-right: 0 !important;
+      padding-left: 0 !important;
     }
 
     html,

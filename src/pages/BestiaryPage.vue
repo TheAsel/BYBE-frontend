@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { useHead } from '@unhead/vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { matPriorityHigh, matArrowDropDown } from '@quasar/extras/material-icons';
+import { matPriorityHigh, matArrowDropDown, matPrint } from '@quasar/extras/material-icons';
 import type { creature } from 'src/types/creature';
 import { requestCreatureId } from 'src/utils/api-calls';
 import _, { isNull } from 'lodash';
@@ -510,6 +510,10 @@ const spellString = computed(() => {
   }
   return finalString.substring(0, finalString.length - 2);
 });
+
+const printPage = () => {
+  window.print();
+};
 </script>
 
 <template>
@@ -537,12 +541,13 @@ const spellString = computed(() => {
               target="_blank"
               rel="noopener"
             >
-              <span
-                class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
-                >{{ nameString }}</span
+              <h1
+                class="tw-leading-8 tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
               >
+                {{ nameString }}
+              </h1>
             </a>
-            <span v-else class="tw-my-auto">{{ nameString }}</span>
+            <h1 v-else class="tw-leading-8 tw-my-auto">{{ nameString }}</h1>
             <q-space />
             <q-select
               class="tw-mx-4 tw-my-auto tw-text-2xl only-screen"
@@ -798,6 +803,19 @@ const spellString = computed(() => {
       </q-scroll-area>
     </q-card>
   </div>
+  <q-page-sticky
+    position="bottom-right"
+    :offset="[18, 18]"
+    class="tw-z-10 only-screen tw-opacity-85"
+  >
+    <q-btn
+      fab
+      :icon="matPrint"
+      color="primary"
+      @click="printPage"
+      aria-label="Print creature sheet"
+    />
+  </q-page-sticky>
 </template>
 
 <style scoped>
