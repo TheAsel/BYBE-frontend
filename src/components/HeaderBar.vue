@@ -29,6 +29,7 @@ TailwindDarkFix();
 const supportButton = ref(
   document.querySelectorAll('[id^=kofi-widget-overlay-]').item(0) as HTMLElement
 );
+supportButton.value.classList.add('only-screen');
 
 const route = useRoute();
 const currentPath = ref(route.path);

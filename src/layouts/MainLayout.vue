@@ -122,9 +122,7 @@ import HeaderBar from 'components/HeaderBar.vue';
     color: #50596c;
   }
 }
-</style>
 
-<style lang="scss">
 body.v-tour--active {
   pointer-events: none;
 }
@@ -141,5 +139,93 @@ body.v-tour--active {
 
 .v-tour__target--relative {
   position: relative;
+}
+
+@media screen {
+  .only-print {
+    display: none;
+  }
+
+  .only-screen {
+    display: block;
+  }
+}
+
+@media print {
+  header,
+  footer {
+    display: none !important;
+  }
+
+  .q-scrollarea {
+    height: 120vh !important;
+    padding-top: 3vh;
+  }
+
+  .hide-print {
+    visibility: hidden;
+  }
+
+  .show-print {
+    visibility: visible;
+  }
+
+  .only-print {
+    display: block;
+  }
+
+  .only-screen {
+    display: none;
+  }
+
+  span,
+  i {
+    color: black !important;
+  }
+
+  .tw-flex-wrap > * {
+    margin: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 1 !important;
+    padding-right: 1 !important;
+  }
+
+  .q-gutter-y-xs * {
+    margin-top: 0.2rem !important;
+    line-height: 1.2rem !important;
+  }
+
+  .tw-text-2xl {
+    font-size: 18px !important;
+    padding-top: 1vh !important;
+    line-height: 0.2rem !important;
+    color: black !important;
+  }
+
+  .tw-text-sm {
+    font-size: 12px !important;
+    color: black !important;
+  }
+
+  .tw-text-base {
+    font-size: 14px !important;
+    color: black !important;
+  }
+
+  body {
+    width: 95vh !important;
+    padding-right: 30vh;
+    padding-left: 5vh;
+  }
+}
+
+@-moz-document url-prefix() {
+  @media print {
+    body {
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
 }
 </style>
