@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
-import { matArrowDropDown } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash';
 import { partyStore, encounterStore, infoStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/api-calls';
@@ -250,7 +249,6 @@ const saveChanges = () => {
           v-model="tmpEncounter.name"
           :options="encounters"
           label="Encounters"
-          :dropdown-icon="matArrowDropDown"
           @update:model-value="changeActiveEncounter(tmpEncounter.name)"
         />
         <q-btn flat dense @click="encounter.clearEncounter" aria-label="Clear encounter"

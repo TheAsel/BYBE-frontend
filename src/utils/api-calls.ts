@@ -11,7 +11,7 @@ export async function requestCreatures(start: number, end: number, version: stri
     };
     const response = await fetch(
       backendUrl +
-        '/bestiary/list?sort_key=Name&order_by=Ascending&cursor=' +
+        '/bestiary/list?cursor=' +
         start +
         '&page_size=' +
         end +

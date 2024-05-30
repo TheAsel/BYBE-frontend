@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
-import { matPriorityHigh, matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore, settingsStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
@@ -171,12 +171,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.traits"
                 :options="Object.freeze(filters.getFilters.traits)"
                 label="Traits"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -185,12 +183,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.size"
                 :options="Object.freeze(filters.getFilters.sizes)"
                 label="Size"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -199,12 +195,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.rarity"
                 :options="Object.freeze(filters.getFilters.rarities)"
                 label="Rarity"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -213,12 +207,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.family"
                 :options="Object.freeze(filters.getFilters.families)"
                 label="Family"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -227,12 +219,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.creature_type"
                 :options="Object.freeze(filters.getFilters.creature_types)"
                 label="Creature Type"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -258,14 +248,12 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.challenge"
                 :options="
                   Object.freeze(['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'])
                 "
                 label="Challenge"
-                :dropdown-icon="matArrowDropDown"
               />
             </div>
           </q-card-section>
@@ -278,12 +266,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.alignment"
                 :options="Object.freeze(filters.getFilters.alignments)"
                 label="Alignment"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -292,12 +278,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.creature_roles"
                 :options="Object.freeze(filters.getFilters.creature_roles)"
                 label="Roles"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
