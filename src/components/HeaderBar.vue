@@ -13,7 +13,7 @@ import {
   biCloudArrowUp,
   biQuestionCircle
 } from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh, matArrowDropDown } from '@quasar/extras/material-icons';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { fasFlaskVial } from '@quasar/extras/fontawesome-v6';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 import { debounce } from 'lodash';
@@ -486,7 +486,6 @@ const downloadData = () => {
                           v-model="pfVersion"
                           :options="['Any', 'Legacy', 'Remaster']"
                           label="Pathfinder Version"
-                          :dropdown-icon="matArrowDropDown"
                           @update:model-value="togglePfVersion"
                         />
                         <q-toggle

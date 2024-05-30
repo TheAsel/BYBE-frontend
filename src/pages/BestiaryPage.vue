@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { useHead } from '@unhead/vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { matPriorityHigh, matArrowDropDown, matPrint } from '@quasar/extras/material-icons';
+import { matPriorityHigh, matPrint } from '@quasar/extras/material-icons';
 import type { creature } from 'src/types/creature';
 import { requestCreatureId } from 'src/utils/api-calls';
 import _, { isNull } from 'lodash';
@@ -553,7 +553,6 @@ const printPage = () => {
               class="tw-mx-4 tw-my-auto tw-text-2xl only-screen"
               v-model="creatureVariant"
               :options="Object.freeze(['Weak', 'Base', 'Elite'])"
-              :dropdown-icon="matArrowDropDown"
               borderless
               dense
               options-dense
