@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
+import { fasScroll } from '@quasar/extras/fontawesome-v6';
 import { debounce } from 'lodash';
-import { partyStore, encounterStore, infoStore } from 'stores/store';
+import { partyStore, encounterStore, infoStore, settingsStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/api-calls';
 import type { encounterList } from 'src/types/encounter';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+
+const settings = settingsStore();
 const party = partyStore();
 const encounter = encounterStore();
 const info = infoStore();
@@ -133,6 +138,11 @@ const changeActiveEncounter = (selected: string) => {
 const saveChanges = () => {
   encounter.updateEncounter(tmpEncounter.value.name, tmpEncounter.value.creatures);
   localStorage.setItem('encounters', JSON.stringify(encounter.getEncounters));
+};
+
+const openCreatureSheet = (id: number) => {
+  const routeData = router.resolve({ name: 'bestiary', query: { id: id } });
+  window.open(routeData.href, '_blank');
 };
 </script>
 
@@ -284,6 +294,17 @@ const saveChanges = () => {
               />
             </div>
             <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
+              <q-btn
+                v-if="settings.getCreatureSheets"
+                round
+                unelevated
+                :icon="fasScroll"
+                size="sm"
+                class="tw-mr-1"
+                @click="openCreatureSheet(item.id)"
+                target="_blank"
+                aria-label="Open creature sheet"
+              />
               {{ item.quantity }}
               <a
                 v-if="item.archive_link"
