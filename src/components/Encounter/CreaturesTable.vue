@@ -296,6 +296,7 @@ const addCreature = debounce(function (creature: creature) {
   const selectedCreature = creatures.getCreatureId(creature.core_data.essential.id);
   if (selectedCreature) {
     const min_creature: creature_encounter = {
+      id: selectedCreature.core_data.essential.id,
       archive_link: selectedCreature.core_data.derived.archive_link,
       name: selectedCreature.core_data.essential.name,
       level: selectedCreature.core_data.essential.level,

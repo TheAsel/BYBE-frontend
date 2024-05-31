@@ -189,7 +189,7 @@ export const encounterStore = defineStore('encounter', {
     addToEncounter(creature: creature_encounter, index?: number) {
       if (index! >= 0) {
         if (creature.quantity) {
-          creature.quantity!++;
+          creature.quantity++;
         } else {
           creature.quantity = 1;
         }
