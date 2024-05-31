@@ -29,7 +29,7 @@ const cards = [
     name: 'Shop Generator',
     to: '/shop',
     description: 'Create various types of shops of a specific level.',
-    subtext: 'Work in progress...',
+    subtext: 'Try it out',
     icon: biShop
   },
   {

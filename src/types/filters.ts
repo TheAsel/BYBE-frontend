@@ -28,3 +28,11 @@ export type roles =
   | 'SpellCaster';
 
 export type variants = 'Weak' | 'Base' | 'Elite';
+
+export type itemFilters = {
+  name: string;
+  level: { min: number; max: number };
+  type: 'consumable' | 'equipment' | null;
+  sort_by: 'id' | 'name' | 'level' | 'type';
+  order_by: 'ascending' | 'descending';
+};

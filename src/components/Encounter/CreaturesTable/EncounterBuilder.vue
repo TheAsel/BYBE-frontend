@@ -4,7 +4,7 @@ import { useQuasar } from 'quasar';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore, settingsStore } from 'src/stores/store';
-import { encounterGenerator } from 'src/utils/api-calls';
+import { encounterGenerator } from 'src/utils/encounter-api-calls';
 import type { alignments, sizes, rarities, challenges, roles } from 'src/types/filters';
 import type { creature_encounter } from 'src/types/creature';
 import { debounce } from 'lodash';
@@ -82,7 +82,7 @@ const generateEncounter = debounce(async function () {
     party_levels: partyLevels,
     creature_roles: creature_roles.value,
     is_pwl_on: is_pwl_on,
-    pathfinder_versions: pf_version
+    pathfinder_version: pf_version
   };
   try {
     const randomEncounter = await encounterGenerator(post);
