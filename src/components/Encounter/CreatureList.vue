@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
 import { debounce } from 'lodash';
 import { partyStore, encounterStore, infoStore } from 'stores/store';
-import { encounterInfo } from 'src/utils/api-calls';
+import { encounterInfo } from 'src/utils/encounter-api-calls';
 import type { encounterList } from 'src/types/encounter';
 
 const party = partyStore();

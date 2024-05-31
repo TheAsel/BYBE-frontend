@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matPrint } from '@quasar/extras/material-icons';
 import type { creature } from 'src/types/creature';
-import { requestCreatureId } from 'src/utils/api-calls';
+import { requestCreatureId } from 'src/utils/encounter-api-calls';
 import _, { isNull } from 'lodash';
 import { variants } from 'src/types/filters';
 

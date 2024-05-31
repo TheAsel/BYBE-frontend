@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, shallowRef } from 'vue';
 import { useHead } from '@unhead/vue';
-import { requestCreatures, requestFilters } from 'src/utils/api-calls';
+import { requestCreatures, requestFilters } from 'src/utils/encounter-api-calls';
 import {
   partyStore,
   filtersStore,
