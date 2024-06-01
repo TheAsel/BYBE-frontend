@@ -287,13 +287,15 @@ const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
     const tmpKoboldMage: creature_encounter = {
-      archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=274',
-      name: 'Kobold Dragon Mage',
+      id: 1721,
+      archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3074',
+      name: 'Kobold Cavern Mage',
       level: 2,
       variant: 'Base'
     };
     const tmpKoboldWarrior: creature_encounter = {
-      archive_link: 'https://2e.aonprd.com/Monsters.aspx?ID=272',
+      id: 1260,
+      archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3072',
       name: 'Kobold Warrior',
       level: -1,
       variant: 'Base'

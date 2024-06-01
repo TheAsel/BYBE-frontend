@@ -166,6 +166,7 @@ export type creature = {
 };
 
 export type creature_encounter = {
+  id: number;
   archive_link: string;
   name: string;
   level: number;
