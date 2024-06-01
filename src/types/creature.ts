@@ -1,11 +1,15 @@
-import type { alignments, rarities, roles, sizes } from './filters';
+import type { alignments, rarities, roles, sizes, variants } from './filters';
+
+interface KeyValue {
+  [key: string]: number;
+}
 
 export type creature = {
   combat_data?: {
     ac: number;
     immunities: string[];
-    resistances: string[];
-    weaknesses: string[];
+    resistances: KeyValue;
+    weaknesses: KeyValue;
     saving_throws: {
       fortitude: number;
       fortitude_detail: string;
@@ -120,7 +124,7 @@ export type creature = {
         proficiency: number;
       }
     ];
-    speeds: number[];
+    speeds: KeyValue;
   };
   spell_caster_data?: {
     spell_caster_entry: {
@@ -157,14 +161,15 @@ export type creature = {
   variant_data?: {
     archive_link: string;
     level: number;
-    variant: 'Weak' | 'Base' | 'Elite';
+    variant: variants;
   };
 };
 
 export type creature_encounter = {
+  id: number;
   archive_link: string;
   name: string;
   level: number;
   quantity?: number;
-  variant?: 'Weak' | 'Base' | 'Elite';
+  variant?: variants;
 };

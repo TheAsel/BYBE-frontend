@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import type { party } from 'src/types/party';
 import { biXLg, biPlusLg, biDashLg, biTrash } from '@quasar/extras/bootstrap-icons';
-import { matArrowDropDown } from '@quasar/extras/material-icons';
 import { partyStore } from 'stores/store';
 
 const partyStores = partyStore();
@@ -121,7 +120,6 @@ const saveChanges = () => {
             v-model="tmpParty.name"
             :options="parties"
             label="Active Party"
-            :dropdown-icon="matArrowDropDown"
             @update:model-value="changeActiveParty(tmpParty.name)"
           />
           <q-space />

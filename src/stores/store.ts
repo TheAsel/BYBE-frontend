@@ -3,7 +3,26 @@ import type { creature, creature_encounter } from 'src/types/creature';
 import type { encounter, encounterList } from 'src/types/encounter';
 import { defineStore } from 'pinia';
 import { capitalize } from 'lodash';
-import type { roles } from 'src/types/filters';
+import type { roles, variants } from 'src/types/filters';
+
+export const settingsStore = defineStore('settings', {
+  state: () => ({
+    is_creature_sheet_on: false,
+    pf_version: 'Any'
+  }),
+  getters: {
+    getCreatureSheets: (state) => state.is_creature_sheet_on,
+    getPfVersion: (state) => state.pf_version
+  },
+  actions: {
+    setCreatureSheets(newCreatureSheets: boolean) {
+      this.is_creature_sheet_on = newCreatureSheets;
+    },
+    setPfVersion(newPfVersion: string) {
+      this.pf_version = newPfVersion;
+    }
+  }
+});
 
 export const partyStore = defineStore('party', {
   state: () => ({
@@ -150,6 +169,7 @@ export const encounterStore = defineStore('encounter', {
     getEncounters: (state) => state.encounters,
     getActive: (state) => state.activeEncounter,
     getActiveEncounter: (state) => state.encounters[state.activeEncounter],
+    getPwl: (state) => state.is_pwl_on,
     getGenerating: (state) => state.generating
   },
   actions: {
@@ -163,13 +183,13 @@ export const encounterStore = defineStore('encounter', {
       const index = this.encounters[this.activeEncounter].creatures.indexOf(creature);
       this.encounters[this.activeEncounter].creatures.splice(index, 1);
     },
-    changeVariant(index: number, variant: 'Weak' | 'Base' | 'Elite') {
+    changeVariant(index: number, variant: variants) {
       this.encounters[this.activeEncounter].creatures[index].variant = variant;
     },
     addToEncounter(creature: creature_encounter, index?: number) {
       if (index! >= 0) {
         if (creature.quantity) {
-          creature.quantity!++;
+          creature.quantity++;
         } else {
           creature.quantity = 1;
         }
