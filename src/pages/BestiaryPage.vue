@@ -250,16 +250,21 @@ const perceptionString = computed(() => {
   }
   if (senses != undefined && senses.length > 0) {
     senses.forEach((sense) => {
+      let found = false;
       creatureData?.extra_data?.actions.forEach((action) => {
         if (action.slug === sense) {
           finalString += action.name.toLowerCase() + ', ';
+          found = true;
         }
       });
+      if (!found) {
+        finalString += sense + ', ';
+      }
     });
-    if (spells != undefined && spells.length > 0) {
+    if (spells != undefined && spells.length > 0 && !senses.includes('truesight')) {
       spells.forEach((spell) => {
         if (spell.name === 'True Seeing (Constant)') {
-          finalString += 'true seeing' + ', ';
+          finalString += 'truesight' + ', ';
         }
       });
     }
@@ -268,6 +273,8 @@ const perceptionString = computed(() => {
     } else {
       finalString = finalString.substring(0, finalString.length - 2);
     }
+  } else if (creatureData?.extra_data?.perception_detail) {
+    finalString += creatureData?.extra_data?.perception_detail;
   }
   return finalString;
 });
