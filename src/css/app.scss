@@ -1,3 +1,5 @@
+/* OPEN SANS */
+
 /* BEGIN Regular */
 @font-face {
   font-family: 'Open Sans';
@@ -34,3 +36,65 @@
   font-display: swap;
 }
 /* END Bold Italic */
+
+/* GOOD PRO */
+
+/* BEGIN Regular */
+@font-face {
+  font-family: 'Good Pro';
+  src: url('./fonts/Regular/good-pro-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* END Regular */
+/* BEGIN Italic */
+@font-face {
+  font-family: 'Good Pro';
+  src: url('./fonts/Italic/good-pro-italic-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+/* END Italic */
+/* BEGIN Bold */
+@font-face {
+  font-family: 'Good Pro';
+  src: url('./fonts/Bold/good-pro-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* END Bold */
+/* BEGIN Bold Italic */
+@font-face {
+  font-family: 'Good Pro';
+  src: url('./fonts/BoldItalic/good-pro-italic-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+/* END Bold Italic */
+
+/* GOOD PRO CONDENSED */
+
+/* BEGIN Condensed */
+@font-face {
+  font-family: 'Good Pro Condensed';
+  src: url('./fonts/Condensed/good-pro-condensed-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* END Condensed */
+
+/* Pathfinder 2E Action Icons */
+
+@font-face {
+  font-family: 'Pathfinder2eActions';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local('font'),
+    url('./fonts/Pathfinder2eActions.ttf') format('truetype');
+}

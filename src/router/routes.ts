@@ -13,6 +13,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/EncounterPage.vue')
       },
       {
+        path: 'bestiary',
+        name: 'bestiary',
+        component: () => import('pages/BestiaryPage.vue')
+      },
+      {
         path: 'npc',
         name: 'npc',
         component: () => import('pages/NpcPage.vue')

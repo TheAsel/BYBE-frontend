@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
-import { matPriorityHigh, matArrowDropDown, matCancel } from '@quasar/extras/material-icons';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { biXLg } from '@quasar/extras/bootstrap-icons';
-import { partyStore, filtersStore, encounterStore } from 'src/stores/store';
+import { partyStore, filtersStore, encounterStore, settingsStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/api-calls';
 import type { alignments, sizes, rarities, challenges, roles } from 'src/types/filters';
 import type { creature_encounter } from 'src/types/creature';
@@ -11,6 +11,7 @@ import { debounce } from 'lodash';
 
 const $q = useQuasar();
 
+const settings = settingsStore();
 const party = partyStore();
 const filters = filtersStore();
 const encounter = encounterStore();
@@ -63,20 +64,9 @@ const generateEncounter = debounce(async function () {
   encounter.setGenerating(true);
   saveChanges();
   const partyLevels = party.getActiveParty.members;
-  const is_pwl_on = ref(false);
-  const localPwl = ref(localStorage.getItem('is_pwl_on'));
-  switch (localPwl.value) {
-    case 'true':
-      is_pwl_on.value = true;
-      break;
-    case 'false':
-      is_pwl_on.value = false;
-      break;
-    default:
-      is_pwl_on.value = false;
-      localStorage.setItem('is_pwl_on', 'false');
-      break;
-  }
+  const is_pwl_on = encounter.getPwl;
+  const pf_version = settings.getPfVersion;
+
   const post = {
     traits: tmpFilters.value.traits,
     alignments: tmpFilters.value.alignment,
@@ -90,16 +80,18 @@ const generateEncounter = debounce(async function () {
     max_creatures: tmpFilters.value.creatures.max,
     challenge: tmpFilters.value.challenge,
     party_levels: partyLevels,
-    is_pwl_on: is_pwl_on.value,
-    creature_roles: creature_roles.value
+    creature_roles: creature_roles.value,
+    is_pwl_on: is_pwl_on,
+    pathfinder_versions: pf_version
   };
   try {
     const randomEncounter = await encounterGenerator(post);
     if (typeof randomEncounter != 'undefined') {
       if (randomEncounter.count > 0 && randomEncounter.results) {
         encounter.clearEncounter();
-        for (var i = 0; i < randomEncounter.count; i++) {
+        for (let i = 0; i < randomEncounter.count; i++) {
           const min_creature: creature_encounter = {
+            id: randomEncounter.results[i].core_data.essential.id,
             archive_link: randomEncounter.results[i].core_data.derived.archive_link,
             name: randomEncounter.results[i].core_data.essential.name,
             level: randomEncounter.results[i].core_data.essential.level,
@@ -116,7 +108,7 @@ const generateEncounter = debounce(async function () {
         });
       }
     } else {
-      throw 'Error generating random encounter';
+      throw new Error('Error generating random encounter');
     }
   } catch (error) {
     console.error(error);
@@ -180,12 +172,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.traits"
                 :options="Object.freeze(filters.getFilters.traits)"
                 label="Traits"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -194,12 +184,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.size"
                 :options="Object.freeze(filters.getFilters.sizes)"
                 label="Size"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -208,12 +196,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.rarity"
                 :options="Object.freeze(filters.getFilters.rarities)"
                 label="Rarity"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -222,12 +208,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.family"
                 :options="Object.freeze(filters.getFilters.families)"
                 label="Family"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -236,12 +220,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.creature_type"
                 :options="Object.freeze(filters.getFilters.creature_types)"
                 label="Creature Type"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -267,14 +249,12 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.challenge"
                 :options="
                   Object.freeze(['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'])
                 "
                 label="Challenge"
-                :dropdown-icon="matArrowDropDown"
               />
             </div>
           </q-card-section>
@@ -287,12 +267,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.alignment"
                 :options="Object.freeze(filters.getFilters.alignments)"
                 label="Alignment"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
@@ -301,12 +279,10 @@ defineExpose({ generateEncounter });
                 dense
                 outlined
                 clearable
-                :clear-icon="matCancel"
                 options-dense
                 v-model="tmpFilters.creature_roles"
                 :options="Object.freeze(filters.getFilters.creature_roles)"
                 label="Roles"
-                :dropdown-icon="matArrowDropDown"
                 style="max-width: 270px"
               />
 
