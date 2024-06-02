@@ -29,7 +29,7 @@ export type roles =
 
 export type variants = 'Weak' | 'Base' | 'Elite';
 
-export type itemFilters = {
+export type item_filters = {
   name: string;
   level: { min: number; max: number };
   type: 'consumable' | 'equipment' | null;

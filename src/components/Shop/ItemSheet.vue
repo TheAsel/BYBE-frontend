@@ -9,9 +9,12 @@ import {
   cleanRoll,
   cleanSymbols
 } from 'src/utils/clean-regex';
-import { biXLg } from '@quasar/extras/bootstrap-icons';
+import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
+import { useRouter } from 'vue-router';
 
 const items = itemsStore();
+
+const router = useRouter();
 
 const cleanDescription = (description: string) => {
   const cleanRegex = /<\/?(?:li)?(?:ul)?>|@Localize\[.+\]/g;
@@ -32,10 +35,15 @@ const cleanDescription = (description: string) => {
 
   return cleanRoll(finalString);
 };
+
+const openItemSheet = (id: number) => {
+  const routeData = router.resolve({ name: 'item', query: { id: id } });
+  window.open(routeData.href, '_blank');
+};
 </script>
 
 <template>
-  <div class="item-sheet q-pa-md tw-w-full md:tw-w-[30%]">
+  <div class="item-sheet">
     <q-card
       flat
       class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
@@ -49,13 +57,32 @@ const cleanDescription = (description: string) => {
             class="tw-flex tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white"
             style="font-family: 'Good Pro Condensed', sans-serif"
           >
+            <q-btn
+              :icon="biBoxArrowUpRight"
+              flat
+              rounded
+              dense
+              size="sm"
+              padding="sm"
+              class="tw-mr-1 only-screen item-page-element"
+              aria-label="Open item sheet"
+              @click="openItemSheet(items.getSelectedItem.core_item.id)"
+            >
+              <q-tooltip
+                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Open item sheet
+              </q-tooltip>
+            </q-btn>
             <h1 class="tw-leading-8 tw-my-auto">
-              {{ items.getSelectedItem.core_item.name }}
+              {{ items.getSelectedItem.core_item.name.toUpperCase() }}
             </h1>
             <q-space />
             <div class="tw-my-auto">ITEM {{ items.getSelectedItem.core_item.level }}</div>
             <q-btn
-              class="tw-ml-2 only-screen"
+              class="tw-ml-2 only-screen item-page-element"
               :icon="biXLg"
               size="sm"
               padding="sm"
@@ -152,14 +179,18 @@ const cleanDescription = (description: string) => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss">
 .item-sheet {
   min-height: calc(100vh - 103px) !important;
   font-family: 'Good Pro', sans-serif;
 }
-</style>
 
-<style lang="scss">
+.item-page {
+  .item-page-element {
+    display: none !important;
+  }
+}
+
 table.pf2e,
 table.pf2-table {
   border-collapse: collapse;
@@ -192,10 +223,11 @@ table.pf2-table {
 
 body.body--dark {
   tr:nth-child(even) {
-    background-color: #454e5d !important;
+    background-color: #374151 !important;
   }
 
-  span {
+  td > span,
+  th > span {
     color: #fff !important;
   }
 }

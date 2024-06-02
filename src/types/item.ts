@@ -31,3 +31,12 @@ export type item_response = {
   next: string;
   results: item[];
 };
+
+export type min_item = {
+  id: number;
+  archive_link: string;
+  name: string;
+  level: number;
+  price: number;
+  quantity?: number;
+};

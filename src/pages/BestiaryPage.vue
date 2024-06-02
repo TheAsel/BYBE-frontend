@@ -6,8 +6,16 @@ import { useQuasar } from 'quasar';
 import { matPriorityHigh, matPrint } from '@quasar/extras/material-icons';
 import type { creature } from 'src/types/creature';
 import { requestCreatureId } from 'src/utils/encounter-api-calls';
-import _, { isNull } from 'lodash';
 import { variants } from 'src/types/filters';
+import _, { isNull } from 'lodash';
+import {
+  cleanEffect,
+  cleanCompendium,
+  cleanDamage,
+  cleanTemplate,
+  cleanSave,
+  cleanRoll
+} from 'src/utils/clean-regex';
 
 const title = ref('Creature Sheet - BYBE');
 
@@ -107,116 +115,12 @@ const variantStyle = (value: number | undefined) => {
   return value;
 };
 
-const cleanCompendium = (description: string) => {
-  const compendiumRegex =
-    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s'()+]*)\](?:{([\w\s'+]*)})?/g;
-
-  const compendium = description.matchAll(compendiumRegex);
-  for (const i of compendium) {
-    if (i) {
-      if (i[5]) {
-        description = description.replace(i[0], i[5].toLowerCase());
-      } else {
-        description = description.replace(i[0], i[4].toLowerCase());
-      }
-    }
-  }
-  return description;
-};
-
-const cleanDamage = (description: string) => {
-  const damageRegex =
-    /@Damage\[\(?([\w+]*)\)?\[(\w*),?(\w+)?\]?,?(\w+)?\[?(\w+)?\]?(?:[\w|:,[\]-]+)?\](?:\{([\w\s,+]*)\})?/g;
-
-  const damage = description.matchAll(damageRegex);
-  for (const i of damage) {
-    if (i) {
-      if (i[6]) {
-        description = description.replace(i[0], i[6]);
-      } else if (i[4]) {
-        description = description.replace(i[0], i[1] + ' ' + i[2] + ' plus ' + i[4] + ' ' + i[5]);
-      } else if (i[3]) {
-        description = description.replace(i[0], i[1] + ' ' + i[2] + ' ' + i[3]);
-      } else {
-        description = description.replace(i[0], i[1] + ' ' + i[2]);
-      }
-    }
-  }
-  return description;
-};
-
-const cleanTemplate = (description: string) => {
-  const templateRegex =
-    /@Template\[type:(\w*)\|distance:(\d*)\|?(?:traits:([\w\-,]*))?\](?:{([\w\s-]*)})?/g;
-
-  const template = description.matchAll(templateRegex);
-  for (const i of template) {
-    if (i) {
-      description = description.replace(i[0], i[2] + '-foot ' + i[1]);
-    }
-  }
-  return description;
-};
-
-const cleanSave = (description: string) => {
-  const checkRegex =
-    /@Check\[type:(\w*)(?:[\w\s\-|]*dc:([\w\s,:+@.()]*))?(?:[\w\s\-,:|()]*basic:(\w*))?[\w\s\-,:|()]*\](?:{([\w\s'+()]*)})?/g;
-
-  const save = description.matchAll(checkRegex);
-  for (const i of save) {
-    if (i) {
-      if (i[2] && Number(i[2])) {
-        if (i[3] === 'true') {
-          if (i[4]) {
-            description = description.replace(
-              i[0],
-              'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]) + ' ' + i[4]
-            );
-          } else {
-            description = description.replace(i[0], 'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]));
-          }
-        } else if (i[4]) {
-          description = description.replace(
-            i[0],
-            'DC ' + i[2] + ' ' + _.upperFirst(i[1]) + ' ' + i[4]
-          );
-        } else {
-          description = description.replace(i[0], 'DC ' + i[2] + ' ' + _.upperFirst(i[1]));
-        }
-      } else if (i[4]) {
-        description = description.replace(i[0], _.upperFirst(i[1]) + ' ' + i[4]);
-      } else {
-        description = description.replace(i[0], _.upperFirst(i[1]));
-      }
-    }
-  }
-  return description;
-};
-
-const cleanRoll = (description: string) => {
-  const rollRegex =
-    /\[\[\/b?r \(?{?(\d\*?\d*d?[\d\s\-+]*\d*),?\d*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\s\-+;]*)})?/g;
-
-  const roll = description.matchAll(rollRegex);
-  for (const i of roll) {
-    if (i) {
-      if (i[2]) {
-        description = description.replace(i[0], i[2]);
-      } else {
-        description = description.replace(i[0], i[1]);
-      }
-    }
-  }
-  return description;
-};
-
 const cleanDescription = (description: string) => {
   const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
-  const effectRegex =
-    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*): ([\w\s\-'()]*)\](?:{([\w\s']*)})?/g;
 
   let finalString = description.replace(cleanRegex, '');
-  finalString = finalString.replace(effectRegex, '');
+
+  finalString = cleanEffect(finalString);
 
   finalString = cleanCompendium(finalString);
 
@@ -576,9 +480,8 @@ const printPage = () => {
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
           <div class="tw-flex tw-flex-wrap tw-font-bold tw-text-sm tw-text-white">
-            <div v-if="creatureData?.core_data.essential.rarity === 'Common'"></div>
             <div
-              v-else-if="creatureData?.core_data.essential.rarity === 'Uncommon'"
+              v-if="creatureData?.core_data.essential.rarity === 'Uncommon'"
               class="tw-bg-[#c45500] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
             >
               {{ creatureData?.core_data.essential.rarity.toUpperCase() }}

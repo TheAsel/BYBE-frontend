@@ -165,7 +165,7 @@ export type creature = {
   };
 };
 
-export type creature_encounter = {
+export type min_creature = {
   id: number;
   archive_link: string;
   name: string;
