@@ -1,6 +1,6 @@
 import { backendUrl } from 'src/boot/globals';
 import type { creature } from 'src/types/creature';
-import type { encounter, randomEncounter } from 'src/types/encounter';
+import type { encounter, random_encounter } from 'src/types/encounter';
 import type { alignments, sizes, rarities, challenges, roles, variants } from 'src/types/filters';
 
 export async function requestCreatures(start: number, page_size: number, version: string) {
@@ -136,7 +136,7 @@ export async function encounterGenerator(body: {
       const error = data?.message || response.status;
       throw new Error(error);
     }
-    return data as randomEncounter;
+    return data as random_encounter;
   } catch (error) {
     console.error(error);
   }

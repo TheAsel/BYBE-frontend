@@ -9,7 +9,7 @@ export const cleanEffect = (description: string) => {
 
 export const cleanCompendium = (description: string) => {
   const compendiumRegex =
-    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s'()+]*)\](?:{([\w\s'+-]*)})?/g;
+    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s'()+]*)\](?:{([\w\s'()+-]*)})?/g;
 
   const compendium = description.matchAll(compendiumRegex);
   for (const i of compendium) {
@@ -116,7 +116,7 @@ export const cleanSymbols = (description: string) => {
 
 export const cleanRoll = (description: string) => {
   const rollRegex =
-    /\[\[\/b?r \(?{?(\d\*?\d*d?[\d\s\-+]*\d*),?\d*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\s\-+;]*)})?/g;
+    /\[\[\/b?r \(?{?(\d?\*?\d*d?[\d\s\-+]*\d*),?\d*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\s\-+;]*)})?/g;
 
   const roll = description.matchAll(rollRegex);
   for (const i of roll) {

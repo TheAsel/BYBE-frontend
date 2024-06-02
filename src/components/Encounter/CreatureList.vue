@@ -5,7 +5,7 @@ import { fasScroll } from '@quasar/extras/fontawesome-v6';
 import { debounce } from 'lodash';
 import { partyStore, encounterStore, infoStore, settingsStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/encounter-api-calls';
-import type { encounterList } from 'src/types/encounter';
+import type { encounter_list } from 'src/types/encounter';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -21,7 +21,7 @@ const newEncounterName = ref('');
 
 const removeEncounterDialog = ref(false);
 
-const tmpEncounter = ref<encounterList>(encounter.getActiveEncounter);
+const tmpEncounter = ref<encounter_list>(encounter.getActiveEncounter);
 const encounters = ref<string[]>(encounter.getEncounters.map((encounter) => encounter.name));
 
 tmpEncounter.value = {
@@ -169,7 +169,15 @@ const openCreatureSheet = (id: number) => {
           dense
           aria-label="Add new encounter"
           @click="newEncounterDialog = true"
-        />
+        >
+          <q-tooltip
+            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+            anchor="top middle"
+            self="bottom middle"
+          >
+            Add new encounter
+          </q-tooltip>
+        </q-btn>
         <q-dialog
           v-model="newEncounterDialog"
           aria-label="New encounter dialog"
@@ -223,7 +231,15 @@ const openCreatureSheet = (id: number) => {
           dense
           aria-label="Remove current encounter"
           @click="removeEncounterDialog = true"
-        />
+        >
+          <q-tooltip
+            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+            anchor="top middle"
+            self="bottom middle"
+          >
+            Delete encounter
+          </q-tooltip>
+        </q-btn>
         <q-dialog
           v-model="removeEncounterDialog"
           aria-label="Remove encounter dialog"
@@ -304,7 +320,15 @@ const openCreatureSheet = (id: number) => {
                 @click="openCreatureSheet(item.id)"
                 target="_blank"
                 aria-label="Open creature sheet"
-              />
+              >
+                <q-tooltip
+                  class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Open creature sheet
+                </q-tooltip>
+              </q-btn>
               {{ item.quantity }}
               <a
                 v-if="item.archive_link"

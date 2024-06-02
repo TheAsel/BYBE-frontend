@@ -13,7 +13,7 @@ import {
   fasScroll
 } from '@quasar/extras/fontawesome-v6';
 import { capitalize, debounce } from 'lodash';
-import type { creature, creature_encounter } from 'src/types/creature';
+import type { creature, min_creature } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore, settingsStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
@@ -293,17 +293,14 @@ const sort = (col: string) => {
 
 // ---- Add creature to encounter function
 const addCreature = debounce(function (creature: creature) {
-  const selectedCreature = creatures.getCreatureId(creature.core_data.essential.id);
-  if (selectedCreature) {
-    const min_creature: creature_encounter = {
-      id: selectedCreature.core_data.essential.id,
-      archive_link: selectedCreature.core_data.derived.archive_link,
-      name: selectedCreature.core_data.essential.name,
-      level: selectedCreature.core_data.essential.level,
-      variant: 'Base'
-    };
-    encounter.addToEncounter(min_creature);
-  }
+  const min_creature: min_creature = {
+    id: creature.core_data.essential.id,
+    archive_link: creature.core_data.derived.archive_link,
+    name: creature.core_data.essential.name,
+    level: creature.core_data.essential.level,
+    variant: 'Base'
+  };
+  encounter.addToEncounter(min_creature);
 }, 50);
 
 const openCreatureSheet = (id: number) => {
@@ -950,7 +947,15 @@ const openCreatureSheet = (id: number) => {
             @click="openCreatureSheet(name.row.core_data.essential.id)"
             target="_blank"
             aria-label="Open creature sheet"
-          />
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Open creature sheet
+            </q-tooltip>
+          </q-btn>
           <a
             v-if="name.row.core_data.derived.archive_link"
             :href="name.row.core_data.derived.archive_link"

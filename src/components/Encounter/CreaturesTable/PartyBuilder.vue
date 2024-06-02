@@ -35,6 +35,7 @@ const validateLevel = (index: number) => {
   if (value > 20) {
     tmpParty.value.members[index] = 20;
   }
+  tmpParty.value.members[index] = Math.round(tmpParty.value.members[index]);
 };
 
 const addPlayer = () => {
@@ -133,7 +134,15 @@ const saveChanges = () => {
             dense
             aria-label="Add new party"
             @click="newPartyDialog = true"
-          />
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Add new party
+            </q-tooltip>
+          </q-btn>
           <q-dialog
             v-model="newPartyDialog"
             aria-label="New party dialog"
@@ -186,7 +195,15 @@ const saveChanges = () => {
             dense
             aria-label="Remove current party"
             @click="removePartyDialog = true"
-          />
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Delete party
+            </q-tooltip>
+          </q-btn>
           <q-dialog
             v-model="removePartyDialog"
             aria-label="Remove party dialog"

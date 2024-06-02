@@ -18,11 +18,13 @@ import { fasFlaskVial } from '@quasar/extras/fontawesome-v6';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 import { debounce } from 'lodash';
 import type { party } from 'src/types/party';
-import type { encounterList } from 'src/types/encounter';
-import { encounterStore, settingsStore } from 'stores/store';
+import type { encounter_list } from 'src/types/encounter';
+import { settingsStore, encounterStore, itemsStore } from 'stores/store';
+import { shop_list } from 'src/types/shop';
 
 const encounter = encounterStore();
 const settings = settingsStore();
+const shop = itemsStore();
 
 TailwindDarkFix();
 
@@ -219,7 +221,7 @@ const validateData = (result: string) => {
               return typeof p.name === 'string' && Array.isArray(p.creatures);
             });
             if (isCompatible) {
-              const encounters: encounterList[] = parsedEncounter;
+              const encounters: encounter_list[] = parsedEncounter;
               const encounterNames = encounters.map((p) => p.name);
               if (new Set(encounterNames).size !== encounterNames.length) {
                 throw new Error('Duplicate loaded encounter names');
@@ -229,6 +231,26 @@ const validateData = (result: string) => {
             }
           } else {
             throw new Error('Invalid loaded encounter format');
+          }
+          break;
+        }
+        case 'shops': {
+          const parsedShop = JSON.parse(parsedData[key]);
+          if (Array.isArray(parsedShop)) {
+            const isCompatible = parsedShop.every((p) => {
+              return typeof p.name === 'string' && Array.isArray(p.items);
+            });
+            if (isCompatible) {
+              const shops: shop_list[] = parsedShop;
+              const shopNames = shops.map((p) => p.name);
+              if (new Set(shopNames).size !== shopNames.length) {
+                throw new Error('Duplicate loaded shop names');
+              }
+            } else {
+              throw new Error('Invalid loaded shop format');
+            }
+          } else {
+            throw new Error('Invalid loaded shop format');
           }
           break;
         }
@@ -287,7 +309,7 @@ const validateData = (result: string) => {
           }
           break;
         default:
-          throw new Error('Unknown loaded key');
+          throw new Error('Unknown loaded key: ' + key);
       }
       localStorage.setItem(key, parsedData[key]);
     });

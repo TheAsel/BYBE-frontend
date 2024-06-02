@@ -10,8 +10,8 @@ import {
   settingsStore
 } from 'stores/store';
 import type { party } from 'src/types/party';
-import type { creature_encounter } from 'src/types/creature';
-import type { encounterList } from 'src/types/encounter';
+import type { min_creature } from 'src/types/creature';
+import type { encounter_list } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
@@ -82,7 +82,7 @@ if (localEncounters) {
         return typeof p.name === 'string' && Array.isArray(p.creatures);
       });
       if (isCompatible) {
-        const encounters: encounterList[] = parsedEncounters;
+        const encounters: encounter_list[] = parsedEncounters;
         const encounterNames = encounters.map((p) => p.name);
         if (new Set(encounterNames).size !== encounterNames.length) {
           throw new Error('Duplicate saved encounter names');
@@ -286,14 +286,14 @@ const options: VTourOptions = {
 const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
-    const tmpKoboldMage: creature_encounter = {
+    const tmpKoboldMage: min_creature = {
       id: 1721,
       archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3074',
       name: 'Kobold Cavern Mage',
       level: 2,
       variant: 'Base'
     };
-    const tmpKoboldWarrior: creature_encounter = {
+    const tmpKoboldWarrior: min_creature = {
       id: 1260,
       archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3072',
       name: 'Kobold Warrior',
