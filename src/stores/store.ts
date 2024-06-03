@@ -410,7 +410,11 @@ export const itemsStore = defineStore('items', {
             silver = silver / 10;
             decimal = (silver - Math.floor(silver)).toFixed(1);
             const copper = parseFloat(decimal) * 10;
-            return Math.trunc(price) + ' gp, ' + Math.trunc(silver) + ' sp, ' + copper + ' cp';
+            if (Math.trunc(silver) === 0) {
+              return Math.trunc(price) + ' gp, ' + copper + ' cp';
+            } else {
+              return Math.trunc(price) + ' gp, ' + Math.trunc(silver) + ' sp, ' + copper + ' cp';
+            }
           }
           return Math.trunc(price) + ' gp, ' + silver / 10 + ' sp';
         }

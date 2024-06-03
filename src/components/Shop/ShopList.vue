@@ -108,20 +108,15 @@ const showItem = debounce(async function (item: min_item) {
 </script>
 
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[30%] only-screen">
+  <div class="q-pa-md tw-w-full md:tw-w-[27%] only-screen">
     <div
       style="height: calc(100vh - 135px)"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
       id="v-step-4"
     >
       <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-0.5">
-        <div
-          class="text-subtitle1 font-bold tw-whitespace-nowrap tw-py-2.5 tw-pr-4 tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800"
-        >
-          Total cost: {{ shop.getFormattedPrice(shop.getTotalCost) }}
-        </div>
         <q-space />
-        <div class="tw-flex">
+        <div class="tw-flex tw-py-1">
           <q-btn
             class="tw-my-auto tw-ml-2 tw-p-2"
             :icon="biPlusLg"
@@ -238,7 +233,7 @@ const showItem = debounce(async function (item: min_item) {
         <q-btn flat dense @click="shop.clearShop" aria-label="Clear shop">CLEAR</q-btn>
       </div>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
-      <q-scroll-area v-if="shop.getGenerating == false" visible style="height: calc(100% - 53px)">
+      <q-scroll-area v-if="shop.getGenerating == false" visible style="height: calc(100% - 103px)">
         <div
           v-for="(item, index) in shop.getActiveShop.items"
           :key="index"
@@ -267,44 +262,42 @@ const showItem = debounce(async function (item: min_item) {
               />
             </div>
             <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
-              <q-btn
+              <q-chip
                 v-if="item.type === 'Consumable'"
-                round
-                unelevated
-                :icon="fasDrumstickBite"
-                color="blue"
-                size="xs"
-                class="tw-mr-2"
-                aria-label="Consumable item type"
+                text-color="white"
+                :clickable="false"
                 :ripple="false"
+                class="tw-p-1 tw-invisible"
+                aria-label="Consumable item type"
               >
-                <q-tooltip
-                  class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                  anchor="top middle"
-                  self="bottom middle"
-                >
-                  Consumable
-                </q-tooltip>
-              </q-btn>
-              <q-btn
+                <q-avatar class="tw-visible" :icon="fasDrumstickBite" color="blue">
+                  <q-tooltip
+                    class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Consumable
+                  </q-tooltip>
+                </q-avatar>
+              </q-chip>
+              <q-chip
                 v-if="item.type === 'Equipment'"
-                round
-                unelevated
-                :icon="fasRing"
-                color="red"
-                size="xs"
-                class="tw-mr-2"
-                aria-label="Consumable item type"
+                text-color="white"
+                :clickable="false"
                 :ripple="false"
+                class="tw-p-1 tw-invisible"
+                aria-label="Equipment item type"
               >
-                <q-tooltip
-                  class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                  anchor="top middle"
-                  self="bottom middle"
-                >
-                  Equipment
-                </q-tooltip>
-              </q-btn>
+                <q-avatar class="tw-visible" :icon="fasRing" color="red">
+                  <q-tooltip
+                    class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Equipment
+                  </q-tooltip>
+                </q-avatar>
+              </q-chip>
               <span class="tw-align-middle">
                 {{ item.quantity }}
                 <a
@@ -343,6 +336,14 @@ const showItem = debounce(async function (item: min_item) {
       <div v-else class="tw-flex" style="height: calc(100% - 103px)">
         <div class="tw-m-auto">
           <q-spinner-gears class="tw-mx-auto" color="white" size="5em" />
+        </div>
+      </div>
+      <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
+      <div class="tw-flex tw-mx-4">
+        <div
+          class="text-subtitle1 font-bold tw-whitespace-nowrap tw-py-2.5 tw-pr-4 tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800"
+        >
+          Total cost: {{ shop.getFormattedPrice(shop.getTotalCost) }}
         </div>
       </div>
     </div>

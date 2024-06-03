@@ -178,7 +178,7 @@ await fetchFromServer(0, 100);
 
 <template>
   <SkeletonTable v-if="skeleton" />
-  <div v-else class="tw-w-full q-pa-md md:tw-w-[40%] only-screen">
+  <div v-else class="tw-w-full q-pa-md md:tw-w-[43%] only-screen">
     <q-table
       ref="itemTable"
       class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
@@ -425,6 +425,20 @@ await fetchFromServer(0, 100);
             >
           </a>
           <span v-else class="tw-align-middle">{{ name.row.core_item.name }}</span>
+          <q-chip
+            v-if="name.row.core_item.remaster && settings.getPfVersion === 'Any'"
+            dense
+            color="blue"
+            class="tw-ml-1 tw-text-xs"
+            label="Remaster"
+          />
+          <q-chip
+            v-if="!name.row.core_item.remaster && settings.getPfVersion === 'Any'"
+            dense
+            color="red-10"
+            class="tw-ml-1 tw-text-xs"
+            label="Legacy"
+          />
         </q-td>
       </template>
       <template v-slot:body-cell-type="type">

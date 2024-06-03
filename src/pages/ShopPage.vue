@@ -7,7 +7,7 @@ import ShopList from 'src/components/Shop/ShopList.vue';
 import { shop_list } from 'src/types/shop';
 import { itemsStore } from 'src/stores/store';
 import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
-import { biArrowUp, biArrowDown } from '@quasar/extras/bootstrap-icons';
+import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 import { item, min_item } from 'src/types/item';
 
 useHead({
@@ -184,9 +184,6 @@ function scrollDirection() {
   }
 }
 
-window.removeEventListener('scroll', scrollDirection);
-window.addEventListener('scroll', scrollDirection);
-
 const scrollPage = (up: boolean) => {
   let offset: number | undefined = 0;
   if (up) {
@@ -216,7 +213,7 @@ const scrollPage = (up: boolean) => {
       <q-btn
         v-if="scrollUp"
         fab
-        :icon="biArrowUp"
+        :icon="matArrowUpward"
         padding="sm"
         color="primary"
         @click="scrollPage(true)"
@@ -224,11 +221,12 @@ const scrollPage = (up: boolean) => {
       <q-btn
         v-else
         fab
-        :icon="biArrowDown"
+        :icon="matArrowDownward"
         padding="sm"
         color="primary"
         @click="scrollPage(false)"
       />
     </q-page-sticky>
+    <q-scroll-observer @scroll="scrollDirection" />
   </q-page>
 </template>
