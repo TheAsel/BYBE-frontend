@@ -973,6 +973,7 @@ const openCreatureSheet = (id: number) => {
             v-if="name.row.core_data.essential.remaster && settings.getPfVersion === 'Any'"
             dense
             color="blue"
+            text-color="white"
             class="tw-ml-1 tw-text-xs"
             label="Remaster"
           />
@@ -980,6 +981,7 @@ const openCreatureSheet = (id: number) => {
             v-if="!name.row.core_data.essential.remaster && settings.getPfVersion === 'Any'"
             dense
             color="red-10"
+            text-color="white"
             class="tw-ml-1 tw-text-xs"
             label="Legacy"
           />
