@@ -102,6 +102,7 @@ const generateShop = debounce(async function () {
             archive_link: '', // TODO: randomShop.results[i].core_item.archive_link,
             name: randomShop.results[i].core_item.name,
             level: randomShop.results[i].core_item.level,
+            type: randomShop.results[i].core_item.item_type,
             price: randomShop.results[i].core_item.price
           };
           shop.addToShop(min_item);
@@ -160,7 +161,7 @@ defineExpose({ generateShop });
 </script>
 
 <template>
-  <q-btn push label="Generator Settings" @click="restoreSettings" id="v-step-2" />
+  <q-btn push label="Generator Settings" @click="restoreSettings" id="v-step-1" />
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center">

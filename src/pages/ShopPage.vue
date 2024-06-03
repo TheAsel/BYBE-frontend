@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
 import ShopTable from 'src/components/Shop/ShopTable.vue';
 import ItemSheet from 'src/components/Shop/ItemSheet.vue';
 import ShopList from 'src/components/Shop/ShopList.vue';
 import { shop_list } from 'src/types/shop';
 import { itemsStore } from 'src/stores/store';
+import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
+import { biArrowUp, biArrowDown } from '@quasar/extras/bootstrap-icons';
+import { item, min_item } from 'src/types/item';
 
 useHead({
   title: 'Shop Generator - BYBE',
@@ -17,6 +21,9 @@ useHead({
 });
 
 const shop = itemsStore();
+const tourActive = ref(false);
+
+const scrollUp = ref(false);
 
 const localShops = localStorage.getItem('shops');
 if (localShops) {
@@ -45,12 +52,183 @@ if (localShops) {
     shop.updateShops([defaultShop]);
   }
 }
+
+const steps: Step[] = [
+  {
+    target: '#v-step-0',
+    content:
+      'This is the item list. Click on a row to show its description and on the + to add it to the shop to the right.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-1',
+    content:
+      'From this window you can define your preferred settings for the random shop generator.',
+    params: {
+      placement: 'bottom'
+    }
+  },
+  {
+    target: '#v-step-2',
+    content:
+      'Clicking this button will generate a new random shop, based on the generator settings previously described.',
+    params: {
+      placement: 'bottom'
+    }
+  },
+  {
+    target: '.v-step-3',
+    content: 'Here you can sort the columns and narrow your search with the various filters.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-4',
+    content:
+      'This is the shop list, where the items you added or randomly generated will be displayed. You can also increase or decrease the number of each individual item.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-5',
+    content: "This is where the selected item's description will be displayed.",
+    params: {
+      placement: 'auto'
+    }
+  }
+];
+
+const options: VTourOptions = {
+  highlight: true,
+  labels: {
+    buttonSkip: 'Close Help',
+    buttonPrevious: 'Previous',
+    buttonNext: 'Next',
+    buttonStop: 'Finish'
+  }
+};
+
+const startTour = () => {
+  if (!tourActive.value) {
+    tourActive.value = true;
+    const tmpCloakFull: item = {
+      core_item: {
+        id: 762,
+        name: 'Cloak of Illusions',
+        bulk: 0.1,
+        category: '',
+        description:
+          '<p>This cloak flows, covering and concealing the wearer\'s body. The cloak allows you to cast @UUID[Compendium.pf2e.spells-srd.Item.Figment] as an occult innate cantrip. Although naturally a dull gray, while invested the cloak picks up colors and patterns from its surroundings, granting a +1 item bonus to Stealth checks.</p>\n<p><strong>Activate—Draw Hood</strong> <span class="action-glyph">2</span> (manipulate)</p>\n<p><strong>Frequency</strong> once per day</p>\n<hr />\n<p><strong>Effect</strong> You draw the hood up and gain the effects of @UUID[Compendium.pf2e.spells-srd.Item.Invisibility], with the spell\'s normal duration or until you pull the hood back down, whichever comes first. While you are invisible, your <em>figment</em> innate cantrip gains the subtle trait, concealing the observable effects of your spellcasting.</p>',
+        hardness: 0,
+        hp: 0,
+        level: 7,
+        price: 36000,
+        usage: 'worncloak',
+        item_type: 'Equipment',
+        material_grade: '',
+        material_type: '',
+        number_of_uses: 0,
+        license: 'ORC',
+        remaster: true,
+        source: 'Pathfinder GM Core',
+        rarity: 'Common',
+        size: 'Medium',
+        traits: ['invested', 'occult']
+      }
+    };
+    const tmpCloak: min_item = {
+      id: 762,
+      archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=424',
+      name: 'Cloak of Illusions',
+      level: 7,
+      type: 'Equipment',
+      price: 36000
+    };
+    const tmpPotion: min_item = {
+      id: 3029,
+      archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=2943',
+      name: 'Healing Potion (Moderate)',
+      level: 6,
+      type: 'Consumable',
+      price: 5000
+    };
+    shop.setSelectedItem(tmpCloakFull);
+    shop.addToShop(tmpCloak);
+    shop.addToShop(tmpPotion);
+  }
+};
+
+const stopTour = () => {
+  if (tourActive.value) {
+    shop.removeSelectedItem();
+    shop.removeFromShop(shop.getActiveShop.items.length - 1);
+    shop.removeFromShop(shop.getActiveShop.items.length - 1);
+    tourActive.value = false;
+  }
+};
+
+const callbacks: VTourCallbacks = {
+  onStart: startTour,
+  onStop: stopTour
+};
+
+function scrollDirection() {
+  const footer = document.querySelector('footer');
+  const top = footer?.getBoundingClientRect().top;
+  if (top) {
+    scrollUp.value = top < window.innerHeight;
+  }
+}
+
+window.removeEventListener('scroll', scrollDirection);
+window.addEventListener('scroll', scrollDirection);
+
+const scrollPage = (up: boolean) => {
+  let offset: number | undefined = 0;
+  if (up) {
+    offset = document.getElementById('table')?.offsetTop;
+  } else {
+    offset = document.getElementById('list')?.offsetTop;
+  }
+  window.scrollTo({
+    top: offset,
+    behavior: 'smooth'
+  });
+};
 </script>
 
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
-    <ItemSheet class="q-pa-md tw-w-full md:tw-w-[30%]" />
-    <ShopTable />
-    <ShopList />
+    <v-tour name="/shop" :steps="steps" :options="options" :callbacks="callbacks" />
+    <ItemSheet class="q-pa-md tw-w-full md:tw-w-[30%] md:tw-block tw-hidden" />
+    <ShopTable id="table" />
+    <ItemSheet class="q-pa-md tw-w-full md:tw-w-[30%] tw-block md:tw-hidden" />
+    <ShopList id="list" />
+    <q-page-sticky
+      position="bottom-right"
+      :offset="[18, 18]"
+      class="tw-z-10 tw-opacity-85 tw-block md:tw-hidden"
+    >
+      <q-btn
+        v-if="scrollUp"
+        fab
+        :icon="biArrowUp"
+        padding="sm"
+        color="primary"
+        @click="scrollPage(true)"
+      />
+      <q-btn
+        v-else
+        fab
+        :icon="biArrowDown"
+        padding="sm"
+        color="primary"
+        @click="scrollPage(false)"
+      />
+    </q-page-sticky>
   </q-page>
 </template>

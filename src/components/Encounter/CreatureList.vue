@@ -153,130 +153,132 @@ const openCreatureSheet = (id: number) => {
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
       id="v-step-6"
     >
-      <div class="tw-flex tw-mx-4 tw-my-0.5">
+      <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-0.5">
         <div
           class="text-subtitle1 font-bold tw-whitespace-nowrap tw-py-2.5 tw-pr-4 tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800"
         >
           Cost: {{ info.getInfo.experience }} XP
         </div>
         <q-space />
-        <q-btn
-          class="tw-my-auto tw-ml-2 tw-p-2"
-          :icon="biPlusLg"
-          size="sm"
-          flat
-          rounded
-          dense
-          aria-label="Add new encounter"
-          @click="newEncounterDialog = true"
-        >
-          <q-tooltip
-            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-            anchor="top middle"
-            self="bottom middle"
+        <div class="tw-flex">
+          <q-btn
+            class="tw-my-auto tw-ml-2 tw-p-2"
+            :icon="biPlusLg"
+            size="sm"
+            flat
+            rounded
+            dense
+            aria-label="Add new encounter"
+            @click="newEncounterDialog = true"
           >
-            Add new encounter
-          </q-tooltip>
-        </q-btn>
-        <q-dialog
-          v-model="newEncounterDialog"
-          aria-label="New encounter dialog"
-          @escape-key="closeDialog"
-        >
-          <q-card flat bordered>
-            <q-card-section>
-              <div class="text-h6">New encounter name</div>
-            </q-card-section>
-
-            <q-card-section class="q-pt-none">
-              <q-input
-                ref="encounterNameInput"
-                dense
-                v-model="newEncounterName"
-                autofocus
-                @keyup.enter="addEncounter"
-                :rules="[
-                  (val) => !!val || 'Field is required',
-                  (val) =>
-                    !encounters.find((name) => name === val) || 'This encounter already exists'
-                ]"
-                :no-error-icon="true"
-              />
-            </q-card-section>
-
-            <q-card-actions align="center" class="text-primary">
-              <q-btn
-                flat
-                label="Cancel"
-                @click="closeDialog"
-                class="tw-text-blue-600 dark:tw-text-blue-400"
-                aria-label="Close dialog"
-              />
-              <q-btn
-                flat
-                label="Add encounter"
-                @click="addEncounter"
-                class="tw-text-blue-600 dark:tw-text-blue-400"
-                aria-label="Add encounter"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-        <q-btn
-          class="tw-my-auto tw-mx-2 tw-p-2"
-          :icon="biTrash"
-          size="sm"
-          flat
-          rounded
-          dense
-          aria-label="Remove current encounter"
-          @click="removeEncounterDialog = true"
-        >
-          <q-tooltip
-            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-            anchor="top middle"
-            self="bottom middle"
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Add new encounter
+            </q-tooltip>
+          </q-btn>
+          <q-dialog
+            v-model="newEncounterDialog"
+            aria-label="New encounter dialog"
+            @escape-key="closeDialog"
           >
-            Delete encounter
-          </q-tooltip>
-        </q-btn>
-        <q-dialog
-          v-model="removeEncounterDialog"
-          aria-label="Remove encounter dialog"
-          @escape-key="closeDialog"
-        >
-          <q-card flat bordered>
-            <q-card-section>
-              <div class="text-h6">Remove this encounter?</div>
-            </q-card-section>
-            <q-card-actions align="center" class="text-primary">
-              <q-btn
-                flat
-                label="Cancel"
-                @click="closeDialog"
-                class="tw-text-blue-600 dark:tw-text-blue-400"
-                aria-label="Close dialog"
-              />
-              <q-btn
-                flat
-                label="Remove"
-                @click="removeEncounter"
-                class="tw-text-red-600 dark:tw-text-red-400"
-                aria-label="Remove encounter"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-        <q-select
-          dense
-          style="min-width: 120px; max-width: 120px"
-          class="tw-my-auto tw-mr-2"
-          outlined
-          v-model="tmpEncounter.name"
-          :options="encounters"
-          label="Encounters"
-          @update:model-value="changeActiveEncounter(tmpEncounter.name)"
-        />
+            <q-card flat bordered>
+              <q-card-section>
+                <div class="text-h6">New encounter name</div>
+              </q-card-section>
+
+              <q-card-section class="q-pt-none">
+                <q-input
+                  ref="encounterNameInput"
+                  dense
+                  v-model="newEncounterName"
+                  autofocus
+                  @keyup.enter="addEncounter"
+                  :rules="[
+                    (val) => !!val || 'Field is required',
+                    (val) =>
+                      !encounters.find((name) => name === val) || 'This encounter already exists'
+                  ]"
+                  :no-error-icon="true"
+                />
+              </q-card-section>
+
+              <q-card-actions align="center" class="text-primary">
+                <q-btn
+                  flat
+                  label="Cancel"
+                  @click="closeDialog"
+                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                  aria-label="Close dialog"
+                />
+                <q-btn
+                  flat
+                  label="Add encounter"
+                  @click="addEncounter"
+                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                  aria-label="Add encounter"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+          <q-btn
+            class="tw-my-auto tw-mx-2 tw-p-2"
+            :icon="biTrash"
+            size="sm"
+            flat
+            rounded
+            dense
+            aria-label="Remove current encounter"
+            @click="removeEncounterDialog = true"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Delete encounter
+            </q-tooltip>
+          </q-btn>
+          <q-dialog
+            v-model="removeEncounterDialog"
+            aria-label="Remove encounter dialog"
+            @escape-key="closeDialog"
+          >
+            <q-card flat bordered>
+              <q-card-section>
+                <div class="text-h6">Remove this encounter?</div>
+              </q-card-section>
+              <q-card-actions align="center" class="text-primary">
+                <q-btn
+                  flat
+                  label="Cancel"
+                  @click="closeDialog"
+                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                  aria-label="Close dialog"
+                />
+                <q-btn
+                  flat
+                  label="Remove"
+                  @click="removeEncounter"
+                  class="tw-text-red-600 dark:tw-text-red-400"
+                  aria-label="Remove encounter"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+          <q-select
+            dense
+            style="min-width: 120px; max-width: 120px"
+            class="tw-my-auto tw-mr-2"
+            outlined
+            v-model="tmpEncounter.name"
+            :options="encounters"
+            label="Encounters"
+            @update:model-value="changeActiveEncounter(tmpEncounter.name)"
+          />
+        </div>
         <q-btn flat dense @click="encounter.clearEncounter" aria-label="Clear encounter"
           >CLEAR</q-btn
         >

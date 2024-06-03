@@ -17,10 +17,13 @@ import { debounce } from 'lodash';
 import { useRouter } from 'vue-router';
 import ShopBuilder from 'src/components/Shop/ShopTable/ShopBuilder.vue';
 import { fasDrumstickBite, fasRing } from '@quasar/extras/fontawesome-v6';
+import SkeletonTable from 'src/components/Shop/SkeletonTable.vue';
 
 const $q = useQuasar();
 const settings = settingsStore();
 const items = itemsStore();
+
+const skeleton = ref(true);
 
 const shopBuilderRef = ref();
 const router = useRouter();
@@ -96,6 +99,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
     if (request) {
       pagination.value.rowsNumber = request.total;
       rows.value = request.results;
+      skeleton.value = false;
     } else {
       throw new Error('Error loading items');
     }
@@ -163,6 +167,7 @@ const addItem = debounce(function (item: item) {
     archive_link: '', // TODO: item.core_item.archive_link,
     name: item.core_item.name,
     level: item.core_item.level,
+    type: item.core_item.item_type,
     price: item.core_item.price
   };
   items.addToShop(min_item);
@@ -172,7 +177,8 @@ await fetchFromServer(0, 100);
 </script>
 
 <template>
-  <div class="tw-w-full q-pa-md md:tw-w-[40%] only-screen">
+  <SkeletonTable v-if="skeleton" />
+  <div v-else class="tw-w-full q-pa-md md:tw-w-[40%] only-screen">
     <q-table
       ref="itemTable"
       class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
@@ -190,6 +196,8 @@ await fetchFromServer(0, 100);
       no-data-label="No item matches the current filters"
       @request="onRequest"
       @row-click="(_, row) => items.setSelectedItem(row)"
+      id="v-step-0"
+      table-header-class="v-step-3"
     >
       <template v-slot:top>
         <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
@@ -209,7 +217,7 @@ await fetchFromServer(0, 100);
                 size="md"
                 aria-label="Random shop"
                 @click="shopBuilderRef.generateShop()"
-                id="v-step-3"
+                id="v-step-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

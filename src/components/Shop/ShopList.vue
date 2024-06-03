@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import {
-  biPlus,
-  biDash,
-  biTrash,
-  biPlusLg,
-  biBoxArrowUpRight
-} from '@quasar/extras/bootstrap-icons';
+import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { itemsStore } from 'stores/store';
 import { useRouter } from 'vue-router';
@@ -15,6 +9,7 @@ import { min_item } from 'src/types/item';
 import { requestItemId } from 'src/utils/shop-api-calls';
 import { debounce, isNull } from 'lodash';
 import { useQuasar } from 'quasar';
+import { fasDrumstickBite, fasRing } from '@quasar/extras/fontawesome-v6';
 
 const $q = useQuasar();
 
@@ -88,22 +83,17 @@ const saveChanges = () => {
   localStorage.setItem('shops', JSON.stringify(shop.getShops));
 };
 
-const openItemSheet = (id: number) => {
-  const routeData = router.resolve({ name: 'item', query: { id: id } });
-  window.open(routeData.href, '_blank');
-};
-
 const showItem = debounce(async function (item: min_item) {
   if (lastItem.value != item.id) {
     lastItem.value = item.id;
     try {
       const itemData = await requestItemId(item.id);
       if (isNull(itemData) || itemData === undefined) {
-        console.error('Missing creature ID');
+        console.error('Missing item ID');
         $q.notify({
           progress: true,
           type: 'warning',
-          message: 'Missing creature ID',
+          message: 'Missing item ID',
           icon: matPriorityHigh
         });
         router.push({ name: 'shop' });
@@ -122,127 +112,129 @@ const showItem = debounce(async function (item: min_item) {
     <div
       style="height: calc(100vh - 135px)"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      id="v-step-6"
+      id="v-step-4"
     >
-      <div class="tw-flex tw-mx-4 tw-my-0.5">
+      <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-0.5">
         <div
           class="text-subtitle1 font-bold tw-whitespace-nowrap tw-py-2.5 tw-pr-4 tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800"
         >
           Total cost: {{ shop.getFormattedPrice(shop.getTotalCost) }}
         </div>
         <q-space />
-        <q-btn
-          class="tw-my-auto tw-ml-2 tw-p-2"
-          :icon="biPlusLg"
-          size="sm"
-          flat
-          rounded
-          dense
-          aria-label="Add new shop"
-          @click="newShopDialog = true"
-        >
-          <q-tooltip
-            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-            anchor="top middle"
-            self="bottom middle"
+        <div class="tw-flex">
+          <q-btn
+            class="tw-my-auto tw-ml-2 tw-p-2"
+            :icon="biPlusLg"
+            size="sm"
+            flat
+            rounded
+            dense
+            aria-label="Add new shop"
+            @click="newShopDialog = true"
           >
-            Add new shop
-          </q-tooltip>
-        </q-btn>
-        <q-dialog v-model="newShopDialog" aria-label="New shop dialog" @escape-key="closeDialog">
-          <q-card flat bordered>
-            <q-card-section>
-              <div class="text-h6">New shop name</div>
-            </q-card-section>
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Add new shop
+            </q-tooltip>
+          </q-btn>
+          <q-dialog v-model="newShopDialog" aria-label="New shop dialog" @escape-key="closeDialog">
+            <q-card flat bordered>
+              <q-card-section>
+                <div class="text-h6">New shop name</div>
+              </q-card-section>
 
-            <q-card-section class="q-pt-none">
-              <q-input
-                ref="shopNameInput"
-                dense
-                v-model="newShopName"
-                autofocus
-                @keyup.enter="addShop"
-                :rules="[
-                  (val) => !!val || 'Field is required',
-                  (val) => !shops.find((name) => name === val) || 'This shop already exists'
-                ]"
-                :no-error-icon="true"
-              />
-            </q-card-section>
+              <q-card-section class="q-pt-none">
+                <q-input
+                  ref="shopNameInput"
+                  dense
+                  v-model="newShopName"
+                  autofocus
+                  @keyup.enter="addShop"
+                  :rules="[
+                    (val) => !!val || 'Field is required',
+                    (val) => !shops.find((name) => name === val) || 'This shop already exists'
+                  ]"
+                  :no-error-icon="true"
+                />
+              </q-card-section>
 
-            <q-card-actions align="center" class="text-primary">
-              <q-btn
-                flat
-                label="Cancel"
-                @click="closeDialog"
-                class="tw-text-blue-600 dark:tw-text-blue-400"
-                aria-label="Close dialog"
-              />
-              <q-btn
-                flat
-                label="Add shop"
-                @click="addShop"
-                class="tw-text-blue-600 dark:tw-text-blue-400"
-                aria-label="Add shop"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-        <q-btn
-          class="tw-my-auto tw-mx-2 tw-p-2"
-          :icon="biTrash"
-          size="sm"
-          flat
-          rounded
-          dense
-          aria-label="Remove current shop"
-          @click="removeShopDialog = true"
-        >
-          <q-tooltip
-            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-            anchor="top middle"
-            self="bottom middle"
+              <q-card-actions align="center" class="text-primary">
+                <q-btn
+                  flat
+                  label="Cancel"
+                  @click="closeDialog"
+                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                  aria-label="Close dialog"
+                />
+                <q-btn
+                  flat
+                  label="Add shop"
+                  @click="addShop"
+                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                  aria-label="Add shop"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+          <q-btn
+            class="tw-my-auto tw-mx-2 tw-p-2"
+            :icon="biTrash"
+            size="sm"
+            flat
+            rounded
+            dense
+            aria-label="Remove current shop"
+            @click="removeShopDialog = true"
           >
-            Delete shop
-          </q-tooltip>
-        </q-btn>
-        <q-dialog
-          v-model="removeShopDialog"
-          aria-label="Remove shop dialog"
-          @escape-key="closeDialog"
-        >
-          <q-card flat bordered>
-            <q-card-section>
-              <div class="text-h6">Remove this shop?</div>
-            </q-card-section>
-            <q-card-actions align="center" class="text-primary">
-              <q-btn
-                flat
-                label="Cancel"
-                @click="closeDialog"
-                class="tw-text-blue-600 dark:tw-text-blue-400"
-                aria-label="Close dialog"
-              />
-              <q-btn
-                flat
-                label="Remove"
-                @click="removeShop"
-                class="tw-text-red-600 dark:tw-text-red-400"
-                aria-label="Remove shop"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-        <q-select
-          dense
-          style="min-width: 120px; max-width: 120px"
-          class="tw-my-auto tw-mr-2"
-          outlined
-          v-model="tmpShop.name"
-          :options="shops"
-          label="Shops"
-          @update:model-value="changeActiveShop(tmpShop.name)"
-        />
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Delete shop
+            </q-tooltip>
+          </q-btn>
+          <q-dialog
+            v-model="removeShopDialog"
+            aria-label="Remove shop dialog"
+            @escape-key="closeDialog"
+          >
+            <q-card flat bordered>
+              <q-card-section>
+                <div class="text-h6">Remove this shop?</div>
+              </q-card-section>
+              <q-card-actions align="center" class="text-primary">
+                <q-btn
+                  flat
+                  label="Cancel"
+                  @click="closeDialog"
+                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                  aria-label="Close dialog"
+                />
+                <q-btn
+                  flat
+                  label="Remove"
+                  @click="removeShop"
+                  class="tw-text-red-600 dark:tw-text-red-400"
+                  aria-label="Remove shop"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+          <q-select
+            dense
+            style="min-width: 120px; max-width: 120px"
+            class="tw-my-auto tw-mr-2"
+            outlined
+            v-model="tmpShop.name"
+            :options="shops"
+            label="Shops"
+            @update:model-value="changeActiveShop(tmpShop.name)"
+          />
+        </div>
         <q-btn flat dense @click="shop.clearShop" aria-label="Clear shop">CLEAR</q-btn>
       </div>
       <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
@@ -276,32 +268,59 @@ const showItem = debounce(async function (item: min_item) {
             </div>
             <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
               <q-btn
+                v-if="item.type === 'Consumable'"
                 round
                 unelevated
-                :icon="biBoxArrowUpRight"
-                size="sm"
-                class="tw-mr-1"
-                @click="openItemSheet(item.id)"
-                target="_blank"
-                aria-label="Open item sheet"
+                :icon="fasDrumstickBite"
+                color="blue"
+                size="xs"
+                class="tw-mr-2"
+                aria-label="Consumable item type"
+                :ripple="false"
               >
                 <q-tooltip
                   class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  Open item sheet
+                  Consumable
                 </q-tooltip>
               </q-btn>
-              {{ item.quantity }}
-              <a v-if="item.archive_link" :href="item.archive_link" target="_blank" rel="noopener">
-                <span
-                  class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
-                  >{{ item.name }}</span
+              <q-btn
+                v-if="item.type === 'Equipment'"
+                round
+                unelevated
+                :icon="fasRing"
+                color="red"
+                size="xs"
+                class="tw-mr-2"
+                aria-label="Consumable item type"
+                :ripple="false"
+              >
+                <q-tooltip
+                  class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  anchor="top middle"
+                  self="bottom middle"
                 >
-              </a>
-              <span v-else>{{ item.name }}</span>
-              — Lv. {{ item.level }}
+                  Equipment
+                </q-tooltip>
+              </q-btn>
+              <span class="tw-align-middle">
+                {{ item.quantity }}
+                <a
+                  v-if="item.archive_link"
+                  :href="item.archive_link"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span
+                    class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                    >{{ item.name }}</span
+                  >
+                </a>
+                <span v-else>{{ item.name }}</span>
+                — Lv. {{ item.level }}
+              </span>
             </div>
             <div class="tw-flex-initial tw-my-auto tw-mx-1">
               {{ shop.getFormattedPrice(item.price * item.quantity!) }}

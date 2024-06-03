@@ -14,6 +14,7 @@ import type { min_creature } from 'src/types/creature';
 import type { encounter_list } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
+import { biArrowUp, biArrowDown } from '@quasar/extras/bootstrap-icons';
 
 useHead({
   title: 'Encounter Builder - BYBE',
@@ -32,6 +33,8 @@ const creatures = creaturesStore();
 const encounter = encounterStore();
 const currentComponent = shallowRef();
 const tourActive = ref(false);
+
+const scrollUp = ref(false);
 
 // read party local storage
 const localParty = localStorage.getItem('parties');
@@ -317,12 +320,58 @@ const callbacks: VTourCallbacks = {
   onStart: startTour,
   onStop: stopTour
 };
+
+function scrollDirection() {
+  const footer = document.querySelector('footer');
+  const top = footer?.getBoundingClientRect().top;
+  if (top) {
+    scrollUp.value = top < window.innerHeight;
+  }
+}
+
+window.removeEventListener('scroll', scrollDirection);
+window.addEventListener('scroll', scrollDirection);
+
+const scrollPage = (up: boolean) => {
+  let offset: number | undefined = 0;
+  if (up) {
+    offset = document.getElementById('table')?.offsetTop;
+  } else {
+    offset = document.getElementById('list')?.offsetTop;
+  }
+  window.scrollTo({
+    top: offset,
+    behavior: 'smooth'
+  });
+};
 </script>
 
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
     <v-tour name="/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
-    <component :is="currentComponent" />
-    <CreatureList />
+    <component id="table" :is="currentComponent" />
+    <CreatureList id="list" />
+    <q-page-sticky
+      position="bottom-right"
+      :offset="[18, 18]"
+      class="tw-z-10 tw-opacity-85 tw-block md:tw-hidden"
+    >
+      <q-btn
+        v-if="scrollUp"
+        fab
+        :icon="biArrowUp"
+        padding="sm"
+        color="primary"
+        @click="scrollPage(true)"
+      />
+      <q-btn
+        v-else
+        fab
+        :icon="biArrowDown"
+        padding="sm"
+        color="primary"
+        @click="scrollPage(false)"
+      />
+    </q-page-sticky>
   </q-page>
 </template>

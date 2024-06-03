@@ -44,9 +44,9 @@ const openItemSheet = (id: number) => {
 
 <template>
   <div class="item-sheet">
-    <q-card
-      flat
+    <div
       class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
+      id="v-step-5"
     >
       <q-scroll-area style="height: calc(100vh - 137px)">
         <div
@@ -175,7 +175,7 @@ const openItemSheet = (id: number) => {
           Click on an item to display its description
         </div>
       </q-scroll-area>
-    </q-card>
+    </div>
   </div>
 </template>
 

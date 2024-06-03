@@ -19,12 +19,11 @@ import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 import { debounce } from 'lodash';
 import type { party } from 'src/types/party';
 import type { encounter_list } from 'src/types/encounter';
-import { settingsStore, encounterStore, itemsStore } from 'stores/store';
+import { settingsStore, encounterStore } from 'stores/store';
 import { shop_list } from 'src/types/shop';
 
 const encounter = encounterStore();
 const settings = settingsStore();
-const shop = itemsStore();
 
 TailwindDarkFix();
 
@@ -582,7 +581,7 @@ const downloadData = () => {
               </q-card>
             </q-dialog>
             <q-btn
-              v-if="currentPath === '/encounter'"
+              v-if="currentPath === '/encounter' || currentPath === '/shop'"
               flat
               padding="sm"
               class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
