@@ -37,6 +37,7 @@ export type min_item = {
   archive_link: string;
   name: string;
   level: number;
+  type: string;
   price: number;
   quantity?: number;
 };
