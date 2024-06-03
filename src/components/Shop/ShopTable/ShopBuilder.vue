@@ -15,6 +15,9 @@ const shop = itemsStore();
 
 const dialog = ref(false);
 
+const fixedConsumableDice = ref(false);
+const fixedEquipmentDice = ref(false);
+
 const diceSelect = [
   {
     label: 'D4',
@@ -62,8 +65,20 @@ const tmpFilters = ref({
 
 const restoreSettings = () => {
   dialog.value = true;
-  tmpFilters.value.consumable_dices = consumable_dices.value;
-  tmpFilters.value.equipment_dices = equipment_dices.value;
+  tmpFilters.value.consumable_dices = {
+    dice_size: {
+      label: consumable_dices.value.dice_size.label,
+      value: consumable_dices.value.dice_size.value
+    },
+    n_of_dices: consumable_dices.value.n_of_dices
+  };
+  tmpFilters.value.equipment_dices = {
+    dice_size: {
+      label: equipment_dices.value.dice_size.label,
+      value: equipment_dices.value.dice_size.value
+    },
+    n_of_dices: equipment_dices.value.n_of_dices
+  };
   tmpFilters.value.levels = levels.value;
   tmpFilters.value.shop_type = shop_type.value;
 };
@@ -91,6 +106,22 @@ const generateShop = debounce(async function () {
     shop_type: tmpFilters.value.shop_type,
     pathfinder_version: pf_version
   };
+  if (fixedConsumableDice.value) {
+    post.consumable_dices = [
+      {
+        dice_size: 1,
+        n_of_dices: tmpFilters.value.consumable_dices.n_of_dices
+      }
+    ];
+  }
+  if (fixedEquipmentDice.value) {
+    post.equipment_dices = [
+      {
+        dice_size: 1,
+        n_of_dices: tmpFilters.value.equipment_dices.n_of_dices
+      }
+    ];
+  }
   try {
     const randomShop = await shopGenerator(post);
     if (typeof randomShop != 'undefined') {
@@ -181,7 +212,16 @@ defineExpose({ generateShop });
       <q-separator />
       <q-card-section style="max-height: 46rem">
         <div class="tw-space-y-3">
-          <q-badge outline class="tw-text-sm"> Consumable dices: </q-badge>
+          <div>
+            <q-badge outline class="tw-text-sm"> Consumable items: </q-badge>
+            <q-toggle
+              v-model="fixedConsumableDice"
+              label="Fixed number?"
+              dense
+              size="xs"
+              class="!tw-my-auto tw-pb-1 tw-ml-[22px] tw-text-xs"
+            />
+          </div>
           <div class="tw-flex tw-flex-row tw-justify-center">
             <q-input
               dense
@@ -190,18 +230,16 @@ defineExpose({ generateShop });
               @update:model-value="validateNumber(true)"
               type="number"
               label="Number"
-              style="max-width: 270px"
-              class="tw-w-32"
+              class="tw-w-32 tw-pr-2"
             />
-            <q-space />
             <q-select
+              v-if="!fixedConsumableDice"
               dense
               outlined
               v-model="tmpFilters.consumable_dices.dice_size"
               :options="Object.freeze(diceSelect)"
               label="Size"
-              style="max-width: 270px"
-              class="tw-w-32"
+              class="tw-w-32 tw-pl-2"
             >
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps">
@@ -215,7 +253,16 @@ defineExpose({ generateShop });
               </template>
             </q-select>
           </div>
-          <q-badge outline class="tw-text-sm"> Equipment dices: </q-badge>
+          <div>
+            <q-badge outline class="tw-text-sm"> Equipment items: </q-badge>
+            <q-toggle
+              v-model="fixedEquipmentDice"
+              label="Fixed number?"
+              dense
+              size="xs"
+              class="!tw-my-auto tw-pb-1 tw-ml-8 tw-text-xs"
+            />
+          </div>
           <div class="tw-flex tw-flex-row tw-justify-center">
             <q-input
               dense
@@ -224,18 +271,16 @@ defineExpose({ generateShop });
               @update:model-value="validateNumber(false)"
               type="number"
               label="Number"
-              style="max-width: 270px"
-              class="tw-w-32"
+              class="tw-w-32 tw-pr-2"
             />
-            <q-space />
             <q-select
+              v-if="!fixedEquipmentDice"
               dense
               outlined
               v-model="tmpFilters.equipment_dices.dice_size"
               :options="Object.freeze(diceSelect)"
               label="Size"
-              style="max-width: 270px"
-              class="tw-w-32"
+              class="tw-w-32 tw-pl-2"
             >
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps">

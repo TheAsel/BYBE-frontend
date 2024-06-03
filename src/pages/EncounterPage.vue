@@ -14,7 +14,7 @@ import type { min_creature } from 'src/types/creature';
 import type { encounter_list } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
-import { biArrowUp, biArrowDown } from '@quasar/extras/bootstrap-icons';
+import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 
 useHead({
   title: 'Encounter Builder - BYBE',
@@ -329,9 +329,6 @@ function scrollDirection() {
   }
 }
 
-window.removeEventListener('scroll', scrollDirection);
-window.addEventListener('scroll', scrollDirection);
-
 const scrollPage = (up: boolean) => {
   let offset: number | undefined = 0;
   if (up) {
@@ -359,7 +356,7 @@ const scrollPage = (up: boolean) => {
       <q-btn
         v-if="scrollUp"
         fab
-        :icon="biArrowUp"
+        :icon="matArrowUpward"
         padding="sm"
         color="primary"
         @click="scrollPage(true)"
@@ -367,11 +364,12 @@ const scrollPage = (up: boolean) => {
       <q-btn
         v-else
         fab
-        :icon="biArrowDown"
+        :icon="matArrowDownward"
         padding="sm"
         color="primary"
         @click="scrollPage(false)"
       />
     </q-page-sticky>
+    <q-scroll-observer @scroll="scrollDirection" />
   </q-page>
 </template>

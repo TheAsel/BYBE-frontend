@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[40%]">
+  <div class="q-pa-md tw-w-full md:tw-w-[43%]">
     <q-markup-table
       style="height: calc(100vh - 135px)"
       flat
@@ -25,7 +25,7 @@
 
       <thead style="height: 49px">
         <tr>
-          <th scope="col" class="text-left" style="min-width: 330px">
+          <th scope="col" class="text-left" style="min-width: 400px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >
@@ -37,7 +37,7 @@
               </div>
             </div>
           </th>
-          <th scope="col" class="text-right" style="min-width: 160px">
+          <th scope="col" class="text-right" style="min-width: 150px">
             <div
               class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
             >

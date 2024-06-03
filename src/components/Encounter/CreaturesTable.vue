@@ -969,6 +969,20 @@ const openCreatureSheet = (id: number) => {
             >
           </a>
           <span v-else class="tw-align-middle">{{ name.value }}</span>
+          <q-chip
+            v-if="name.row.core_data.essential.remaster && settings.getPfVersion === 'Any'"
+            dense
+            color="blue"
+            class="tw-ml-1 tw-text-xs"
+            label="Remaster"
+          />
+          <q-chip
+            v-if="!name.row.core_data.essential.remaster && settings.getPfVersion === 'Any'"
+            dense
+            color="red-10"
+            class="tw-ml-1 tw-text-xs"
+            label="Legacy"
+          />
         </q-td>
       </template>
       <template v-slot:body-cell-traits="traits">
