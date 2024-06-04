@@ -330,6 +330,7 @@ function scrollDirection() {
 }
 
 const scrollPage = (up: boolean) => {
+  settings.setHiddenNav(true);
   let offset: number | undefined = 0;
   if (up) {
     offset = document.getElementById('table')?.offsetTop;

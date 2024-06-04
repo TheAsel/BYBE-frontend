@@ -182,9 +182,8 @@ const themeSwitch = () => {
   }
 };
 
-const hidden = ref(true);
 const unhide = debounce(function () {
-  hidden.value = !hidden.value;
+  settings.setHiddenNav(!settings.getHiddenNav);
 }, 50);
 
 const uploadData = () => {
@@ -384,7 +383,7 @@ const downloadData = () => {
       <div
         id="navbar-collapse"
         class="tw-grow sm:tw-block"
-        :class="{ 'tw-hidden': hidden, 'overflow-hidden': hidden }"
+        :class="{ 'tw-hidden': settings.getHiddenNav, 'overflow-hidden': settings.getHiddenNav }"
       >
         <div
           class="tw-flex tw-flex-col tw-gap-y-4 tw-gap-x-0 tw-mt-5 sm:tw-flex-row sm:tw-items-center sm:tw-justify-end sm:tw-gap-y-0 sm:tw-gap-x-7 sm:tw-mt-0 sm:tw-pl-7"

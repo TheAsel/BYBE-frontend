@@ -5,7 +5,7 @@ import ShopTable from 'src/components/Shop/ShopTable.vue';
 import ItemSheet from 'src/components/Shop/ItemSheet.vue';
 import ShopList from 'src/components/Shop/ShopList.vue';
 import { shop_list } from 'src/types/shop';
-import { itemsStore } from 'src/stores/store';
+import { itemsStore, settingsStore } from 'src/stores/store';
 import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 import { item, min_item } from 'src/types/item';
@@ -20,6 +20,7 @@ useHead({
   ]
 });
 
+const settings = settingsStore();
 const shop = itemsStore();
 const tourActive = ref(false);
 const screenWidth = ref(screen.width);
@@ -186,6 +187,7 @@ function scrollDirection() {
 }
 
 const scrollPage = (up: boolean) => {
+  settings.setHiddenNav(true);
   let offset: number | undefined = 0;
   if (up) {
     offset = document.getElementById('table')?.offsetTop;
