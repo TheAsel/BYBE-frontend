@@ -9,14 +9,19 @@ import { shop_list } from 'src/types/shop';
 
 export const settingsStore = defineStore('settings', {
   state: () => ({
+    hidden_nav: true,
     is_creature_sheet_on: false,
     pf_version: 'Any'
   }),
   getters: {
+    getHiddenNav: (state) => state.hidden_nav,
     getCreatureSheets: (state) => state.is_creature_sheet_on,
     getPfVersion: (state) => state.pf_version
   },
   actions: {
+    setHiddenNav(newHiddenNav: boolean) {
+      this.hidden_nav = newHiddenNav;
+    },
     setCreatureSheets(newCreatureSheets: boolean) {
       this.is_creature_sheet_on = newCreatureSheets;
     },

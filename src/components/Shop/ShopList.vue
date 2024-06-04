@@ -121,6 +121,11 @@ const showItem = debounce(async function (item: min_item) {
         class="tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800 dark:!tw-border-gray-700"
       >
         <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-0.5">
+          <div class="tw-flex tw-flex-shrink">
+            <span class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
+              Shop
+            </span>
+          </div>
           <q-space />
           <div class="tw-flex tw-py-1">
             <q-btn
