@@ -292,8 +292,8 @@ const openCreatureSheet = (id: number) => {
       </q-header>
       <q-page-container v-if="encounter.getGenerating == false">
         <div v-for="(item, index) in encounter.getActiveEncounter.creatures" :key="index">
-          <div class="tw-flex tw-grow tw-flex-wrap justify-end">
-            <div class="tw-flex-initial tw-w-12 tw-my-auto tw-mx-1">
+          <div class="tw-flex">
+            <div class="tw-flex-none tw-w-12 tw-my-auto tw-mx-1">
               <q-btn
                 unelevated
                 :ripple="false"
@@ -313,79 +313,81 @@ const openCreatureSheet = (id: number) => {
                 @click="encounter.removeFromEncounter(index)"
               />
             </div>
-            <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
-              <q-btn
-                v-if="settings.getCreatureSheets"
-                round
-                unelevated
-                :icon="fasScroll"
-                size="sm"
-                class="tw-mr-2"
-                @click="openCreatureSheet(item.id)"
-                target="_blank"
-                aria-label="Open creature sheet"
-              >
-                <q-tooltip
-                  class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                  anchor="top middle"
-                  self="bottom middle"
-                >
-                  Open creature sheet
-                </q-tooltip>
-              </q-btn>
-              <span class="tw-align-middle">
-                {{ item.quantity }}
-                <a
-                  v-if="item.archive_link"
-                  :href="
-                    item.archive_link +
-                    '&Weak=' +
-                    (item.variant === 'Weak') +
-                    '&Elite=' +
-                    (item.variant === 'Elite')
-                  "
+            <div class="tw-flex tw-flex-row tw-flex-grow tw-flex-wrap">
+              <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
+                <q-btn
+                  v-if="settings.getCreatureSheets"
+                  round
+                  unelevated
+                  :icon="fasScroll"
+                  size="sm"
+                  class="tw-mr-2"
+                  @click="openCreatureSheet(item.id)"
                   target="_blank"
-                  rel="noopener"
+                  aria-label="Open creature sheet"
                 >
-                  <span
-                    class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
-                    >{{ item.name }}</span
+                  <q-tooltip
+                    class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                    anchor="top middle"
+                    self="bottom middle"
                   >
-                </a>
-                <span v-else>{{ item.name }}</span>
-                — Lv. {{ item.level }}
-              </span>
-            </div>
-            <div class="tw-flex-initial tw-my-auto tw-mx-1">
-              <q-btn-group unelevated flat spread>
-                <q-btn
-                  flat
-                  label="Weak"
-                  size="15px"
-                  :color="item.variant === 'Weak' ? 'positive' : 'grey-4'"
-                  padding="xs"
-                  class="text-weight-bold"
-                  @click="encounter.changeVariant(index, 'Weak')"
-                />
-                <q-btn
-                  flat
-                  label="Base"
-                  size="15px"
-                  :color="item.variant === 'Base' ? 'primary' : 'grey-4'"
-                  padding="xs"
-                  class="text-weight-bold"
-                  @click="encounter.changeVariant(index, 'Base')"
-                />
-                <q-btn
-                  flat
-                  label="Elite"
-                  size="15px"
-                  :color="item.variant === 'Elite' ? 'negative' : 'grey-4'"
-                  padding="xs"
-                  class="text-weight-bold"
-                  @click="encounter.changeVariant(index, 'Elite')"
-                />
-              </q-btn-group>
+                    Open creature sheet
+                  </q-tooltip>
+                </q-btn>
+                <span class="tw-align-middle">
+                  {{ item.quantity }}
+                  <a
+                    v-if="item.archive_link"
+                    :href="
+                      item.archive_link +
+                      '&Weak=' +
+                      (item.variant === 'Weak') +
+                      '&Elite=' +
+                      (item.variant === 'Elite')
+                    "
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <span
+                      class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                      >{{ item.name }}</span
+                    >
+                  </a>
+                  <span v-else>{{ item.name }}</span>
+                  — Lv. {{ item.level }}
+                </span>
+              </div>
+              <div class="tw-flex-initial tw-my-auto tw-mx-1">
+                <q-btn-group unelevated flat spread>
+                  <q-btn
+                    flat
+                    label="Weak"
+                    size="15px"
+                    :color="item.variant === 'Weak' ? 'positive' : 'grey-4'"
+                    padding="xs"
+                    class="text-weight-bold"
+                    @click="encounter.changeVariant(index, 'Weak')"
+                  />
+                  <q-btn
+                    flat
+                    label="Base"
+                    size="15px"
+                    :color="item.variant === 'Base' ? 'primary' : 'grey-4'"
+                    padding="xs"
+                    class="text-weight-bold"
+                    @click="encounter.changeVariant(index, 'Base')"
+                  />
+                  <q-btn
+                    flat
+                    label="Elite"
+                    size="15px"
+                    :color="item.variant === 'Elite' ? 'negative' : 'grey-4'"
+                    padding="xs"
+                    class="text-weight-bold"
+                    @click="encounter.changeVariant(index, 'Elite')"
+                  />
+                </q-btn-group>
+              </div>
             </div>
             <div class="tw-flex-initial tw-my-auto tw-ml-1 tw-mr-3">
               <q-btn

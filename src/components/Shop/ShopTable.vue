@@ -184,7 +184,7 @@ const deactivateNavigation = () => {
 async function onKey(evt) {
   if (
     navigationActive.value !== true ||
-    [38, 40].indexOf(evt.keyCode) === -1 ||
+    [33, 34, 35, 36, 37, 38, 39, 40].indexOf(evt.keyCode) === -1 ||
     itemTable.value === null ||
     loading.value === true ||
     keyDown.value === true
@@ -211,51 +211,91 @@ async function onKey(evt) {
   let index = currentIndex;
   let page = currentPage;
 
-  console.log('-----------------');
-  console.log('currentIndex: ' + currentIndex);
-  console.log('index: ' + index);
-
   switch (evt.keyCode) {
-    case 38: // ArrowUp
-      if (currentIndex <= 0) {
-        page = currentPage <= 1 ? lastPage : currentPage - 1;
-        index = rowsPerPage - 1;
-        if (page === lastPage) {
-          itemTable.value.lastPage();
-        } else {
-          itemTable.value.prevPage();
-        }
-        keyDown.value = true;
-        setTimeout(() => {
-          const { computedRows } = itemTable.value;
-          selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
-          items.setSelectedItem(selected.value[0]);
-          keyDown.value = false;
-        }, 500);
+    case 33: // PageUp
+      index = 0;
+      selected.value = [computedRows[index]];
+      items.setSelectedItem(selected.value[0]);
+      itemTable.value.scrollTo(index);
+      break;
+    case 34: // PageDown
+      index = rowsPerPage - 1;
+      selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
+      items.setSelectedItem(selected.value[0]);
+      itemTable.value.scrollTo(index);
+      break;
+    case 36: // Home
+      index = 0;
+      itemTable.value.firstPage();
+      keyDown.value = true;
+      setTimeout(() => {
+        const { computedRows } = itemTable.value;
+        selected.value = [computedRows[index]];
+        items.setSelectedItem(selected.value[0]);
+        keyDown.value = false;
+      }, 500);
+
+      itemTable.value.scrollTo(index);
+      break;
+    case 35: // End
+      index = rowsPerPage - 1;
+      itemTable.value.lastPage();
+      keyDown.value = true;
+      setTimeout(() => {
+        const { computedRows } = itemTable.value;
+        selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
+        items.setSelectedItem(selected.value[0]);
+        keyDown.value = false;
+      }, 500);
+
+      itemTable.value.scrollTo(index - 1);
+      break;
+    case 37: // ArrowLeft
+      page = currentPage <= 1 ? lastPage : currentPage - 1;
+      index = 0;
+      if (page === lastPage) {
+        itemTable.value.lastPage();
       } else {
+        itemTable.value.prevPage();
+      }
+      keyDown.value = true;
+      setTimeout(() => {
+        const { computedRows } = itemTable.value;
+        selected.value = [computedRows[index]];
+        items.setSelectedItem(selected.value[0]);
+        keyDown.value = false;
+      }, 500);
+
+      itemTable.value.scrollTo(index);
+      break;
+    case 38: // ArrowUp
+      if (currentIndex > 0) {
         index = currentIndex - 1;
         selected.value = [computedRows[index]];
         items.setSelectedItem(selected.value[0]);
       }
       itemTable.value.scrollTo(index - 1);
       break;
-    case 40: // ArrowDown
-      if (currentIndex >= lastIndex) {
-        page = currentPage >= lastPage ? 1 : currentPage + 1;
-        index = 0;
-        if (page === 1) {
-          itemTable.value.firstPage();
-        } else {
-          itemTable.value.nextPage();
-        }
-        keyDown.value = true;
-        setTimeout(() => {
-          const { computedRows } = itemTable.value;
-          selected.value = [computedRows[index]];
-          items.setSelectedItem(selected.value[0]);
-          keyDown.value = false;
-        }, 500);
+    case 39: // ArrowRight
+      page = currentPage >= lastPage ? 1 : currentPage + 1;
+      index = 0;
+      if (page === 1) {
+        itemTable.value.firstPage();
       } else {
+        itemTable.value.nextPage();
+      }
+      keyDown.value = true;
+      setTimeout(() => {
+        const { computedRows } = itemTable.value;
+        selected.value = [computedRows[index]];
+        items.setSelectedItem(selected.value[0]);
+        keyDown.value = false;
+      }, 500);
+
+      itemTable.value.scrollTo(index);
+      break;
+    case 40: // ArrowDown
+      if (currentIndex < lastIndex) {
         index = currentIndex + 1;
         selected.value = [computedRows[index]];
         items.setSelectedItem(selected.value[0]);

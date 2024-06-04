@@ -245,14 +245,9 @@ const showItem = debounce(async function (item: min_item) {
       </q-header>
 
       <q-page-container v-if="shop.getGenerating == false">
-        <div
-          v-for="(item, index) in shop.getActiveShop.items"
-          :key="index"
-          @click="showItem(item)"
-          class="cursor-pointer"
-        >
-          <div class="tw-flex tw-grow tw-flex-wrap justify-end">
-            <div class="tw-flex-initial tw-w-12 tw-my-auto tw-mx-1">
+        <div v-for="(item, index) in shop.getActiveShop.items" :key="index">
+          <div class="tw-flex">
+            <div class="tw-flex-none tw-w-12 tw-my-auto tw-mx-1">
               <q-btn
                 unelevated
                 :ripple="false"
@@ -272,64 +267,66 @@ const showItem = debounce(async function (item: min_item) {
                 @click="shop.removeFromShop(index)"
               />
             </div>
-            <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
-              <q-chip
-                v-if="item.type === 'Consumable'"
-                text-color="white"
-                :clickable="false"
-                :ripple="false"
-                class="tw-p-1 tw-invisible"
-                aria-label="Consumable item type"
-              >
-                <q-avatar class="tw-visible" :icon="fasDrumstickBite" color="blue">
-                  <q-tooltip
-                    class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    Consumable
-                  </q-tooltip>
-                </q-avatar>
-              </q-chip>
-              <q-chip
-                v-if="item.type === 'Equipment'"
-                text-color="white"
-                :clickable="false"
-                :ripple="false"
-                class="tw-p-1 tw-invisible"
-                aria-label="Equipment item type"
-              >
-                <q-avatar class="tw-visible" :icon="fasRing" color="red">
-                  <q-tooltip
-                    class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    Equipment
-                  </q-tooltip>
-                </q-avatar>
-              </q-chip>
-              <span class="tw-align-middle">
-                {{ item.quantity }}
-                <a
-                  v-if="item.archive_link"
-                  :href="item.archive_link"
-                  target="_blank"
-                  rel="noopener"
+            <div class="tw-flex tw-flex-row tw-flex-grow cursor-pointer" @click="showItem(item)">
+              <div class="tw-flex-grow tw-my-auto tw-mx-1" style="min-width: 100px">
+                <q-chip
+                  v-if="item.type === 'Consumable'"
+                  text-color="white"
+                  :clickable="false"
+                  :ripple="false"
+                  class="tw-p-1 tw-invisible"
+                  aria-label="Consumable item type"
                 >
-                  <span
-                    class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
-                    >{{ item.name }}</span
+                  <q-avatar class="tw-visible" :icon="fasDrumstickBite" color="blue">
+                    <q-tooltip
+                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Consumable
+                    </q-tooltip>
+                  </q-avatar>
+                </q-chip>
+                <q-chip
+                  v-if="item.type === 'Equipment'"
+                  text-color="white"
+                  :clickable="false"
+                  :ripple="false"
+                  class="tw-p-1 tw-invisible"
+                  aria-label="Equipment item type"
+                >
+                  <q-avatar class="tw-visible" :icon="fasRing" color="red">
+                    <q-tooltip
+                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Equipment
+                    </q-tooltip>
+                  </q-avatar>
+                </q-chip>
+                <span class="tw-align-middle">
+                  {{ item.quantity }}
+                  <a
+                    v-if="item.archive_link"
+                    :href="item.archive_link"
+                    target="_blank"
+                    rel="noopener"
                   >
-                </a>
-                <span v-else>{{ item.name }}</span>
-                — Lv. {{ item.level }}
-              </span>
+                    <span
+                      class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                      >{{ item.name }}</span
+                    >
+                  </a>
+                  <span v-else>{{ item.name }}</span>
+                  — Lv. {{ item.level }}
+                </span>
+              </div>
+              <div class="tw-flex-shrink tw-text-nowrap tw-my-auto tw-mx-1">
+                {{ shop.getFormattedPrice(item.price * item.quantity!) }}
+              </div>
             </div>
-            <div class="tw-flex-initial tw-my-auto tw-mx-1">
-              {{ shop.getFormattedPrice(item.price * item.quantity!) }}
-            </div>
-            <div class="tw-flex-initial tw-my-auto tw-ml-1 tw-mr-3">
+            <div class="tw-flex-none tw-my-auto tw-ml-1 tw-mr-3">
               <q-btn
                 unelevated
                 :ripple="false"
