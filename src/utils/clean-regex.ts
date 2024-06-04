@@ -9,7 +9,7 @@ export const cleanEffect = (description: string) => {
 
 export const cleanCompendium = (description: string) => {
   const compendiumRegex =
-    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s'()+]*)\](?:{([\w\s'()+-]*)})?/g;
+    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s'.()+]*)\](?:{([\w\s'()+-]*)})?/g;
 
   const compendium = description.matchAll(compendiumRegex);
   for (const i of compendium) {
