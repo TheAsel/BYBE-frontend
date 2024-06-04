@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, toRaw } from 'vue';
 import { requestItems } from 'src/utils/shop-api-calls';
 import type { item, min_item } from 'src/types/item';
 import {
@@ -7,12 +7,13 @@ import {
   biBasketFill,
   biEraser,
   biPlusLg,
-  biBoxArrowUpRight
+  biBoxArrowUpRight,
+  biCaretRight
 } from '@quasar/extras/bootstrap-icons';
 import { item_filters } from 'src/types/filters';
 import { itemsStore, settingsStore } from 'src/stores/store';
 import { useQuasar } from 'quasar';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
+import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash';
 import { useRouter } from 'vue-router';
 import ShopBuilder from 'src/components/Shop/ShopTable/ShopBuilder.vue';
@@ -29,6 +30,9 @@ const shopBuilderRef = ref();
 const router = useRouter();
 
 const itemTable = ref();
+const navigationActive = ref(false);
+const selected = ref<item[]>([]);
+const keyDown = ref(false);
 const rows = ref<item[]>([]);
 const loading = ref(false);
 const pagination = ref({
@@ -119,17 +123,13 @@ async function onRequest(props) {
 
   loading.value = true;
 
-  // calculate starting row of data
   const startRow = (page - 1) * rowsPerPage;
 
-  // don't forget to update local pagination object
   pagination.value.page = page;
   pagination.value.rowsPerPage = rowsPerPage;
 
-  // fetch data from "server"
   await fetchFromServer(startRow, pagination.value.rowsPerPage);
 
-  // ...and turn of loading indicator
   loading.value = false;
 }
 
@@ -173,6 +173,98 @@ const addItem = debounce(function (item: item) {
   items.addToShop(min_item);
 }, 50);
 
+const activateNavigation = () => {
+  navigationActive.value = true;
+};
+
+const deactivateNavigation = () => {
+  navigationActive.value = false;
+};
+
+async function onKey(evt) {
+  if (
+    navigationActive.value !== true ||
+    [38, 40].indexOf(evt.keyCode) === -1 ||
+    itemTable.value === null ||
+    loading.value === true ||
+    keyDown.value === true
+  ) {
+    return;
+  }
+
+  evt.preventDefault();
+
+  const { computedRowsNumber, computedRows } = itemTable.value;
+
+  if (computedRows.length === 0) {
+    return;
+  }
+
+  const currentIndex =
+    selected.value.length > 0 ? computedRows.indexOf(toRaw(selected.value[0])) : -1;
+  const currentPage = pagination.value.page;
+  const rowsPerPage =
+    pagination.value.rowsPerPage === 0 ? computedRowsNumber : pagination.value.rowsPerPage;
+  const lastIndex = computedRows.length - 1;
+  const lastPage = Math.ceil(computedRowsNumber / rowsPerPage);
+
+  let index = currentIndex;
+  let page = currentPage;
+
+  console.log('-----------------');
+  console.log('currentIndex: ' + currentIndex);
+  console.log('index: ' + index);
+
+  switch (evt.keyCode) {
+    case 38: // ArrowUp
+      if (currentIndex <= 0) {
+        page = currentPage <= 1 ? lastPage : currentPage - 1;
+        index = rowsPerPage - 1;
+        if (page === lastPage) {
+          itemTable.value.lastPage();
+        } else {
+          itemTable.value.prevPage();
+        }
+        keyDown.value = true;
+        setTimeout(() => {
+          const { computedRows } = itemTable.value;
+          selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
+          items.setSelectedItem(selected.value[0]);
+          keyDown.value = false;
+        }, 500);
+      } else {
+        index = currentIndex - 1;
+        selected.value = [computedRows[index]];
+        items.setSelectedItem(selected.value[0]);
+      }
+      itemTable.value.scrollTo(index - 1);
+      break;
+    case 40: // ArrowDown
+      if (currentIndex >= lastIndex) {
+        page = currentPage >= lastPage ? 1 : currentPage + 1;
+        index = 0;
+        if (page === 1) {
+          itemTable.value.firstPage();
+        } else {
+          itemTable.value.nextPage();
+        }
+        keyDown.value = true;
+        setTimeout(() => {
+          const { computedRows } = itemTable.value;
+          selected.value = [computedRows[index]];
+          items.setSelectedItem(selected.value[0]);
+          keyDown.value = false;
+        }, 500);
+      } else {
+        index = currentIndex + 1;
+        selected.value = [computedRows[index]];
+        items.setSelectedItem(selected.value[0]);
+      }
+      itemTable.value.scrollTo(index);
+      break;
+  }
+}
+
 await fetchFromServer(0, 100);
 </script>
 
@@ -188,14 +280,32 @@ await fetchFromServer(0, 100);
       :rows="rows"
       :columns="columns"
       virtual-scroll
+      virtual-scroll-sticky-size-start="50"
+      virtual-scroll-sticky-size-end="50"
       v-model:pagination="pagination"
       :loading="loading"
       :filter="filters"
       rows-per-page-label="Items per page:"
       :rows-per-page-options="[50, 100, 0]"
-      no-data-label="No item matches the current filters"
+      :selected-rows-label="
+        function str() {
+          return '';
+        }
+      "
       @request="onRequest"
-      @row-click="(_, row) => items.setSelectedItem(row)"
+      @row-click="
+        (_, row) => {
+          items.setSelectedItem(row);
+          selected.pop();
+          selected.push(row);
+        }
+      "
+      row-key="id"
+      selection="single"
+      v-model:selected="selected"
+      @focusin="activateNavigation"
+      @focusout="deactivateNavigation"
+      @keydown="onKey"
       id="v-step-0"
       table-header-class="v-step-3"
     >
@@ -392,26 +502,37 @@ await fetchFromServer(0, 100);
           <q-icon :name="biBasketFill" class="tw-mr-1" size="sm"></q-icon>
         </q-th>
       </template>
+      <template v-slot:body-selection="selected">
+        <q-btn
+          :props="selected"
+          round
+          unelevated
+          :icon="biBoxArrowUpRight"
+          size="sm"
+          @click="openItemSheet(selected.row.core_item.id)"
+          target="_blank"
+          aria-label="Open item sheet"
+        >
+          <q-tooltip
+            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+            anchor="top middle"
+            self="bottom middle"
+          >
+            Open item sheet
+          </q-tooltip>
+        </q-btn>
+      </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">
-          <q-btn
-            round
-            unelevated
-            :icon="biBoxArrowUpRight"
-            size="sm"
-            class="tw-mr-1"
-            @click="openItemSheet(name.row.core_item.id)"
-            target="_blank"
-            aria-label="Open item sheet"
-          >
-            <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-              anchor="top middle"
-              self="bottom middle"
-            >
-              Open item sheet
-            </q-tooltip>
-          </q-btn>
+          <q-icon
+            v-if="
+              items.getSelectedItem?.core_item &&
+              name.row.core_item.id === items.getSelectedItem?.core_item.id
+            "
+            class="tw-mr-1 tw-align-middle"
+            size="xs"
+            :name="biCaretRight"
+          />
           <a
             v-if="name.row.core_item.archive_link"
             :href="name.row.core_item.archive_link"
@@ -496,6 +617,12 @@ await fetchFromServer(0, 100);
             </q-tooltip>
           </q-btn>
         </q-td>
+      </template>
+      <template v-slot:no-data>
+        <div class="row flex-center q-gutter-sm">
+          <q-icon size="2em" :name="matWarning" />
+          <span> No item matches the current filters </span>
+        </div>
       </template>
     </q-table>
   </div>
