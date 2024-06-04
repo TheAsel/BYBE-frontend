@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useHead } from '@unhead/vue';
 import ShopTable from 'src/components/Shop/ShopTable.vue';
 import ItemSheet from 'src/components/Shop/ItemSheet.vue';
@@ -22,6 +22,7 @@ useHead({
 
 const shop = itemsStore();
 const tourActive = ref(false);
+const screenWidth = ref(screen.width);
 
 const scrollUp = ref(false);
 
@@ -196,14 +197,26 @@ const scrollPage = (up: boolean) => {
     behavior: 'smooth'
   });
 };
+
+const handleResize = () => {
+  screenWidth.value = screen.width;
+};
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
     <v-tour name="/shop" :steps="steps" :options="options" :callbacks="callbacks" />
-    <ItemSheet class="q-pa-md tw-w-full md:tw-w-[30%] md:tw-block tw-hidden" />
+    <ItemSheet v-if="screenWidth >= 768" class="q-pa-md tw-w-full md:tw-w-[30%]" />
     <ShopTable id="table" />
-    <ItemSheet class="q-pa-md tw-w-full md:tw-w-[30%] tw-block md:tw-hidden" />
+    <ItemSheet v-if="screenWidth < 768" class="q-pa-md tw-w-full md:tw-w-[30%]" />
     <ShopList id="list" />
     <q-page-sticky
       position="bottom-right"
