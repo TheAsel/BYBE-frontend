@@ -134,7 +134,8 @@ const generateShop = debounce(async function () {
             name: randomShop.results[i].core_item.name,
             level: randomShop.results[i].core_item.level,
             type: randomShop.results[i].core_item.item_type,
-            price: randomShop.results[i].core_item.price
+            price: randomShop.results[i].core_item.price,
+            quantity: randomShop.results[i].core_item.quantity
           };
           shop.addToShop(min_item);
         }
@@ -213,6 +214,47 @@ defineExpose({ generateShop });
       <q-card-section style="max-height: 46rem">
         <div class="tw-space-y-3">
           <div>
+            <q-badge outline class="tw-text-sm"> Equipable items: </q-badge>
+            <q-toggle
+              v-model="fixedEquipmentDice"
+              label="Fixed number?"
+              dense
+              size="xs"
+              class="!tw-my-auto tw-pb-1 tw-ml-10 tw-text-xs"
+            />
+          </div>
+          <div class="tw-flex tw-flex-row tw-justify-center">
+            <q-input
+              dense
+              outlined
+              v-model.number="tmpFilters.equipment_dices.n_of_dices"
+              @update:model-value="validateNumber(false)"
+              type="number"
+              label="Number"
+              class="tw-w-32 tw-pr-2"
+            />
+            <q-select
+              v-if="!fixedEquipmentDice"
+              dense
+              outlined
+              v-model="tmpFilters.equipment_dices.dice_size"
+              :options="Object.freeze(diceSelect)"
+              label="Size"
+              class="tw-w-32 tw-pl-2"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section avatar>
+                    <q-icon :name="scope.opt.icon" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <div>
             <q-badge outline class="tw-text-sm"> Consumable items: </q-badge>
             <q-toggle
               v-model="fixedConsumableDice"
@@ -253,48 +295,6 @@ defineExpose({ generateShop });
               </template>
             </q-select>
           </div>
-          <div>
-            <q-badge outline class="tw-text-sm"> Equipment items: </q-badge>
-            <q-toggle
-              v-model="fixedEquipmentDice"
-              label="Fixed number?"
-              dense
-              size="xs"
-              class="!tw-my-auto tw-pb-1 tw-ml-8 tw-text-xs"
-            />
-          </div>
-          <div class="tw-flex tw-flex-row tw-justify-center">
-            <q-input
-              dense
-              outlined
-              v-model.number="tmpFilters.equipment_dices.n_of_dices"
-              @update:model-value="validateNumber(false)"
-              type="number"
-              label="Number"
-              class="tw-w-32 tw-pr-2"
-            />
-            <q-select
-              v-if="!fixedEquipmentDice"
-              dense
-              outlined
-              v-model="tmpFilters.equipment_dices.dice_size"
-              :options="Object.freeze(diceSelect)"
-              label="Size"
-              class="tw-w-32 tw-pl-2"
-            >
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section avatar>
-                    <q-icon :name="scope.opt.icon" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
-
           <div class="tw-pb-4">
             <q-badge outline class="tw-text-sm"> Level of items: </q-badge>
             <q-range

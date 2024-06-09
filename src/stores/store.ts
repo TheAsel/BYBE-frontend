@@ -317,7 +317,7 @@ export const itemsStore = defineStore('items', {
     getTotalCost: (state) => {
       let cost = 0;
       state.shops[state.activeShop].items.forEach((item) => {
-        for (let i = 0; i < item.quantity!; i++) {
+        for (let i = 0; i < item.quantity; i++) {
           cost += item.price;
         }
       });
@@ -343,21 +343,15 @@ export const itemsStore = defineStore('items', {
     },
     addToShop(item: min_item, index?: number) {
       if (index! >= 0) {
-        if (item.quantity) {
-          item.quantity++;
-        } else {
-          item.quantity = 1;
-        }
+        item.quantity++;
         this.shops[this.activeShop].items.splice(index!, 1, item);
       } else {
-        const newItem = { ...item };
-        newItem.quantity = 1;
-        this.shops[this.activeShop].items.push(newItem);
+        this.shops[this.activeShop].items.push(item);
       }
     },
     removeFromShop(index: number) {
-      if (this.shops[this.activeShop].items[index].quantity! > 1) {
-        this.shops[this.activeShop].items[index].quantity!--;
+      if (this.shops[this.activeShop].items[index].quantity > 1) {
+        this.shops[this.activeShop].items[index].quantity--;
       } else {
         this.shops[this.activeShop].items.splice(index, 1);
       }
@@ -396,9 +390,9 @@ export const itemsStore = defineStore('items', {
       this.generating = newGenerating;
     },
     getFormattedPrice(price: number) {
-      if (price < 100) {
+      if (price < 10) {
         return price + ' cp';
-      } else if (price >= 100 && price < 1000) {
+      } else if (price >= 10 && price < 100) {
         price = price / 10;
         if (!Number.isInteger(price)) {
           const decimal = (price - Math.floor(price)).toFixed(1);
@@ -406,7 +400,7 @@ export const itemsStore = defineStore('items', {
           return Math.trunc(price) + ' sp, ' + copper + ' cp';
         }
         return price + ' sp';
-      } else if (price >= 1000) {
+      } else if (price >= 100) {
         price = price / 100;
         if (!Number.isInteger(price)) {
           let decimal = (price - Math.floor(price)).toFixed(2);

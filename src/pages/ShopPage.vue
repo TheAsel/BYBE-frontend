@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useHead } from '@unhead/vue';
 import ShopTable from 'src/components/Shop/ShopTable.vue';
-import ItemSheet from 'src/components/Shop/ItemSheet.vue';
+import ShopSheet from 'src/components/Shop/ShopSheet.vue';
 import ShopList from 'src/components/Shop/ShopList.vue';
 import { shop_list } from 'src/types/shop';
 import { itemsStore, settingsStore } from 'src/stores/store';
@@ -119,9 +119,11 @@ const startTour = () => {
     tourActive.value = true;
     const tmpCloakFull: item = {
       core_item: {
-        id: 762,
+        id: 15913,
         name: 'Cloak of Illusions',
         bulk: 0.1,
+        quantity: 1,
+        base_item: null,
         category: '',
         description:
           '<p>This cloak flows, covering and concealing the wearer\'s body. The cloak allows you to cast @UUID[Compendium.pf2e.spells-srd.Item.Figment] as an occult innate cantrip. Although naturally a dull gray, while invested the cloak picks up colors and patterns from its surroundings, granting a +1 item bonus to Stealth checks.</p>\n<p><strong>Activate—Draw Hood</strong> <span class="action-glyph">2</span> (manipulate)</p>\n<p><strong>Frequency</strong> once per day</p>\n<hr />\n<p><strong>Effect</strong> You draw the hood up and gain the effects of @UUID[Compendium.pf2e.spells-srd.Item.Invisibility], with the spell\'s normal duration or until you pull the hood back down, whichever comes first. While you are invisible, your <em>figment</em> innate cantrip gains the subtle trait, concealing the observable effects of your spellcasting.</p>',
@@ -130,6 +132,7 @@ const startTour = () => {
         level: 7,
         price: 36000,
         usage: 'worncloak',
+        group: '',
         item_type: 'Equipment',
         material_grade: '',
         material_type: '',
@@ -143,22 +146,25 @@ const startTour = () => {
       }
     };
     const tmpCloak: min_item = {
-      id: 762,
-      archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=424',
+      id: 16983,
+      archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=3069',
       name: 'Cloak of Illusions',
       level: 7,
       type: 'Equipment',
-      price: 36000
+      price: 36000,
+      quantity: 1
     };
     const tmpPotion: min_item = {
-      id: 3029,
+      id: 19250,
       archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=2943',
       name: 'Healing Potion (Moderate)',
       level: 6,
       type: 'Consumable',
-      price: 5000
+      price: 5000,
+      quantity: 3
     };
     shop.setSelectedItem(tmpCloakFull);
+    shop.addShop('Example');
     shop.addToShop(tmpCloak);
     shop.addToShop(tmpPotion);
   }
@@ -166,9 +172,8 @@ const startTour = () => {
 
 const stopTour = () => {
   if (tourActive.value) {
+    shop.removeShop();
     shop.removeSelectedItem();
-    shop.removeFromShop(shop.getActiveShop.items.length - 1);
-    shop.removeFromShop(shop.getActiveShop.items.length - 1);
     tourActive.value = false;
   }
 };
@@ -216,9 +221,9 @@ onUnmounted(() => {
 <template>
   <q-page class="tw-flex row items-center justify-evenly">
     <v-tour name="/shop" :steps="steps" :options="options" :callbacks="callbacks" />
-    <ItemSheet v-if="screenWidth >= 768" class="q-pa-md tw-w-full md:tw-w-[30%]" />
+    <ShopSheet v-if="screenWidth >= 768" class="q-pa-md tw-w-full md:tw-w-[30%]" />
     <ShopTable id="table" />
-    <ItemSheet v-if="screenWidth < 768" class="q-pa-md tw-w-full md:tw-w-[30%]" />
+    <ShopSheet v-if="screenWidth < 768" class="q-pa-md tw-w-full md:tw-w-[30%]" />
     <ShopList id="list" />
     <q-page-sticky
       position="bottom-right"

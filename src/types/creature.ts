@@ -1,4 +1,5 @@
 import type { alignments, rarities, roles, sizes, variants } from './filters';
+import { item } from './item';
 
 interface KeyValue {
   [key: string]: number;
@@ -7,6 +8,12 @@ interface KeyValue {
 export type creature = {
   combat_data?: {
     ac: number;
+    armors: [
+      {
+        item_core: item['core_item'];
+        armor_data: item['armor_data'];
+      }
+    ];
     immunities: string[];
     resistances: KeyValue;
     weaknesses: KeyValue;
@@ -20,35 +27,8 @@ export type creature = {
     };
     weapons: [
       {
-        base: string;
-        bonus_dmg: number;
-        bulk: number;
-        carry_type: string;
-        category: string;
-        creature_id: number;
-        die_size: string;
-        dmg_type: string;
-        hands_held: number;
-        hardness: number;
-        hp_curr: number;
-        hp_max: number;
-        id: number;
-        invested: boolean;
-        level: number;
-        license: string;
-        n_of_dices: number;
-        name: string;
-        quantity: number;
-        range: string;
-        rarity: rarities;
-        reload: string;
-        remaster: boolean;
-        size: string;
-        source: string;
-        to_hit_bonus: number;
-        usage: string;
-        weapon_group: string;
-        wp_type: string;
+        item_core: item['core_item'];
+        weapon_data: item['weapon_data'];
       }
     ];
   };
@@ -102,7 +82,7 @@ export type creature = {
         description: string;
         id: number;
         license: string;
-        n_of_actions: number;
+        n_of_actions: number | null;
         name: string;
         rarity: rarities;
         remaster: boolean;
@@ -111,6 +91,7 @@ export type creature = {
       }
     ];
     hp_detail: string;
+    items: [item['core_item']];
     language_detail: string;
     languages: string[];
     perception: number;
