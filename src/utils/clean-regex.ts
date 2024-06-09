@@ -98,7 +98,7 @@ export const cleanSave = (description: string) => {
 };
 
 export const cleanSymbols = (description: string) => {
-  const symbolsRegex = /<span class=\"action-glyph\">(\w)<\/span>/g;
+  const symbolsRegex = /<span class="action-glyph">(\w)<\/span>/g;
 
   const symbol = description.matchAll(symbolsRegex);
   for (const i of symbol) {
@@ -116,7 +116,7 @@ export const cleanSymbols = (description: string) => {
 
 export const cleanRoll = (description: string) => {
   const rollRegex =
-    /\[\[\/b?r \(?{?(\d?\*?\d*d?[\d\s\-+]*\d*),?\d*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\s\-+;]*)})?/g;
+    /\[\[\/b?r \(?{?(\d?\*?\d*d?[\d\s\-+]*\d*)\[?\w*\]?,?\d*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\s\-+;]*)})?/g;
 
   const roll = description.matchAll(rollRegex);
   for (const i of roll) {

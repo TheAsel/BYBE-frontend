@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ItemSheet from 'src/components/Shop/ItemSheet.vue';
+import ShopSheet from 'src/components/Shop/ShopSheet.vue';
 import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -66,7 +66,7 @@ const printPage = () => {
 </script>
 
 <template>
-  <ItemSheet class="tw-mx-auto item-page q-pa-md tw-w-full md:tw-w-[57rem]" />
+  <ShopSheet class="tw-mx-auto item-page q-pa-md tw-w-full md:tw-w-[57rem]" />
   <q-page-sticky
     position="bottom-right"
     :offset="[18, 18]"

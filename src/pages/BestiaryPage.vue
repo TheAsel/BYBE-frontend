@@ -69,6 +69,32 @@ try {
       title.value =
         creatureVariant.value + ' ' + creatureData?.core_data.essential.name + ' - BYBE';
     }
+    if (creatureData?.combat_data?.weapons) {
+      creatureData?.combat_data?.weapons.sort((a, b) => {
+        if (a.weapon_data?.die_size && b.weapon_data?.die_size) {
+          return (
+            parseInt(b.weapon_data.die_size.substring(1)) -
+            parseInt(a.weapon_data.die_size.substring(1))
+          );
+        } else {
+          return 0;
+        }
+      });
+      creatureData?.combat_data?.weapons.sort((a, b) => {
+        if (a.weapon_data?.to_hit_bonus && b.weapon_data?.to_hit_bonus) {
+          return b.weapon_data.to_hit_bonus - a.weapon_data.to_hit_bonus;
+        } else {
+          return 0;
+        }
+      });
+      creatureData?.combat_data?.weapons.sort((a, b) => {
+        if (a.weapon_data?.weapon_type && b.weapon_data?.weapon_type) {
+          return a.weapon_data.weapon_type.localeCompare(b.weapon_data.weapon_type);
+        } else {
+          return 0;
+        }
+      });
+    }
   } else {
     console.error('Invalid creature ID');
     $q.notify({
@@ -113,6 +139,18 @@ const variantStyle = (value: number | undefined) => {
     return valueStr;
   }
   return value;
+};
+
+const pfActionSymbol = (num: number | null, action: string) => {
+  if (num === 1 || num === 2 || num === 3) {
+    return num;
+  }
+  if (action === 'free') {
+    return 4;
+  }
+  if (action === 'reaction') {
+    return 5;
+  }
 };
 
 const cleanDescription = (description: string) => {
@@ -214,16 +252,97 @@ const skillString = computed(() => {
   return finalString.substring(0, finalString.length - 2);
 });
 
-const weaponString = computed(() => {
+const itemString = computed(() => {
   const weapons = creatureData?.combat_data?.weapons;
+  const items = creatureData?.extra_data?.items;
+  const armors = creatureData?.combat_data?.armors;
   let finalString = '';
+  finalString += '<strong>Items&nbsp;</strong>';
   if (weapons != undefined && weapons.length > 0) {
-    finalString += '<strong>Items&nbsp;</strong>';
     weapons.forEach((weapon) => {
-      // TODO: wait for DB fix
-      if (weapon.wp_type != 'melee' && weapon.wp_type != 'ranged') {
-        finalString += weapon.name.toLowerCase() + ', ';
+      if (weapon.weapon_data) {
+        if (
+          weapon.weapon_data.n_of_potency_runes > 0 ||
+          weapon.weapon_data.n_of_striking_runes > 0 ||
+          weapon.weapon_data.property_runes.length > 0
+        ) {
+          if (weapon.weapon_data.n_of_potency_runes > 0) {
+            finalString += addPlus(weapon.weapon_data.n_of_potency_runes) + ' ';
+          }
+          switch (weapon.weapon_data.n_of_striking_runes) {
+            case 1:
+              finalString += 'striking ';
+              break;
+            case 2:
+              finalString += 'greater striking ';
+              break;
+            case 3:
+              finalString += 'major striking ';
+              break;
+            default:
+              break;
+          }
+          if (weapon.weapon_data.property_runes.length > 0) {
+            weapon.weapon_data.property_runes.forEach((rune) => {
+              finalString += rune + ' ';
+            });
+          }
+          if (weapon.item_core.material_type) {
+            finalString += weapon.item_core.material_type + ' ';
+          }
+          finalString += weapon.item_core.name.toLowerCase() + ', ';
+        }
+        if (weapon.item_core.quantity > 1) {
+          finalString +=
+            weapon.item_core.quantity + ' ' + weapon.item_core.name.toLowerCase() + ', ';
+        }
       }
+    });
+  }
+  if (items != undefined && items.length > 0) {
+    items.forEach((item) => {
+      if (item.item_type === 'Consumable' || item.item_type === 'Equipment') {
+        if (item.quantity > 1) {
+          finalString += item.quantity + ' ';
+        }
+        finalString += item.name.toLowerCase() + ', ';
+      }
+    });
+  }
+  if (armors != undefined && armors.length > 0) {
+    armors.forEach((armor) => {
+      if (armor.armor_data)
+        if (
+          armor.armor_data.n_of_potency_runes > 0 ||
+          armor.armor_data.n_of_resilient_runes > 0 ||
+          armor.armor_data.property_runes.length > 0
+        ) {
+          if (armor.armor_data.n_of_potency_runes > 0) {
+            finalString += addPlus(armor.armor_data.n_of_potency_runes) + ' ';
+          }
+          switch (armor.armor_data.n_of_resilient_runes) {
+            case 1:
+              finalString += 'resilient ';
+              break;
+            case 2:
+              finalString += 'greater resilient ';
+              break;
+            case 3:
+              finalString += 'major resilient ';
+              break;
+            default:
+              break;
+          }
+          if (armor.armor_data.property_runes.length > 0) {
+            armor.armor_data.property_runes.forEach((rune) => {
+              finalString += rune + ' ';
+            });
+          }
+          if (armor.item_core.material_type) {
+            finalString += armor.item_core.material_type + ' ';
+          }
+        }
+      finalString += armor.item_core.name.toLowerCase() + ', ';
     });
   }
   if (finalString === '<strong>Items&nbsp;</strong>') {
@@ -577,12 +696,9 @@ const printPage = () => {
                 class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               >
                 <strong>{{ item.name + ' ' }}</strong>
-                <span
-                  v-if="item.action_type === 'reaction'"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >5</span
-                >
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                  >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
+                </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
             </div>
@@ -592,7 +708,7 @@ const printPage = () => {
                 creatureData?.combat_data?.weapons.length > 0
               "
               class="tw-text-base tw-text-gray-800 dark:tw-text-white"
-              v-html="weaponString"
+              v-html="itemString"
             ></div>
           </div>
           <q-separator class="tw-my-2" style="height: 2px" />
@@ -621,12 +737,9 @@ const printPage = () => {
                 class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               >
                 <strong>{{ item.name + ' ' }}</strong>
-                <span
-                  v-if="item.action_type === 'reaction'"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >5</span
-                >
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                  >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
+                </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
             </div>
@@ -650,18 +763,22 @@ const printPage = () => {
 
             <div
               v-for="item in creatureData?.combat_data?.weapons"
-              :key="item.name"
+              :key="item.item_core.name"
               class="tw-text-base tw-text-gray-800 dark:tw-text-white"
             >
-              <strong v-if="item.wp_type === 'melee'">Melee </strong>
-              <strong v-if="item.wp_type === 'ranged'">Ranged </strong>
-              <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
-                >1</span
-              >
-              <i>{{ ' ' + item.name.toLowerCase() }} </i>
-              {{ addPlus(item.to_hit_bonus) }}, <strong>Damage</strong> {{ item.n_of_dices
-              }}{{ item.die_size }}+{{ item.bonus_dmg }}
-              {{ item.dmg_type }}
+              <span v-if="item.weapon_data?.weapon_type != 'Generic'">
+                <strong v-if="item.weapon_data?.weapon_type === 'Melee'">Melee </strong>
+                <strong v-if="item.weapon_data?.weapon_type === 'Ranged'">Ranged </strong>
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                  >1</span
+                >
+                <i>{{ ' ' + item.item_core.name.toLowerCase() }} </i>
+                {{ addPlus(item.weapon_data?.to_hit_bonus!) }}, <strong>Damage</strong>
+                {{ item.weapon_data?.number_of_dice! }}{{ item.weapon_data?.die_size }}+{{
+                  item.weapon_data?.bonus_dmg
+                }}
+                {{ item.weapon_data?.dmg_type }}
+              </span>
             </div>
             <div
               v-if="creatureData?.spell_caster_data?.spell_caster_entry.spell_casting_name != null"
@@ -674,36 +791,9 @@ const printPage = () => {
                 class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               >
                 <strong>{{ item.name + ' ' }}</strong>
-                <span
-                  v-if="item.n_of_actions === 1"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >1</span
-                >
-                <span
-                  v-else-if="item.n_of_actions === 2"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >2</span
-                >&nbsp;
-                <span
-                  v-else-if="item.n_of_actions === 3"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >3</span
-                >
-                <span
-                  v-else-if="item.action_type === 'free'"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >4</span
-                >
-                <span
-                  v-else-if="item.action_type === 'reaction'"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >5</span
-                >
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                  >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
+                </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
             </div>

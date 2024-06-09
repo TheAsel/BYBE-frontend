@@ -9,7 +9,7 @@ import { min_item } from 'src/types/item';
 import { requestItemId } from 'src/utils/shop-api-calls';
 import { debounce, isNull } from 'lodash';
 import { useQuasar } from 'quasar';
-import { fasDrumstickBite, fasRing } from '@quasar/extras/fontawesome-v6';
+import { mdiSword, mdiShield, mdiFoodDrumstick, mdiRing } from '@quasar/extras/mdi-v7';
 
 const $q = useQuasar();
 
@@ -35,6 +35,10 @@ tmpShop.value = {
 
 // save on shop list change
 watch(shop, () => {
+  tmpShop.value = {
+    name: shop.getActiveShop.name,
+    items: shop.getActiveShop.items
+  };
   saveChanges();
 });
 
@@ -275,6 +279,24 @@ const showItem = debounce(async function (item: min_item) {
             <div class="tw-flex tw-flex-row tw-flex-grow cursor-pointer" @click="showItem(item)">
               <div class="tw-flex-grow tw-my-auto tw-mx-1" style="min-width: 100px">
                 <q-chip
+                  v-if="item.type === 'Armor'"
+                  text-color="white"
+                  :clickable="false"
+                  :ripple="false"
+                  class="tw-p-1 tw-invisible"
+                  aria-label="Armor item type"
+                >
+                  <q-avatar class="tw-visible" :icon="mdiShield" color="blue">
+                    <q-tooltip
+                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Armor
+                    </q-tooltip>
+                  </q-avatar>
+                </q-chip>
+                <q-chip
                   v-if="item.type === 'Consumable'"
                   text-color="white"
                   :clickable="false"
@@ -282,7 +304,7 @@ const showItem = debounce(async function (item: min_item) {
                   class="tw-p-1 tw-invisible"
                   aria-label="Consumable item type"
                 >
-                  <q-avatar class="tw-visible" :icon="fasDrumstickBite" color="blue">
+                  <q-avatar class="tw-visible" :icon="mdiFoodDrumstick" color="orange">
                     <q-tooltip
                       class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
                       anchor="top middle"
@@ -300,13 +322,31 @@ const showItem = debounce(async function (item: min_item) {
                   class="tw-p-1 tw-invisible"
                   aria-label="Equipment item type"
                 >
-                  <q-avatar class="tw-visible" :icon="fasRing" color="red">
+                  <q-avatar class="tw-visible" :icon="mdiRing" color="green">
                     <q-tooltip
                       class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
                       anchor="top middle"
                       self="bottom middle"
                     >
                       Equipment
+                    </q-tooltip>
+                  </q-avatar>
+                </q-chip>
+                <q-chip
+                  v-if="item.type === 'Weapon'"
+                  text-color="white"
+                  :clickable="false"
+                  :ripple="false"
+                  class="tw-p-1 tw-invisible"
+                  aria-label="Weapon item type"
+                >
+                  <q-avatar class="tw-visible" :icon="mdiSword" color="red">
+                    <q-tooltip
+                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Weapon
                     </q-tooltip>
                   </q-avatar>
                 </q-chip>

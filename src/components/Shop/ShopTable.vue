@@ -17,7 +17,7 @@ import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash';
 import { useRouter } from 'vue-router';
 import ShopBuilder from 'src/components/Shop/ShopTable/ShopBuilder.vue';
-import { fasDrumstickBite, fasRing } from '@quasar/extras/fontawesome-v6';
+import { mdiSword, mdiShield, mdiFoodDrumstick, mdiRing } from '@quasar/extras/mdi-v7';
 import SkeletonTable from 'src/components/Shop/SkeletonTable.vue';
 
 const $q = useQuasar();
@@ -156,7 +156,7 @@ const sort = (col: 'name' | 'id' | 'level' | 'type') => {
   }
 };
 
-const openItemSheet = (id: number) => {
+const openShopSheet = (id: number) => {
   const routeData = router.resolve({ name: 'item', query: { id: id } });
   window.open(routeData.href, '_blank');
 };
@@ -168,7 +168,8 @@ const addItem = debounce(function (item: item) {
     name: item.core_item.name,
     level: item.core_item.level,
     type: item.core_item.item_type,
-    price: item.core_item.price
+    price: item.core_item.price,
+    quantity: item.core_item.quantity
   };
   items.addToShop(min_item);
 }, 50);
@@ -517,7 +518,7 @@ await fetchFromServer(0, 100);
                 clearable
                 options-dense
                 v-model="filters.type"
-                :options="Object.freeze(['Consumable', 'Equipment'])"
+                :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Weapon'])"
                 :label="columns[2].label"
                 :style="columns[2].style"
               />
@@ -549,7 +550,7 @@ await fetchFromServer(0, 100);
           unelevated
           :icon="biBoxArrowUpRight"
           size="sm"
-          @click="openItemSheet(selected.row.core_item.id)"
+          @click="openShopSheet(selected.row.core_item.id)"
           target="_blank"
           aria-label="Open item sheet"
         >
@@ -606,9 +607,18 @@ await fetchFromServer(0, 100);
       </template>
       <template v-slot:body-cell-type="type">
         <q-td :props="type">
+          <q-icon v-if="type.row.core_item.item_type === 'Armor'" :name="mdiShield" size="sm" left>
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Armor
+            </q-tooltip>
+          </q-icon>
           <q-icon
             v-if="type.row.core_item.item_type === 'Consumable'"
-            :name="fasDrumstickBite"
+            :name="mdiFoodDrumstick"
             size="sm"
             left
           >
@@ -622,7 +632,7 @@ await fetchFromServer(0, 100);
           </q-icon>
           <q-icon
             v-if="type.row.core_item.item_type === 'Equipment'"
-            :name="fasRing"
+            :name="mdiRing"
             size="sm"
             left
           >
@@ -632,6 +642,15 @@ await fetchFromServer(0, 100);
               self="bottom middle"
             >
               Equipment
+            </q-tooltip>
+          </q-icon>
+          <q-icon v-if="type.row.core_item.item_type === 'Weapon'" :name="mdiSword" size="sm" left>
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Weapon
             </q-tooltip>
           </q-icon>
         </q-td>
