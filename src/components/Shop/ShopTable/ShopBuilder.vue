@@ -5,7 +5,7 @@ import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { biXLg } from '@quasar/extras/bootstrap-icons';
 import { itemsStore, settingsStore } from 'src/stores/store';
 import { shopGenerator } from 'src/utils/shop-api-calls';
-import { debounce } from 'lodash';
+import { debounce } from 'lodash-es';
 import { min_item } from 'src/types/item';
 
 const $q = useQuasar();
@@ -130,7 +130,9 @@ const generateShop = debounce(async function () {
         for (let i = 0; i < randomShop.count; i++) {
           const min_item: min_item = {
             id: randomShop.results[i].core_item.id,
-            archive_link: '', // TODO: randomShop.results[i].core_item.archive_link,
+            archive_link:
+              'https://2e.aonprd.com/Search.aspx?q=' +
+              encodeURIComponent(randomShop.results[i].core_item.name), // TODO: randomShop.results[i].core_item.archive_link,
             name: randomShop.results[i].core_item.name,
             level: randomShop.results[i].core_item.level,
             type: randomShop.results[i].core_item.item_type,
@@ -214,13 +216,13 @@ defineExpose({ generateShop });
       <q-card-section style="max-height: 46rem">
         <div class="tw-space-y-3">
           <div>
-            <q-badge outline class="tw-text-sm"> Equipable items: </q-badge>
+            <q-badge outline class="tw-text-sm"> Equippable items: </q-badge>
             <q-toggle
               v-model="fixedEquipmentDice"
               label="Fixed number?"
               dense
               size="xs"
-              class="!tw-my-auto tw-pb-1 tw-ml-10 tw-text-xs"
+              class="!tw-my-auto tw-pb-1 tw-ml-8 tw-text-xs"
             />
           </div>
           <div class="tw-flex tw-flex-row tw-justify-center">

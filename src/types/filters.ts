@@ -29,10 +29,13 @@ export type roles =
 
 export type variants = 'Weak' | 'Base' | 'Elite';
 
+export type item_columns = 'id' | 'name' | 'level' | 'rarity' | 'type';
+
 export type item_filters = {
   name: string;
   level: { min: number; max: number };
+  rarity: rarities | null;
   type: 'consumable' | 'equipment' | null;
-  sort_by: 'id' | 'name' | 'level' | 'type';
+  sort_by: item_columns;
   order_by: 'ascending' | 'descending';
 };

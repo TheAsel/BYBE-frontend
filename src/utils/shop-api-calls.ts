@@ -37,6 +37,9 @@ export async function requestItems(
     if (filters.level.max != undefined) {
       request += '&max_level_filter=' + filters.level.max;
     }
+    if (filters.rarity) {
+      request += '&rarity_filter=' + filters.rarity;
+    }
     if (filters.type) {
       request += '&type_filter=' + filters.type;
     }

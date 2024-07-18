@@ -2,6 +2,7 @@
 import { itemsStore } from 'src/stores/store';
 import ArmorSheet from 'src/components/Shop/ShopSheet/ArmorSheet.vue';
 import ItemSheet from 'src/components/Shop/ShopSheet/ItemSheet.vue';
+import ShieldSheet from 'src/components/Shop/ShopSheet/ShieldSheet.vue';
 import WeaponSheet from 'src/components/Shop/ShopSheet/WeaponSheet.vue';
 
 const items = itemsStore();
@@ -10,10 +11,10 @@ const items = itemsStore();
 <template>
   <div class="item-sheet">
     <div
-      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
+      class="tw-items-center tw-text-left tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
       id="v-step-5"
     >
-      <q-scroll-area style="height: calc(100vh - 137px)">
+      <q-scroll-area style="height: calc(100vh - 135px)">
         <div
           class="q-gutter-y-xs tw-p-4 show-print"
           v-if="items.getSelectedItem && items.getSelectedItem.core_item"
@@ -25,9 +26,10 @@ const items = itemsStore();
               items.getSelectedItem.core_item.item_type === 'Equipment'
             "
           />
+          <ShieldSheet v-if="items.getSelectedItem.core_item.item_type === 'Shield'" />
           <WeaponSheet v-if="items.getSelectedItem.core_item.item_type === 'Weapon'" />
         </div>
-        <div class="tw-text-center tw-text-lg tw-pt-[38vh]" v-else>
+        <div v-else class="tw-text-center tw-text-lg tw-pt-[38vh]">
           Click on an item to display its description
         </div>
       </q-scroll-area>

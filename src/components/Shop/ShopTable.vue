@@ -10,14 +10,20 @@ import {
   biBoxArrowUpRight,
   biCaretRight
 } from '@quasar/extras/bootstrap-icons';
-import { item_filters } from 'src/types/filters';
+import { item_columns, item_filters } from 'src/types/filters';
 import { itemsStore, settingsStore } from 'src/stores/store';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
-import { debounce } from 'lodash';
+import { debounce } from 'lodash-es';
 import { useRouter } from 'vue-router';
 import ShopBuilder from 'src/components/Shop/ShopTable/ShopBuilder.vue';
-import { mdiSword, mdiShield, mdiFoodDrumstick, mdiRing } from '@quasar/extras/mdi-v7';
+import {
+  mdiSword,
+  mdiShield,
+  mdiFoodDrumstick,
+  mdiRing,
+  mdiTshirtCrew
+} from '@quasar/extras/mdi-v7';
 import SkeletonTable from 'src/components/Shop/SkeletonTable.vue';
 
 const $q = useQuasar();
@@ -46,13 +52,14 @@ const pagination = ref({
 const filters = ref<item_filters>({
   name: '',
   level: { min: 0, max: 25 },
+  rarity: null,
   type: null,
   sort_by: 'name',
   order_by: 'ascending'
 });
 
 const columns: {
-  name: 'name' | 'id' | 'level' | 'type';
+  name: item_columns;
   label: string;
   field: (row: item) => string | number | string[];
   required?: boolean;
@@ -73,23 +80,33 @@ const columns: {
     name: 'level',
     label: 'Level',
     field: (row) => row.core_item.level,
-    required: true,
+    required: false,
     align: 'left',
     sortable: true,
     style: 'min-width: 80px;'
   },
   {
+    name: 'rarity',
+    label: 'Rarity',
+    field: (row) => row.core_item.rarity,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 100px;'
+  },
+  {
     name: 'type',
     label: 'Type',
     field: (row) => row.core_item.item_type,
-    required: true,
+    required: false,
     align: 'center',
     sortable: true,
     style: 'min-width: 100px; max-width: 140px;'
   },
+
   {
     name: 'id',
-    label: '',
+    label: 'Shop',
     field: (row) => row.core_item.id,
     required: true,
     align: 'center',
@@ -108,6 +125,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       throw new Error('Error loading items');
     }
   } catch (error) {
+    skeleton.value = true;
     console.error(error);
     $q.notify({
       progress: true,
@@ -137,13 +155,16 @@ const resetFilters = () => {
   filters.value = {
     name: '',
     level: { min: 0, max: 25 },
+    rarity: null,
     type: null,
     sort_by: 'name',
     order_by: 'ascending'
   };
 };
 
-const sort = (col: 'name' | 'id' | 'level' | 'type') => {
+const visibleColumns = ref(['name', 'level', 'type', 'id']);
+
+const sort = (col: item_columns) => {
   if (filters.value.sort_by === col) {
     if (filters.value.order_by === 'ascending') {
       filters.value.order_by = 'descending';
@@ -164,7 +185,7 @@ const openShopSheet = (id: number) => {
 const addItem = debounce(function (item: item) {
   const min_item: min_item = {
     id: item.core_item.id,
-    archive_link: '', // TODO: item.core_item.archive_link,
+    archive_link: 'https://2e.aonprd.com/Search.aspx?q=' + encodeURIComponent(item.core_item.name), // TODO: item.core_item.archive_link,
     name: item.core_item.name,
     level: item.core_item.level,
     type: item.core_item.item_type,
@@ -227,29 +248,27 @@ async function onKey(evt) {
       break;
     case 36: // Home
       index = 0;
-      itemTable.value.firstPage();
+      await itemTable.value.firstPage();
       keyDown.value = true;
       setTimeout(() => {
         const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
+        itemTable.value.scrollTo(index);
       }, 500);
-
-      itemTable.value.scrollTo(index);
       break;
     case 35: // End
       index = rowsPerPage - 1;
-      itemTable.value.lastPage();
+      await itemTable.value.lastPage();
       keyDown.value = true;
       setTimeout(() => {
         const { computedRows } = itemTable.value;
         selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
+        itemTable.value.scrollTo(index - 1);
       }, 500);
-
-      itemTable.value.scrollTo(index - 1);
       break;
     case 37: // ArrowLeft
       page = currentPage <= 1 ? lastPage : currentPage - 1;
@@ -265,9 +284,8 @@ async function onKey(evt) {
         selected.value = [computedRows[index]];
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
+        itemTable.value.scrollTo(index);
       }, 500);
-
-      itemTable.value.scrollTo(index);
       break;
     case 38: // ArrowUp
       if (currentIndex > 0) {
@@ -291,9 +309,8 @@ async function onKey(evt) {
         selected.value = [computedRows[index]];
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
+        itemTable.value.scrollTo(index);
       }, 500);
-
-      itemTable.value.scrollTo(index);
       break;
     case 40: // ArrowDown
       if (currentIndex < lastIndex) {
@@ -311,15 +328,16 @@ await fetchFromServer(0, 100);
 
 <template>
   <SkeletonTable v-if="skeleton" />
-  <div v-else class="tw-w-full q-pa-md md:tw-w-[43%] only-screen">
+  <div v-else class="tw-w-full q-pa-md md:tw-w-[46%] only-screen">
     <q-table
       ref="itemTable"
       class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      style="height: calc(100vh - 135px)"
+      style="height: calc(100vh - 133px)"
       flat
       bordered
       :rows="rows"
       :columns="columns"
+      :visible-columns="visibleColumns"
       virtual-scroll
       virtual-scroll-sticky-size-start="50"
       virtual-scroll-sticky-size-end="50"
@@ -328,22 +346,15 @@ await fetchFromServer(0, 100);
       :filter="filters"
       rows-per-page-label="Items per page:"
       :rows-per-page-options="[50, 100, 0]"
-      :selected-rows-label="
-        function str() {
-          return '';
-        }
-      "
       @request="onRequest"
       @row-click="
-        (_, row) => {
+        (_, row: item) => {
           items.setSelectedItem(row);
-          selected.pop();
-          selected.push(row);
+          selected = [row];
         }
       "
       row-key="id"
       selection="single"
-      v-model:selected="selected"
       @focusin="activateNavigation"
       @focusout="deactivateNavigation"
       @keydown="onKey"
@@ -410,11 +421,12 @@ await fetchFromServer(0, 100);
           <div class="tw-flex tw-flex-shrink">
             <q-btn
               flat
-              rounded
+              round
               dense
-              class="tw-p-2"
+              class="tw-mr-2"
               :icon="biEraser"
               size="md"
+              padding="sm"
               aria-label="Clear filters"
               @click="resetFilters"
             >
@@ -426,6 +438,21 @@ await fetchFromServer(0, 100);
                 Clear Filters
               </q-tooltip>
             </q-btn>
+            <div id="v-step-4">
+              <q-select
+                v-model="visibleColumns"
+                multiple
+                outlined
+                dense
+                options-dense
+                display-value="Show\Hide columns"
+                emit-value
+                map-options
+                :options="Object.freeze(columns)"
+                option-value="name"
+                style="min-width: 150px"
+              />
+            </div>
           </div>
         </div>
       </template>
@@ -446,10 +473,10 @@ await fetchFromServer(0, 100);
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort name column"
                 @click="sort(columns[0].name)"
@@ -494,13 +521,45 @@ await fetchFromServer(0, 100);
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort level column"
                 @click="sort(columns[1].name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template v-slot:header-cell-rarity>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                dense
+                outlined
+                clearable
+                options-dense
+                v-model="filters.rarity"
+                :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
+                :label="columns[2].label"
+                :style="columns[2].style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort rarity column"
+                @click="sort(columns[2].name)"
               />
             </div>
           </div>
@@ -518,21 +577,21 @@ await fetchFromServer(0, 100);
                 clearable
                 options-dense
                 v-model="filters.type"
-                :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Weapon'])"
-                :label="columns[2].label"
-                :style="columns[2].style"
+                :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Shield', 'Weapon'])"
+                :label="columns[3].label"
+                :style="columns[3].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort types column"
-                @click="sort(columns[2].name)"
+                @click="sort(columns[3].name)"
               />
             </div>
           </div>
@@ -575,8 +634,10 @@ await fetchFromServer(0, 100);
             :name="biCaretRight"
           />
           <a
-            v-if="name.row.core_item.archive_link"
-            :href="name.row.core_item.archive_link"
+            v-if="settings.getAonLinks"
+            :href="
+              'https://2e.aonprd.com/Search.aspx?q=' + encodeURIComponent(name.row.core_item.name)
+            "
             target="_blank"
             rel="noopener"
             class="tw-inline tw-align-middle"
@@ -607,7 +668,12 @@ await fetchFromServer(0, 100);
       </template>
       <template v-slot:body-cell-type="type">
         <q-td :props="type">
-          <q-icon v-if="type.row.core_item.item_type === 'Armor'" :name="mdiShield" size="sm" left>
+          <q-icon
+            v-if="type.row.core_item.item_type === 'Armor'"
+            :name="mdiTshirtCrew"
+            size="sm"
+            left
+          >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
               anchor="top middle"
@@ -642,6 +708,15 @@ await fetchFromServer(0, 100);
               self="bottom middle"
             >
               Equipment
+            </q-tooltip>
+          </q-icon>
+          <q-icon v-if="type.row.core_item.item_type === 'Shield'" :name="mdiShield" size="sm" left>
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Shield
             </q-tooltip>
           </q-icon>
           <q-icon v-if="type.row.core_item.item_type === 'Weapon'" :name="mdiSword" size="sm" left>
@@ -730,10 +805,6 @@ await fetchFromServer(0, 100);
 
 tr:nth-child(even) {
   background-color: #f3f4f6 !important;
-}
-
-.q-table--dark tr:nth-child(even) {
-  background-color: #374151 !important;
 }
 
 .q-table--dark td {

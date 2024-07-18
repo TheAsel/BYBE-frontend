@@ -2,11 +2,20 @@
 import { itemsStore, settingsStore } from 'src/stores/store';
 import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
 import { useRouter } from 'vue-router';
+import { upperFirst } from 'lodash-es';
 
 const settings = settingsStore();
 const items = itemsStore();
 
 const router = useRouter();
+
+const addPlus = (value: number | undefined) => {
+  if (value != undefined && value >= 0) {
+    return '+' + value;
+  } else {
+    return value;
+  }
+};
 
 const cleanSymbols = (description: string) => {
   const symbolsRegex = /<span class="action-glyph">(\w)<\/span>/g;
@@ -34,6 +43,7 @@ const cleanDescription = (description: string) => {
 
   return finalString.replace(cleanRegex, '');
 };
+
 const openShopSheet = (id: number) => {
   const routeData = router.resolve({ name: 'item', query: { id: id } });
   window.open(routeData.href, '_blank');
@@ -84,7 +94,7 @@ const openShopSheet = (id: number) => {
       {{ items.getSelectedItem!.core_item.name.toUpperCase() }}
     </h1>
     <q-space />
-    <div class="tw-my-auto">ITEM {{ items.getSelectedItem!.core_item.level }}</div>
+    <div class="tw-my-auto">SHIELD {{ items.getSelectedItem!.core_item.level }}</div>
     <q-btn
       class="tw-ml-2 tw-my-auto only-screen item-page-element"
       :icon="biXLg"
@@ -146,20 +156,41 @@ const openShopSheet = (id: number) => {
         </i>
       </a>
     </div>
-    <div
-      class="tw-text-base tw-text-gray-800 dark:tw-text-white"
-      v-if="items.getSelectedItem!.core_item.price"
-    >
+    <div class="tw-text-base tw-text-gray-800 dark:tw-text-white">
       <strong>Price</strong>
-      {{ items.getFormattedPrice(items.getSelectedItem!.core_item.price) }}
+      {{ items.getFormattedPrice(items.getSelectedItem!.core_item.price) }};
+      <span v-if="items.getSelectedItem!.shield_data">
+        <strong>AC Bonus</strong>
+        {{ addPlus(items.getSelectedItem!.shield_data.bonus_ac) }};
+        <strong>Speed Penalty </strong>
+        <span v-if="items.getSelectedItem!.shield_data.speed_penalty === 0">—</span>
+        <span v-else> {{ items.getSelectedItem!.shield_data.speed_penalty }} ft.</span>
+      </span>
     </div>
     <div class="tw-text-base tw-text-gray-800 dark:tw-text-white">
-      <span v-if="items.getSelectedItem!.core_item.usage">
-        <strong>Usage</strong>
-        {{ items.getFormattedUsage(items.getSelectedItem!.core_item.usage) }};
-      </span>
       <strong>Bulk</strong>
-      {{ items.getFormattedBulk(items.getSelectedItem!.core_item.bulk) }}
+      {{ items.getFormattedBulk(items.getSelectedItem!.core_item.bulk) }};
+      <span v-if="items.getSelectedItem!.core_item.hardness">
+        <strong>Hardness</strong>
+        {{ items.getSelectedItem!.core_item.hardness }};
+      </span>
+      <span v-if="items.getSelectedItem!.core_item.hp">
+        <strong>HP</strong>
+        {{ items.getSelectedItem!.core_item.hp }}
+      </span>
+    </div>
+    <div class="tw-text-base tw-text-gray-800 dark:tw-text-white">
+      <span
+        v-if="
+          items.getSelectedItem!.core_item.base_item &&
+          items.getSelectedItem!.core_item.base_item.toLowerCase().replaceAll('-', ' ') !=
+            items.getSelectedItem!.core_item.name.toLowerCase() &&
+          items.getSelectedItem!.core_item.base_item != 'casters-targe'
+        "
+      >
+        <strong>Base Shield</strong>
+        {{ upperFirst(items.getSelectedItem!.core_item.base_item).replaceAll('-', ' ') }}
+      </span>
     </div>
   </div>
   <q-separator class="tw-my-2" style="height: 2px" />

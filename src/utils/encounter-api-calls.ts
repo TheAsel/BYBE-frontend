@@ -58,7 +58,11 @@ export async function requestFilters(
   }
 }
 
-export async function requestCreatureId(creature_id: number, variant: variants) {
+export async function requestCreatureId(
+  creature_id: number,
+  variant: variants,
+  is_pwl_on: boolean
+) {
   try {
     const requestOptions = {
       method: 'GET',
@@ -70,7 +74,8 @@ export async function requestCreatureId(creature_id: number, variant: variants) 
         variant.toLowerCase() +
         '/' +
         creature_id +
-        '?extra_data=true&combat_data=true&spell_casting_data=true',
+        '?extra_data=true&combat_data=true&spell_casting_data=true&is_pwl_on=' +
+        is_pwl_on,
       requestOptions
     );
     const data = await response.json();

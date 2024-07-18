@@ -193,16 +193,20 @@ function scrollDirection() {
 
 const scrollPage = (up: boolean) => {
   settings.setHiddenNav(true);
-  let offset: number | undefined = 0;
-  if (up) {
-    offset = document.getElementById('table')?.offsetTop;
-  } else {
-    offset = document.getElementById('list')?.offsetTop;
-  }
-  window.scrollTo({
-    top: offset,
-    behavior: 'smooth'
-  });
+  setTimeout(() => {
+    let offset: number | undefined = 0;
+    if (up) {
+      offset = document.getElementById('table')?.offsetTop;
+    } else {
+      offset = document.getElementById('list')?.offsetTop;
+    }
+    if (typeof offset === 'number') {
+      window.scrollTo({
+        top: offset - 60,
+        behavior: 'smooth'
+      });
+    }
+  }, 10);
 };
 
 const handleResize = () => {
@@ -219,11 +223,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <q-page class="tw-flex row items-center justify-evenly">
+  <div class="row items-center justify-between">
     <v-tour name="/shop" :steps="steps" :options="options" :callbacks="callbacks" />
-    <ShopSheet v-if="screenWidth >= 768" class="q-pa-md tw-w-full md:tw-w-[30%]" />
+    <ShopSheet v-if="screenWidth >= 768" class="q-pa-md tw-w-full md:tw-w-[27%]" />
     <ShopTable id="table" />
-    <ShopSheet v-if="screenWidth < 768" class="q-pa-md tw-w-full md:tw-w-[30%]" />
+    <ShopSheet v-if="screenWidth < 768" class="q-pa-md tw-w-full md:tw-w-[27%]" />
     <ShopList id="list" />
     <q-page-sticky
       position="bottom-right"
@@ -248,5 +252,5 @@ onUnmounted(() => {
       />
     </q-page-sticky>
     <q-scroll-observer @scroll="scrollDirection" />
-  </q-page>
+  </div>
 </template>

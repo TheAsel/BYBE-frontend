@@ -1,7 +1,7 @@
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[43%]">
+  <div class="q-pa-md tw-w-full md:tw-w-[46%]">
     <q-markup-table
-      style="height: calc(100vh - 135px)"
+      style="height: calc(100vh - 133px)"
       flat
       bordered
       class="tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"

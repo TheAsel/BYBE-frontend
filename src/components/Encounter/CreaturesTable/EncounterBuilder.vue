@@ -7,7 +7,7 @@ import { partyStore, filtersStore, encounterStore, settingsStore } from 'src/sto
 import { encounterGenerator } from 'src/utils/encounter-api-calls';
 import type { alignments, sizes, rarities, challenges, roles } from 'src/types/filters';
 import type { min_creature } from 'src/types/creature';
-import { debounce } from 'lodash';
+import { debounce } from 'lodash-es';
 
 const $q = useQuasar();
 
