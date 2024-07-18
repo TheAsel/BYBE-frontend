@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { biXLg } from '@quasar/extras/bootstrap-icons';
+import { biXLg, biQuestionCircle } from '@quasar/extras/bootstrap-icons';
 import { itemsStore, settingsStore } from 'src/stores/store';
 import { shopGenerator } from 'src/utils/shop-api-calls';
 import { debounce } from 'lodash-es';
@@ -54,13 +54,13 @@ const diceSelect = [
 const consumable_dices = ref({ dice_size: { label: 'D4', value: 4 }, n_of_dices: 3 });
 const equipment_dices = ref({ dice_size: { label: 'D4', value: 4 }, n_of_dices: 3 });
 const levels = ref({ min: 0, max: 25 });
-const shop_type = ref<'Blacksmith' | 'Alchemist' | 'General'>('General');
+const shop_template = ref<'Blacksmith' | 'Alchemist' | 'General'>('General');
 
 const tmpFilters = ref({
   consumable_dices: consumable_dices.value,
   equipment_dices: equipment_dices.value,
   levels: levels.value,
-  shop_type: shop_type.value
+  shop_template: shop_template.value
 });
 
 const restoreSettings = () => {
@@ -80,7 +80,7 @@ const restoreSettings = () => {
     n_of_dices: equipment_dices.value.n_of_dices
   };
   tmpFilters.value.levels = levels.value;
-  tmpFilters.value.shop_type = shop_type.value;
+  tmpFilters.value.shop_template = shop_template.value;
 };
 
 const generateShop = debounce(async function () {
@@ -103,7 +103,7 @@ const generateShop = debounce(async function () {
     ],
     min_level: tmpFilters.value.levels.min,
     max_level: tmpFilters.value.levels.max,
-    shop_type: tmpFilters.value.shop_type,
+    shop_template: tmpFilters.value.shop_template,
     pathfinder_version: pf_version
   };
   if (fixedConsumableDice.value) {
@@ -162,7 +162,7 @@ const saveChanges = () => {
   consumable_dices.value = tmpFilters.value.consumable_dices;
   equipment_dices.value = tmpFilters.value.equipment_dices;
   levels.value = tmpFilters.value.levels;
-  shop_type.value = tmpFilters.value.shop_type;
+  shop_template.value = tmpFilters.value.shop_template;
 };
 
 const validateNumber = (consumables: boolean) => {
@@ -315,14 +315,65 @@ defineExpose({ generateShop });
             />
           </div>
 
-          <q-select
-            dense
-            outlined
-            options-dense
-            v-model="tmpFilters.shop_type"
-            :options="Object.freeze(['Alchemist', 'Blacksmith', 'General'])"
-            label="Shop type"
-          />
+          <div class="tw-flex tw-flex-row">
+            <q-select
+              dense
+              outlined
+              options-dense
+              v-model="tmpFilters.shop_template"
+              :options="Object.freeze(['Alchemist', 'Blacksmith', 'General'])"
+              label="Shop template"
+              class="tw-w-56"
+            >
+              <q-tooltip
+                v-if="tmpFilters.shop_template === 'Alchemist'"
+                class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                <strong>Alchemist</strong>
+                <br />
+                Only equipments and consumables,<br />
+                no weapons, armors or shields
+              </q-tooltip>
+              <q-tooltip
+                v-if="tmpFilters.shop_template === 'Blacksmith'"
+                class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                <strong>Blacksmith</strong>
+                <br />
+                Mainly weapons, armors and shields,<br />
+                sometimes equipments and consumables
+              </q-tooltip>
+              <q-tooltip
+                v-if="tmpFilters.shop_template === 'General'"
+                class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                <strong>General</strong>
+                <br />
+                All kinds of items
+              </q-tooltip>
+            </q-select>
+            <q-icon flat round size="xs" :name="biQuestionCircle" class="tw-m-auto">
+              <q-tooltip
+                class="text-caption text-left tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                <strong>Shop templates</strong>
+                <hr />
+                <b>• Alchemist: </b> Only equipments and consumables
+                <br />
+                <b>• Blacksmith: </b> Weapons, armors and shields
+                <br />
+                <b>• General: </b> All kinds of items
+              </q-tooltip>
+            </q-icon>
+          </div>
         </div>
       </q-card-section>
       <q-separator />
