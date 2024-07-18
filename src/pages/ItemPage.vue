@@ -6,7 +6,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import type { item } from 'src/types/item';
 import { matPriorityHigh, matPrint } from '@quasar/extras/material-icons';
-import { isNull } from 'lodash';
+import { isNull } from 'lodash-es';
 import { requestItemId } from 'src/utils/shop-api-calls';
 import { itemsStore } from 'src/stores/store';
 

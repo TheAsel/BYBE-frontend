@@ -43,7 +43,10 @@ const cards = [
 </script>
 
 <template>
-  <div class="tw-max-w-[85rem] tw-px-4 tw-pb-10 sm:tw-px-6 lg:tw-px-8 lg:tw-py-14 tw-mx-auto">
+  <div
+    style="min-height: calc(100vh - 101px)"
+    class="tw-max-w-[85rem] tw-px-4 tw-pb-10 sm:tw-px-6 lg:tw-px-8 lg:tw-py-14 tw-mx-auto"
+  >
     <div class="tw-max-w-2xl tw-mx-auto tw-text-center tw-my-4 lg:tw-mb-14">
       <h1 class="tw-block text-h4 text-bold tw-text-gray-800 dark:tw-text-white sm:tw-text-4xl">
         Welcome to BYBE

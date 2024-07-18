@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef } from 'vue';
+import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
 import { requestCreatures, requestFilters } from 'src/utils/encounter-api-calls';
 import {
@@ -15,6 +15,8 @@ import type { encounter_list } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
+import SkeletonTable from 'src/components/Encounter/SkeletonTable.vue';
+import CreaturesTable from 'src/components/Encounter/CreaturesTable.vue';
 
 useHead({
   title: 'Encounter Builder - BYBE',
@@ -31,7 +33,6 @@ const partyStores = partyStore();
 const filters = filtersStore();
 const creatures = creaturesStore();
 const encounter = encounterStore();
-const currentComponent = shallowRef();
 const tourActive = ref(false);
 
 const scrollUp = ref(false);
@@ -104,9 +105,6 @@ if (localEncounters) {
   }
 }
 
-import('src/components/Encounter/SkeletonTable.vue').then((module) => {
-  currentComponent.value = module.default;
-});
 // ---- API requests
 try {
   if (
@@ -195,10 +193,6 @@ try {
       throw new Error('Error loading creatures');
     }
   }
-
-  import('src/components/Encounter/CreaturesTable.vue').then((module) => {
-    currentComponent.value = module.default;
-  });
 } catch (error) {
   console.error(error);
 }
@@ -303,6 +297,7 @@ const startTour = () => {
       level: -1,
       variant: 'Base'
     };
+    encounter.addEncounter('Example');
     encounter.addToEncounter(tmpKoboldMage);
     encounter.addToEncounter(tmpKoboldWarrior);
   }
@@ -310,8 +305,7 @@ const startTour = () => {
 
 const stopTour = () => {
   if (tourActive.value) {
-    encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
-    encounter.removeFromEncounter(encounter.getActiveEncounter.creatures.length - 1);
+    encounter.removeEncounter();
     tourActive.value = false;
   }
 };
@@ -331,23 +325,28 @@ function scrollDirection() {
 
 const scrollPage = (up: boolean) => {
   settings.setHiddenNav(true);
-  let offset: number | undefined = 0;
-  if (up) {
-    offset = document.getElementById('table')?.offsetTop;
-  } else {
-    offset = document.getElementById('list')?.offsetTop;
-  }
-  window.scrollTo({
-    top: offset,
-    behavior: 'smooth'
-  });
+  setTimeout(() => {
+    let offset: number | undefined = 0;
+    if (up) {
+      offset = document.getElementById('table')?.offsetTop;
+    } else {
+      offset = document.getElementById('list')?.offsetTop;
+    }
+    if (typeof offset === 'number') {
+      window.scrollTo({
+        top: offset - 60,
+        behavior: 'smooth'
+      });
+    }
+  }, 10);
 };
 </script>
 
 <template>
-  <q-page class="tw-flex row items-center justify-evenly">
+  <div class="row items-center justify-between">
     <v-tour name="/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
-    <component id="table" :is="currentComponent" />
+    <SkeletonTable id="table" v-if="creatures.getCreatures.length === 0" />
+    <CreaturesTable id="table" v-else />
     <CreatureList id="list" />
     <q-page-sticky
       position="bottom-right"
@@ -372,5 +371,5 @@ const scrollPage = (up: boolean) => {
       />
     </q-page-sticky>
     <q-scroll-observer @scroll="scrollDirection" />
-  </q-page>
+  </div>
 </template>

@@ -2,19 +2,26 @@
 import { ref, watch } from 'vue';
 import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { itemsStore } from 'stores/store';
+import { itemsStore, settingsStore } from 'stores/store';
 import { useRouter } from 'vue-router';
 import { shop_list } from 'src/types/shop';
 import { min_item } from 'src/types/item';
 import { requestItemId } from 'src/utils/shop-api-calls';
-import { debounce, isNull } from 'lodash';
+import { debounce, isNull } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { mdiSword, mdiShield, mdiFoodDrumstick, mdiRing } from '@quasar/extras/mdi-v7';
+import {
+  mdiSword,
+  mdiShield,
+  mdiFoodDrumstick,
+  mdiRing,
+  mdiTshirtCrew
+} from '@quasar/extras/mdi-v7';
 
 const $q = useQuasar();
 
 const router = useRouter();
 
+const settings = settingsStore();
 const shop = itemsStore();
 
 const newShopDialog = ref(false);
@@ -116,7 +123,7 @@ const showItem = debounce(async function (item: min_item) {
     <q-layout
       view="lHh lpr lFf"
       container
-      style="height: calc(100vh - 135px)"
+      style="height: calc(100vh - 133px)"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
       id="v-step-4"
     >
@@ -133,11 +140,12 @@ const showItem = debounce(async function (item: min_item) {
           <q-space />
           <div class="tw-flex tw-py-1">
             <q-btn
-              class="tw-my-auto tw-ml-2 tw-p-2"
+              class="tw-my-auto tw-ml-2"
               :icon="biPlusLg"
               size="sm"
+              padding="sm"
               flat
-              rounded
+              round
               dense
               aria-label="Add new shop"
               @click="newShopDialog = true"
@@ -197,8 +205,9 @@ const showItem = debounce(async function (item: min_item) {
               class="tw-my-auto tw-mx-2 tw-p-2"
               :icon="biTrash"
               size="sm"
+              padding="sm"
               flat
-              rounded
+              round
               dense
               aria-label="Remove current shop"
               @click="removeShopDialog = true"
@@ -286,7 +295,7 @@ const showItem = debounce(async function (item: min_item) {
                   class="tw-p-1 tw-invisible"
                   aria-label="Armor item type"
                 >
-                  <q-avatar class="tw-visible" :icon="mdiShield" color="blue">
+                  <q-avatar class="tw-visible" :icon="mdiTshirtCrew" color="blue">
                     <q-tooltip
                       class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
                       anchor="top middle"
@@ -333,6 +342,24 @@ const showItem = debounce(async function (item: min_item) {
                   </q-avatar>
                 </q-chip>
                 <q-chip
+                  v-if="item.type === 'Shield'"
+                  text-color="white"
+                  :clickable="false"
+                  :ripple="false"
+                  class="tw-p-1 tw-invisible"
+                  aria-label="Shield item type"
+                >
+                  <q-avatar class="tw-visible" :icon="mdiShield" color="purple">
+                    <q-tooltip
+                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Shield
+                    </q-tooltip>
+                  </q-avatar>
+                </q-chip>
+                <q-chip
                   v-if="item.type === 'Weapon'"
                   text-color="white"
                   :clickable="false"
@@ -353,7 +380,7 @@ const showItem = debounce(async function (item: min_item) {
                 <span class="tw-align-middle">
                   {{ item.quantity }}
                   <a
-                    v-if="item.archive_link"
+                    v-if="item.archive_link && settings.getAonLinks"
                     :href="item.archive_link"
                     target="_blank"
                     rel="noopener"
@@ -376,8 +403,10 @@ const showItem = debounce(async function (item: min_item) {
                 unelevated
                 :ripple="false"
                 size="sm"
+                padding="sm"
                 class="q-px-sm"
                 :icon="biTrash"
+                round
                 aria-label="Clear item"
                 @click="shop.clearItem(item)"
               />

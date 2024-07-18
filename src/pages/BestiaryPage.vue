@@ -7,17 +7,11 @@ import { matPriorityHigh, matPrint } from '@quasar/extras/material-icons';
 import type { creature } from 'src/types/creature';
 import { requestCreatureId } from 'src/utils/encounter-api-calls';
 import { variants } from 'src/types/filters';
-import _, { isNull } from 'lodash';
-import {
-  cleanEffect,
-  cleanCompendium,
-  cleanDamage,
-  cleanTemplate,
-  cleanSave,
-  cleanRoll
-} from 'src/utils/clean-regex';
+import { isNull, upperFirst } from 'lodash-es';
+import { encounterStore } from 'src/stores/store';
 
 const title = ref('Creature Sheet - BYBE');
+const encounters = encounterStore();
 
 useHead({
   title: title,
@@ -43,15 +37,15 @@ try {
     switch (queryVariant) {
       case 'weak':
         creatureVariant.value = 'Weak';
-        creatureData = await requestCreatureId(creatureId, 'Weak');
+        creatureData = await requestCreatureId(creatureId, 'Weak', encounters.getPwl);
         break;
       case 'elite':
         creatureVariant.value = 'Elite';
-        creatureData = await requestCreatureId(creatureId, 'Elite');
+        creatureData = await requestCreatureId(creatureId, 'Elite', encounters.getPwl);
         break;
       default:
         creatureVariant.value = 'Base';
-        creatureData = await requestCreatureId(creatureId, 'Base');
+        creatureData = await requestCreatureId(creatureId, 'Base', encounters.getPwl);
         break;
     }
     if (isNull(creatureData) || creatureData === undefined) {
@@ -71,10 +65,13 @@ try {
     }
     if (creatureData?.combat_data?.weapons) {
       creatureData?.combat_data?.weapons.sort((a, b) => {
-        if (a.weapon_data?.die_size && b.weapon_data?.die_size) {
+        if (
+          a.weapon_data?.damage_data[0].dice?.dice_size &&
+          b.weapon_data?.damage_data[0].dice?.dice_size
+        ) {
           return (
-            parseInt(b.weapon_data.die_size.substring(1)) -
-            parseInt(a.weapon_data.die_size.substring(1))
+            b.weapon_data.damage_data[0].dice?.dice_size -
+            a.weapon_data.damage_data[0].dice?.dice_size
           );
         } else {
           return 0;
@@ -133,7 +130,7 @@ const addPlus = (value: number | undefined) => {
   }
 };
 
-const variantStyle = (value: number | undefined) => {
+const variantStyle = (value: string | number | undefined) => {
   if (value && creatureVariant.value != 'Base') {
     let valueStr = '<span class="tw-text-red-600"><b>' + value.toString() + '</b></span>';
     return valueStr;
@@ -156,19 +153,7 @@ const pfActionSymbol = (num: number | null, action: string) => {
 const cleanDescription = (description: string) => {
   const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
 
-  let finalString = description.replace(cleanRegex, '');
-
-  finalString = cleanEffect(finalString);
-
-  finalString = cleanCompendium(finalString);
-
-  finalString = cleanDamage(finalString);
-
-  finalString = cleanTemplate(finalString);
-
-  finalString = cleanSave(finalString);
-
-  return cleanRoll(finalString);
+  return description.replace(cleanRegex, '');
 };
 
 const nameString = computed(() => {
@@ -188,7 +173,8 @@ const perceptionString = computed(() => {
   const spells = creatureData?.spell_caster_data?.spells;
   let finalString = '';
   if (perception != undefined) {
-    finalString += finalString += '<strong>Perception&nbsp;</strong>' + addPlus(perception) + '; ';
+    finalString += finalString +=
+      '<strong>Perception&nbsp;</strong>' + variantStyle(addPlus(perception)) + '; ';
   }
   if (senses != undefined && senses.length > 0) {
     senses.forEach((sense) => {
@@ -227,7 +213,7 @@ const languageString = computed(() => {
   if (languages != undefined && languages.length > 0) {
     finalString += '<strong>Languages&nbsp;</strong>';
     languages.forEach((language) => {
-      finalString += _.upperFirst(language) + ', ';
+      finalString += upperFirst(language) + ', ';
     });
   }
   finalString = finalString.substring(0, finalString.length - 2);
@@ -246,7 +232,7 @@ const skillString = computed(() => {
   if (skills != undefined && skills.length > 0) {
     finalString += '<strong>Skills&nbsp;</strong>';
     skills.forEach((skill) => {
-      finalString += skill.name + ' ' + addPlus(skill.modifier) + ', ';
+      finalString += skill.name + ' ' + variantStyle(addPlus(skill.modifier)) + ', ';
     });
   }
   return finalString.substring(0, finalString.length - 2);
@@ -356,23 +342,25 @@ const defenceString = computed(() => {
   const actions = creatureData?.extra_data?.actions;
   let finalString = '';
   if (creatureData?.combat_data?.ac) {
-    finalString += '<strong>AC&nbsp;</strong>' + creatureData?.combat_data?.ac + ';&nbsp;';
+    finalString +=
+      '<strong>AC&nbsp;</strong>' + variantStyle(creatureData?.combat_data?.ac) + ';&nbsp;';
   }
   if (creatureData?.combat_data?.saving_throws.fortitude) {
     finalString +=
       '<strong>Fort&nbsp;</strong>' +
-      addPlus(creatureData?.combat_data?.saving_throws.fortitude) +
+      variantStyle(addPlus(creatureData?.combat_data?.saving_throws.fortitude)) +
       ';&nbsp;';
   }
   if (creatureData?.combat_data?.saving_throws.reflex) {
     finalString +=
       '<strong>Ref&nbsp;</strong>' +
-      addPlus(creatureData?.combat_data?.saving_throws.reflex) +
+      variantStyle(addPlus(creatureData?.combat_data?.saving_throws.reflex)) +
       ';&nbsp;';
   }
   if (creatureData?.combat_data?.saving_throws.will) {
     finalString +=
-      '<strong>Will&nbsp;</strong>' + addPlus(creatureData?.combat_data?.saving_throws.will);
+      '<strong>Will&nbsp;</strong>' +
+      variantStyle(addPlus(creatureData?.combat_data?.saving_throws.will));
   }
   if (actions != undefined && actions.length > 0) {
     finalString += '; ';
@@ -547,13 +535,12 @@ const printPage = () => {
 </script>
 
 <template>
-  <div class="creature-sheet">
-    <q-card
-      flat
-      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-mx-auto tw-mt-4 tw-p-4 tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
+  <div class="creature-sheet q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto">
+    <div
+      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
     >
-      <q-scroll-area style="height: calc(100vh - 155px)">
-        <div class="q-gutter-y-xs show-print">
+      <q-scroll-area style="height: calc(100vh - 135px)">
+        <div class="q-gutter-y-xs tw-p-4 show-print">
           <div
             class="tw-flex tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white"
             style="font-family: 'Good Pro Condensed', sans-serif"
@@ -590,7 +577,9 @@ const printPage = () => {
             />
             <div class="tw-my-auto">
               {{ creatureData?.core_data.essential.cr_type.toUpperCase() }}
-              {{ creatureData?.core_data.essential.level }}
+              <span :class="{ 'tw-text-red-600': creatureVariant != 'Base' }">{{
+                creatureData?.core_data.essential.level
+              }}</span>
             </div>
           </div>
           <q-separator class="tw-my-2" style="height: 2px" />
@@ -772,12 +761,40 @@ const printPage = () => {
                 <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
                   >1</span
                 >
-                <i>{{ ' ' + item.item_core.name.toLowerCase() }} </i>
-                {{ addPlus(item.weapon_data?.to_hit_bonus!) }}, <strong>Damage</strong>
-                {{ item.weapon_data?.number_of_dice! }}{{ item.weapon_data?.die_size }}+{{
-                  item.weapon_data?.bonus_dmg
-                }}
-                {{ item.weapon_data?.dmg_type }}
+                <i>{{ ' ' + item.item_core.name.toLowerCase() + ' ' }} </i>
+                <span :class="{ 'tw-text-red-600 tw-font-bold': creatureVariant != 'Base' }"
+                  >{{ addPlus(item.weapon_data?.to_hit_bonus!) }}
+                  <span v-if="item.item_core.traits.includes('agile')"
+                    >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 4) }}/{{
+                      addPlus(item.weapon_data?.to_hit_bonus! - 8)
+                    }}]
+                  </span>
+                  <span v-else
+                    >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 5) }}/{{
+                      addPlus(item.weapon_data?.to_hit_bonus! - 10)
+                    }}]
+                  </span> </span
+                >({{ item.item_core.traits.join(', ').replaceAll('-', ' ') }}),
+                <strong>Damage </strong>
+                <span v-for="(weapon, index) in item.weapon_data?.damage_data" :key="index">
+                  <span v-if="weapon.dice">
+                    {{ weapon.dice.n_of_dices }}d{{ weapon.dice.dice_size
+                    }}<span
+                      v-if="weapon.bonus_dmg != 0"
+                      :class="{ 'tw-text-red-600 tw-font-bold': creatureVariant != 'Base' }"
+                      >{{ addPlus(weapon.bonus_dmg) }}</span
+                    >
+                    {{ weapon.dmg_type }}
+                    <span
+                      v-if="
+                        item.weapon_data!.damage_data.length > 1 &&
+                        index != item.weapon_data!.damage_data.length - 1
+                      "
+                    >
+                      plus
+                    </span>
+                  </span>
+                </span>
               </span>
             </div>
             <div
@@ -800,7 +817,7 @@ const printPage = () => {
           </div>
         </div>
       </q-scroll-area>
-    </q-card>
+    </div>
   </div>
   <q-page-sticky
     position="bottom-right"
@@ -819,7 +836,7 @@ const printPage = () => {
 
 <style scoped>
 .creature-sheet {
-  min-height: calc(100vh - 119px) !important;
+  min-height: calc(100vh - 103px) !important;
   font-family: 'Good Pro', sans-serif;
 }
 

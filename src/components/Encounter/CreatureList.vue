@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
 import { fasScroll } from '@quasar/extras/fontawesome-v6';
-import { debounce } from 'lodash';
+import { debounce } from 'lodash-es';
 import { partyStore, encounterStore, infoStore, settingsStore } from 'stores/store';
 import { encounterInfo } from 'src/utils/encounter-api-calls';
 import type { encounter_list } from 'src/types/encounter';
@@ -83,6 +83,10 @@ const debouncedCall = debounce(async function () {
 
 // get info on creature list change
 watch(encounter, () => {
+  tmpEncounter.value = {
+    name: encounter.getActiveEncounter.name,
+    creatures: encounter.getActiveEncounter.creatures
+  };
   saveChanges();
   debouncedCall();
 });
@@ -151,7 +155,7 @@ const openCreatureSheet = (id: number) => {
     <q-layout
       view="lHh lpr lFf"
       container
-      style="height: calc(100vh - 135px)"
+      style="height: calc(100vh - 133px)"
       class="tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
       id="v-step-6"
     >
@@ -171,8 +175,9 @@ const openCreatureSheet = (id: number) => {
               class="tw-my-auto tw-ml-2 tw-p-2"
               :icon="biPlusLg"
               size="sm"
+              padding="sm"
               flat
-              rounded
+              round
               dense
               aria-label="Add new encounter"
               @click="newEncounterDialog = true"
@@ -233,8 +238,9 @@ const openCreatureSheet = (id: number) => {
               class="tw-my-auto tw-mx-2 tw-p-2"
               :icon="biTrash"
               size="sm"
+              padding="sm"
               flat
-              rounded
+              round
               dense
               aria-label="Remove current encounter"
               @click="removeEncounterDialog = true"
@@ -394,8 +400,9 @@ const openCreatureSheet = (id: number) => {
                 unelevated
                 :ripple="false"
                 size="sm"
-                class="q-px-sm"
+                padding="sm"
                 :icon="biTrash"
+                round
                 aria-label="Clear creature"
                 @click="encounter.clearCreature(item)"
               />

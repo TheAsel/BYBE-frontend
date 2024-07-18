@@ -26,7 +26,7 @@ export type item = {
     price: number;
     usage: string | null;
     group: string | null;
-    item_type: 'Armor' | 'Consumable' | 'Equipment' | 'Weapon';
+    item_type: 'Armor' | 'Consumable' | 'Equipment' | 'Weapon' | 'Shield';
     material_grade: string | null;
     material_type: string | null;
     number_of_uses: number | null;
@@ -37,20 +37,33 @@ export type item = {
     size: sizes;
     traits: string[];
   };
-  weapon_data?: {
-    bonus_dmg: number;
-    die_size: string | null;
-    dmg_type: string | null;
+  shield_data?: {
+    bonus_ac: number;
     id: number;
+    n_of_reinforcing_runes: number;
+    speed_penalty: number;
+  };
+  weapon_data?: {
+    id: number;
+    to_hit_bonus: number;
+    damage_data: [
+      {
+        id: number;
+        bonus_dmg: number;
+        dmg_type: string | null;
+        dice?: {
+          n_of_dices: number;
+          dice_size: number;
+        };
+      }
+    ];
     n_of_potency_runes: number;
     n_of_striking_runes: number;
-    number_of_dice: number | null;
-    property_runes: string[];
-    range: number | null;
-    reload: string | null;
-    splash_dmg: number | null;
-    to_hit_bonus: number | null;
+    property_runes: [];
+    range: number;
+    reload: string;
     weapon_type: 'Melee' | 'Ranged' | 'Generic';
+    splash_dmg: number;
   };
 };
 
