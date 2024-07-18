@@ -84,7 +84,7 @@ export async function shopGenerator(body: {
   }[];
   min_level: number;
   max_level: number;
-  shop_type: '' | 'Blacksmith' | 'Alchemist' | 'General' | null;
+  shop_template: '' | 'Blacksmith' | 'Alchemist' | 'General' | null;
   pathfinder_version: string;
 }) {
   try {
