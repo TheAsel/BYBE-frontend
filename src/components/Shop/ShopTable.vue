@@ -438,7 +438,7 @@ await fetchFromServer(0, 100);
                 Clear Filters
               </q-tooltip>
             </q-btn>
-            <div id="v-step-4">
+            <div>
               <q-select
                 v-model="visibleColumns"
                 multiple
