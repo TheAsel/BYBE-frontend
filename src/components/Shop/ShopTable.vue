@@ -11,7 +11,7 @@ import {
   biCaretRight,
   biBook
 } from '@quasar/extras/bootstrap-icons';
-import { item_columns, item_filters } from 'src/types/filters';
+import { item_columns, item_filters, rarities } from 'src/types/filters';
 import { itemsStore, settingsStore } from 'src/stores/store';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
@@ -50,13 +50,20 @@ const pagination = ref({
   rowsNumber: 0
 });
 const sources = ref<string[]>();
-
-const filters = ref<item_filters>({
-  name: '',
-  level: { min: 0, max: 25 },
-  rarity: null,
-  type: null,
-  source: '',
+const filters = ref<{
+  name_filter: string;
+  level_filter: { min: number; max: number };
+  rarity_filter: rarities[];
+  type_filter: string[];
+  source_filter: string[];
+  sort_by: item_columns;
+  order_by: 'ascending' | 'descending';
+}>({
+  name_filter: '',
+  level_filter: { min: 0, max: 25 },
+  rarity_filter: [],
+  type_filter: [],
+  source_filter: [],
   sort_by: 'name',
   order_by: 'ascending'
 });
@@ -127,8 +134,31 @@ const columns: {
 ];
 
 const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: number) {
+  const body: item_filters = {
+    min_level_filter: filters.value.level_filter.min,
+    max_level_filter: filters.value.level_filter.max,
+    pathfinder_version: settings.getPfVersion
+  };
+  if (filters.value.name_filter != '') {
+    body.name_filter = filters.value.name_filter;
+  }
+  if (filters.value.rarity_filter != undefined && filters.value.rarity_filter.length > 0) {
+    body.rarity_filter = filters.value.rarity_filter;
+  }
+  if (filters.value.type_filter != undefined && filters.value.type_filter.length > 0) {
+    body.type_filter = filters.value.type_filter;
+  }
+  if (filters.value.source_filter != undefined && filters.value.source_filter.length > 0) {
+    body.source_filter = filters.value.source_filter;
+  }
   try {
-    const request = await requestItems(startRow, rowsPerPage, filters.value, settings.getPfVersion);
+    const request = await requestItems(
+      startRow,
+      rowsPerPage,
+      filters.value.sort_by,
+      filters.value.order_by,
+      body
+    );
     if (request) {
       pagination.value.rowsNumber = request.total;
       rows.value = request.results;
@@ -165,11 +195,11 @@ async function onRequest(props) {
 
 const resetFilters = () => {
   filters.value = {
-    name: '',
-    level: { min: 0, max: 25 },
-    rarity: null,
-    type: null,
-    source: '',
+    name_filter: '',
+    level_filter: { min: 0, max: 25 },
+    rarity_filter: [],
+    type_filter: [],
+    source_filter: [],
     sort_by: 'name',
     order_by: 'ascending'
   };
@@ -487,11 +517,12 @@ try {
           >
             <div class="col-grow">
               <q-select
+                multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filters.source"
+                v-model="filters.source_filter"
                 :options="Object.freeze(sources)"
                 :label="columns[0].label"
                 :style="columns[0].style"
@@ -510,7 +541,7 @@ try {
               <q-input
                 dense
                 outlined
-                v-model="filters.name"
+                v-model="filters.name_filter"
                 :label="columns[1].label"
                 :style="columns[1].style"
               />
@@ -544,13 +575,13 @@ try {
                 stack-label
               >
                 <template v-slot:control>
-                  {{ filters.level.min }} to {{ filters.level.max }}
+                  {{ filters.level_filter.min }} to {{ filters.level_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
                     <div class="tw-pt-8 tw-px-1">
                       <q-range
-                        v-model="filters.level"
+                        v-model="filters.level_filter"
                         label-always
                         :min="0"
                         :max="25"
@@ -585,11 +616,12 @@ try {
           >
             <div class="col-grow">
               <q-select
+                multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filters.rarity"
+                v-model="filters.rarity_filter"
                 :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
                 :label="columns[3].label"
                 :style="columns[3].style"
@@ -617,11 +649,12 @@ try {
           >
             <div class="col-grow">
               <q-select
+                multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filters.type"
+                v-model="filters.type_filter"
                 :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Shield', 'Weapon'])"
                 :label="columns[4].label"
                 :style="columns[4].style"
