@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, toRaw } from 'vue';
-import { requestItems } from 'src/utils/shop-api-calls';
+import { requestItems, requestSources } from 'src/utils/shop-api-calls';
 import type { item, min_item } from 'src/types/item';
 import {
   biArrowDownUp,
@@ -8,7 +8,8 @@ import {
   biEraser,
   biPlusLg,
   biBoxArrowUpRight,
-  biCaretRight
+  biCaretRight,
+  biBook
 } from '@quasar/extras/bootstrap-icons';
 import { item_columns, item_filters } from 'src/types/filters';
 import { itemsStore, settingsStore } from 'src/stores/store';
@@ -48,12 +49,14 @@ const pagination = ref({
   rowsPerPage: 100,
   rowsNumber: 0
 });
+const sources = ref<string[]>();
 
 const filters = ref<item_filters>({
   name: '',
   level: { min: 0, max: 25 },
   rarity: null,
   type: null,
+  source: '',
   sort_by: 'name',
   order_by: 'ascending'
 });
@@ -67,6 +70,15 @@ const columns: {
   sortable?: boolean;
   style?: string;
 }[] = [
+  {
+    name: 'source',
+    label: 'Source',
+    field: (row) => row.core_item.source,
+    required: false,
+    align: 'center',
+    sortable: true,
+    style: 'min-width: 120px; max-width: 120px;'
+  },
   {
     name: 'name',
     label: 'Name',
@@ -157,6 +169,7 @@ const resetFilters = () => {
     level: { min: 0, max: 25 },
     rarity: null,
     type: null,
+    source: '',
     sort_by: 'name',
     order_by: 'ascending'
   };
@@ -324,6 +337,17 @@ async function onKey(evt) {
 }
 
 await fetchFromServer(0, 100);
+
+try {
+  const request = await requestSources();
+  if (request) {
+    sources.value = request.sort();
+  } else {
+    throw new Error('Error fetching sources');
+  }
+} catch (error) {
+  console.error(error);
+}
 </script>
 
 <template>
@@ -456,6 +480,27 @@ await fetchFromServer(0, 100);
           </div>
         </div>
       </template>
+      <template v-slot:header-cell-source>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                dense
+                outlined
+                clearable
+                options-dense
+                v-model="filters.source"
+                :options="Object.freeze(sources)"
+                :label="columns[0].label"
+                :style="columns[0].style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2"></div>
+          </div>
+        </q-th>
+      </template>
       <template v-slot:header-cell-name>
         <q-th>
           <div
@@ -466,8 +511,8 @@ await fetchFromServer(0, 100);
                 dense
                 outlined
                 v-model="filters.name"
-                :label="columns[0].label"
-                :style="columns[0].style"
+                :label="columns[1].label"
+                :style="columns[1].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -479,7 +524,7 @@ await fetchFromServer(0, 100);
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort name column"
-                @click="sort(columns[0].name)"
+                @click="sort(columns[1].name)"
               />
             </div>
           </div>
@@ -494,8 +539,8 @@ await fetchFromServer(0, 100);
               <q-field
                 dense
                 outlined
-                :label="columns[1].label"
-                :style="columns[1].style"
+                :label="columns[2].label"
+                :style="columns[2].style"
                 stack-label
               >
                 <template v-slot:control>
@@ -527,7 +572,7 @@ await fetchFromServer(0, 100);
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort level column"
-                @click="sort(columns[1].name)"
+                @click="sort(columns[2].name)"
               />
             </div>
           </div>
@@ -546,8 +591,8 @@ await fetchFromServer(0, 100);
                 options-dense
                 v-model="filters.rarity"
                 :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
-                :label="columns[2].label"
-                :style="columns[2].style"
+                :label="columns[3].label"
+                :style="columns[3].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -559,7 +604,7 @@ await fetchFromServer(0, 100);
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort rarity column"
-                @click="sort(columns[2].name)"
+                @click="sort(columns[3].name)"
               />
             </div>
           </div>
@@ -578,8 +623,8 @@ await fetchFromServer(0, 100);
                 options-dense
                 v-model="filters.type"
                 :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Shield', 'Weapon'])"
-                :label="columns[3].label"
-                :style="columns[3].style"
+                :label="columns[4].label"
+                :style="columns[4].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -591,7 +636,7 @@ await fetchFromServer(0, 100);
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort types column"
-                @click="sort(columns[3].name)"
+                @click="sort(columns[4].name)"
               />
             </div>
           </div>
@@ -621,6 +666,36 @@ await fetchFromServer(0, 100);
             Open item sheet
           </q-tooltip>
         </q-btn>
+      </template>
+      <template v-slot:body-cell-source="source">
+        <q-td :props="source">
+          <q-btn
+            round
+            unelevated
+            v-if="source.row.core_item.source"
+            :icon="biBook"
+            size="sm"
+            padding="sm"
+            :href="
+              'https://paizo.com/search?q=' +
+              encodeURIComponent(source.row.core_item.source) +
+              '&what=products&includeUnrated=true&includeUnavailable=true'
+            "
+            target="_blank"
+            rel="noopener"
+            aria-label="Search source on Paizo store"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              <i class="tw-whitespace-nowrap">
+                {{ source.row.core_item.source }}
+              </i>
+            </q-tooltip>
+          </q-btn>
+        </q-td>
       </template>
       <template v-slot:body-cell-name="name">
         <q-td :props="name">

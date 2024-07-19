@@ -2,6 +2,24 @@ import { backendUrl } from 'src/boot/globals';
 import type { item_filters } from 'src/types/filters';
 import type { item, item_response } from 'src/types/item';
 
+export async function requestSources() {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    };
+    const response = await fetch(backendUrl + '/shop/sources', requestOptions);
+    const data = await response.json();
+    if (!response.ok) {
+      const error = data?.message || response.status;
+      throw new Error(error);
+    }
+    return data as string[];
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function requestItems(
   start: number,
   page_size: number,
@@ -42,6 +60,9 @@ export async function requestItems(
     }
     if (filters.type) {
       request += '&type_filter=' + filters.type;
+    }
+    if (filters.source) {
+      request += '&source_filter=' + filters.source;
     }
     const response = await fetch(request, requestOptions);
     const data = await response.json();
