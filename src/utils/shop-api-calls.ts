@@ -1,5 +1,5 @@
 import { backendUrl } from 'src/boot/globals';
-import type { item_filters } from 'src/types/filters';
+import type { item_columns, item_filters } from 'src/types/filters';
 import type { item, item_response } from 'src/types/item';
 
 export async function requestSources() {
@@ -21,49 +21,32 @@ export async function requestSources() {
 }
 
 export async function requestItems(
-  start: number,
+  cursor: number,
   page_size: number,
-  filters: item_filters,
-  version: string
+  sort_by: item_columns,
+  order_by: 'ascending' | 'descending',
+  body: item_filters
 ) {
   if (page_size === 0) {
     page_size = -1;
   }
+
   try {
     const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
+      method: 'POST',
+      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
     };
-    let request =
+    const request =
       backendUrl +
       '/shop/list?cursor=' +
-      start +
+      cursor +
       '&page_size=' +
       page_size +
-      '&pathfinder_version=' +
-      version +
       '&sort_by=' +
-      filters.sort_by +
+      sort_by +
       '&order_by=' +
-      filters.order_by;
-    if (filters.name) {
-      request += '&name_filter=' + filters.name;
-    }
-    if (filters.level.min != undefined) {
-      request += '&min_level_filter=' + filters.level.min;
-    }
-    if (filters.level.max != undefined) {
-      request += '&max_level_filter=' + filters.level.max;
-    }
-    if (filters.rarity) {
-      request += '&rarity_filter=' + filters.rarity;
-    }
-    if (filters.type) {
-      request += '&type_filter=' + filters.type;
-    }
-    if (filters.source) {
-      request += '&source_filter=' + filters.source;
-    }
+      order_by;
     const response = await fetch(request, requestOptions);
     const data = await response.json();
     if (!response.ok) {
