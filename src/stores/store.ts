@@ -402,7 +402,7 @@ export const itemsStore = defineStore('items', {
     getFormattedPrice(price: number) {
       if (price < 10) {
         return price + ' cp';
-      } else if (price >= 10 && price < 100) {
+      } else if (price < 100) {
         price = price / 10;
         if (!Number.isInteger(price)) {
           const decimal = (price - Math.floor(price)).toFixed(1);

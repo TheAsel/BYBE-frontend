@@ -119,14 +119,14 @@ const startTour = () => {
     tourActive.value = true;
     const tmpCloakFull: item = {
       core_item: {
-        id: 15913,
+        id: 762,
         name: 'Cloak of Illusions',
         bulk: 0.1,
         quantity: 1,
         base_item: null,
         category: '',
         description:
-          '<p>This cloak flows, covering and concealing the wearer\'s body. The cloak allows you to cast @UUID[Compendium.pf2e.spells-srd.Item.Figment] as an occult innate cantrip. Although naturally a dull gray, while invested the cloak picks up colors and patterns from its surroundings, granting a +1 item bonus to Stealth checks.</p>\n<p><strong>Activate—Draw Hood</strong> <span class="action-glyph">2</span> (manipulate)</p>\n<p><strong>Frequency</strong> once per day</p>\n<hr />\n<p><strong>Effect</strong> You draw the hood up and gain the effects of @UUID[Compendium.pf2e.spells-srd.Item.Invisibility], with the spell\'s normal duration or until you pull the hood back down, whichever comes first. While you are invisible, your <em>figment</em> innate cantrip gains the subtle trait, concealing the observable effects of your spellcasting.</p>',
+          '<p>This cloak flows, covering and concealing the wearer\'s body. The cloak allows you to cast Figment as an occult innate cantrip. Although naturally a dull gray, while invested the cloak picks up colors and patterns from its surroundings, granting a +1 item bonus to Stealth checks.</p>\n<p><strong>Activate—Draw Hood</strong> <span class="action-glyph">2</span> (manipulate)</p>\n<p><strong>Frequency</strong> once per day</p>\n<hr />\n<p><strong>Effect</strong> You draw the hood up and gain the effects of Invisibility, with the spell\'s normal duration or until you pull the hood back down, whichever comes first. While you are invisible, your <em>figment</em> innate cantrip gains the subtle trait, concealing the observable effects of your spellcasting.</p>',
         hardness: 0,
         hp: 0,
         level: 7,
@@ -146,7 +146,7 @@ const startTour = () => {
       }
     };
     const tmpCloak: min_item = {
-      id: 16983,
+      id: 3029,
       archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=3069',
       name: 'Cloak of Illusions',
       level: 7,
@@ -155,7 +155,7 @@ const startTour = () => {
       quantity: 1
     };
     const tmpPotion: min_item = {
-      id: 19250,
+      id: 3029,
       archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=2943',
       name: 'Healing Potion (Moderate)',
       level: 6,
