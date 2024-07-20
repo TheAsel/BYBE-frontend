@@ -111,7 +111,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 100px;'
+    style: 'min-width: 100px; max-width: 180px;'
   },
   {
     name: 'type',
@@ -120,7 +120,7 @@ const columns: {
     required: false,
     align: 'center',
     sortable: true,
-    style: 'min-width: 100px; max-width: 140px;'
+    style: 'min-width: 100px; max-width: 180px;'
   },
 
   {

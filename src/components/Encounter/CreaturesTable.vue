@@ -82,7 +82,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 110px; max-width: 300px;'
+    style: 'min-width: 110px; max-width: 180px;'
   },
   {
     name: 'alignment',
@@ -91,7 +91,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 135px; max-width: 300px;'
+    style: 'min-width: 135px; max-width: 180px;'
   },
   {
     name: 'size',
@@ -100,7 +100,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 100px; max-width: 300px;'
+    style: 'min-width: 100px; max-width: 180px;'
   },
   {
     name: 'rarity',
@@ -109,7 +109,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 100px;'
+    style: 'min-width: 100px; max-width: 180px;'
   },
   {
     name: 'family',
@@ -118,7 +118,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 125px; max-width: 300px;'
+    style: 'min-width: 125px; max-width: 180px;'
   },
   {
     name: 'creature_type',
