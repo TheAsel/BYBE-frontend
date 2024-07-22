@@ -41,7 +41,9 @@ const cleanDescription = (description: string) => {
 
   finalString = finalString.replaceAll('<hr />', '<hr class="tw-my-2"/>');
 
-  return finalString.replace(cleanRegex, '');
+  finalString = finalString.replaceAll('\n', '<br style="display: block; margin-top: 0px;">');
+
+  return finalString.replaceAll(cleanRegex, '');
 };
 
 const openShopSheet = (id: number) => {
