@@ -5,11 +5,13 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matPrint } from '@quasar/extras/material-icons';
 import type { creature } from 'src/types/creature';
-import { requestCreatureId } from 'src/utils/api-calls';
-import _, { isNull } from 'lodash';
+import { requestCreatureId } from 'src/utils/encounter-api-calls';
 import { variants } from 'src/types/filters';
+import { isNull, upperFirst } from 'lodash-es';
+import { encounterStore } from 'src/stores/store';
 
 const title = ref('Creature Sheet - BYBE');
+const encounters = encounterStore();
 
 useHead({
   title: title,
@@ -35,15 +37,15 @@ try {
     switch (queryVariant) {
       case 'weak':
         creatureVariant.value = 'Weak';
-        creatureData = await requestCreatureId(creatureId, 'Weak');
+        creatureData = await requestCreatureId(creatureId, 'Weak', encounters.getPwl);
         break;
       case 'elite':
         creatureVariant.value = 'Elite';
-        creatureData = await requestCreatureId(creatureId, 'Elite');
+        creatureData = await requestCreatureId(creatureId, 'Elite', encounters.getPwl);
         break;
       default:
         creatureVariant.value = 'Base';
-        creatureData = await requestCreatureId(creatureId, 'Base');
+        creatureData = await requestCreatureId(creatureId, 'Base', encounters.getPwl);
         break;
     }
     if (isNull(creatureData) || creatureData === undefined) {
@@ -60,6 +62,35 @@ try {
     } else {
       title.value =
         creatureVariant.value + ' ' + creatureData?.core_data.essential.name + ' - BYBE';
+    }
+    if (creatureData?.combat_data?.weapons) {
+      creatureData?.combat_data?.weapons.sort((a, b) => {
+        if (
+          a.weapon_data?.damage_data[0].dice?.dice_size &&
+          b.weapon_data?.damage_data[0].dice?.dice_size
+        ) {
+          return (
+            b.weapon_data.damage_data[0].dice?.dice_size -
+            a.weapon_data.damage_data[0].dice?.dice_size
+          );
+        } else {
+          return 0;
+        }
+      });
+      creatureData?.combat_data?.weapons.sort((a, b) => {
+        if (a.weapon_data?.to_hit_bonus && b.weapon_data?.to_hit_bonus) {
+          return b.weapon_data.to_hit_bonus - a.weapon_data.to_hit_bonus;
+        } else {
+          return 0;
+        }
+      });
+      creatureData?.combat_data?.weapons.sort((a, b) => {
+        if (a.weapon_data?.weapon_type && b.weapon_data?.weapon_type) {
+          return a.weapon_data.weapon_type.localeCompare(b.weapon_data.weapon_type);
+        } else {
+          return 0;
+        }
+      });
     }
   } else {
     console.error('Invalid creature ID');
@@ -99,7 +130,7 @@ const addPlus = (value: number | undefined) => {
   }
 };
 
-const variantStyle = (value: number | undefined) => {
+const variantStyle = (value: string | number | undefined) => {
   if (value && creatureVariant.value != 'Base') {
     let valueStr = '<span class="tw-text-red-600"><b>' + value.toString() + '</b></span>';
     return valueStr;
@@ -107,126 +138,22 @@ const variantStyle = (value: number | undefined) => {
   return value;
 };
 
-const cleanCompendium = (description: string) => {
-  const compendiumRegex =
-    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s'()+]*)\](?:{([\w\s'+]*)})?/g;
-
-  const compendium = description.matchAll(compendiumRegex);
-  for (const i of compendium) {
-    if (i) {
-      if (i[5]) {
-        description = description.replace(i[0], i[5].toLowerCase());
-      } else {
-        description = description.replace(i[0], i[4].toLowerCase());
-      }
-    }
+const pfActionSymbol = (num: number | null, action: string) => {
+  if (num === 1 || num === 2 || num === 3) {
+    return num;
   }
-  return description;
-};
-
-const cleanDamage = (description: string) => {
-  const damageRegex =
-    /@Damage\[\(?([\w+]*)\)?\[(\w*),?(\w+)?\]?,?(\w+)?\[?(\w+)?\]?(?:[\w|:,[\]-]+)?\](?:\{([\w\s,+]*)\})?/g;
-
-  const damage = description.matchAll(damageRegex);
-  for (const i of damage) {
-    if (i) {
-      if (i[6]) {
-        description = description.replace(i[0], i[6]);
-      } else if (i[4]) {
-        description = description.replace(i[0], i[1] + ' ' + i[2] + ' plus ' + i[4] + ' ' + i[5]);
-      } else if (i[3]) {
-        description = description.replace(i[0], i[1] + ' ' + i[2] + ' ' + i[3]);
-      } else {
-        description = description.replace(i[0], i[1] + ' ' + i[2]);
-      }
-    }
+  if (action === 'free') {
+    return 4;
   }
-  return description;
-};
-
-const cleanTemplate = (description: string) => {
-  const templateRegex =
-    /@Template\[type:(\w*)\|distance:(\d*)\|?(?:traits:([\w\-,]*))?\](?:{([\w\s-]*)})?/g;
-
-  const template = description.matchAll(templateRegex);
-  for (const i of template) {
-    if (i) {
-      description = description.replace(i[0], i[2] + '-foot ' + i[1]);
-    }
+  if (action === 'reaction') {
+    return 5;
   }
-  return description;
-};
-
-const cleanSave = (description: string) => {
-  const checkRegex =
-    /@Check\[type:(\w*)(?:[\w\s\-|]*dc:([\w\s,:+@.()]*))?(?:[\w\s\-,:|()]*basic:(\w*))?[\w\s\-,:|()]*\](?:{([\w\s'+()]*)})?/g;
-
-  const save = description.matchAll(checkRegex);
-  for (const i of save) {
-    if (i) {
-      if (i[2] && Number(i[2])) {
-        if (i[3] === 'true') {
-          if (i[4]) {
-            description = description.replace(
-              i[0],
-              'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]) + ' ' + i[4]
-            );
-          } else {
-            description = description.replace(i[0], 'DC ' + i[2] + ' basic ' + _.upperFirst(i[1]));
-          }
-        } else if (i[4]) {
-          description = description.replace(
-            i[0],
-            'DC ' + i[2] + ' ' + _.upperFirst(i[1]) + ' ' + i[4]
-          );
-        } else {
-          description = description.replace(i[0], 'DC ' + i[2] + ' ' + _.upperFirst(i[1]));
-        }
-      } else if (i[4]) {
-        description = description.replace(i[0], _.upperFirst(i[1]) + ' ' + i[4]);
-      } else {
-        description = description.replace(i[0], _.upperFirst(i[1]));
-      }
-    }
-  }
-  return description;
-};
-
-const cleanRoll = (description: string) => {
-  const rollRegex =
-    /\[\[\/b?r \(?{?(\d\*?\d*d?[\d\s\-+]*\d*),?\d*}?\)?[\w\s]*\[?#?[\w\s,]*\]\]\]?(?:{([\w\s\-+;]*)})?/g;
-
-  const roll = description.matchAll(rollRegex);
-  for (const i of roll) {
-    if (i) {
-      if (i[2]) {
-        description = description.replace(i[0], i[2]);
-      } else {
-        description = description.replace(i[0], i[1]);
-      }
-    }
-  }
-  return description;
 };
 
 const cleanDescription = (description: string) => {
   const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
-  const effectRegex =
-    /@UUID\[Compendium\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*)\.([\w\-\s]*): ([\w\s\-'()]*)\](?:{([\w\s']*)})?/g;
 
-  let finalString = description.replace(cleanRegex, '');
-  finalString = finalString.replace(effectRegex, '');
-
-  finalString = cleanCompendium(finalString);
-
-  finalString = cleanDamage(finalString);
-
-  finalString = cleanTemplate(finalString);
-
-  finalString = cleanSave(finalString);
-
-  return cleanRoll(finalString);
+  return description.replace(cleanRegex, '');
 };
 
 const nameString = computed(() => {
@@ -246,7 +173,8 @@ const perceptionString = computed(() => {
   const spells = creatureData?.spell_caster_data?.spells;
   let finalString = '';
   if (perception != undefined) {
-    finalString += finalString += '<strong>Perception&nbsp;</strong>' + addPlus(perception) + '; ';
+    finalString += finalString +=
+      '<strong>Perception&nbsp;</strong>' + variantStyle(addPlus(perception)) + '; ';
   }
   if (senses != undefined && senses.length > 0) {
     senses.forEach((sense) => {
@@ -285,7 +213,7 @@ const languageString = computed(() => {
   if (languages != undefined && languages.length > 0) {
     finalString += '<strong>Languages&nbsp;</strong>';
     languages.forEach((language) => {
-      finalString += _.upperFirst(language) + ', ';
+      finalString += upperFirst(language) + ', ';
     });
   }
   finalString = finalString.substring(0, finalString.length - 2);
@@ -304,22 +232,103 @@ const skillString = computed(() => {
   if (skills != undefined && skills.length > 0) {
     finalString += '<strong>Skills&nbsp;</strong>';
     skills.forEach((skill) => {
-      finalString += skill.name + ' ' + addPlus(skill.modifier) + ', ';
+      finalString += skill.name + ' ' + variantStyle(addPlus(skill.modifier)) + ', ';
     });
   }
   return finalString.substring(0, finalString.length - 2);
 });
 
-const weaponString = computed(() => {
+const itemString = computed(() => {
   const weapons = creatureData?.combat_data?.weapons;
+  const items = creatureData?.extra_data?.items;
+  const armors = creatureData?.combat_data?.armors;
   let finalString = '';
+  finalString += '<strong>Items&nbsp;</strong>';
   if (weapons != undefined && weapons.length > 0) {
-    finalString += '<strong>Items&nbsp;</strong>';
     weapons.forEach((weapon) => {
-      // TODO: wait for DB fix
-      if (weapon.wp_type != 'melee' && weapon.wp_type != 'ranged') {
-        finalString += weapon.name.toLowerCase() + ', ';
+      if (weapon.weapon_data) {
+        if (
+          weapon.weapon_data.n_of_potency_runes > 0 ||
+          weapon.weapon_data.n_of_striking_runes > 0 ||
+          weapon.weapon_data.property_runes.length > 0
+        ) {
+          if (weapon.weapon_data.n_of_potency_runes > 0) {
+            finalString += addPlus(weapon.weapon_data.n_of_potency_runes) + ' ';
+          }
+          switch (weapon.weapon_data.n_of_striking_runes) {
+            case 1:
+              finalString += 'striking ';
+              break;
+            case 2:
+              finalString += 'greater striking ';
+              break;
+            case 3:
+              finalString += 'major striking ';
+              break;
+            default:
+              break;
+          }
+          if (weapon.weapon_data.property_runes.length > 0) {
+            weapon.weapon_data.property_runes.forEach((rune) => {
+              finalString += rune + ' ';
+            });
+          }
+          if (weapon.item_core.material_type) {
+            finalString += weapon.item_core.material_type + ' ';
+          }
+          finalString += weapon.item_core.name.toLowerCase() + ', ';
+        }
+        if (weapon.item_core.quantity > 1) {
+          finalString +=
+            weapon.item_core.quantity + ' ' + weapon.item_core.name.toLowerCase() + ', ';
+        }
       }
+    });
+  }
+  if (items != undefined && items.length > 0) {
+    items.forEach((item) => {
+      if (item.item_type === 'Consumable' || item.item_type === 'Equipment') {
+        if (item.quantity > 1) {
+          finalString += item.quantity + ' ';
+        }
+        finalString += item.name.toLowerCase() + ', ';
+      }
+    });
+  }
+  if (armors != undefined && armors.length > 0) {
+    armors.forEach((armor) => {
+      if (armor.armor_data)
+        if (
+          armor.armor_data.n_of_potency_runes > 0 ||
+          armor.armor_data.n_of_resilient_runes > 0 ||
+          armor.armor_data.property_runes.length > 0
+        ) {
+          if (armor.armor_data.n_of_potency_runes > 0) {
+            finalString += addPlus(armor.armor_data.n_of_potency_runes) + ' ';
+          }
+          switch (armor.armor_data.n_of_resilient_runes) {
+            case 1:
+              finalString += 'resilient ';
+              break;
+            case 2:
+              finalString += 'greater resilient ';
+              break;
+            case 3:
+              finalString += 'major resilient ';
+              break;
+            default:
+              break;
+          }
+          if (armor.armor_data.property_runes.length > 0) {
+            armor.armor_data.property_runes.forEach((rune) => {
+              finalString += rune + ' ';
+            });
+          }
+          if (armor.item_core.material_type) {
+            finalString += armor.item_core.material_type + ' ';
+          }
+        }
+      finalString += armor.item_core.name.toLowerCase() + ', ';
     });
   }
   if (finalString === '<strong>Items&nbsp;</strong>') {
@@ -333,23 +342,25 @@ const defenceString = computed(() => {
   const actions = creatureData?.extra_data?.actions;
   let finalString = '';
   if (creatureData?.combat_data?.ac) {
-    finalString += '<strong>AC&nbsp;</strong>' + creatureData?.combat_data?.ac + ';&nbsp;';
+    finalString +=
+      '<strong>AC&nbsp;</strong>' + variantStyle(creatureData?.combat_data?.ac) + ';&nbsp;';
   }
   if (creatureData?.combat_data?.saving_throws.fortitude) {
     finalString +=
       '<strong>Fort&nbsp;</strong>' +
-      addPlus(creatureData?.combat_data?.saving_throws.fortitude) +
+      variantStyle(addPlus(creatureData?.combat_data?.saving_throws.fortitude)) +
       ';&nbsp;';
   }
   if (creatureData?.combat_data?.saving_throws.reflex) {
     finalString +=
       '<strong>Ref&nbsp;</strong>' +
-      addPlus(creatureData?.combat_data?.saving_throws.reflex) +
+      variantStyle(addPlus(creatureData?.combat_data?.saving_throws.reflex)) +
       ';&nbsp;';
   }
   if (creatureData?.combat_data?.saving_throws.will) {
     finalString +=
-      '<strong>Will&nbsp;</strong>' + addPlus(creatureData?.combat_data?.saving_throws.will);
+      '<strong>Will&nbsp;</strong>' +
+      variantStyle(addPlus(creatureData?.combat_data?.saving_throws.will));
   }
   if (actions != undefined && actions.length > 0) {
     finalString += '; ';
@@ -524,13 +535,12 @@ const printPage = () => {
 </script>
 
 <template>
-  <div class="creature-sheet">
-    <q-card
-      flat
-      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-mx-auto tw-mt-4 tw-p-4 tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
+  <div class="creature-sheet q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto">
+    <div
+      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
     >
-      <q-scroll-area style="height: calc(100vh - 155px)">
-        <div class="q-gutter-y-xs show-print">
+      <q-scroll-area style="height: calc(100vh - 135px)">
+        <div class="q-gutter-y-xs tw-p-4 show-print">
           <div
             class="tw-flex tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white"
             style="font-family: 'Good Pro Condensed', sans-serif"
@@ -567,7 +577,9 @@ const printPage = () => {
             />
             <div class="tw-my-auto">
               {{ creatureData?.core_data.essential.cr_type.toUpperCase() }}
-              {{ creatureData?.core_data.essential.level }}
+              <span :class="{ 'tw-text-red-600': creatureVariant != 'Base' }">{{
+                creatureData?.core_data.essential.level
+              }}</span>
             </div>
           </div>
           <q-separator class="tw-my-2" style="height: 2px" />
@@ -576,9 +588,8 @@ const printPage = () => {
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
           <div class="tw-flex tw-flex-wrap tw-font-bold tw-text-sm tw-text-white">
-            <div v-if="creatureData?.core_data.essential.rarity === 'Common'"></div>
             <div
-              v-else-if="creatureData?.core_data.essential.rarity === 'Uncommon'"
+              v-if="creatureData?.core_data.essential.rarity === 'Uncommon'"
               class="tw-bg-[#c45500] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
             >
               {{ creatureData?.core_data.essential.rarity.toUpperCase() }}
@@ -674,12 +685,9 @@ const printPage = () => {
                 class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               >
                 <strong>{{ item.name + ' ' }}</strong>
-                <span
-                  v-if="item.action_type === 'reaction'"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >5</span
-                >
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                  >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
+                </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
             </div>
@@ -689,7 +697,7 @@ const printPage = () => {
                 creatureData?.combat_data?.weapons.length > 0
               "
               class="tw-text-base tw-text-gray-800 dark:tw-text-white"
-              v-html="weaponString"
+              v-html="itemString"
             ></div>
           </div>
           <q-separator class="tw-my-2" style="height: 2px" />
@@ -718,12 +726,9 @@ const printPage = () => {
                 class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               >
                 <strong>{{ item.name + ' ' }}</strong>
-                <span
-                  v-if="item.action_type === 'reaction'"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >5</span
-                >
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                  >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
+                </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
             </div>
@@ -747,18 +752,50 @@ const printPage = () => {
 
             <div
               v-for="item in creatureData?.combat_data?.weapons"
-              :key="item.name"
+              :key="item.item_core.name"
               class="tw-text-base tw-text-gray-800 dark:tw-text-white"
             >
-              <strong v-if="item.wp_type === 'melee'">Melee </strong>
-              <strong v-if="item.wp_type === 'ranged'">Ranged </strong>
-              <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
-                >1</span
-              >
-              <i>{{ ' ' + item.name.toLowerCase() }} </i>
-              {{ addPlus(item.to_hit_bonus) }}, <strong>Damage</strong> {{ item.n_of_dices
-              }}{{ item.die_size }}+{{ item.bonus_dmg }}
-              {{ item.dmg_type }}
+              <span v-if="item.weapon_data?.weapon_type != 'Generic'">
+                <strong v-if="item.weapon_data?.weapon_type === 'Melee'">Melee </strong>
+                <strong v-if="item.weapon_data?.weapon_type === 'Ranged'">Ranged </strong>
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                  >1</span
+                >
+                <i>{{ ' ' + item.item_core.name.toLowerCase() + ' ' }} </i>
+                <span :class="{ 'tw-text-red-600 tw-font-bold': creatureVariant != 'Base' }"
+                  >{{ addPlus(item.weapon_data?.to_hit_bonus!) }}
+                  <span v-if="item.item_core.traits.includes('agile')"
+                    >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 4) }}/{{
+                      addPlus(item.weapon_data?.to_hit_bonus! - 8)
+                    }}]
+                  </span>
+                  <span v-else
+                    >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 5) }}/{{
+                      addPlus(item.weapon_data?.to_hit_bonus! - 10)
+                    }}]
+                  </span> </span
+                >({{ item.item_core.traits.join(', ').replaceAll('-', ' ') }}),
+                <strong>Damage </strong>
+                <span v-for="(weapon, index) in item.weapon_data?.damage_data" :key="index">
+                  <span v-if="weapon.dice">
+                    {{ weapon.dice.n_of_dices }}d{{ weapon.dice.dice_size
+                    }}<span
+                      v-if="weapon.bonus_dmg != 0"
+                      :class="{ 'tw-text-red-600 tw-font-bold': creatureVariant != 'Base' }"
+                      >{{ addPlus(weapon.bonus_dmg) }}</span
+                    >
+                    {{ weapon.dmg_type }}
+                    <span
+                      v-if="
+                        item.weapon_data!.damage_data.length > 1 &&
+                        index != item.weapon_data!.damage_data.length - 1
+                      "
+                    >
+                      plus
+                    </span>
+                  </span>
+                </span>
+              </span>
             </div>
             <div
               v-if="creatureData?.spell_caster_data?.spell_caster_entry.spell_casting_name != null"
@@ -771,43 +808,16 @@ const printPage = () => {
                 class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               >
                 <strong>{{ item.name + ' ' }}</strong>
-                <span
-                  v-if="item.n_of_actions === 1"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >1</span
-                >
-                <span
-                  v-else-if="item.n_of_actions === 2"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >2</span
-                >&nbsp;
-                <span
-                  v-else-if="item.n_of_actions === 3"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >3</span
-                >
-                <span
-                  v-else-if="item.action_type === 'free'"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >4</span
-                >
-                <span
-                  v-else-if="item.action_type === 'reaction'"
-                  style="font-family: Pathfinder2eActions, sans-serif"
-                  class="tw-text-2xl"
-                  >5</span
-                >
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                  >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
+                </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
             </div>
           </div>
         </div>
       </q-scroll-area>
-    </q-card>
+    </div>
   </div>
   <q-page-sticky
     position="bottom-right"
@@ -826,7 +836,7 @@ const printPage = () => {
 
 <style scoped>
 .creature-sheet {
-  min-height: calc(100vh - 119px) !important;
+  min-height: calc(100vh - 103px) !important;
   font-family: 'Good Pro', sans-serif;
 }
 

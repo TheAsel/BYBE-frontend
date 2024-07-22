@@ -28,3 +28,15 @@ export type roles =
   | 'SpellCaster';
 
 export type variants = 'Weak' | 'Base' | 'Elite';
+
+export type item_columns = 'id' | 'name' | 'level' | 'rarity' | 'type' | 'source';
+
+export type item_filters = {
+  name_filter?: string;
+  min_level_filter?: number;
+  max_level_filter?: number;
+  rarity_filter?: rarities[];
+  type_filter?: string[];
+  source_filter?: string[];
+  pathfinder_version: string;
+};

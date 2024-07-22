@@ -35,13 +35,13 @@ module.exports = configure(function (/* ctx */) {
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
       // 'ionicons-v4',
-      // 'mdi-v5',
+      // 'mdi-v7',
       // 'fontawesome-v6',
       // 'eva-icons',
       // 'themify',
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
-      'material-icons' // optional, you are not bound to it
+      // 'material-icons' // optional, you are not bound to it
       // 'roboto-font', // optional, you are not bound to it
       // 'bootstrap-icons'
     ],
@@ -50,10 +50,10 @@ module.exports = configure(function (/* ctx */) {
     build: {
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
-        node: 'node16'
+        node: 'node20'
       },
 
-      vueRouterMode: 'history' // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -65,7 +65,7 @@ module.exports = configure(function (/* ctx */) {
       // env: {},
       // rawDefine: {}
       // ignorePublicFolder: true,
-      // minify: false,
+      minify: 'terser'
       // polyfillModulePreload: true,
       // distDir
 
@@ -87,7 +87,7 @@ module.exports = configure(function (/* ctx */) {
     framework: {
       config: {},
 
-      // iconSet: 'material-icons', // Quasar icon set
+      iconSet: 'svg-material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 
       // For special cases outside of where the auto-import strategy can have an impact

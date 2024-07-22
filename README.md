@@ -14,13 +14,19 @@
 
 ## Features
 
-- Browse and filter a list of all creatures
-- Balance encounters based on your party size and level
-- Generate random encounters based on your requirements
+- Encounter Builder
+  - Browse and filter a list of all creatures
+  - Balance encounters based on your party size and level
+  - Generate random encounters based on your requirements
+- Shop Generator
+  - Browse and filter a list of all items
+  - Generate random shops with filters and templates
 - Fast, mobile friendly, light/dark theme, accessible
 - More to come...
 
-![Screenshot of the Encounter Builder page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter-builder.png)
+![Screenshot of the Encounter Builder page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter_builder.png)
+
+![Screenshot of the Shop Generator page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/shop_generator.png)
 
 ## Requirements
 
