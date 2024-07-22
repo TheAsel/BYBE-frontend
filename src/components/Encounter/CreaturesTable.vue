@@ -12,8 +12,8 @@ import {
   fasGraduationCap,
   fasScroll
 } from '@quasar/extras/fontawesome-v6';
-import { capitalize, debounce } from 'lodash';
-import type { creature, creature_encounter } from 'src/types/creature';
+import { capitalize, debounce } from 'lodash-es';
+import type { creature, min_creature } from 'src/types/creature';
 import { filtersStore, creaturesStore, encounterStore, settingsStore } from 'stores/store';
 import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
@@ -82,7 +82,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 110px; max-width: 300px;'
+    style: 'min-width: 110px; max-width: 180px;'
   },
   {
     name: 'alignment',
@@ -91,7 +91,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 135px; max-width: 300px;'
+    style: 'min-width: 135px; max-width: 180px;'
   },
   {
     name: 'size',
@@ -100,7 +100,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 100px; max-width: 300px;'
+    style: 'min-width: 100px; max-width: 180px;'
   },
   {
     name: 'rarity',
@@ -109,7 +109,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 100px;'
+    style: 'min-width: 100px; max-width: 180px;'
   },
   {
     name: 'family',
@@ -118,7 +118,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 125px; max-width: 300px;'
+    style: 'min-width: 125px; max-width: 180px;'
   },
   {
     name: 'creature_type',
@@ -293,17 +293,14 @@ const sort = (col: string) => {
 
 // ---- Add creature to encounter function
 const addCreature = debounce(function (creature: creature) {
-  const selectedCreature = creatures.getCreatureId(creature.core_data.essential.id);
-  if (selectedCreature) {
-    const min_creature: creature_encounter = {
-      id: selectedCreature.core_data.essential.id,
-      archive_link: selectedCreature.core_data.derived.archive_link,
-      name: selectedCreature.core_data.essential.name,
-      level: selectedCreature.core_data.essential.level,
-      variant: 'Base'
-    };
-    encounter.addToEncounter(min_creature);
-  }
+  const min_creature: min_creature = {
+    id: creature.core_data.essential.id,
+    archive_link: creature.core_data.derived.archive_link,
+    name: creature.core_data.essential.name,
+    level: creature.core_data.essential.level,
+    variant: 'Base'
+  };
+  encounter.addToEncounter(min_creature);
 }, 50);
 
 const openCreatureSheet = (id: number) => {
@@ -317,7 +314,7 @@ const openCreatureSheet = (id: number) => {
     <q-table
       ref="creatureTable"
       class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      style="height: calc(100vh - 135px)"
+      style="height: calc(100vh - 133px)"
       flat
       bordered
       title="Creatures"
@@ -394,11 +391,12 @@ const openCreatureSheet = (id: number) => {
           <div class="tw-flex tw-flex-shrink">
             <q-btn
               flat
-              rounded
+              round
               dense
-              class="tw-mx-2 tw-p-2"
+              class="tw-mx-2"
               :icon="biEraser"
               size="md"
+              padding="sm"
               aria-label="Clear filters"
               @click="resetFilters"
             >
@@ -467,10 +465,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort name column"
                 @click="sort(columns[1].name)"
@@ -513,10 +511,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort level column"
                 @click="sort(columns[2].name)"
@@ -559,10 +557,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort hp column"
                 @click="sort(columns[3].name)"
@@ -592,10 +590,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort traits column"
                 @click="sort(columns[4].name)"
@@ -625,10 +623,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort alignment column"
                 @click="sort(columns[5].name)"
@@ -658,10 +656,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort size column"
                 @click="sort(columns[6].name)"
@@ -691,10 +689,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort rarity column"
                 @click="sort(columns[7].name)"
@@ -724,10 +722,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort family column"
                 @click="sort(columns[8].name)"
@@ -757,10 +755,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort creature type column"
                 @click="sort(columns[9].name)"
@@ -863,10 +861,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort attacks column"
                 @click="sort(columns[10].name)"
@@ -896,10 +894,10 @@ const openCreatureSheet = (id: number) => {
             <div class="col-shrink tw-mx-2">
               <q-btn
                 flat
-                rounded
+                round
                 dense
                 size="xs"
-                class="tw-p-2"
+                padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort creature role column"
                 @click="sort(columns[11].name)"
@@ -950,7 +948,15 @@ const openCreatureSheet = (id: number) => {
             @click="openCreatureSheet(name.row.core_data.essential.id)"
             target="_blank"
             aria-label="Open creature sheet"
-          />
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Open creature sheet
+            </q-tooltip>
+          </q-btn>
           <a
             v-if="name.row.core_data.derived.archive_link"
             :href="name.row.core_data.derived.archive_link"
@@ -964,6 +970,22 @@ const openCreatureSheet = (id: number) => {
             >
           </a>
           <span v-else class="tw-align-middle">{{ name.value }}</span>
+          <q-chip
+            v-if="name.row.core_data.essential.remaster && settings.getPfVersion === 'Any'"
+            dense
+            color="blue"
+            text-color="white"
+            class="tw-ml-1 tw-text-xs"
+            label="Remaster"
+          />
+          <q-chip
+            v-if="!name.row.core_data.essential.remaster && settings.getPfVersion === 'Any'"
+            dense
+            color="red-10"
+            text-color="white"
+            class="tw-ml-1 tw-text-xs"
+            label="Legacy"
+          />
         </q-td>
       </template>
       <template v-slot:body-cell-traits="traits">

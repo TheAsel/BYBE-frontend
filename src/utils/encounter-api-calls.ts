@@ -1,9 +1,9 @@
 import { backendUrl } from 'src/boot/globals';
 import type { creature } from 'src/types/creature';
-import type { encounter, randomEncounter } from 'src/types/encounter';
+import type { encounter, random_encounter } from 'src/types/encounter';
 import type { alignments, sizes, rarities, challenges, roles, variants } from 'src/types/filters';
 
-export async function requestCreatures(start: number, end: number, version: string) {
+export async function requestCreatures(start: number, page_size: number, version: string) {
   try {
     const requestOptions = {
       method: 'GET',
@@ -14,7 +14,7 @@ export async function requestCreatures(start: number, end: number, version: stri
         '/bestiary/list?cursor=' +
         start +
         '&page_size=' +
-        end +
+        page_size +
         '&pathfinder_version=' +
         version,
       requestOptions
@@ -58,7 +58,11 @@ export async function requestFilters(
   }
 }
 
-export async function requestCreatureId(creature_id: number, variant: variants) {
+export async function requestCreatureId(
+  creature_id: number,
+  variant: variants,
+  is_pwl_on: boolean
+) {
   try {
     const requestOptions = {
       method: 'GET',
@@ -70,7 +74,8 @@ export async function requestCreatureId(creature_id: number, variant: variants) 
         variant.toLowerCase() +
         '/' +
         creature_id +
-        '?extra_data=true&combat_data=true&spell_casting_data=true',
+        '?extra_data=true&combat_data=true&spell_casting_data=true&is_pwl_on=' +
+        is_pwl_on,
       requestOptions
     );
     const data = await response.json();
@@ -122,7 +127,7 @@ export async function encounterGenerator(body: {
   allow_elite_variants: boolean;
   creature_roles: roles[] | undefined;
   is_pwl_on: boolean;
-  pathfinder_versions: string;
+  pathfinder_version: string;
 }) {
   try {
     const requestOptions = {
@@ -136,7 +141,7 @@ export async function encounterGenerator(body: {
       const error = data?.message || response.status;
       throw new Error(error);
     }
-    return data as randomEncounter;
+    return data as random_encounter;
   } catch (error) {
     console.error(error);
   }
