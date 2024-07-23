@@ -60,7 +60,7 @@ const columns: {
   {
     name: 'level',
     label: 'Level',
-    field: (row) => row.core_data.essential.level,
+    field: (row) => row.core_data.essential.base_level,
     required: false,
     align: 'left',
     sortable: true,
@@ -186,8 +186,8 @@ const combineFilters = computed(() => {
   let filteredLevel = filteredNames.filter((out) => {
     if (levelRange.value.max < 25 || levelRange.value.min > -1) {
       return (
-        out.core_data.essential.level <= levelRange.value.max &&
-        out.core_data.essential.level >= levelRange.value.min
+        out.core_data.essential.base_level <= levelRange.value.max &&
+        out.core_data.essential.base_level >= levelRange.value.min
       );
     }
     return out;
@@ -297,7 +297,7 @@ const addCreature = debounce(function (creature: creature) {
     id: creature.core_data.essential.id,
     archive_link: creature.core_data.derived.archive_link,
     name: creature.core_data.essential.name,
-    level: creature.core_data.essential.level,
+    level: creature.core_data.essential.base_level,
     variant: 'Base'
   };
   encounter.addToEncounter(min_creature);

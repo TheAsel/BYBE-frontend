@@ -94,7 +94,7 @@ const generateEncounter = debounce(async function () {
             id: randomEncounter.results[i].core_data.essential.id,
             archive_link: randomEncounter.results[i].core_data.derived.archive_link,
             name: randomEncounter.results[i].core_data.essential.name,
-            level: randomEncounter.results[i].core_data.essential.level,
+            level: randomEncounter.results[i].core_data.essential.base_level,
             variant: randomEncounter.results[i].variant_data?.variant
           };
           encounter.addToEncounter(min_creature);
