@@ -38,7 +38,7 @@ export type creature = {
       aon_id: number;
       name: string;
       hp: number;
-      level: number;
+      base_level: number;
       size: sizes;
       family: string;
       rarity: rarities;
