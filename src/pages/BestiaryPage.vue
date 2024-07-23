@@ -578,7 +578,7 @@ const printPage = () => {
             <div class="tw-my-auto">
               {{ creatureData?.core_data.essential.cr_type.toUpperCase() }}
               <span :class="{ 'tw-text-red-600': creatureVariant != 'Base' }">{{
-                creatureData?.core_data.essential.level
+                creatureData?.variant_data?.level
               }}</span>
             </div>
           </div>
