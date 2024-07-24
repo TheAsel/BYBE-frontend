@@ -535,11 +535,13 @@ const printPage = () => {
 </script>
 
 <template>
-  <div class="creature-sheet q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto">
+  <div
+    class="creature-sheet tw-opacity-80 dark:tw-opacity-90 q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto"
+  >
     <div
       class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
     >
-      <q-scroll-area style="height: calc(100vh - 135px)">
+      <q-scroll-area style="height: calc(100vh - 124px)">
         <div class="q-gutter-y-xs tw-p-4 show-print">
           <div
             class="tw-flex tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white"
@@ -836,7 +838,7 @@ const printPage = () => {
 
 <style scoped>
 .creature-sheet {
-  min-height: calc(100vh - 103px) !important;
+  min-height: calc(100vh - 92px) !important;
   font-family: 'Good Pro', sans-serif;
 }
 

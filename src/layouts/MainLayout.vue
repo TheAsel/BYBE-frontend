@@ -3,21 +3,33 @@ import HeaderBar from 'components/HeaderBar.vue';
 </script>
 
 <template>
-  <q-layout view="hHh lpr fFf">
-    <HeaderBar />
-    <q-page-container class="!tw-pb-0 tw-min-h-[91vh]">
+  <q-layout
+    view="hHh lpr fFf"
+    style="
+      background-image: url('/background.webp');
+      background-position: center;
+      background-size: cover;
+      position: absolute;
+    "
+  >
+    <HeaderBar class="tw-backdrop-blur-2xl !tw-bg-white/90 dark:!tw-bg-black/70" />
+
+    <q-page-container class="!tw-pb-0 tw-min-h-[90vh]">
       <router-view />
     </q-page-container>
-    <footer class="tw-relative tw-bottom-0 tw-inset-x-0 tw-text-center tw-py-1">
+    <footer
+      class="tw-relative tw-bottom-0 tw-inset-x-0 tw-text-center tw-py-2 tw-border-t tw-border-gray-300 dark:tw-border-gray-700 tw-backdrop-blur-2xl !tw-bg-white/70 dark:!tw-bg-black/70"
+    >
       <div class="tw-max-w-[85rem] tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
         <p class="tw-text-sm dark:tw-text-white/50 tw-text-black/70">
-          BYBE uses trademarks and/or copyrights owned by Paizo Inc., used under Paizo's Community
-          Use Policy (<a href="https://paizo.com/communityuse" target="_blank" rel="noopener"
-            >paizo.com/communityuse</a
-          >). We are expressly prohibited from charging you to use or access this content. BYBE is
-          not published, endorsed, or specifically approved by Paizo. For more information about
-          Paizo Inc. and Paizo products, visit
-          <a href="https://paizo.com" target="_blank" rel="noopener">paizo.com</a>.
+          BYBE - v2.1.0 | <router-link to="/license">Licenses and Policies</router-link> |
+          <a
+            href="https://github.com/TheAsel/BYBE-frontend/releases"
+            target="_blank"
+            rel="noopener"
+          >
+            What's new
+          </a>
         </p>
       </div>
     </footer>

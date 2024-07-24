@@ -408,7 +408,7 @@ const downloadData = () => {
 
 <template>
   <q-header
-    class="tw-flex tw-flex-wrap sm:tw-justify-start sm:tw-flex-nowrap tw-z-50 tw-w-full tw-bg-white tw-border-b tw-border-gray-200 tw-text-sm tw-py-3 sm:tw-py-0 dark:tw-bg-gray-800 dark:tw-border-gray-700"
+    class="tw-opacity-100 sm:tw-opacity-80 dark:tw-opacity-100 sm:dark:tw-opacity-90 tw-flex tw-flex-wrap sm:tw-justify-start sm:tw-flex-nowrap tw-z-50 tw-w-full tw-bg-white tw-border-b tw-border-gray-200 tw-text-sm tw-py-3 sm:tw-py-0 dark:tw-bg-gray-800 dark:tw-border-gray-700"
   >
     <nav
       class="tw-relative tw-w-full tw-mx-auto tw-px-4 sm:tw-flex sm:tw-items-center sm:tw-justify-between sm:tw-px-6 lg:tw-px-8"
@@ -436,7 +436,7 @@ const downloadData = () => {
               alt="Dark BYBE logo"
             />
           </q-avatar>
-          <div class="tw-my-auto tw-ml-4">BYBE</div>
+          <div class="tw-my-auto tw-ml-4 tw-text-gray-800 dark:tw-text-gray-200">BYBE</div>
         </router-link>
         <div class="sm:tw-hidden">
           <q-btn
