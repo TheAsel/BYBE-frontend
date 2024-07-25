@@ -1,27 +1,35 @@
 <script lang="ts">
+import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
 
 useHead({
   title: '404 Not Found - BYBE'
 });
+
+const supportButton = ref(
+  document.querySelectorAll('[id^=kofi-widget-overlay-]').item(0) as HTMLElement
+);
+
+supportButton.value.style.display = 'none';
 </script>
 
 <template>
-  <div class="fullscreen bg-blue-8 text-white text-center q-pa-md flex flex-center">
-    <div>
-      <div style="font-size: 30vh">404</div>
-
-      <div class="text-h2" style="opacity: 0.4">Oops. Nothing here...</div>
-
+  <main class="fullscreen bg-blue-8 text-white text-center q-pa-md flex flex-center">
+    <div class="q-gutter-y-md">
+      <h1 class="tw tw-text-9xl">404</h1>
+      <h2 class="tw-text-3xl tw-opacity-80">You critically failed your Stealth check.</h2>
+      <p class="tw-text-xl tw-opacity-80">
+        The guards notice you and tell you that you're at the wrong address.
+      </p>
       <q-btn
-        class="q-mt-xl"
+        class="q-mt-xl tw-text-lg"
         color="white"
         text-color="blue-8"
         unelevated
         to="/"
-        label="Go Home"
+        label="Go to home page"
         no-caps
       />
     </div>
-  </div>
+  </main>
 </template>
