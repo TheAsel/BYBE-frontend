@@ -3,9 +3,9 @@
 <p align="center">
   <a href="https://bybe.fly.dev/" target="_blank">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo-light.png">
-      <img alt="BYBE" src="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo-light.png" width="450" height="100" style="max-width: 100%;">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo_dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo_light.png">
+      <img alt="BYBE" src="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo_light.png" width="450" height="100" style="max-width: 100%;">
     </picture>
   </a>
 </p>
