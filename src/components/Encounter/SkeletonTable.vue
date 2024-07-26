@@ -4,7 +4,7 @@
       style="height: calc(100vh - 122px)"
       flat
       bordered
-      class="tw-opacity-80 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      class="tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
     >
       <thead style="height: 53px">
         <tr>
