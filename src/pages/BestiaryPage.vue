@@ -536,7 +536,7 @@ const printPage = () => {
 
 <template>
   <div
-    class="creature-sheet tw-opacity-80 dark:tw-opacity-90 q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto"
+    class="creature-sheet tw-opacity-85 dark:tw-opacity-90 q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto"
   >
     <div
       class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
