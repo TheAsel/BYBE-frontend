@@ -37,14 +37,14 @@ const debouncedCall = debounce(async function () {
       switch (creature.variant) {
         case 'Weak':
           if (creature.level === 1) {
-            enemyLevels.push(-1);
+            enemyLevels.push(creature.level - 2);
           } else {
             enemyLevels.push(creature.level - 1);
           }
           break;
         case 'Elite':
-          if (creature.level === -1) {
-            enemyLevels.push(1);
+          if (creature.level === -1 || creature.level === 0) {
+            enemyLevels.push(creature.level + 2);
           } else {
             enemyLevels.push(creature.level + 1);
           }
