@@ -326,79 +326,64 @@ defineExpose({ generateEncounter });
                   v-model="tmpFilters.adventure_group"
                   :options="Object.freeze(adventureGroupSelect)"
                   label="Adventure Group"
-                  class="tw-pt-1"
+                  class="tw-pt-1 tw-pb-6"
+                />
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'BossAndLackeys'"
+                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
                 >
-                  <q-tooltip
-                    v-if="tmpFilters.adventure_group.value === 'BossAndLackeys'"
-                    class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    <strong>Boss and Lackeys (120 XP)</strong>
-                    <br />
-                    One creature of party level +2,<br />four creatures of party level -4
-                  </q-tooltip>
-                  <q-tooltip
-                    v-if="tmpFilters.adventure_group.value === 'BossAndLieutenant'"
-                    class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    <strong>Boss and Lieutenant (120 XP)</strong>
-                    <br />
-                    One creature of party level +2,<br />one creature of party level
-                  </q-tooltip>
-                  <q-tooltip
-                    v-if="tmpFilters.adventure_group.value === 'EliteEnemies'"
-                    class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    <strong>Elite Enemies (120 XP)</strong>
-                    <br />
-                    Three creatures of party level
-                  </q-tooltip>
-                  <q-tooltip
-                    v-if="tmpFilters.adventure_group.value === 'LieutenantAndLackeys'"
-                    class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    <strong>Lieutenant and Lackeys (80 XP)</strong>
-                    <br />
-                    One creature of party level,<br />four creatures of party level -4
-                  </q-tooltip>
-                  <q-tooltip
-                    v-if="tmpFilters.adventure_group.value === 'MatedPair'"
-                    class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    <strong>Mated Pair (80 XP)</strong>
-                    <br />
-                    Two creatures of party level
-                  </q-tooltip>
-                  <q-tooltip
-                    v-if="tmpFilters.adventure_group.value === 'Troop'"
-                    class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    <strong>Troop (80 XP)</strong>
-                    <br />
-                    One creature of party level,<br />two creatures of party level -2
-                  </q-tooltip>
-                  <q-tooltip
-                    v-if="tmpFilters.adventure_group.value === 'MookSquad'"
-                    class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    <strong>Mook Squad (60 XP)</strong>
-                    <br />
-                    Six creatures of party level -4
-                  </q-tooltip>
-                </q-select>
+                  <strong>Boss and Lackeys (120 XP)</strong>
+                  <br />
+                  One creature of party level +2,<br />four creatures of party level -4
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'BossAndLieutenant'"
+                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Boss and Lieutenant (120 XP)</strong>
+                  <br />
+                  One creature of party level +2,<br />one creature of party level
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'EliteEnemies'"
+                  class="tw-mb-[21px] text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Elite Enemies (120 XP)</strong>
+                  <br />
+                  Three creatures of party level
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'LieutenantAndLackeys'"
+                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Lieutenant and Lackeys (80 XP)</strong>
+                  <br />
+                  One creature of party level,<br />four creatures of party level -4
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'MatedPair'"
+                  class="tw-mb-[21px] text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Mated Pair (80 XP)</strong>
+                  <br />
+                  Two creatures of party level
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'Troop'"
+                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Troop (80 XP)</strong>
+                  <br />
+                  One creature of party level,<br />two creatures of party level -2
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'MookSquad'"
+                  class="tw-mb-[21px] text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Mook Squad (60 XP)</strong>
+                  <br />
+                  Six creatures of party level -4
+                </p>
               </span>
               <span v-else>
                 <div class="tw-pb-7">
