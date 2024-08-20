@@ -119,16 +119,16 @@ export async function encounterGenerator(body: {
   rarities: rarities[] | undefined;
   families: string[] | undefined;
   creature_types: string[] | undefined;
-  challenge: challenges | undefined;
+  challenge?: challenges;
   party_levels: number[];
-  min_creatures: number | undefined;
-  max_creatures: number | undefined;
+  min_creatures?: number;
+  max_creatures?: number;
   allow_weak_variants: boolean;
   allow_elite_variants: boolean;
   creature_roles: roles[] | undefined;
   is_pwl_on: boolean;
   pathfinder_version: string;
-  adventure_group: adventure_groups | undefined;
+  adventure_group?: adventure_groups;
 }) {
   try {
     const requestOptions = {
