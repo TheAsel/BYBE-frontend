@@ -416,7 +416,7 @@ try {
       color="primary"
     >
       <template v-slot:loading>
-        <q-inner-loading showing>
+        <q-inner-loading showing style="z-index: 2">
           <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
         </q-inner-loading>
       </template>
@@ -890,6 +890,7 @@ try {
     padding-top: 4px;
     padding-bottom: 4px;
     position: sticky;
+    z-index: 1;
     background-color: #ffffff;
     border-left: none;
     border-right: none;
