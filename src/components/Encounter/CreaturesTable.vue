@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { biEraser, biArrowDownUp, biBook } from '@quasar/extras/bootstrap-icons';
+import {
+  biEraser,
+  biArrowDownUp,
+  biBook,
+  biFullscreen,
+  biFullscreenExit
+} from '@quasar/extras/bootstrap-icons';
 import { mdiSword, mdiBowArrow, mdiMagicStaff } from '@quasar/extras/mdi-v7';
 import {
   fasHandFist,
@@ -28,6 +34,9 @@ const settings = settingsStore();
 const filters = filtersStore();
 const creatures = creaturesStore();
 const encounter = encounterStore();
+
+const fullscreen = ref(false);
+const tableHeight = ref('height: calc(100vh - 122px)');
 
 // ---- Columns declaration
 const columns: {
@@ -307,6 +316,15 @@ const openCreatureSheet = (id: number) => {
   const routeData = router.resolve({ name: 'bestiary', query: { id: id } });
   window.open(routeData.href, '_blank');
 };
+
+const toggleFullscreen = () => {
+  fullscreen.value = !fullscreen.value;
+  if (fullscreen.value) {
+    tableHeight.value = 'height: 100%; opacity: 1';
+  } else {
+    tableHeight.value = 'height: calc(100vh - 122px)';
+  }
+};
 </script>
 
 <template>
@@ -314,7 +332,7 @@ const openCreatureSheet = (id: number) => {
     <q-table
       ref="creatureTable"
       class="sticky-header-table tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      style="height: calc(100vh - 122px)"
+      :style="tableHeight"
       flat
       bordered
       title="Creatures"
@@ -328,6 +346,7 @@ const openCreatureSheet = (id: number) => {
       @row-dblclick="(_, row) => addCreature(row)"
       id="v-step-0"
       table-header-class="v-step-5"
+      :fullscreen="fullscreen"
     >
       <template v-slot:top>
         <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
@@ -415,7 +434,7 @@ const openCreatureSheet = (id: number) => {
                 outlined
                 dense
                 options-dense
-                display-value="Show\Hide columns"
+                display-value="Display columns"
                 emit-value
                 map-options
                 :options="Object.freeze(columns)"
@@ -423,6 +442,16 @@ const openCreatureSheet = (id: number) => {
                 style="min-width: 150px"
               />
             </div>
+            <q-btn
+              flat
+              round
+              dense
+              class="tw-ml-2 !tw-p-3"
+              :icon="fullscreen ? biFullscreenExit : biFullscreen"
+              size="sm"
+              aria-label="Toggle fullscreen"
+              @click="toggleFullscreen"
+            />
           </div>
         </div>
       </template>
