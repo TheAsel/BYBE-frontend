@@ -1,6 +1,6 @@
 import { backendUrl } from 'src/boot/globals';
 import type { creature } from 'src/types/creature';
-import type { encounter, random_encounter } from 'src/types/encounter';
+import type { adventure_groups, encounter, random_encounter } from 'src/types/encounter';
 import type { alignments, sizes, rarities, challenges, roles, variants } from 'src/types/filters';
 
 export async function requestCreatures(start: number, page_size: number, version: string) {
@@ -119,15 +119,16 @@ export async function encounterGenerator(body: {
   rarities: rarities[] | undefined;
   families: string[] | undefined;
   creature_types: string[] | undefined;
-  challenge: challenges | undefined;
+  challenge?: challenges;
   party_levels: number[];
-  min_creatures: number;
-  max_creatures: number;
+  min_creatures?: number;
+  max_creatures?: number;
   allow_weak_variants: boolean;
   allow_elite_variants: boolean;
   creature_roles: roles[] | undefined;
   is_pwl_on: boolean;
   pathfinder_version: string;
+  adventure_group?: adventure_groups;
 }) {
   try {
     const requestOptions = {

@@ -421,7 +421,7 @@ const openCreatureSheet = (id: number) => {
       </q-page-container>
       <q-page-container v-else class="tw-flex" style="height: 78vh">
         <div class="tw-m-auto">
-          <q-spinner-gears class="tw-mx-auto" color="white" size="5em" />
+          <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
         </div>
       </q-page-container>
       <q-footer

@@ -25,3 +25,12 @@ export type encounter_list = {
   name: string;
   creatures: min_creature[];
 };
+
+export type adventure_groups =
+  | 'BossAndLackeys'
+  | 'BossAndLieutenant'
+  | 'EliteEnemies'
+  | 'LieutenantAndLackeys'
+  | 'MatedPair'
+  | 'Troop'
+  | 'MookSquad';
