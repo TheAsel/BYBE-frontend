@@ -30,7 +30,9 @@ TailwindDarkFix();
 const supportButton = ref(
   document.querySelectorAll('[id^=kofi-widget-overlay-]').item(0) as HTMLElement
 );
-supportButton.value.classList.add('hide-print');
+if (supportButton.value) {
+  supportButton.value.classList.add('hide-print');
+}
 
 const route = useRoute();
 const currentPath = ref(route.path);
@@ -69,25 +71,33 @@ const localSupport = ref(localStorage.getItem('hide_support'));
 switch (localSupport.value) {
   case 'true':
     hideSupport.value = true;
-    supportButton.value.style.display = 'none';
+    if (supportButton.value) {
+      supportButton.value.style.display = 'none';
+    }
     break;
   case 'false':
     hideSupport.value = false;
-    supportButton.value.style.display = 'block';
+    if (supportButton.value) {
+      supportButton.value.style.display = 'block';
+    }
     break;
   default:
     hideSupport.value = false;
-    supportButton.value.style.display = 'block';
+    if (supportButton.value) {
+      supportButton.value.style.display = 'block';
+    }
     localStorage.setItem('hide_support', 'false');
     break;
 }
 
 const toggleSupport = () => {
   localStorage.setItem('hide_support', JSON.stringify(hideSupport.value));
-  if (hideSupport.value) {
-    supportButton.value.style.display = 'none';
-  } else {
-    supportButton.value.style.display = 'block';
+  if (supportButton.value) {
+    if (hideSupport.value) {
+      supportButton.value.style.display = 'none';
+    } else {
+      supportButton.value.style.display = 'block';
+    }
   }
 };
 
@@ -408,7 +418,7 @@ const downloadData = () => {
 
 <template>
   <q-header
-    class="tw-flex tw-flex-wrap sm:tw-justify-start sm:tw-flex-nowrap tw-z-50 tw-w-full tw-bg-white tw-border-b tw-border-gray-200 tw-text-sm tw-py-3 sm:tw-py-0 dark:tw-bg-gray-800 dark:tw-border-gray-700"
+    class="tw-opacity-100 sm:tw-opacity-85 dark:tw-opacity-100 sm:dark:tw-opacity-90 tw-flex tw-flex-wrap sm:tw-justify-start sm:tw-flex-nowrap tw-z-50 tw-w-full tw-bg-white tw-border-b tw-border-gray-200 tw-text-sm tw-py-3 sm:tw-py-0 dark:tw-bg-gray-800 dark:tw-border-gray-700"
   >
     <nav
       class="tw-relative tw-w-full tw-mx-auto tw-px-4 sm:tw-flex sm:tw-items-center sm:tw-justify-between sm:tw-px-6 lg:tw-px-8"
@@ -436,7 +446,7 @@ const downloadData = () => {
               alt="Dark BYBE logo"
             />
           </q-avatar>
-          <div class="tw-my-auto tw-ml-4">BYBE</div>
+          <div class="tw-my-auto tw-ml-4 tw-text-gray-800 dark:tw-text-gray-200">BYBE</div>
         </router-link>
         <div class="sm:tw-hidden">
           <q-btn
