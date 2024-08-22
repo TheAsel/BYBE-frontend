@@ -385,8 +385,8 @@ try {
   <div v-else class="tw-w-full q-pa-md md:tw-w-[46%] only-screen">
     <q-table
       ref="itemTable"
-      class="sticky-header-table tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      style="height: calc(100vh - 133px)"
+      class="sticky-header-table tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      style="height: calc(100vh - 122px)"
       flat
       bordered
       :rows="rows"

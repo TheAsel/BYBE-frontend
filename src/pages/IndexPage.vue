@@ -44,14 +44,12 @@ const cards = [
 
 <template>
   <div
-    style="min-height: calc(100vh - 101px)"
-    class="tw-max-w-[85rem] tw-px-4 tw-pb-10 sm:tw-px-6 lg:tw-px-8 lg:tw-py-14 tw-mx-auto"
+    style="min-height: calc(100vh - 90px)"
+    class="tw-max-w-[80rem] tw-px-4 tw-pb-10 sm:tw-px-6 lg:tw-px-8 lg:tw-py-14 tw-mx-auto"
   >
     <div class="tw-max-w-2xl tw-mx-auto tw-text-center tw-my-4 lg:tw-mb-14">
-      <h1 class="tw-block text-h4 text-bold tw-text-gray-800 dark:tw-text-white sm:tw-text-4xl">
-        Welcome to BYBE
-      </h1>
-      <h2 class="tw-mt-3 text-h6 tw-text-gray-600 dark:tw-text-gray-300">
+      <h1 class="tw-block text-h4 text-bold tw-text-white sm:tw-text-4xl">Welcome to BYBE</h1>
+      <h2 class="tw-mt-3 text-h6 tw-text-gray-200">
         BYBE provides tools to help Pathfinder 2e Game Masters.
       </h2>
     </div>
@@ -61,26 +59,26 @@ const cards = [
         v-for="item in cards"
         :key="item.to"
         flat
-        class="tw-group tw-flex tw-gap-y-6 tw-w-full tw-h-full hover:tw-bg-gray-100 tw-rounded-lg tw-p-5 tw-transition-all dark:hover:tw-bg-white/[.075]"
+        class="tw-group tw-backdrop-blur tw-border tw-bg-white/10 dark:tw-bg-gray-800/40 tw-border-gray-500/20 dark:tw-border-gray-700/40 hover:tw-bg-white/[0.20] hover:dark:tw-bg-white/[.075] tw-flex tw-gap-y-6 tw-w-full tw-h-full tw-rounded-lg tw-p-5 tw-transition-all"
         :to="item.to"
       >
         <q-icon
           :name="item.icon"
-          class="tw-flex-shrink-0 tw-w-8 tw-h-8 tw-text-gray-800 tw-mt-4 tw-mr-6 dark:tw-text-gray-200"
+          class="tw-flex-shrink-0 tw-w-8 tw-h-8 tw-mt-4 tw-mr-6 tw-text-gray-200"
         />
 
         <div>
           <div>
-            <h3 class="tw-block text-bold tw-text-gray-800 dark:tw-text-white">
+            <h3 class="tw-block text-bold tw-text-white">
               {{ item.name }}
             </h3>
-            <p class="tw-text-gray-600 dark:tw-text-gray-400">
+            <p class="tw-text-gray-300">
               {{ item.description }}
             </p>
           </div>
 
           <p
-            class="tw-mt-3 tw-inline-flex tw-items-center tw-gap-x-2 tw-text-sm text-medium tw-text-gray-800 dark:tw-text-gray-200"
+            class="tw-mt-3 tw-inline-flex tw-items-center tw-gap-x-2 tw-text-sm text-medium tw-text-gray-200"
           >
             {{ item.subtext }}
             <q-icon
