@@ -2,12 +2,13 @@
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { biXLg } from '@quasar/extras/bootstrap-icons';
+import { biXLg, biQuestionCircle } from '@quasar/extras/bootstrap-icons';
 import { partyStore, filtersStore, encounterStore, settingsStore } from 'src/stores/store';
 import { encounterGenerator } from 'src/utils/encounter-api-calls';
 import type { alignments, sizes, rarities, challenges, roles } from 'src/types/filters';
 import type { min_creature } from 'src/types/creature';
 import { debounce } from 'lodash-es';
+import { adventure_groups } from 'src/types/encounter';
 
 const $q = useQuasar();
 
@@ -27,9 +28,45 @@ const family = ref<string[]>();
 const creature_type = ref<string[]>();
 const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
-const creatureNumber = ref({ min: 1, max: 20 });
+const creature_number = ref({ min: 1, max: 20 });
 const challenge = ref<challenges>();
 const creature_roles = ref<roles[]>();
+const adventure_group_toggle = ref(false);
+const adventure_group = ref<{ label: string; value: adventure_groups }>({
+  label: 'Boss and Lackeys',
+  value: 'BossAndLackeys'
+});
+
+const adventureGroupSelect = [
+  {
+    label: 'Boss and Lackeys',
+    value: 'BossAndLackeys'
+  },
+  {
+    label: 'Boss and Lieutenant',
+    value: 'BossAndLieutenant'
+  },
+  {
+    label: 'Elite Enemies',
+    value: 'EliteEnemies'
+  },
+  {
+    label: 'Lieutenant and Lackeys',
+    value: 'LieutenantAndLackeys'
+  },
+  {
+    label: 'Mated Pair',
+    value: 'MatedPair'
+  },
+  {
+    label: 'Troop',
+    value: 'Troop'
+  },
+  {
+    label: 'Mook Squad',
+    value: 'MookSquad'
+  }
+];
 
 const tmpFilters = ref({
   traits: traits.value,
@@ -40,9 +77,11 @@ const tmpFilters = ref({
   creature_type: creature_type.value,
   allow_weak_variants: allow_weak_variants.value,
   allow_elite_variants: allow_elite_variants.value,
-  creatures: creatureNumber.value,
+  creatures: creature_number.value,
   challenge: challenge.value,
-  creature_roles: creature_roles.value
+  creature_roles: creature_roles.value,
+  adventure_group_toggle: adventure_group_toggle.value,
+  adventure_group: adventure_group.value
 });
 
 const restoreSettings = () => {
@@ -55,9 +94,11 @@ const restoreSettings = () => {
   tmpFilters.value.creature_type = creature_type.value;
   tmpFilters.value.allow_weak_variants = allow_weak_variants.value;
   tmpFilters.value.allow_elite_variants = allow_elite_variants.value;
-  tmpFilters.value.creatures = creatureNumber.value;
+  tmpFilters.value.creatures = creature_number.value;
   tmpFilters.value.challenge = challenge.value;
   tmpFilters.value.creature_roles = creature_roles.value;
+  tmpFilters.value.adventure_group_toggle = adventure_group_toggle.value;
+  tmpFilters.value.adventure_group = adventure_group.value;
 };
 
 const generateEncounter = debounce(async function () {
@@ -67,7 +108,24 @@ const generateEncounter = debounce(async function () {
   const is_pwl_on = encounter.getPwl;
   const pf_version = settings.getPfVersion;
 
-  const post = {
+  const post: {
+    traits: string[] | undefined;
+    alignments: alignments[] | undefined;
+    sizes: sizes[] | undefined;
+    rarities: rarities[] | undefined;
+    families: string[] | undefined;
+    creature_types: string[] | undefined;
+    challenge?: challenges;
+    party_levels: number[];
+    min_creatures?: number;
+    max_creatures?: number;
+    allow_weak_variants: boolean;
+    allow_elite_variants: boolean;
+    creature_roles: roles[] | undefined;
+    is_pwl_on: boolean;
+    pathfinder_version: string;
+    adventure_group?: adventure_groups;
+  } = {
     traits: tmpFilters.value.traits,
     alignments: tmpFilters.value.alignment,
     sizes: tmpFilters.value.size,
@@ -76,14 +134,19 @@ const generateEncounter = debounce(async function () {
     creature_types: tmpFilters.value.creature_type,
     allow_weak_variants: tmpFilters.value.allow_weak_variants,
     allow_elite_variants: tmpFilters.value.allow_elite_variants,
-    min_creatures: tmpFilters.value.creatures.min,
-    max_creatures: tmpFilters.value.creatures.max,
-    challenge: tmpFilters.value.challenge,
     party_levels: partyLevels,
     creature_roles: creature_roles.value,
     is_pwl_on: is_pwl_on,
     pathfinder_version: pf_version
   };
+
+  if (tmpFilters.value.adventure_group_toggle) {
+    post.adventure_group = tmpFilters.value.adventure_group.value;
+  } else {
+    post.min_creatures = tmpFilters.value.creatures.min;
+    post.max_creatures = tmpFilters.value.creatures.max;
+    post.challenge = tmpFilters.value.challenge;
+  }
   try {
     const randomEncounter = await encounterGenerator(post);
     if (typeof randomEncounter != 'undefined') {
@@ -125,9 +188,11 @@ const saveChanges = () => {
   creature_type.value = tmpFilters.value.creature_type;
   allow_weak_variants.value = tmpFilters.value.allow_weak_variants;
   allow_elite_variants.value = tmpFilters.value.allow_elite_variants;
-  creatureNumber.value = tmpFilters.value.creatures;
+  creature_number.value = tmpFilters.value.creatures;
   challenge.value = tmpFilters.value.challenge;
   creature_roles.value = tmpFilters.value.creature_roles;
+  adventure_group_toggle.value = tmpFilters.value.adventure_group_toggle;
+  adventure_group.value = tmpFilters.value.adventure_group;
 };
 
 defineExpose({ generateEncounter });
@@ -226,36 +291,132 @@ defineExpose({ generateEncounter });
                 label="Creature Type"
                 style="max-width: 270px"
               />
-
-              <div class="tw-pb-4">
-                <q-badge outline class="tw-text-sm"> Number of creatures: </q-badge>
-                <q-range
-                  v-model="tmpFilters.creatures"
-                  label-always
-                  :min="1"
-                  :max="20"
-                  markers
-                  :left-label-value="'Min: ' + tmpFilters.creatures.min"
-                  :right-label-value="'Max: ' + tmpFilters.creatures.max"
-                  style="max-width: 270px"
-                  class="tw-px-3 tw-pt-1"
-                  aria-label="Creature numbers"
-                  role="menuitem"
-                  switch-label-side
+              <q-separator />
+              <q-toggle
+                v-model="tmpFilters.adventure_group_toggle"
+                label="Use Adventure Groups"
+                class="tw-mr-2"
+                aria-label="Toggle Adventure Groups"
+              >
+              </q-toggle>
+              <q-btn
+                flat
+                round
+                size="sm"
+                :icon="biQuestionCircle"
+                href="https://2e.aonprd.com/Rules.aspx?ID=2717"
+                target="_blank"
+                rel="noopener"
+                aria-label="Link to explanation for adventure groups"
+              >
+                <q-tooltip
+                  class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  <strong>Adventure Groups</strong> <br />
+                  Click to learn more
+                </q-tooltip>
+              </q-btn>
+              <span v-if="tmpFilters.adventure_group_toggle">
+                <q-select
+                  dense
+                  outlined
+                  options-dense
+                  v-model="tmpFilters.adventure_group"
+                  :options="Object.freeze(adventureGroupSelect)"
+                  label="Adventure Group"
+                  class="tw-pt-1 tw-pb-6"
                 />
-              </div>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'BossAndLackeys'"
+                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Boss and Lackeys (120 XP)</strong>
+                  <br />
+                  One creature of party level +2,<br />four creatures of party level -4
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'BossAndLieutenant'"
+                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Boss and Lieutenant (120 XP)</strong>
+                  <br />
+                  One creature of party level +2,<br />one creature of party level
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'EliteEnemies'"
+                  class="tw-mb-[21px] text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Elite Enemies (120 XP)</strong>
+                  <br />
+                  Three creatures of party level
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'LieutenantAndLackeys'"
+                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Lieutenant and Lackeys (80 XP)</strong>
+                  <br />
+                  One creature of party level,<br />four creatures of party level -4
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'MatedPair'"
+                  class="tw-mb-[21px] text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Mated Pair (80 XP)</strong>
+                  <br />
+                  Two creatures of party level
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'Troop'"
+                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Troop (80 XP)</strong>
+                  <br />
+                  One creature of party level,<br />two creatures of party level -2
+                </p>
+                <p
+                  v-if="tmpFilters.adventure_group.value === 'MookSquad'"
+                  class="tw-mb-[21px] text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                >
+                  <strong>Mook Squad (60 XP)</strong>
+                  <br />
+                  Six creatures of party level -4
+                </p>
+              </span>
+              <span v-else>
+                <div class="tw-pb-7">
+                  <q-badge outline class="tw-text-sm"> Number of creatures: </q-badge>
 
-              <q-select
-                dense
-                outlined
-                clearable
-                options-dense
-                v-model="tmpFilters.challenge"
-                :options="
-                  Object.freeze(['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'])
-                "
-                label="Challenge"
-              />
+                  <q-range
+                    v-model="tmpFilters.creatures"
+                    label-always
+                    :min="1"
+                    :max="20"
+                    markers
+                    :left-label-value="'Min: ' + tmpFilters.creatures.min"
+                    :right-label-value="'Max: ' + tmpFilters.creatures.max"
+                    style="max-width: 270px"
+                    class="tw-px-3 tw-pt-1"
+                    aria-label="Creature numbers"
+                    role="menuitem"
+                    switch-label-side
+                  />
+                </div>
+
+                <q-select
+                  dense
+                  outlined
+                  clearable
+                  options-dense
+                  v-model="tmpFilters.challenge"
+                  :options="
+                    Object.freeze(['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'])
+                  "
+                  label="Challenge"
+                />
+              </span>
             </div>
           </q-card-section>
         </q-tab-panel>

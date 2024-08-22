@@ -163,6 +163,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       pagination.value.rowsNumber = request.total;
       rows.value = request.results;
       skeleton.value = false;
+      loading.value = false;
     } else {
       throw new Error('Error loading items');
     }
@@ -189,8 +190,6 @@ async function onRequest(props) {
   pagination.value.rowsPerPage = rowsPerPage;
 
   await fetchFromServer(startRow, pagination.value.rowsPerPage);
-
-  loading.value = false;
 }
 
 const resetFilters = () => {
@@ -414,7 +413,13 @@ try {
       @keydown="onKey"
       id="v-step-0"
       table-header-class="v-step-3"
+      color="primary"
     >
+      <template v-slot:loading>
+        <q-inner-loading showing style="z-index: 2">
+          <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
+        </q-inner-loading>
+      </template>
       <template v-slot:top>
         <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
           <div class="tw-flex tw-flex-shrink">
