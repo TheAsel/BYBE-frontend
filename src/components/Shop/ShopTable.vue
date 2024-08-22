@@ -9,7 +9,9 @@ import {
   biPlusLg,
   biBoxArrowUpRight,
   biCaretRight,
-  biBook
+  biBook,
+  biFullscreen,
+  biFullscreenExit
 } from '@quasar/extras/bootstrap-icons';
 import { item_columns, item_filters, rarities } from 'src/types/filters';
 import { itemsStore, settingsStore } from 'src/stores/store';
@@ -67,6 +69,8 @@ const filters = ref<{
   sort_by: 'name',
   order_by: 'ascending'
 });
+const fullscreen = ref(false);
+const tableHeight = ref('height: calc(100vh - 122px)');
 
 const columns: {
   name: item_columns;
@@ -377,6 +381,15 @@ try {
 } catch (error) {
   console.error(error);
 }
+
+const toggleFullscreen = () => {
+  fullscreen.value = !fullscreen.value;
+  if (fullscreen.value) {
+    tableHeight.value = 'height: 100%; opacity: 1';
+  } else {
+    tableHeight.value = 'height: calc(100vh - 122px)';
+  }
+};
 </script>
 
 <template>
@@ -385,7 +398,7 @@ try {
     <q-table
       ref="itemTable"
       class="sticky-header-table tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      style="height: calc(100vh - 122px)"
+      :style="tableHeight"
       flat
       bordered
       :rows="rows"
@@ -414,6 +427,7 @@ try {
       id="v-step-0"
       table-header-class="v-step-3"
       color="primary"
+      :fullscreen="fullscreen"
     >
       <template v-slot:loading>
         <q-inner-loading showing style="z-index: 2">
@@ -504,7 +518,7 @@ try {
                 outlined
                 dense
                 options-dense
-                display-value="Show\Hide columns"
+                display-value="Display columns"
                 emit-value
                 map-options
                 :options="Object.freeze(columns)"
@@ -512,6 +526,16 @@ try {
                 style="min-width: 150px"
               />
             </div>
+            <q-btn
+              flat
+              round
+              dense
+              class="tw-ml-2 !tw-p-3"
+              :icon="fullscreen ? biFullscreenExit : biFullscreen"
+              size="sm"
+              aria-label="Toggle fullscreen"
+              @click="toggleFullscreen"
+            />
           </div>
         </div>
       </template>
