@@ -44,10 +44,10 @@ useHead({
             BYBE uses trademarks and/or copyrights owned by Paizo Inc., used under Paizo's Community
             Use Policy (<a
               class="tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-400"
-              href="https://paizo.com/communityuse"
+              href="https://paizo.com/licenses/communityuse"
               target="_blank"
               rel="noopener"
-              >paizo.com/communityuse</a
+              >paizo.com/licenses/communityuse</a
             >). We are expressly prohibited from charging you to use or access this content. BYBE is
             not published, endorsed, or specifically approved by Paizo. For more information about
             Paizo Inc. and Paizo products, visit
