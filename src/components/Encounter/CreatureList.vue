@@ -377,7 +377,11 @@ const openCreatureSheet = (id: number) => {
                     flat
                     label="Weak"
                     size="15px"
-                    :color="item.variant === 'Weak' ? 'positive' : 'grey-4'"
+                    :class="
+                      item.variant === 'Weak'
+                        ? 'tw-text-green-500'
+                        : 'dark:tw-text-gray-200 tw-text-gray-400'
+                    "
                     padding="xs"
                     class="text-weight-bold"
                     @click="encounter.changeVariant(index, 'Weak')"
@@ -386,7 +390,11 @@ const openCreatureSheet = (id: number) => {
                     flat
                     label="Base"
                     size="15px"
-                    :color="item.variant === 'Base' ? 'primary' : 'grey-4'"
+                    :class="
+                      item.variant === 'Base'
+                        ? 'tw-text-blue-500'
+                        : 'dark:tw-text-gray-200 tw-text-gray-400'
+                    "
                     padding="xs"
                     class="text-weight-bold"
                     @click="encounter.changeVariant(index, 'Base')"
@@ -395,7 +403,11 @@ const openCreatureSheet = (id: number) => {
                     flat
                     label="Elite"
                     size="15px"
-                    :color="item.variant === 'Elite' ? 'negative' : 'grey-4'"
+                    :class="
+                      item.variant === 'Elite'
+                        ? 'tw-text-orange-500'
+                        : 'dark:tw-text-gray-200 tw-text-gray-400'
+                    "
                     padding="xs"
                     class="text-weight-bold"
                     @click="encounter.changeVariant(index, 'Elite')"
