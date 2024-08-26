@@ -2,11 +2,11 @@
 import { useHead } from '@unhead/vue';
 
 useHead({
-  title: 'Licences - BYBE',
+  title: 'Licenses - BYBE',
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/licence'
+      href: 'https://bybe.fly.dev/license'
     }
   ]
 });
@@ -206,7 +206,7 @@ useHead({
           <q-separator />
           <br />
           <h1 class="tw-text-center tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white">
-            Book licences
+            Book licenses
           </h1>
           <h2
             class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
