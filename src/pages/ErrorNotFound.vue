@@ -3,7 +3,13 @@ import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
 
 useHead({
-  title: '404 Not Found - BYBE'
+  title: '404 Not Found - BYBE',
+  meta: [
+    {
+      name: 'robots',
+      content: 'noindex'
+    }
+  ]
 });
 
 const supportButton = ref(
