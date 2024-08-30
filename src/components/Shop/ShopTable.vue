@@ -252,7 +252,7 @@ const deactivateNavigation = () => {
 async function onKey(evt) {
   if (
     navigationActive.value !== true ||
-    [33, 34, 35, 36, 37, 38, 39, 40].indexOf(evt.keyCode) === -1 ||
+    [13, 33, 34, 35, 36, 37, 38, 39, 40].indexOf(evt.keyCode) === -1 ||
     itemTable.value === null ||
     loading.value === true ||
     keyDown.value === true
@@ -280,6 +280,9 @@ async function onKey(evt) {
   let page = currentPage;
 
   switch (evt.keyCode) {
+    case 13: // Enter
+      addItem(selected.value[0]);
+      break;
     case 33: // PageUp
       index = 0;
       selected.value = [computedRows[index]];
@@ -302,7 +305,7 @@ async function onKey(evt) {
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
         itemTable.value.scrollTo(index);
-      }, 500);
+      }, 1000);
       break;
     case 35: // End
       index = rowsPerPage - 1;
@@ -314,7 +317,7 @@ async function onKey(evt) {
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
         itemTable.value.scrollTo(index - 1);
-      }, 500);
+      }, 1000);
       break;
     case 37: // ArrowLeft
       page = currentPage <= 1 ? lastPage : currentPage - 1;
@@ -331,7 +334,7 @@ async function onKey(evt) {
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
         itemTable.value.scrollTo(index);
-      }, 500);
+      }, 1000);
       break;
     case 38: // ArrowUp
       if (currentIndex > 0) {
@@ -356,7 +359,7 @@ async function onKey(evt) {
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
         itemTable.value.scrollTo(index);
-      }, 500);
+      }, 1000);
       break;
     case 40: // ArrowDown
       if (currentIndex < lastIndex) {
