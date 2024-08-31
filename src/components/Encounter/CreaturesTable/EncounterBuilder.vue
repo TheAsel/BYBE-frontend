@@ -21,10 +21,12 @@ const dialog = ref(false);
 const tab = ref('General');
 
 const traits = ref<string[]>();
+const traitsOptions = filters.getFilters.traits;
 const alignment = ref<alignments[]>();
 const size = ref<sizes[]>();
 const rarity = ref<rarities[]>();
 const family = ref<string[]>();
+const familiesOptions = filters.getFilters.families;
 const creature_type = ref<string[]>();
 const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
@@ -195,6 +197,22 @@ const saveChanges = () => {
   adventure_group.value = tmpFilters.value.adventure_group;
 };
 
+const filterTraitsFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getFilters.traits = traitsOptions.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+  });
+};
+
+const filterFamiliesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getFilters.families = familiesOptions.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
+  });
+};
+
 defineExpose({ generateEncounter });
 </script>
 
@@ -240,6 +258,9 @@ defineExpose({ generateEncounter });
                 options-dense
                 v-model="tmpFilters.traits"
                 :options="Object.freeze(filters.getFilters.traits)"
+                @filter="filterTraitsFn"
+                use-input
+                input-debounce="0"
                 label="Traits"
                 style="max-width: 270px"
               />
@@ -276,6 +297,9 @@ defineExpose({ generateEncounter });
                 options-dense
                 v-model="tmpFilters.family"
                 :options="Object.freeze(filters.getFilters.families)"
+                @filter="filterFamiliesFn"
+                use-input
+                input-debounce="0"
                 label="Family"
                 style="max-width: 270px"
               />

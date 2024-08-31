@@ -71,6 +71,7 @@ const filters = ref<{
 });
 const fullscreen = ref(false);
 const tableHeight = ref('height: calc(100vh - 122px)');
+const sourcesOptions = ref(['']);
 
 const columns: {
   name: item_columns;
@@ -378,6 +379,7 @@ try {
   const request = await requestSources();
   if (request) {
     sources.value = request.sort();
+    sourcesOptions.value = sources.value;
   } else {
     throw new Error('Error fetching sources');
   }
@@ -392,6 +394,13 @@ const toggleFullscreen = () => {
   } else {
     tableHeight.value = 'height: calc(100vh - 122px)';
   }
+};
+
+const filterSourcesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    sources.value = sourcesOptions.value.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+  });
 };
 </script>
 
@@ -556,6 +565,9 @@ const toggleFullscreen = () => {
                 options-dense
                 v-model="filters.source_filter"
                 :options="Object.freeze(sources)"
+                @filter="filterSourcesFn"
+                use-input
+                input-debounce="0"
                 :label="columns[0].label"
                 :style="columns[0].style"
               />
