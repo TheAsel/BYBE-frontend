@@ -176,6 +176,10 @@ const filterType = ref<string[]>();
 const filterAttacks = ref([false, false, false]);
 const filterRole = ref<roles[]>();
 
+const sourcesOptions = filters.getFilters.sources;
+const traitsOptions = filters.getFilters.traits;
+const familiesOptions = filters.getFilters.families;
+
 // ---- Filter function
 // combines all filters
 const combineFilters = computed(() => {
@@ -325,6 +329,29 @@ const toggleFullscreen = () => {
     tableHeight.value = 'height: calc(100vh - 122px)';
   }
 };
+
+const filterSourcesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getFilters.sources = sourcesOptions.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+  });
+};
+
+const filterTraitsFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getFilters.traits = traitsOptions.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+  });
+};
+
+const filterFamiliesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getFilters.families = familiesOptions.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
+  });
+};
 </script>
 
 <template>
@@ -469,6 +496,9 @@ const toggleFullscreen = () => {
                 options-dense
                 v-model="filterSource"
                 :options="Object.freeze(filters.getFilters.sources)"
+                @filter="filterSourcesFn"
+                use-input
+                input-debounce="0"
                 :label="columns[0].label"
                 :style="columns[0].style"
               />
@@ -612,6 +642,9 @@ const toggleFullscreen = () => {
                 options-dense
                 v-model="filterTraits"
                 :options="Object.freeze(filters.getFilters.traits)"
+                @filter="filterTraitsFn"
+                use-input
+                input-debounce="0"
                 :label="columns[4].label"
                 :style="columns[4].style"
               />
@@ -744,6 +777,9 @@ const toggleFullscreen = () => {
                 options-dense
                 v-model="filterFamily"
                 :options="Object.freeze(filters.getFilters.families)"
+                @filter="filterFamiliesFn"
+                use-input
+                input-debounce="0"
                 :label="columns[8].label"
                 :style="columns[8].style"
               />
