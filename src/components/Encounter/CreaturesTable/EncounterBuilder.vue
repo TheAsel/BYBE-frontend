@@ -471,7 +471,7 @@ defineExpose({ generateEncounter });
                 style="max-width: 270px"
               />
 
-              <div class="q-gutter-sm tw-pb-[239px]">
+              <div class="q-gutter-sm tw-pb-[292px]">
                 <q-checkbox
                   v-model="tmpFilters.allow_weak_variants"
                   label="Allow Weak?"
