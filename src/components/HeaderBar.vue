@@ -432,16 +432,16 @@ const downloadData = () => {
         >
           <q-avatar size="36px">
             <img
+              v-if="theme === 'light'"
               width="36px"
               height="36px"
-              v-if="theme === 'light'"
               src="/favicon-64x64-light.png"
               alt="Light BYBE logo"
             />
             <img
+              v-else
               width="36px"
               height="36px"
-              v-else
               src="/favicon-64x64-dark.png"
               alt="Dark BYBE logo"
             />
@@ -502,11 +502,12 @@ const downloadData = () => {
               size="sm"
               padding="sm"
               class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
-              @click="themeSwitch"
               :icon="$q.dark.isActive ? biSun : biMoon"
               aria-label="Toggle theme"
+              @click="themeSwitch"
             />
             <q-btn
+              id="v-step-8"
               flat
               round
               size="sm"
@@ -516,7 +517,6 @@ const downloadData = () => {
               target="_blank"
               aria-label="Open settings"
               @click="settingsDialog = true"
-              id="v-step-8"
             />
             <q-dialog v-model="settingsDialog" aria-label="Settings dialog">
               <q-card flat bordered style="min-height: 451px; min-width: 270px">
@@ -525,13 +525,13 @@ const downloadData = () => {
                     <div class="text-h6 tw-mr-4 tw-my-auto">Settings</div>
                     <q-space />
                     <q-btn
+                      v-close-popup
                       :icon="biXLg"
                       size="md"
                       padding="sm"
                       flat
                       round
                       dense
-                      v-close-popup
                       aria-label="Close dialog"
                     />
                   </div>
@@ -556,8 +556,8 @@ const downloadData = () => {
                         label="Export Data"
                         no-caps
                         :icon="biCloudArrowDown"
-                        @click="downloadData"
                         class="tw-mx-auto"
+                        @click="downloadData"
                       />
                     </q-card-actions>
                     <q-card-actions>
@@ -566,8 +566,8 @@ const downloadData = () => {
                         label="Import Data"
                         no-caps
                         :icon="biCloudArrowUp"
-                        @click="uploadData"
                         class="tw-mx-auto"
+                        @click="uploadData"
                       >
                         <q-tooltip
                           class="text-caption tw-bg-amber-400 tw-text-gray-800 tw-rounded-md tw-shadow-sm dark:tw-bg-amber-400"
@@ -582,10 +582,10 @@ const downloadData = () => {
                     <q-card-actions>
                       <div class="q-gutter-y-sm column tw-mx-auto">
                         <q-select
+                          v-model="pfVersion"
                           outlined
                           dense
                           options-dense
-                          v-model="pfVersion"
                           :options="['Any', 'Legacy', 'Remaster']"
                           label="Pathfinder Version"
                           @update:model-value="togglePfVersion"
@@ -593,15 +593,15 @@ const downloadData = () => {
                         <q-toggle
                           v-model="hideSupport"
                           label="Hide support button"
-                          @update:model-value="toggleSupport"
                           aria-label="Toggle support button visibility"
+                          @update:model-value="toggleSupport"
                         />
                         <q-toggle
-                          class="tw-w-52 tw-text-wrap"
                           v-model="all_experimentals"
+                          class="tw-w-52 tw-text-wrap"
                           label="Enable all experimental features"
-                          @update:model-value="toggleAllExperimental"
                           aria-label="Toggle all experimental features"
+                          @update:model-value="toggleAllExperimental"
                         />
                       </div>
                     </q-card-actions>
@@ -611,9 +611,9 @@ const downloadData = () => {
                       <q-toggle
                         v-model="is_pwl_on"
                         label="Prof. without Level"
-                        @update:model-value="togglePwL"
                         class="tw-mx-auto"
                         aria-label="Toggle proficiency without level"
+                        @update:model-value="togglePwL"
                       >
                       </q-toggle>
                       <q-space />
@@ -648,8 +648,8 @@ const downloadData = () => {
                       <q-toggle
                         v-model="is_creature_sheets_on"
                         label="Creature sheets"
-                        @update:model-value="toggleCreatureSheets"
                         aria-label="Toggle experimental creature sheets"
+                        @update:model-value="toggleCreatureSheets"
                       >
                       </q-toggle>
                       <q-space />
@@ -677,8 +677,8 @@ const downloadData = () => {
                       <q-toggle
                         v-model="is_aon_links_on"
                         label="AoN item links"
-                        @update:model-value="toggleAonLinks"
                         aria-label="Toggle experimental item links"
+                        @update:model-value="toggleAonLinks"
                       >
                       </q-toggle>
                       <q-space />
@@ -703,8 +703,8 @@ const downloadData = () => {
               flat
               padding="sm"
               class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
-              @click="$tours[currentPath].start()"
               aria-label="Start help tour"
+              @click="$tours[currentPath].start()"
             >
               HELP
             </q-btn>

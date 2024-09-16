@@ -49,6 +49,7 @@ if (localShops) {
       throw new Error('Invalid saved shop format');
     }
   } catch (error) {
+    console.error(error);
     const defaultShop = { name: 'Default', items: [] };
     localStorage.setItem('shops', JSON.stringify([defaultShop]));
     shop.updateShops([defaultShop]);

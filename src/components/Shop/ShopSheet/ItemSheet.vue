@@ -87,7 +87,7 @@ const openShopSheet = (id: number) => {
       {{ items.getSelectedItem!.core_item.name.toUpperCase() }}
     </h1>
     <q-space />
-    <div class="tw-my-auto">ITEM {{ items.getSelectedItem!.core_item.level }}</div>
+    <div class="tw-my-1">ITEM {{ items.getSelectedItem!.core_item.level }}</div>
     <q-btn
       class="tw-ml-2 tw-my-auto only-screen item-page-element"
       :icon="biXLg"
@@ -96,9 +96,9 @@ const openShopSheet = (id: number) => {
       flat
       round
       dense
-      @click="items.removeSelectedItem()"
       aria-label="Remove selected item"
-    ></q-btn>
+      @click="items.removeSelectedItem()"
+    />
   </div>
   <q-separator class="tw-my-2" style="height: 2px" />
   <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
@@ -131,8 +131,8 @@ const openShopSheet = (id: number) => {
   </div>
   <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
     <div
-      class="tw-text-base tw-text-gray-800 dark:tw-text-white"
       v-if="items.getSelectedItem!.core_item.source"
+      class="tw-text-base tw-text-gray-800 dark:tw-text-white"
     >
       <strong>Source </strong>
       <a
@@ -150,8 +150,8 @@ const openShopSheet = (id: number) => {
       </a>
     </div>
     <div
-      class="tw-text-base tw-text-gray-800 dark:tw-text-white"
       v-if="items.getSelectedItem!.core_item.price"
+      class="tw-text-base tw-text-gray-800 dark:tw-text-white"
     >
       <strong>Price</strong>
       {{ items.getFormattedPrice(items.getSelectedItem!.core_item.price) }}

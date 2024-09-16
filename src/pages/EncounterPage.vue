@@ -99,6 +99,7 @@ if (localEncounters) {
       throw new Error('Invalid saved encounter format');
     }
   } catch (error) {
+    console.error(error);
     const defaultEncounter = { name: 'Default', creatures: [] };
     localStorage.setItem('encounters', JSON.stringify([defaultEncounter]));
     encounter.updateEncounters([defaultEncounter]);
@@ -345,8 +346,8 @@ const scrollPage = (up: boolean) => {
 <template>
   <div class="row items-center justify-between">
     <v-tour name="/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
-    <SkeletonTable id="table" v-if="creatures.getCreatures.length === 0" />
-    <CreaturesTable id="table" v-else />
+    <SkeletonTable v-if="creatures.getCreatures.length === 0" id="table" />
+    <CreaturesTable v-else id="table" />
     <CreatureList id="list" />
     <q-page-sticky
       position="bottom-right"

@@ -357,7 +357,9 @@ const filterFamiliesFn = (val, update) => {
 <template>
   <div class="q-pa-md tw-w-full md:tw-w-[73%]">
     <q-table
+      id="v-step-0"
       ref="creatureTable"
+      table-header-class="v-step-5"
       class="sticky-header-table tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
       :style="tableHeight"
       flat
@@ -370,12 +372,10 @@ const filterFamiliesFn = (val, update) => {
       :visible-columns="visibleColumns"
       virtual-scroll
       no-data-label="No creature matches the current filters"
-      @row-dblclick="(_, row) => addCreature(row)"
-      id="v-step-0"
-      table-header-class="v-step-5"
       :fullscreen="fullscreen"
+      @row-dblclick="(_, row) => addCreature(row)"
     >
-      <template v-slot:top>
+      <template #top>
         <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
           <div class="tw-flex tw-flex-shrink">
             <h1 class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
@@ -389,13 +389,13 @@ const filterFamiliesFn = (val, update) => {
               <EncounterBuilder ref="encounterBuilderRef" />
               <q-separator vertical />
               <q-btn
+                id="v-step-3"
                 push
                 dense
                 class="tw-p-2"
                 size="md"
                 aria-label="Random encounter"
                 @click="encounterBuilderRef.generateEncounter()"
-                id="v-step-3"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -482,41 +482,41 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </div>
       </template>
-      <template v-slot:header-cell-source>
+      <template #header-cell-source>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filterSource"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filterSource"
                 :options="Object.freeze(filters.getFilters.sources)"
-                @filter="filterSourcesFn"
                 use-input
                 input-debounce="0"
                 :label="columns[0].label"
                 :style="columns[0].style"
+                @filter="filterSourcesFn"
               />
             </div>
             <div class="col-shrink tw-mx-2"></div>
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-name>
+      <template #header-cell-name>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-input
+                v-model="filterName"
                 dense
                 outlined
-                v-model="filterName"
                 :label="columns[1].label"
                 :style="columns[1].style"
               />
@@ -536,7 +536,7 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-level>
+      <template #header-cell-level>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
@@ -549,7 +549,7 @@ const filterFamiliesFn = (val, update) => {
                 :style="columns[2].style"
                 stack-label
               >
-                <template v-slot:control> {{ levelRange.min }} to {{ levelRange.max }} </template>
+                <template #control> {{ levelRange.min }} to {{ levelRange.max }} </template>
                 <q-popup-proxy>
                   <q-banner rounded>
                     <div class="tw-pt-8 tw-px-1">
@@ -582,7 +582,7 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-hp>
+      <template #header-cell-hp>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
@@ -595,7 +595,7 @@ const filterFamiliesFn = (val, update) => {
                 :style="columns[3].style"
                 stack-label
               >
-                <template v-slot:control> {{ hpRange.min }} to {{ hpRange.max }} </template>
+                <template #control> {{ hpRange.min }} to {{ hpRange.max }} </template>
                 <q-popup-proxy>
                   <q-banner rounded>
                     <div class="tw-pt-8 tw-px-1">
@@ -628,25 +628,25 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-traits>
+      <template #header-cell-traits>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filterTraits"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filterTraits"
                 :options="Object.freeze(filters.getFilters.traits)"
-                @filter="filterTraitsFn"
                 use-input
                 input-debounce="0"
                 :label="columns[4].label"
                 :style="columns[4].style"
+                @filter="filterTraitsFn"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -664,19 +664,19 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-alignment>
+      <template #header-cell-alignment>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filterAlignment"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filterAlignment"
                 :options="Object.freeze(filters.getFilters.alignments)"
                 :label="columns[5].label"
                 :style="columns[5].style"
@@ -697,19 +697,19 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-size>
+      <template #header-cell-size>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filterSize"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filterSize"
                 :options="Object.freeze(filters.getFilters.sizes)"
                 :label="columns[6].label"
                 :style="columns[6].style"
@@ -730,19 +730,19 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-rarity>
+      <template #header-cell-rarity>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filterRarity"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filterRarity"
                 :options="Object.freeze(filters.getFilters.rarities)"
                 :label="columns[7].label"
                 :style="columns[7].style"
@@ -763,25 +763,25 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-family>
+      <template #header-cell-family>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filterFamily"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filterFamily"
                 :options="Object.freeze(filters.getFilters.families)"
-                @filter="filterFamiliesFn"
                 use-input
                 input-debounce="0"
                 :label="columns[8].label"
                 :style="columns[8].style"
+                @filter="filterFamiliesFn"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -799,19 +799,19 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-creature_type>
+      <template #header-cell-creature_type>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filterType"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filterType"
                 :options="Object.freeze(filters.getFilters.creature_types)"
                 :label="columns[9].label"
                 :style="columns[9].style"
@@ -832,7 +832,7 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-attacks>
+      <template #header-cell-attacks>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
@@ -845,7 +845,7 @@ const filterFamiliesFn = (val, update) => {
                 :style="columns[10].style"
                 :stack-label="filterAttacks[0] || filterAttacks[1] || filterAttacks[2]"
               >
-                <template v-slot:control>
+                <template #control>
                   <q-icon
                     v-if="filterAttacks[0]"
                     :name="mdiSword"
@@ -869,8 +869,8 @@ const filterFamiliesFn = (val, update) => {
                   <q-banner rounded style="min-width: 100px">
                     <div class="column">
                       <q-toggle
-                        :icon="mdiSword"
                         v-model="filterAttacks[0]"
+                        :icon="mdiSword"
                         size="xl"
                         role="menuitemcheckbox"
                         aria-checked="false"
@@ -886,8 +886,8 @@ const filterFamiliesFn = (val, update) => {
                       </q-toggle>
 
                       <q-toggle
-                        :icon="mdiBowArrow"
                         v-model="filterAttacks[1]"
+                        :icon="mdiBowArrow"
                         size="xl"
                         role="menuitemcheckbox"
                         aria-checked="false"
@@ -903,8 +903,8 @@ const filterFamiliesFn = (val, update) => {
                       </q-toggle>
 
                       <q-toggle
-                        :icon="mdiMagicStaff"
                         v-model="filterAttacks[2]"
+                        :icon="mdiMagicStaff"
                         size="xl"
                         role="menuitemcheckbox"
                         aria-checked="false"
@@ -938,19 +938,19 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-creature_role>
+      <template #header-cell-creature_role>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filterRole"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filterRole"
                 :options="Object.freeze(filters.getFilters.creature_roles)"
                 :label="columns[11].label"
                 :style="columns[11].style"
@@ -971,12 +971,12 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:body-cell-source="source">
+      <template #body-cell-source="source">
         <q-td :props="source">
           <q-btn
+            v-if="source.row.core_data.essential.source"
             round
             unelevated
-            v-if="source.row.core_data.essential.source"
             :icon="biBook"
             size="sm"
             padding="sm"
@@ -1001,7 +1001,7 @@ const filterFamiliesFn = (val, update) => {
           </q-btn>
         </q-td>
       </template>
-      <template v-slot:body-cell-name="name">
+      <template #body-cell-name="name">
         <q-td :props="name">
           <q-btn
             v-if="settings.getCreatureSheets"
@@ -1010,9 +1010,9 @@ const filterFamiliesFn = (val, update) => {
             :icon="fasScroll"
             size="sm"
             class="tw-mr-1"
-            @click="openCreatureSheet(name.row.core_data.essential.id)"
             target="_blank"
             aria-label="Open creature sheet"
+            @click="openCreatureSheet(name.row.core_data.essential.id)"
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -1053,7 +1053,7 @@ const filterFamiliesFn = (val, update) => {
           />
         </q-td>
       </template>
-      <template v-slot:body-cell-traits="traits">
+      <template #body-cell-traits="traits">
         <q-td :props="traits">
           <span
             v-if="traits.row.core_data.traits"
@@ -1069,7 +1069,7 @@ const filterFamiliesFn = (val, update) => {
           </span>
         </q-td>
       </template>
-      <template v-slot:body-cell-attacks="attacks">
+      <template #body-cell-attacks="attacks">
         <q-td :props="attacks">
           <q-icon v-if="attacks.row.core_data.derived.is_melee" :name="mdiSword" size="sm" left>
             <q-tooltip
@@ -1105,10 +1105,10 @@ const filterFamiliesFn = (val, update) => {
           </q-icon>
         </q-td>
       </template>
-      <template v-slot:body-cell-creature_role="roles">
-        <q-td :props="roles">
+      <template #body-cell-creature_role="creatureRoles">
+        <q-td :props="creatureRoles">
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role.includes('Brute')"
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Brute')"
             :name="fasHandFist"
             size="sm"
             left
@@ -1122,7 +1122,7 @@ const filterFamiliesFn = (val, update) => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role.includes('Magical Striker')"
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Magical Striker')"
             :name="fasMeteor"
             size="sm"
             left
@@ -1136,7 +1136,7 @@ const filterFamiliesFn = (val, update) => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role.includes('Skill Paragon')"
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Skill Paragon')"
             :name="fasGraduationCap"
             size="sm"
             left
@@ -1150,7 +1150,7 @@ const filterFamiliesFn = (val, update) => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role.includes('Skirmisher')"
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Skirmisher')"
             :name="fasUserNinja"
             size="sm"
             left
@@ -1164,7 +1164,7 @@ const filterFamiliesFn = (val, update) => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role.includes('Sniper')"
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Sniper')"
             :name="fasCrosshairs"
             size="sm"
             left
@@ -1178,7 +1178,7 @@ const filterFamiliesFn = (val, update) => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role.includes('Soldier')"
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Soldier')"
             :name="fasUserShield"
             size="sm"
             left
@@ -1192,7 +1192,7 @@ const filterFamiliesFn = (val, update) => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="roles.row.core_data.derived.creature_role.includes('SpellCaster')"
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('SpellCaster')"
             :name="fasHatWizard"
             size="sm"
             left

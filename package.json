@@ -4,6 +4,7 @@
   "description": "Beyond Your Bestiary Explorer (BYBE) is a one-stop shop for the most useful tools for Pathfinder Second Edition GMs",
   "productName": "BYBE - Pathfinder 2e GM Tools",
   "author": "TheAsel",
+  "type": "module",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
@@ -11,31 +12,35 @@
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build",
-    "start": "quasar serve --cache --history dist/spa"
+    "start": "./node_modules/@quasar/cli/bin/quasar.js serve dist/spa --history --open --hostname localhost"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.12",
-    "@unhead/vue": "^1.10.4",
+    "@unhead/vue": "^1.11.6",
     "lodash-es": "^4.17.21",
     "pinia": "^2.2.2",
-    "quasar": "^2.16.10",
-    "vue": "^3.5.1",
-    "vue-router": "^4.4.3",
+    "quasar": "^2.16.11",
+    "vue": "^3.5.6",
+    "vue-router": "^4.4.5",
     "vue3-tour": "1.0.2"
   },
   "devDependencies": {
-    "@quasar/app-vite": "^1.9.5",
+    "@quasar/app-vite": "^2.0.0-beta.21",
+    "@quasar/cli": "2.4.1",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^22.5.4",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
+    "@types/node": "^22.5.5",
+    "@typescript-eslint/eslint-plugin": "^8.5.0",
+    "@typescript-eslint/parser": "^8.5.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-vue": "^9.28.0",
+    "postcss": "^8.4.47",
     "prettier": "^3.3.3",
-    "tailwindcss": "^3.4.10",
-    "typescript": "^5.5.4"
+    "tailwindcss": "^3.4.11",
+    "typescript": "^5.6.2",
+    "vite-plugin-checker": "^0.8.0",
+    "vue-tsc": "^2.1.6"
   },
   "engines": {
     "node": ">= 20",
