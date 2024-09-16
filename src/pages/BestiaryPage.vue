@@ -569,8 +569,8 @@ const printPage = () => {
             <h1 v-else class="tw-leading-8 tw-my-auto">{{ nameString }}</h1>
             <q-space />
             <q-select
-              class="tw-mx-4 tw-my-auto tw-text-2xl only-screen"
               v-model="creatureVariant"
+              class="tw-mx-4 tw-my-auto tw-text-2xl only-screen"
               :options="Object.freeze(['Weak', 'Base', 'Elite'])"
               borderless
               dense
@@ -627,8 +627,8 @@ const printPage = () => {
           </div>
           <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
             <div
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               v-if="creatureData?.core_data.essential.source"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
             >
               <strong>Source </strong>
               <a
@@ -830,8 +830,8 @@ const printPage = () => {
       fab
       :icon="matPrint"
       color="primary"
-      @click="printPage"
       aria-label="Print creature sheet"
+      @click="printPage"
     />
   </q-page-sticky>
 </template>

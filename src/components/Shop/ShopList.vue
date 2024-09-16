@@ -121,11 +121,11 @@ const showItem = debounce(async function (item: min_item) {
 <template>
   <div class="q-pa-md tw-w-full md:tw-w-[27%] only-screen">
     <q-layout
+      id="v-step-4"
       view="lHh lpr lFf"
       container
       style="height: calc(100vh - 122px)"
       class="tw-opacity-85 dark:tw-opacity-90 tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      id="v-step-4"
     >
       <q-header
         bordered
@@ -171,15 +171,15 @@ const showItem = debounce(async function (item: min_item) {
                 <q-card-section class="q-pt-none">
                   <q-input
                     ref="shopNameInput"
-                    dense
                     v-model="newShopName"
+                    dense
                     autofocus
-                    @keyup.enter="addShop"
+                    :no-error-icon="true"
                     :rules="[
                       (val) => !!val || 'Field is required',
                       (val) => !shops.find((name) => name === val) || 'This shop already exists'
                     ]"
-                    :no-error-icon="true"
+                    @keyup.enter="addShop"
                   />
                 </q-card-section>
 
@@ -187,16 +187,16 @@ const showItem = debounce(async function (item: min_item) {
                   <q-btn
                     flat
                     label="Cancel"
-                    @click="closeDialog"
                     class="tw-text-blue-600 dark:tw-text-blue-400"
                     aria-label="Close dialog"
+                    @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Add shop"
-                    @click="addShop"
                     class="tw-text-blue-600 dark:tw-text-blue-400"
                     aria-label="Add shop"
+                    @click="addShop"
                   />
                 </q-card-actions>
               </q-card>
@@ -233,32 +233,32 @@ const showItem = debounce(async function (item: min_item) {
                   <q-btn
                     flat
                     label="Cancel"
-                    @click="closeDialog"
                     class="tw-text-blue-600 dark:tw-text-blue-400"
                     aria-label="Close dialog"
+                    @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Remove"
-                    @click="removeShop"
                     class="tw-text-red-600 dark:tw-text-red-400"
                     aria-label="Remove shop"
+                    @click="removeShop"
                   />
                 </q-card-actions>
               </q-card>
             </q-dialog>
             <q-select
+              v-model="tmpShop.name"
               dense
               style="min-width: 120px; max-width: 120px"
               class="tw-my-auto tw-mr-2"
               outlined
-              v-model="tmpShop.name"
               :options="shops"
               label="Shops"
               @update:model-value="changeActiveShop(tmpShop.name)"
             />
           </div>
-          <q-btn flat dense @click="shop.clearShop" aria-label="Clear shop">CLEAR</q-btn>
+          <q-btn flat dense aria-label="Clear shop" @click="shop.clearShop">CLEAR</q-btn>
         </div>
       </q-header>
 

@@ -408,9 +408,12 @@ const filterSourcesFn = (val, update) => {
   <SkeletonTable v-if="skeleton" />
   <div v-else class="tw-w-full q-pa-md md:tw-w-[46%] only-screen">
     <q-table
+      id="v-step-0"
       ref="itemTable"
+      v-model:pagination="pagination"
       class="sticky-header-table tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
       :style="tableHeight"
+      color="primary"
       flat
       bordered
       :rows="rows"
@@ -419,11 +422,14 @@ const filterSourcesFn = (val, update) => {
       virtual-scroll
       virtual-scroll-sticky-size-start="50"
       virtual-scroll-sticky-size-end="50"
-      v-model:pagination="pagination"
       :loading="loading"
       :filter="filters"
       rows-per-page-label="Items per page:"
       :rows-per-page-options="[50, 100, 0]"
+      table-header-class="v-step-3"
+      row-key="id"
+      selection="single"
+      :fullscreen="fullscreen"
       @request="onRequest"
       @row-click="
         (_, row: item) => {
@@ -431,22 +437,16 @@ const filterSourcesFn = (val, update) => {
           selected = [row];
         }
       "
-      row-key="id"
-      selection="single"
       @focusin="activateNavigation"
       @focusout="deactivateNavigation"
       @keydown="onKey"
-      id="v-step-0"
-      table-header-class="v-step-3"
-      color="primary"
-      :fullscreen="fullscreen"
     >
-      <template v-slot:loading>
+      <template #loading>
         <q-inner-loading showing style="z-index: 2">
           <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
         </q-inner-loading>
       </template>
-      <template v-slot:top>
+      <template #top>
         <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
           <div class="tw-flex tw-flex-shrink">
             <h1 class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
@@ -458,13 +458,13 @@ const filterSourcesFn = (val, update) => {
               <ShopBuilder ref="shopBuilderRef" />
               <q-separator vertical />
               <q-btn
+                id="v-step-2"
                 push
                 dense
                 class="tw-p-2"
                 size="md"
                 aria-label="Random shop"
                 @click="shopBuilderRef.generateShop()"
-                id="v-step-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -551,41 +551,41 @@ const filterSourcesFn = (val, update) => {
           </div>
         </div>
       </template>
-      <template v-slot:header-cell-source>
+      <template #header-cell-source>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filters.source_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filters.source_filter"
                 :options="Object.freeze(sources)"
-                @filter="filterSourcesFn"
-                use-input
-                input-debounce="0"
                 :label="columns[0].label"
                 :style="columns[0].style"
+                use-input
+                input-debounce="0"
+                @filter="filterSourcesFn"
               />
             </div>
             <div class="col-shrink tw-mx-2"></div>
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-name>
+      <template #header-cell-name>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-input
+                v-model="filters.name_filter"
                 dense
                 outlined
-                v-model="filters.name_filter"
                 :label="columns[1].label"
                 :style="columns[1].style"
               />
@@ -605,7 +605,7 @@ const filterSourcesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-level>
+      <template #header-cell-level>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
@@ -618,7 +618,7 @@ const filterSourcesFn = (val, update) => {
                 :style="columns[2].style"
                 stack-label
               >
-                <template v-slot:control>
+                <template #control>
                   {{ filters.level_filter.min }} to {{ filters.level_filter.max }}
                 </template>
                 <q-popup-proxy>
@@ -653,19 +653,19 @@ const filterSourcesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-rarity>
+      <template #header-cell-rarity>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filters.rarity_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filters.rarity_filter"
                 :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
                 :label="columns[3].label"
                 :style="columns[3].style"
@@ -686,19 +686,19 @@ const filterSourcesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-type>
+      <template #header-cell-type>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filters.type_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filters.type_filter"
                 :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Shield', 'Weapon'])"
                 :label="columns[4].label"
                 :style="columns[4].style"
@@ -719,21 +719,21 @@ const filterSourcesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-id>
+      <template #header-cell-id>
         <q-th>
           <q-icon :name="biBasketFill" class="tw-mr-1" size="sm"></q-icon>
         </q-th>
       </template>
-      <template v-slot:body-selection="selected">
+      <template #body-selection="selectedItem">
         <q-btn
-          :props="selected"
+          :props="selectedItem"
           round
           unelevated
           :icon="biBoxArrowUpRight"
           size="sm"
-          @click="openShopSheet(selected.row.core_item.id)"
-          target="_blank"
           aria-label="Open item sheet"
+          target="_blank"
+          @click="openShopSheet(selectedItem.row.core_item.id)"
         >
           <q-tooltip
             class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -744,12 +744,12 @@ const filterSourcesFn = (val, update) => {
           </q-tooltip>
         </q-btn>
       </template>
-      <template v-slot:body-cell-source="source">
+      <template #body-cell-source="source">
         <q-td :props="source">
           <q-btn
+            v-if="source.row.core_item.source"
             round
             unelevated
-            v-if="source.row.core_item.source"
             :icon="biBook"
             size="sm"
             padding="sm"
@@ -774,7 +774,7 @@ const filterSourcesFn = (val, update) => {
           </q-btn>
         </q-td>
       </template>
-      <template v-slot:body-cell-name="name">
+      <template #body-cell-name="name">
         <q-td :props="name">
           <q-icon
             v-if="
@@ -818,7 +818,7 @@ const filterSourcesFn = (val, update) => {
           />
         </q-td>
       </template>
-      <template v-slot:body-cell-type="type">
+      <template #body-cell-type="type">
         <q-td :props="type">
           <q-icon
             v-if="type.row.core_item.item_type === 'Armor'"
@@ -882,7 +882,7 @@ const filterSourcesFn = (val, update) => {
           </q-icon>
         </q-td>
       </template>
-      <template v-slot:body-cell-id="id">
+      <template #body-cell-id="id">
         <q-td :props="id">
           <q-btn
             round
@@ -890,9 +890,9 @@ const filterSourcesFn = (val, update) => {
             :icon="biPlusLg"
             size="sm"
             class="tw-mr-1"
-            @click="addItem(id.row)"
-            target="_blank"
             aria-label="Open creature sheet"
+            target="_blank"
+            @click="addItem(id.row)"
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -904,7 +904,7 @@ const filterSourcesFn = (val, update) => {
           </q-btn>
         </q-td>
       </template>
-      <template v-slot:no-data>
+      <template #no-data>
         <div class="row flex-center q-gutter-sm">
           <q-icon size="2em" :name="matWarning" />
           <span> No item matches the current filters </span>
