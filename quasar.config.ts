@@ -4,6 +4,9 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 import { configure } from 'quasar/wrappers';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: ['.env.local', '.env'] });
 
 export default configure((/* ctx */) => {
   return {
@@ -48,7 +51,9 @@ export default configure((/* ctx */) => {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        API_URL: process.env.API_URL
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       minify: 'terser',

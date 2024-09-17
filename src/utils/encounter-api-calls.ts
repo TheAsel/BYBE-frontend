@@ -1,4 +1,3 @@
-import { backendUrl } from 'src/boot/globals';
 import type { creature } from 'src/types/creature';
 import type { adventure_groups, encounter, random_encounter } from 'src/types/encounter';
 import type { alignments, sizes, rarities, challenges, roles, variants } from 'src/types/filters';
@@ -10,7 +9,7 @@ export async function requestCreatures(start: number, page_size: number, version
       headers: { accept: 'application/json' }
     };
     const response = await fetch(
-      backendUrl +
+      process.env.API_URL +
         '/bestiary/list?cursor=' +
         start +
         '&page_size=' +
@@ -46,7 +45,7 @@ export async function requestFilters(
       method: 'GET',
       headers: { accept: 'application/json' }
     };
-    const response = await fetch(backendUrl + '/bestiary/' + filter, requestOptions);
+    const response = await fetch(process.env.API_URL + '/bestiary/' + filter, requestOptions);
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
@@ -69,7 +68,7 @@ export async function requestCreatureId(
       headers: { accept: 'application/json' }
     };
     const response = await fetch(
-      backendUrl +
+      process.env.API_URL +
         '/bestiary/' +
         variant.toLowerCase() +
         '/' +
@@ -100,7 +99,7 @@ export async function encounterInfo(encounter: {
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(encounter)
     };
-    const response = await fetch(backendUrl + '/encounter/info', requestOptions);
+    const response = await fetch(process.env.API_URL + '/encounter/info', requestOptions);
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
@@ -136,7 +135,7 @@ export async function encounterGenerator(body: {
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     };
-    const response = await fetch(backendUrl + '/encounter/generator', requestOptions);
+    const response = await fetch(process.env.API_URL + '/encounter/generator', requestOptions);
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
