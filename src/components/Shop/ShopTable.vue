@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, toRaw } from 'vue';
-import { requestItems, requestSources } from 'src/utils/shop-api-calls';
+import { requestFilters, requestItems } from 'src/utils/shop-api-calls';
 import type { item, min_item } from 'src/types/item';
 import {
   biArrowDownUp,
@@ -17,7 +17,7 @@ import { item_columns, item_filters, rarities } from 'src/types/filters';
 import { itemsStore, settingsStore } from 'src/stores/store';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
-import { debounce } from 'lodash-es';
+import { capitalize, debounce } from 'lodash-es';
 import { useRouter } from 'vue-router';
 import ShopBuilder from 'src/components/Shop/ShopTable/ShopBuilder.vue';
 import {
@@ -52,9 +52,11 @@ const pagination = ref({
   rowsNumber: 0
 });
 const sources = ref<string[]>();
+const traits = ref<{ label: string; value: string }[]>([]);
 const filters = ref<{
   name_filter: string;
   level_filter: { min: number; max: number };
+  trait_filter: { label: string; value: string }[];
   rarity_filter: rarities[];
   type_filter: string[];
   source_filter: string[];
@@ -63,6 +65,7 @@ const filters = ref<{
 }>({
   name_filter: '',
   level_filter: { min: 0, max: 25 },
+  trait_filter: [],
   rarity_filter: [],
   type_filter: [],
   source_filter: [],
@@ -72,6 +75,7 @@ const filters = ref<{
 const fullscreen = ref(false);
 const tableHeight = ref('height: calc(100vh - 122px)');
 const sourcesOptions = ref(['']);
+const traitsOptions = ref<{ label: string; value: string }[]>([]);
 
 const columns: {
   name: item_columns;
@@ -110,6 +114,15 @@ const columns: {
     style: 'min-width: 80px;'
   },
   {
+    name: 'trait',
+    label: 'Traits',
+    field: (row) => row.core_item.traits,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 200px; max-width: 300px;'
+  },
+  {
     name: 'rarity',
     label: 'Rarity',
     field: (row) => row.core_item.rarity,
@@ -146,6 +159,9 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   };
   if (filters.value.name_filter != '') {
     body.name_filter = filters.value.name_filter;
+  }
+  if (filters.value.trait_filter != undefined && filters.value.trait_filter.length > 0) {
+    body.trait_whitelist_filter = filters.value.trait_filter.map((traits) => traits.value);
   }
   if (filters.value.rarity_filter != undefined && filters.value.rarity_filter.length > 0) {
     body.rarity_filter = filters.value.rarity_filter;
@@ -201,6 +217,7 @@ const resetFilters = () => {
   filters.value = {
     name_filter: '',
     level_filter: { min: 0, max: 25 },
+    trait_filter: [],
     rarity_filter: [],
     type_filter: [],
     source_filter: [],
@@ -376,12 +393,26 @@ async function onKey(evt) {
 await fetchFromServer(0, 100);
 
 try {
-  const request = await requestSources();
-  if (request) {
-    sources.value = request.sort();
+  const sourcesRequest = await requestFilters('sources');
+  if (sourcesRequest) {
+    sources.value = sourcesRequest;
     sourcesOptions.value = sources.value;
   } else {
     throw new Error('Error fetching sources');
+  }
+  const traitsRequest = await requestFilters('traits');
+  if (traitsRequest) {
+    traits.value = traitsRequest.map((trait) => ({
+      label: trait
+        .split('-')
+        .map((str) => capitalize(str))
+        .join(' ')
+        .replace('Additive', 'Additive '),
+      value: trait
+    }));
+    traitsOptions.value = traits.value;
+  } else {
+    throw new Error('Error fetching traits');
   }
 } catch (error) {
   console.error(error);
@@ -400,6 +431,13 @@ const filterSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
     sources.value = sourcesOptions.value.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+  });
+};
+
+const filterTraitsFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    traits.value = traitsOptions.value.filter((v) => v.value.toLowerCase().indexOf(filter) > -1);
   });
 };
 </script>
@@ -653,6 +691,42 @@ const filterSourcesFn = (val, update) => {
           </div>
         </q-th>
       </template>
+      <template #header-cell-trait>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                v-model="filters.trait_filter"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="traits"
+                :label="columns[3].label"
+                :style="columns[3].style"
+                use-input
+                input-debounce="0"
+                @filter="filterTraitsFn"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort traits column"
+                @click="sort(columns[3].name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
       <template #header-cell-rarity>
         <q-th>
           <div
@@ -667,8 +741,8 @@ const filterSourcesFn = (val, update) => {
                 clearable
                 options-dense
                 :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
-                :label="columns[3].label"
-                :style="columns[3].style"
+                :label="columns[4].label"
+                :style="columns[4].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -680,7 +754,7 @@ const filterSourcesFn = (val, update) => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort rarity column"
-                @click="sort(columns[3].name)"
+                @click="sort(columns[4].name)"
               />
             </div>
           </div>
@@ -700,8 +774,8 @@ const filterSourcesFn = (val, update) => {
                 clearable
                 options-dense
                 :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Shield', 'Weapon'])"
-                :label="columns[4].label"
-                :style="columns[4].style"
+                :label="columns[5].label"
+                :style="columns[5].style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -713,7 +787,7 @@ const filterSourcesFn = (val, update) => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort types column"
-                @click="sort(columns[4].name)"
+                @click="sort(columns[5].name)"
               />
             </div>
           </div>
@@ -816,6 +890,25 @@ const filterSourcesFn = (val, update) => {
             class="tw-ml-1 tw-text-xs"
             label="Legacy"
           />
+        </q-td>
+      </template>
+      <template #body-cell-trait="trait">
+        <q-td :props="trait">
+          <span
+            v-if="trait.row.core_item.traits"
+            class="tw-block tw-max-w-[250px] tw-whitespace-normal"
+          >
+            {{
+              trait.row.core_item.traits
+                .map((trait: string) => {
+                  return trait
+                    .split('-')
+                    .map((str) => capitalize(str))
+                    .join(' ');
+                })
+                .join(', ')
+            }}
+          </span>
         </q-td>
       </template>
       <template #body-cell-type="type">

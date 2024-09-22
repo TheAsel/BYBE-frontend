@@ -126,7 +126,7 @@ const openShopSheet = (id: number) => {
       :key="item"
       class="tw-bg-[#522e2c] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
     >
-      {{ item.toUpperCase() }}
+      {{ item.toUpperCase().replaceAll('-', ' ').replace('ADDITIVE', 'ADDITIVE ') }}
     </div>
   </div>
   <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
