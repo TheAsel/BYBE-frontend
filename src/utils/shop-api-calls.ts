@@ -1,13 +1,13 @@
 import type { item_columns, item_filters } from 'src/types/filters';
 import type { item, item_response } from 'src/types/item';
 
-export async function requestSources() {
+export async function requestFilters(filter: 'sources' | 'traits') {
   try {
     const requestOptions = {
       method: 'GET',
       headers: { accept: 'application/json' }
     };
-    const response = await fetch(process.env.API_URL + '/shop/sources', requestOptions);
+    const response = await fetch(process.env.API_URL + '/shop/' + filter, requestOptions);
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
