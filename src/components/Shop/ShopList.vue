@@ -174,10 +174,14 @@ const showItem = debounce(async function (item: min_item) {
                     v-model="newShopName"
                     dense
                     autofocus
+                    counter
+                    :maxlength="50"
                     :no-error-icon="true"
                     :rules="[
                       (val) => !!val || 'Field is required',
-                      (val) => !shops.find((name) => name === val) || 'This shop already exists'
+                      (val) =>
+                        !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                        'This shop already exists'
                     ]"
                     @keyup.enter="addShop"
                   />

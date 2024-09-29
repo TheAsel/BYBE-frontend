@@ -176,9 +176,9 @@ const filterType = ref<string[]>();
 const filterAttacks = ref([false, false, false]);
 const filterRole = ref<roles[]>();
 
-const sourcesOptions = filters.getFilters.sources;
-const traitsOptions = filters.getFilters.traits;
-const familiesOptions = filters.getFilters.families;
+const sourcesOptions = filters.getCreatureFilters.sources;
+const traitsOptions = filters.getCreatureFilters.traits;
+const familiesOptions = filters.getCreatureFilters.families;
 
 // ---- Filter function
 // combines all filters
@@ -333,21 +333,25 @@ const toggleFullscreen = () => {
 const filterSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getFilters.sources = sourcesOptions.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+    filters.getCreatureFilters.sources = sourcesOptions.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
   });
 };
 
 const filterTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getFilters.traits = traitsOptions.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+    filters.getCreatureFilters.traits = traitsOptions.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
   });
 };
 
 const filterFamiliesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getFilters.families = familiesOptions.filter(
+    filters.getCreatureFilters.families = familiesOptions.filter(
       (v) => v.toLowerCase().indexOf(filter) > -1
     );
   });
@@ -495,7 +499,7 @@ const filterFamiliesFn = (val, update) => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.sources)"
+                :options="Object.freeze(filters.getCreatureFilters.sources)"
                 use-input
                 input-debounce="0"
                 :label="columns[0].label"
@@ -641,7 +645,7 @@ const filterFamiliesFn = (val, update) => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.traits)"
+                :options="Object.freeze(filters.getCreatureFilters.traits)"
                 use-input
                 input-debounce="0"
                 :label="columns[4].label"
@@ -677,7 +681,7 @@ const filterFamiliesFn = (val, update) => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.alignments)"
+                :options="Object.freeze(filters.getCreatureFilters.alignments)"
                 :label="columns[5].label"
                 :style="columns[5].style"
               />
@@ -710,7 +714,7 @@ const filterFamiliesFn = (val, update) => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.sizes)"
+                :options="Object.freeze(filters.getCreatureFilters.sizes)"
                 :label="columns[6].label"
                 :style="columns[6].style"
               />
@@ -743,7 +747,7 @@ const filterFamiliesFn = (val, update) => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.rarities)"
+                :options="Object.freeze(filters.getCreatureFilters.rarities)"
                 :label="columns[7].label"
                 :style="columns[7].style"
               />
@@ -776,7 +780,7 @@ const filterFamiliesFn = (val, update) => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.families)"
+                :options="Object.freeze(filters.getCreatureFilters.families)"
                 use-input
                 input-debounce="0"
                 :label="columns[8].label"
@@ -812,7 +816,7 @@ const filterFamiliesFn = (val, update) => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.creature_types)"
+                :options="Object.freeze(filters.getCreatureFilters.creature_types)"
                 :label="columns[9].label"
                 :style="columns[9].style"
               />
@@ -951,7 +955,7 @@ const filterFamiliesFn = (val, update) => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.creature_roles)"
+                :options="Object.freeze(filters.getCreatureFilters.creature_roles)"
                 :label="columns[11].label"
                 :style="columns[11].style"
               />
