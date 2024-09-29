@@ -83,7 +83,7 @@ docker build -t bybe-frontend .
 4. Run the docker image:
 
 ```
-docker run --name bybe-frontend -p 3000:80 --rm bybe-frontend
+docker run --name bybe-frontend -p 3000:8080 --rm bybe-frontend
 ```
 
 ## Support me
