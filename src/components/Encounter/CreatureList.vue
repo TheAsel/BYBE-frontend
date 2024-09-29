@@ -214,12 +214,15 @@ const openCreatureSheet = (id: number) => {
                     v-model="newEncounterName"
                     dense
                     autofocus
+                    counter
+                    :maxlength="50"
+                    :no-error-icon="true"
                     :rules="[
                       (val) => !!val || 'Field is required',
                       (val) =>
-                        !encounters.find((name) => name === val) || 'This encounter already exists'
+                        !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                        'This encounter already exists'
                     ]"
-                    :no-error-icon="true"
                     @keyup.enter="addEncounter"
                   />
                 </q-card-section>

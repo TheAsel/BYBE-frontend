@@ -6,6 +6,7 @@ import type { encounter, encounter_list } from 'src/types/encounter';
 import type { roles, variants } from 'src/types/filters';
 import type { item, min_item } from 'src/types/item';
 import { shop_list } from 'src/types/shop';
+import { template, template_data } from 'src/types/template';
 
 export const settingsStore = defineStore('settings', {
   state: () => ({
@@ -87,7 +88,7 @@ export const partyStore = defineStore('party', {
 
 export const filtersStore = defineStore('filters', {
   state: () => ({
-    filters: {
+    creatureFilters: {
       traits: [] as string[],
       alignments: [] as string[],
       sizes: [] as string[],
@@ -96,38 +97,56 @@ export const filtersStore = defineStore('filters', {
       creature_types: [] as string[],
       sources: [] as string[],
       creature_roles: [] as string[]
+    },
+    itemFilters: {
+      sources: [] as string[],
+      traits: [{}] as { label: string; value: string }[]
     }
   }),
   getters: {
-    getFilters: (state) => state.filters
+    getCreatureFilters: (state) => state.creatureFilters,
+    getItemFilters: (state) => state.itemFilters
   },
   actions: {
     updateTraits(newTraits: string[]) {
-      this.filters.traits = newTraits.map((trait) => {
+      this.creatureFilters.traits = newTraits.map((trait) => {
         return capitalize(trait);
       });
     },
     updateAlignments(newAlignments: string[]) {
-      this.filters.alignments = newAlignments;
+      this.creatureFilters.alignments = newAlignments;
     },
     updateSizes(newSizes: string[]) {
       newSizes.reverse();
-      this.filters.sizes = newSizes;
+      this.creatureFilters.sizes = newSizes;
     },
     updateRarities(newRarities: string[]) {
-      this.filters.rarities = newRarities;
+      this.creatureFilters.rarities = newRarities;
     },
     updateFamilies(newFamilies: string[]) {
-      this.filters.families = newFamilies;
+      this.creatureFilters.families = newFamilies;
     },
     updateCreatureType(newCreatureType: string[]) {
-      this.filters.creature_types = newCreatureType;
+      this.creatureFilters.creature_types = newCreatureType;
     },
     updateSources(newSources: string[]) {
-      this.filters.sources = newSources;
+      this.creatureFilters.sources = newSources;
     },
     updateRoles(newRoles: string[]) {
-      this.filters.creature_roles = newRoles;
+      this.creatureFilters.creature_roles = newRoles;
+    },
+    updateItemSources(newSources: string[]) {
+      this.itemFilters.sources = newSources;
+    },
+    updateItemTraits(newTraits: string[]) {
+      this.itemFilters.traits = newTraits.map((trait) => ({
+        label: trait
+          .split('-')
+          .map((str) => capitalize(str))
+          .join(' ')
+          .replace('Additive', 'Additive '),
+        value: trait
+      }));
     }
   }
 });
@@ -447,6 +466,75 @@ export const itemsStore = defineStore('items', {
         usage = usage.replace(worn[0], worn[1] + ' ' + worn[2]);
       }
       return usage;
+    }
+  }
+});
+
+export const templateStore = defineStore('template', {
+  state: () => ({
+    templates: [] as template[],
+    activeTemplate: 0,
+    defaultTemplates: 0
+  }),
+  getters: {
+    getTemplates: (state) => state.templates,
+    getActive: (state) => state.activeTemplate,
+    getActiveTemplate: (state) => state.templates[state.activeTemplate]
+  },
+  actions: {
+    getTemplateIndex(templateName: string): number {
+      const index = this.templates.map((template) => template.name).indexOf(templateName);
+      return index;
+    },
+    updateTemplate(oldName: string, newTemplate: template) {
+      const templateIndex = this.getTemplateIndex(oldName);
+      if (templateIndex >= this.defaultTemplates - 1) {
+        this.templates[templateIndex] = newTemplate;
+      }
+    },
+    updateTemplates(newTemplates: template[]) {
+      this.templates = newTemplates;
+    },
+    changeActiveTemplate(templateIndex: number) {
+      if (templateIndex >= this.templates.length || templateIndex < 0) {
+        this.activeTemplate = 0;
+      } else {
+        this.activeTemplate = templateIndex;
+      }
+    },
+    addDefaultTemplates(defaultTemplates: template_data[]) {
+      const newTemplates: template[] = [];
+      defaultTemplates.forEach((template) => {
+        newTemplates.push({
+          default: true,
+          name: template.name,
+          description: template.description,
+          source_filter: [],
+          trait_blacklist_filter: [],
+          trait_whitelist_filter: [],
+          rarity_filter: template.item_rarities,
+          type_filter: template.item_types,
+          armor_percentage: template.armor_percentage,
+          equipment_percentage: template.equipment_percentage,
+          shield_percentage: template.shield_percentage,
+          weapon_percentage: template.weapon_percentage
+        });
+      });
+      this.defaultTemplates = newTemplates.length;
+      newTemplates.sort((a, b) => a.name.localeCompare(b.name));
+      this.templates.forEach((template) => {
+        newTemplates.push(template);
+      });
+      this.templates = newTemplates;
+      this.changeActiveTemplate(this.getTemplateIndex('General'));
+    },
+    addTemplate(newTemplate: template) {
+      this.templates.push(newTemplate);
+      this.activeTemplate = this.templates.length - 1;
+    },
+    removeTemplate() {
+      this.templates.splice(this.activeTemplate, 1);
+      this.changeActiveTemplate(this.getTemplateIndex('General'));
     }
   }
 });

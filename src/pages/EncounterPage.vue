@@ -109,13 +109,13 @@ if (localEncounters) {
 // ---- API requests
 try {
   if (
-    filters.getFilters.traits.length === 0 ||
-    filters.getFilters.alignments.length === 0 ||
-    filters.getFilters.sizes.length === 0 ||
-    filters.getFilters.rarities.length === 0 ||
-    filters.getFilters.families.length === 0 ||
-    filters.getFilters.sources.length === 0 ||
-    filters.getFilters.creature_roles.length === 0 ||
+    filters.getCreatureFilters.traits.length === 0 ||
+    filters.getCreatureFilters.alignments.length === 0 ||
+    filters.getCreatureFilters.sizes.length === 0 ||
+    filters.getCreatureFilters.rarities.length === 0 ||
+    filters.getCreatureFilters.families.length === 0 ||
+    filters.getCreatureFilters.sources.length === 0 ||
+    filters.getCreatureFilters.creature_roles.length === 0 ||
     creatures.getCreatures.length === 0
   ) {
     let [

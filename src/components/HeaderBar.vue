@@ -21,6 +21,7 @@ import type { party } from 'src/types/party';
 import type { encounter_list } from 'src/types/encounter';
 import { settingsStore, encounterStore } from 'stores/store';
 import { shop_list } from 'src/types/shop';
+import { template } from 'src/types/template';
 
 const encounter = encounterStore();
 const settings = settingsStore();
@@ -319,6 +320,26 @@ const validateData = (result: string) => {
             }
           } else {
             throw new Error('Invalid loaded shop format');
+          }
+          break;
+        }
+        case 'templates': {
+          const parsedTemplates = JSON.parse(parsedData[key]);
+          if (Array.isArray(parsedTemplates)) {
+            const isCompatible = parsedTemplates.every((p) => {
+              return typeof p.name === 'string' && typeof p.default === 'boolean';
+            });
+            if (isCompatible) {
+              const templates: template[] = parsedTemplates;
+              const templatesNames = templates.map((p) => p.name);
+              if (new Set(templatesNames).size !== templatesNames.length) {
+                throw new Error('Duplicate loaded template names');
+              }
+            } else {
+              throw new Error('Invalid loaded template format');
+            }
+          } else {
+            throw new Error('Invalid loaded template format');
           }
           break;
         }
