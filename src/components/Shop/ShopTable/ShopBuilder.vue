@@ -714,7 +714,7 @@ defineExpose({ generateShop });
                         dense
                         autogrow
                         counter
-                        :maxlength="50"
+                        :maxlength="100"
                         label="Description"
                         type="textarea"
                       />
@@ -1141,7 +1141,7 @@ defineExpose({ generateShop });
                         dense
                         autogrow
                         counter
-                        :maxlength="50"
+                        :maxlength="100"
                         label="Description"
                         type="textarea"
                       />
