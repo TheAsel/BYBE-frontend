@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { mdiCloseCircle } from '@quasar/extras/mdi-v7';
@@ -319,6 +319,9 @@ const addTemplate = () => {
       resetTemplateDialog();
     } else {
       tab.value = 'General';
+      nextTick(() => {
+        newNameInput.value.validate();
+      });
     }
   } catch (error) {
     console.error(error);
@@ -417,6 +420,11 @@ const editTemplate = () => {
       saveChanges();
       editTemplateDialog.value = false;
       resetTemplateDialog();
+    } else {
+      tab.value = 'General';
+      nextTick(() => {
+        editNameInput.value.validate();
+      });
     }
   } catch (error) {
     console.error(error);
@@ -808,27 +816,27 @@ defineExpose({ generateShop });
                   </q-tab-panel>
                   <q-tab-panel name="Advanced" class="tw-px-3">
                     <q-card-section class="tw-flex" style="max-height: 46rem">
+                      <q-input
+                        ref="newNameInput"
+                        v-model="newTemplate.name"
+                        outlined
+                        dense
+                        autofocus
+                        label="Name"
+                        counter
+                        class="tw-hidden"
+                        :maxlength="50"
+                        :no-error-icon="true"
+                        :rules="[
+                          (val) => !!val || 'Field is required',
+                          (val) =>
+                            !template_list.find(
+                              (name) => name.toLowerCase() === val.toLowerCase()
+                            ) || 'This template already exists'
+                        ]"
+                      />
                       <div class="tw-space-y-3">
                         <div class="tw-flex tw-flex-col">
-                          <q-input
-                            ref="newNameInput"
-                            v-model="newTemplate.name"
-                            outlined
-                            dense
-                            autofocus
-                            label="Name"
-                            counter
-                            class="tw-hidden"
-                            :maxlength="50"
-                            :no-error-icon="true"
-                            :rules="[
-                              (val) => !!val || 'Field is required',
-                              (val) =>
-                                !template_list.find(
-                                  (name) => name.toLowerCase() === val.toLowerCase()
-                                ) || 'This template already exists'
-                            ]"
-                          />
                           <div class="tw-flex tw-flex-row">
                             <q-checkbox
                               v-model="armorOn"
@@ -972,7 +980,7 @@ defineExpose({ generateShop });
                       flat
                       label="Cancel"
                       type="button"
-                      class="full-width tw-px-16 tw-text-blue-600 dark:tw-text-blue-400"
+                      class="full-width !tw-px-6 tw-text-blue-600 dark:tw-text-blue-400"
                       @click="
                         resetTemplateDialog();
                         newTemplateDialog = false;
@@ -983,7 +991,7 @@ defineExpose({ generateShop });
                       flat
                       label="Add template"
                       type="button"
-                      class="full-width tw-text-blue-600 dark:tw-text-blue-400"
+                      class="full-width !tw-px-6 tw-text-blue-600 dark:tw-text-blue-400"
                       @click="addTemplate()"
                     />
                   </q-btn-group>
@@ -1235,29 +1243,29 @@ defineExpose({ generateShop });
                   </q-tab-panel>
                   <q-tab-panel name="Advanced" class="tw-px-3">
                     <q-card-section class="tw-flex" style="max-height: 46rem">
+                      <q-input
+                        ref="editNameInput"
+                        v-model="newTemplate.name"
+                        outlined
+                        dense
+                        autofocus
+                        label="Name"
+                        counter
+                        class="tw-hidden"
+                        :maxlength="50"
+                        :no-error-icon="true"
+                        :rules="[
+                          (val) => !!val || 'Field is required',
+                          (val) =>
+                            !template_list.find(
+                              (name) =>
+                                name.toLowerCase() === val.toLowerCase() &&
+                                newTemplate.name !== templatesStore.getActiveTemplate.name
+                            ) || 'This template already exists'
+                        ]"
+                      />
                       <div class="tw-space-y-3">
                         <div class="tw-flex tw-flex-col">
-                          <q-input
-                            ref="editNameInput"
-                            v-model="newTemplate.name"
-                            outlined
-                            dense
-                            autofocus
-                            label="Name"
-                            counter
-                            class="tw-hidden"
-                            :maxlength="50"
-                            :no-error-icon="true"
-                            :rules="[
-                              (val) => !!val || 'Field is required',
-                              (val) =>
-                                !template_list.find(
-                                  (name) =>
-                                    name.toLowerCase() === val.toLowerCase() &&
-                                    newTemplate.name !== templatesStore.getActiveTemplate.name
-                                ) || 'This template already exists'
-                            ]"
-                          />
                           <div class="tw-flex tw-flex-row">
                             <q-checkbox
                               v-model="armorOn"
@@ -1401,7 +1409,7 @@ defineExpose({ generateShop });
                       flat
                       label="Cancel"
                       type="button"
-                      class="full-width tw-px-16 tw-text-blue-600 dark:tw-text-blue-400"
+                      class="full-width !tw-px-6 tw-text-blue-600 dark:tw-text-blue-400"
                       @click="
                         resetTemplateDialog();
                         editTemplateDialog = false;
@@ -1412,7 +1420,7 @@ defineExpose({ generateShop });
                       flat
                       label="Edit template"
                       type="button"
-                      class="full-width tw-text-blue-600 dark:tw-text-blue-400"
+                      class="full-width !tw-px-6 tw-text-blue-600 dark:tw-text-blue-400"
                       @click="editTemplate()"
                     />
                   </q-btn-group>
