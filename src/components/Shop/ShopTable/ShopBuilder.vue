@@ -311,6 +311,7 @@ const addTemplate = () => {
       if (weaponOn.value) {
         newTemplate.value.type_filter?.push('Weapon');
       }
+      newTemplate.value.type_filter?.push('Consumable');
       templatesStore.addTemplate(newTemplate.value);
       template_list.value = templatesStore.getTemplates.map((template) => template.name);
       tmpFilters.value.shop_template = cloneDeep(templatesStore.getActiveTemplate);
@@ -413,6 +414,7 @@ const editTemplate = () => {
       if (weaponOn.value) {
         newTypes.push('Weapon');
       }
+      newTypes.push('Consumable');
       newTemplate.value.type_filter = newTypes;
       templatesStore.updateTemplate(templatesStore.getActiveTemplate.name, newTemplate.value);
       template_list.value = templatesStore.getTemplates.map((template) => template.name);
