@@ -264,6 +264,7 @@ defineExpose({ generateEncounter });
                 input-debounce="0"
                 label="Traits"
                 style="max-width: 242px"
+                virtual-scroll-item-size="32"
                 @filter="filterTraitsFn"
               />
 
@@ -303,6 +304,7 @@ defineExpose({ generateEncounter });
                 input-debounce="0"
                 label="Family"
                 style="max-width: 242px"
+                virtual-scroll-item-size="32"
                 @filter="filterFamiliesFn"
               />
 

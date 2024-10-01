@@ -375,6 +375,8 @@ const filterFamiliesFn = (val, update) => {
       :rows-per-page-options="[0]"
       :visible-columns="visibleColumns"
       virtual-scroll
+      virtual-scroll-sticky-size-start="50"
+      virtual-scroll-item-size="48"
       no-data-label="No creature matches the current filters"
       :fullscreen="fullscreen"
       @row-dblclick="(_, row) => addCreature(row)"
@@ -504,6 +506,7 @@ const filterFamiliesFn = (val, update) => {
                 input-debounce="0"
                 :label="columns[0].label"
                 :style="columns[0].style"
+                virtual-scroll-item-size="32"
                 @filter="filterSourcesFn"
               />
             </div>
@@ -650,6 +653,7 @@ const filterFamiliesFn = (val, update) => {
                 input-debounce="0"
                 :label="columns[4].label"
                 :style="columns[4].style"
+                virtual-scroll-item-size="32"
                 @filter="filterTraitsFn"
               />
             </div>
@@ -785,6 +789,7 @@ const filterFamiliesFn = (val, update) => {
                 input-debounce="0"
                 :label="columns[8].label"
                 :style="columns[8].style"
+                virtual-scroll-item-size="32"
                 @filter="filterFamiliesFn"
               />
             </div>
