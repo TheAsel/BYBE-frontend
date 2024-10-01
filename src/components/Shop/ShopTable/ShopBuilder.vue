@@ -47,6 +47,7 @@ const duplicateTemplateDialog = ref(false);
 const duplicateNameInput = ref();
 const editTemplateDialog = ref(false);
 const editNameInput = ref();
+const editTraitSelect = ref();
 
 const newTemplate = ref<template>({
   default: false,
@@ -379,6 +380,15 @@ const openEditDialog = () => {
     });
   });
   editTemplateDialog.value = true;
+  nextTick(() => {
+    selectedTraits.value.forEach((trait) => {
+      editTraitSelect.value.options.forEach((opt) => {
+        if (opt.label === trait.label) {
+          opt.state = trait.state;
+        }
+      });
+    });
+  });
 };
 
 const editTemplate = () => {
@@ -741,6 +751,7 @@ defineExpose({ generateShop });
                         input-debounce="0"
                         label="Source"
                         style="max-width: 235px"
+                        virtual-scroll-item-size="32"
                         @filter="filterSourcesFn"
                       />
                       <q-select
@@ -756,6 +767,7 @@ defineExpose({ generateShop });
                         input-debounce="0"
                         label="Traits"
                         style="max-width: 235px"
+                        :virtual-scroll-slice-size="traitsOptions.length"
                         @filter="filterTraitsFn"
                       >
                         <template #selected-item="scope">
@@ -1168,9 +1180,11 @@ defineExpose({ generateShop });
                         input-debounce="0"
                         label="Source"
                         style="max-width: 235px"
+                        virtual-scroll-item-size="32"
                         @filter="filterSourcesFn"
                       />
                       <q-select
+                        ref="editTraitSelect"
                         v-model="selectedTraits"
                         multiple
                         dense
@@ -1183,6 +1197,7 @@ defineExpose({ generateShop });
                         input-debounce="0"
                         label="Traits"
                         style="max-width: 235px"
+                        :virtual-scroll-slice-size="traitsOptions.length"
                         @filter="filterTraitsFn"
                       >
                         <template #selected-item="scope">

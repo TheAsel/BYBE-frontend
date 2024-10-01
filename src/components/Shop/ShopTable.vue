@@ -459,7 +459,7 @@ const filterTraitsFn = (val, update) => {
       :visible-columns="visibleColumns"
       virtual-scroll
       virtual-scroll-sticky-size-start="50"
-      virtual-scroll-sticky-size-end="50"
+      virtual-scroll-item-size="48"
       :loading="loading"
       :filter="filters"
       rows-per-page-label="Items per page:"
@@ -607,6 +607,7 @@ const filterTraitsFn = (val, update) => {
                 :style="columns[0].style"
                 use-input
                 input-debounce="0"
+                virtual-scroll-item-size="32"
                 @filter="filterSourcesFn"
               />
             </div>
@@ -709,6 +710,7 @@ const filterTraitsFn = (val, update) => {
                 :style="columns[3].style"
                 use-input
                 input-debounce="0"
+                virtual-scroll-item-size="32"
                 @filter="filterTraitsFn"
               />
             </div>
