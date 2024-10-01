@@ -19,6 +19,8 @@ export type template_data = {
   name: string;
   description: string;
   item_types?: string[];
+  item_traits_whitelist: string[];
+  item_traits_blacklist: string[];
   item_rarities?: rarities[];
   armor_percentage?: number;
   equipment_percentage?: number;
