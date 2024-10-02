@@ -123,9 +123,8 @@ const saveChanges = () => {
             label="Active Party"
             @update:model-value="changeActiveParty(tmpParty.name)"
           />
-          <q-space />
           <q-btn
-            class="tw-my-auto"
+            class="tw-my-auto tw-mx-2"
             :icon="biPlusLg"
             size="sm"
             padding="sm"
@@ -159,10 +158,14 @@ const saveChanges = () => {
                   v-model="newPartyName"
                   dense
                   autofocus
+                  counter
+                  :maxlength="50"
                   :no-error-icon="true"
                   :rules="[
                     (val) => !!val || 'Field is required',
-                    (val) => !parties.find((name) => name === val) || 'This party already exists'
+                    (val) =>
+                      !parties.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                      'This party already exists'
                   ]"
                   @keyup.enter="addParty"
                 />
@@ -184,9 +187,8 @@ const saveChanges = () => {
               </q-card-actions>
             </q-card>
           </q-dialog>
-          <q-space />
           <q-btn
-            class="tw-m-auto"
+            class="tw-my-auto"
             :icon="biTrash"
             size="sm"
             padding="sm"

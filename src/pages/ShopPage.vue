@@ -5,10 +5,11 @@ import ShopTable from 'src/components/Shop/ShopTable.vue';
 import ShopSheet from 'src/components/Shop/ShopSheet.vue';
 import ShopList from 'src/components/Shop/ShopList.vue';
 import { shop_list } from 'src/types/shop';
-import { itemsStore, settingsStore } from 'src/stores/store';
+import { itemsStore, settingsStore, templateStore } from 'src/stores/store';
 import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 import { item, min_item } from 'src/types/item';
+import { template } from 'src/types/template';
 
 useHead({
   title: 'Shop Generator - BYBE',
@@ -22,6 +23,7 @@ useHead({
 
 const settings = settingsStore();
 const shop = itemsStore();
+const templatesStore = templateStore();
 const tourActive = ref(false);
 const screenWidth = ref(screen.width);
 
@@ -53,6 +55,35 @@ if (localShops) {
     const defaultShop = { name: 'Default', items: [] };
     localStorage.setItem('shops', JSON.stringify([defaultShop]));
     shop.updateShops([defaultShop]);
+  }
+}
+
+const localTemplates = localStorage.getItem('templates');
+if (localTemplates) {
+  try {
+    const parsedTemplates = JSON.parse(localTemplates);
+    if (Array.isArray(parsedTemplates)) {
+      const isCompatible = parsedTemplates.every((p) => {
+        return typeof p.name === 'string' && typeof p.default === 'boolean';
+      });
+      if (isCompatible) {
+        const templates: template[] = parsedTemplates;
+        const templateNames = templates.map((p) => p.name);
+        if (new Set(templateNames).size !== templateNames.length) {
+          throw new Error('Duplicate saved template names');
+        }
+        templates.forEach((template) => (template.default = false));
+        templatesStore.updateTemplates(templates);
+      } else {
+        throw new Error('Invalid saved template format');
+      }
+    } else {
+      throw new Error('Invalid saved template format');
+    }
+  } catch (error) {
+    console.error(error);
+    localStorage.setItem('shops', JSON.stringify([]));
+    templatesStore.updateTemplates([]);
   }
 }
 

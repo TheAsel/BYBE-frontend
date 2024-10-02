@@ -59,7 +59,7 @@ export type item = {
     ];
     n_of_potency_runes: number;
     n_of_striking_runes: number;
-    property_runes: [];
+    property_runes: string[];
     range: number;
     reload: string;
     weapon_type: 'Melee' | 'Ranged' | 'Generic';

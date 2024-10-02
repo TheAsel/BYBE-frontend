@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, toRaw } from 'vue';
-import { requestFilters, requestItems } from 'src/utils/shop-api-calls';
+import { requestFilters, requestItems, requestTemplates } from 'src/utils/shop-api-calls';
 import type { item, min_item } from 'src/types/item';
 import {
   biArrowDownUp,
@@ -14,7 +14,7 @@ import {
   biFullscreenExit
 } from '@quasar/extras/bootstrap-icons';
 import { item_columns, item_filters, rarities } from 'src/types/filters';
-import { itemsStore, settingsStore } from 'src/stores/store';
+import { filtersStore, itemsStore, settingsStore, templateStore } from 'src/stores/store';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 import { capitalize, debounce } from 'lodash-es';
@@ -32,6 +32,7 @@ import SkeletonTable from 'src/components/Shop/SkeletonTable.vue';
 const $q = useQuasar();
 const settings = settingsStore();
 const items = itemsStore();
+const filterStore = filtersStore();
 
 const skeleton = ref(true);
 
@@ -51,7 +52,7 @@ const pagination = ref({
   rowsPerPage: 100,
   rowsNumber: 0
 });
-const sources = ref<string[]>();
+const sources = ref<string[]>(filterStore.getItemFilters.sources);
 const traits = ref<{ label: string; value: string }[]>([]);
 const filters = ref<{
   name_filter: string;
@@ -395,24 +396,23 @@ await fetchFromServer(0, 100);
 try {
   const sourcesRequest = await requestFilters('sources');
   if (sourcesRequest) {
-    sources.value = sourcesRequest;
-    sourcesOptions.value = sources.value;
+    filterStore.updateItemSources(sourcesRequest);
+    sourcesOptions.value = filterStore.getItemFilters.sources;
   } else {
     throw new Error('Error fetching sources');
   }
   const traitsRequest = await requestFilters('traits');
   if (traitsRequest) {
-    traits.value = traitsRequest.map((trait) => ({
-      label: trait
-        .split('-')
-        .map((str) => capitalize(str))
-        .join(' ')
-        .replace('Additive', 'Additive '),
-      value: trait
-    }));
-    traitsOptions.value = traits.value;
+    filterStore.updateItemTraits(traitsRequest);
+    traitsOptions.value = filterStore.getItemFilters.traits;
   } else {
     throw new Error('Error fetching traits');
+  }
+  const templatesRequest = await requestTemplates();
+  if (templatesRequest) {
+    templateStore().addDefaultTemplates(templatesRequest);
+  } else {
+    throw new Error('Error fetching templates');
   }
 } catch (error) {
   console.error(error);
@@ -459,7 +459,7 @@ const filterTraitsFn = (val, update) => {
       :visible-columns="visibleColumns"
       virtual-scroll
       virtual-scroll-sticky-size-start="50"
-      virtual-scroll-sticky-size-end="50"
+      virtual-scroll-item-size="48"
       :loading="loading"
       :filter="filters"
       rows-per-page-label="Items per page:"
@@ -607,6 +607,7 @@ const filterTraitsFn = (val, update) => {
                 :style="columns[0].style"
                 use-input
                 input-debounce="0"
+                virtual-scroll-item-size="32"
                 @filter="filterSourcesFn"
               />
             </div>
@@ -709,6 +710,7 @@ const filterTraitsFn = (val, update) => {
                 :style="columns[3].style"
                 use-input
                 input-debounce="0"
+                virtual-scroll-item-size="32"
                 @filter="filterTraitsFn"
               />
             </div>
