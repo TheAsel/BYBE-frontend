@@ -494,21 +494,23 @@ const filterFamiliesFn = (val, update) => {
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
-              <q-select
-                v-model="filterSource"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="Object.freeze(filters.getCreatureFilters.sources)"
-                use-input
-                input-debounce="0"
-                :label="columns[0].label"
-                :style="columns[0].style"
-                virtual-scroll-item-size="32"
-                @filter="filterSourcesFn"
-              />
+              <KeepAlive>
+                <q-select
+                  v-model="filterSource"
+                  multiple
+                  dense
+                  outlined
+                  clearable
+                  options-dense
+                  :options="Object.freeze(filters.getCreatureFilters.sources)"
+                  use-input
+                  input-debounce="0"
+                  :label="columns[0].label"
+                  :style="columns[0].style"
+                  virtual-scroll-item-size="32"
+                  @filter="filterSourcesFn"
+                />
+              </KeepAlive>
             </div>
             <div class="col-shrink tw-mx-2"></div>
           </div>
@@ -641,21 +643,23 @@ const filterFamiliesFn = (val, update) => {
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
-              <q-select
-                v-model="filterTraits"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="Object.freeze(filters.getCreatureFilters.traits)"
-                use-input
-                input-debounce="0"
-                :label="columns[4].label"
-                :style="columns[4].style"
-                virtual-scroll-item-size="32"
-                @filter="filterTraitsFn"
-              />
+              <KeepAlive>
+                <q-select
+                  v-model="filterTraits"
+                  multiple
+                  dense
+                  outlined
+                  clearable
+                  options-dense
+                  :options="Object.freeze(filters.getCreatureFilters.traits)"
+                  use-input
+                  input-debounce="0"
+                  :label="columns[4].label"
+                  :style="columns[4].style"
+                  virtual-scroll-item-size="32"
+                  @filter="filterTraitsFn"
+                />
+              </KeepAlive>
             </div>
             <div class="col-shrink tw-mx-2">
               <q-btn
@@ -777,21 +781,23 @@ const filterFamiliesFn = (val, update) => {
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
-              <q-select
-                v-model="filterFamily"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="Object.freeze(filters.getCreatureFilters.families)"
-                use-input
-                input-debounce="0"
-                :label="columns[8].label"
-                :style="columns[8].style"
-                virtual-scroll-item-size="32"
-                @filter="filterFamiliesFn"
-              />
+              <KeepAlive>
+                <q-select
+                  v-model="filterFamily"
+                  multiple
+                  dense
+                  outlined
+                  clearable
+                  options-dense
+                  :options="Object.freeze(filters.getCreatureFilters.families)"
+                  use-input
+                  input-debounce="0"
+                  :label="columns[8].label"
+                  :style="columns[8].style"
+                  virtual-scroll-item-size="32"
+                  @filter="filterFamiliesFn"
+                />
+              </KeepAlive>
             </div>
             <div class="col-shrink tw-mx-2">
               <q-btn
