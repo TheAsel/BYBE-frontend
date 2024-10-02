@@ -72,6 +72,6 @@ const printPage = () => {
     :offset="[18, 18]"
     class="tw-z-10 only-screen tw-opacity-85"
   >
-    <q-btn fab :icon="matPrint" color="primary" @click="printPage" aria-label="Print item sheet" />
+    <q-btn fab :icon="matPrint" color="primary" aria-label="Print item sheet" @click="printPage" />
   </q-page-sticky>
 </template>

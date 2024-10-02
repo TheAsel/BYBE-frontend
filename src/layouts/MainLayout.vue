@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import HeaderBar from 'components/HeaderBar.vue';
+import { version } from '../../package.json';
 </script>
 
 <template>
@@ -22,7 +23,7 @@ import HeaderBar from 'components/HeaderBar.vue';
     >
       <div class="tw-max-w-[85rem] tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
         <p class="tw-text-sm dark:tw-text-white/50 tw-text-black/70">
-          BYBE - v2.1.0 | <router-link to="/license">Licenses and Policies</router-link> |
+          BYBE - v{{ version }} | <router-link to="/license">Licenses and Policies</router-link> |
           <a
             href="https://github.com/TheAsel/BYBE-frontend/releases"
             target="_blank"

@@ -29,12 +29,13 @@ export type roles =
 
 export type variants = 'Weak' | 'Base' | 'Elite';
 
-export type item_columns = 'id' | 'name' | 'level' | 'rarity' | 'type' | 'source';
+export type item_columns = 'id' | 'name' | 'level' | 'trait' | 'rarity' | 'type' | 'source';
 
 export type item_filters = {
   name_filter?: string;
   min_level_filter?: number;
   max_level_filter?: number;
+  trait_whitelist_filter?: string[];
   rarity_filter?: rarities[];
   type_filter?: string[];
   source_filter?: string[];

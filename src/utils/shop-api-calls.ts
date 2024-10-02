@@ -1,14 +1,13 @@
-import { backendUrl } from 'src/boot/globals';
 import type { item_columns, item_filters } from 'src/types/filters';
 import type { item, item_response } from 'src/types/item';
 
-export async function requestSources() {
+export async function requestFilters(filter: 'sources' | 'traits') {
   try {
     const requestOptions = {
       method: 'GET',
       headers: { accept: 'application/json' }
     };
-    const response = await fetch(backendUrl + '/shop/sources', requestOptions);
+    const response = await fetch(process.env.API_URL + '/shop/' + filter, requestOptions);
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
@@ -38,7 +37,7 @@ export async function requestItems(
       body: JSON.stringify(body)
     };
     const request =
-      backendUrl +
+      process.env.API_URL +
       '/shop/list?cursor=' +
       cursor +
       '&page_size=' +
@@ -65,7 +64,7 @@ export async function requestItemId(item_id: number) {
       method: 'GET',
       headers: { accept: 'application/json' }
     };
-    const response = await fetch(backendUrl + '/shop/item/' + item_id, requestOptions);
+    const response = await fetch(process.env.API_URL + '/shop/item/' + item_id, requestOptions);
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
@@ -97,7 +96,7 @@ export async function shopGenerator(body: {
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     };
-    const response = await fetch(backendUrl + '/shop/generator', requestOptions);
+    const response = await fetch(process.env.API_URL + '/shop/generator', requestOptions);
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
