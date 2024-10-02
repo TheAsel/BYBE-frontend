@@ -21,12 +21,12 @@ const dialog = ref(false);
 const tab = ref('General');
 
 const traits = ref<string[]>();
-const traitsOptions = filters.getFilters.traits;
+const traitsOptions = filters.getCreatureFilters.traits;
 const alignment = ref<alignments[]>();
 const size = ref<sizes[]>();
 const rarity = ref<rarities[]>();
 const family = ref<string[]>();
-const familiesOptions = filters.getFilters.families;
+const familiesOptions = filters.getCreatureFilters.families;
 const creature_type = ref<string[]>();
 const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
@@ -200,14 +200,16 @@ const saveChanges = () => {
 const filterTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getFilters.traits = traitsOptions.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+    filters.getCreatureFilters.traits = traitsOptions.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
   });
 };
 
 const filterFamiliesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getFilters.families = familiesOptions.filter(
+    filters.getCreatureFilters.families = familiesOptions.filter(
       (v) => v.toLowerCase().indexOf(filter) > -1
     );
   });
@@ -257,11 +259,12 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.traits)"
+                :options="Object.freeze(filters.getCreatureFilters.traits)"
                 use-input
                 input-debounce="0"
                 label="Traits"
-                style="max-width: 270px"
+                style="max-width: 242px"
+                virtual-scroll-item-size="32"
                 @filter="filterTraitsFn"
               />
 
@@ -272,9 +275,9 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.sizes)"
+                :options="Object.freeze(filters.getCreatureFilters.sizes)"
                 label="Size"
-                style="max-width: 270px"
+                style="max-width: 242px"
               />
 
               <q-select
@@ -284,9 +287,9 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.rarities)"
+                :options="Object.freeze(filters.getCreatureFilters.rarities)"
                 label="Rarity"
-                style="max-width: 270px"
+                style="max-width: 242px"
               />
 
               <q-select
@@ -296,11 +299,12 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.families)"
+                :options="Object.freeze(filters.getCreatureFilters.families)"
                 use-input
                 input-debounce="0"
                 label="Family"
-                style="max-width: 270px"
+                style="max-width: 242px"
+                virtual-scroll-item-size="32"
                 @filter="filterFamiliesFn"
               />
 
@@ -311,9 +315,9 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.creature_types)"
+                :options="Object.freeze(filters.getCreatureFilters.creature_types)"
                 label="Creature Type"
-                style="max-width: 270px"
+                style="max-width: 242px"
               />
               <q-separator />
               <q-toggle
@@ -421,7 +425,6 @@ defineExpose({ generateEncounter });
                     markers
                     :left-label-value="'Min: ' + tmpFilters.creatures.min"
                     :right-label-value="'Max: ' + tmpFilters.creatures.max"
-                    style="max-width: 270px"
                     class="tw-px-3 tw-pt-1"
                     aria-label="Creature numbers"
                     role="menuitem"
@@ -454,9 +457,9 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.alignments)"
+                :options="Object.freeze(filters.getCreatureFilters.alignments)"
                 label="Alignment"
-                style="max-width: 270px"
+                style="max-width: 242px"
               />
 
               <q-select
@@ -466,9 +469,9 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getFilters.creature_roles)"
+                :options="Object.freeze(filters.getCreatureFilters.creature_roles)"
                 label="Roles"
-                style="max-width: 270px"
+                style="max-width: 242px"
               />
 
               <div class="q-gutter-sm tw-pb-[292px]">

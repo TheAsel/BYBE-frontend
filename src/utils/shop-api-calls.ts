@@ -1,5 +1,6 @@
 import type { item_columns, item_filters } from 'src/types/filters';
 import type { item, item_response } from 'src/types/item';
+import { template_data } from 'src/types/template';
 
 export async function requestFilters(filter: 'sources' | 'traits') {
   try {
@@ -14,6 +15,24 @@ export async function requestFilters(filter: 'sources' | 'traits') {
       throw new Error(error);
     }
     return data as string[];
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function requestTemplates() {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    };
+    const response = await fetch(process.env.API_URL + '/shop/templates_data', requestOptions);
+    const data = await response.json();
+    if (!response.ok) {
+      const error = data?.message || response.status;
+      throw new Error(error);
+    }
+    return data as template_data[];
   } catch (error) {
     console.error(error);
   }
@@ -81,13 +100,13 @@ export async function shopGenerator(body: {
     dice_size: number | null;
     n_of_dices: number | null;
   }[];
-  equipment_dices: {
+  equippable_dices: {
     dice_size: number | null;
     n_of_dices: number | null;
   }[];
   min_level: number;
   max_level: number;
-  shop_template: '' | 'Blacksmith' | 'Alchemist' | 'General' | null;
+  shop_template?: string;
   pathfinder_version: string;
 }) {
   try {
