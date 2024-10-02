@@ -30,7 +30,7 @@ const dialog = ref(false);
 const tab = ref('General');
 
 const selectedTraits = ref<{ label: string; value: string; state: boolean | null }[]>([]);
-const traitsOptions = ref<{ label: string; value: string; state: boolean | null }[]>(
+const traitOptions = ref<{ label: string; value: string; state: boolean | null }[]>(
   filters.getItemFilters.traits.map((trait) => ({
     label: trait.label,
     value: trait.value,
@@ -39,7 +39,7 @@ const traitsOptions = ref<{ label: string; value: string; state: boolean | null 
 );
 
 const sourceFilter = filters.getItemFilters.sources;
-const traitFilter = traitsOptions.value;
+const traitFilter = traitOptions.value;
 
 const newTemplateDialog = ref(false);
 const newNameInput = ref();
@@ -497,7 +497,7 @@ const filterTraitsFn = (val, update) => {
   const filter = val.toLowerCase();
   const filtered = traitFilter.filter((v) => v.label.toLowerCase().indexOf(filter) > -1);
   update(() => {
-    traitsOptions.value = filtered;
+    traitOptions.value = filtered;
   });
 };
 
@@ -761,14 +761,14 @@ defineExpose({ generateShop });
                         dense
                         outlined
                         options-dense
-                        :options="traitsOptions"
+                        :options="traitOptions"
                         map-options
                         emit-value
                         use-input
                         input-debounce="0"
                         label="Traits"
                         style="max-width: 235px"
-                        :virtual-scroll-slice-size="traitsOptions.length"
+                        :virtual-scroll-slice-size="traitOptions.length"
                         @filter="filterTraitsFn"
                       >
                         <template #selected-item="scope">
@@ -1193,14 +1193,14 @@ defineExpose({ generateShop });
                         dense
                         outlined
                         options-dense
-                        :options="traitsOptions"
+                        :options="traitOptions"
                         map-options
                         emit-value
                         use-input
                         input-debounce="0"
                         label="Traits"
                         style="max-width: 235px"
-                        :virtual-scroll-slice-size="traitsOptions.length"
+                        :virtual-scroll-slice-size="traitOptions.length"
                         @filter="filterTraitsFn"
                       >
                         <template #selected-item="scope">

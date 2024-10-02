@@ -52,8 +52,6 @@ const pagination = ref({
   rowsPerPage: 100,
   rowsNumber: 0
 });
-const sources = ref<string[]>(filterStore.getItemFilters.sources);
-const traits = ref<{ label: string; value: string }[]>([]);
 const filters = ref<{
   name_filter: string;
   level_filter: { min: number; max: number };
@@ -75,8 +73,9 @@ const filters = ref<{
 });
 const fullscreen = ref(false);
 const tableHeight = ref('height: calc(100vh - 122px)');
-const sourcesOptions = ref(['']);
-const traitsOptions = ref<{ label: string; value: string }[]>([]);
+
+const sourceFilter = ref<string[]>(filterStore.getItemFilters.sources);
+const traitFilter = ref<{ label: string; value: string }[]>(filterStore.getItemFilters.traits);
 
 const columns: {
   name: item_columns;
@@ -141,7 +140,6 @@ const columns: {
     sortable: true,
     style: 'min-width: 100px; max-width: 180px;'
   },
-
   {
     name: 'id',
     label: 'Shop',
@@ -397,14 +395,14 @@ try {
   const sourcesRequest = await requestFilters('sources');
   if (sourcesRequest) {
     filterStore.updateItemSources(sourcesRequest);
-    sourcesOptions.value = filterStore.getItemFilters.sources;
+    sourceFilter.value = filterStore.getItemFilters.sources;
   } else {
     throw new Error('Error fetching sources');
   }
   const traitsRequest = await requestFilters('traits');
   if (traitsRequest) {
     filterStore.updateItemTraits(traitsRequest);
-    traitsOptions.value = filterStore.getItemFilters.traits;
+    traitFilter.value = filterStore.getItemFilters.traits;
   } else {
     throw new Error('Error fetching traits');
   }
@@ -430,14 +428,18 @@ const toggleFullscreen = () => {
 const filterSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    sources.value = sourcesOptions.value.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+    filterStore.getItemFilters.sources = sourceFilter.value.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
   });
 };
 
 const filterTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    traits.value = traitsOptions.value.filter((v) => v.value.toLowerCase().indexOf(filter) > -1);
+    filterStore.getItemFilters.traits = traitFilter.value.filter(
+      (v) => v.label.toLowerCase().indexOf(filter) > -1
+    );
   });
 };
 </script>
@@ -595,21 +597,23 @@ const filterTraitsFn = (val, update) => {
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
-              <q-select
-                v-model="filters.source_filter"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="Object.freeze(sources)"
-                :label="columns[0].label"
-                :style="columns[0].style"
-                use-input
-                input-debounce="0"
-                virtual-scroll-item-size="32"
-                @filter="filterSourcesFn"
-              />
+              <KeepAlive>
+                <q-select
+                  v-model="filters.source_filter"
+                  multiple
+                  dense
+                  outlined
+                  clearable
+                  options-dense
+                  :options="Object.freeze(filterStore.getItemFilters.sources)"
+                  :label="columns[0].label"
+                  :style="columns[0].style"
+                  use-input
+                  input-debounce="0"
+                  virtual-scroll-item-size="32"
+                  @filter="filterSourcesFn"
+                />
+              </KeepAlive>
             </div>
             <div class="col-shrink tw-mx-2"></div>
           </div>
@@ -698,21 +702,25 @@ const filterTraitsFn = (val, update) => {
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
-              <q-select
-                v-model="filters.trait_filter"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="traits"
-                :label="columns[3].label"
-                :style="columns[3].style"
-                use-input
-                input-debounce="0"
-                virtual-scroll-item-size="32"
-                @filter="filterTraitsFn"
-              />
+              <KeepAlive>
+                <q-select
+                  v-model="filters.trait_filter"
+                  multiple
+                  dense
+                  outlined
+                  clearable
+                  options-dense
+                  :options="filterStore.getItemFilters.traits"
+                  :label="columns[3].label"
+                  :style="columns[3].style"
+                  map-options
+                  emit-value
+                  use-input
+                  input-debounce="0"
+                  virtual-scroll-item-size="32"
+                  @filter="filterTraitsFn"
+                />
+              </KeepAlive>
             </div>
             <div class="col-shrink tw-mx-2">
               <q-btn
