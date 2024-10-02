@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, toRaw } from 'vue';
-import { requestItems, requestSources } from 'src/utils/shop-api-calls';
+import { requestFilters, requestItems } from 'src/utils/shop-api-calls';
 import type { item, min_item } from 'src/types/item';
 import {
   biArrowDownUp,
@@ -17,7 +17,7 @@ import { item_columns, item_filters, rarities } from 'src/types/filters';
 import { itemsStore, settingsStore } from 'src/stores/store';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
-import { debounce } from 'lodash-es';
+import { capitalize, debounce } from 'lodash-es';
 import { useRouter } from 'vue-router';
 import ShopBuilder from 'src/components/Shop/ShopTable/ShopBuilder.vue';
 import {
@@ -52,9 +52,11 @@ const pagination = ref({
   rowsNumber: 0
 });
 const sources = ref<string[]>();
+const traits = ref<{ label: string; value: string }[]>([]);
 const filters = ref<{
   name_filter: string;
   level_filter: { min: number; max: number };
+  trait_filter: { label: string; value: string }[];
   rarity_filter: rarities[];
   type_filter: string[];
   source_filter: string[];
@@ -63,6 +65,7 @@ const filters = ref<{
 }>({
   name_filter: '',
   level_filter: { min: 0, max: 25 },
+  trait_filter: [],
   rarity_filter: [],
   type_filter: [],
   source_filter: [],
@@ -71,6 +74,8 @@ const filters = ref<{
 });
 const fullscreen = ref(false);
 const tableHeight = ref('height: calc(100vh - 122px)');
+const sourcesOptions = ref(['']);
+const traitsOptions = ref<{ label: string; value: string }[]>([]);
 
 const columns: {
   name: item_columns;
@@ -109,6 +114,15 @@ const columns: {
     style: 'min-width: 80px;'
   },
   {
+    name: 'trait',
+    label: 'Traits',
+    field: (row) => row.core_item.traits,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 200px; max-width: 300px;'
+  },
+  {
     name: 'rarity',
     label: 'Rarity',
     field: (row) => row.core_item.rarity,
@@ -145,6 +159,9 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   };
   if (filters.value.name_filter != '') {
     body.name_filter = filters.value.name_filter;
+  }
+  if (filters.value.trait_filter != undefined && filters.value.trait_filter.length > 0) {
+    body.trait_whitelist_filter = filters.value.trait_filter.map((traits) => traits.value);
   }
   if (filters.value.rarity_filter != undefined && filters.value.rarity_filter.length > 0) {
     body.rarity_filter = filters.value.rarity_filter;
@@ -200,6 +217,7 @@ const resetFilters = () => {
   filters.value = {
     name_filter: '',
     level_filter: { min: 0, max: 25 },
+    trait_filter: [],
     rarity_filter: [],
     type_filter: [],
     source_filter: [],
@@ -252,7 +270,7 @@ const deactivateNavigation = () => {
 async function onKey(evt) {
   if (
     navigationActive.value !== true ||
-    [33, 34, 35, 36, 37, 38, 39, 40].indexOf(evt.keyCode) === -1 ||
+    [13, 33, 34, 35, 36, 37, 38, 39, 40].indexOf(evt.keyCode) === -1 ||
     itemTable.value === null ||
     loading.value === true ||
     keyDown.value === true
@@ -280,6 +298,9 @@ async function onKey(evt) {
   let page = currentPage;
 
   switch (evt.keyCode) {
+    case 13: // Enter
+      addItem(selected.value[0]);
+      break;
     case 33: // PageUp
       index = 0;
       selected.value = [computedRows[index]];
@@ -302,7 +323,7 @@ async function onKey(evt) {
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
         itemTable.value.scrollTo(index);
-      }, 500);
+      }, 1000);
       break;
     case 35: // End
       index = rowsPerPage - 1;
@@ -314,7 +335,7 @@ async function onKey(evt) {
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
         itemTable.value.scrollTo(index - 1);
-      }, 500);
+      }, 1000);
       break;
     case 37: // ArrowLeft
       page = currentPage <= 1 ? lastPage : currentPage - 1;
@@ -331,7 +352,7 @@ async function onKey(evt) {
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
         itemTable.value.scrollTo(index);
-      }, 500);
+      }, 1000);
       break;
     case 38: // ArrowUp
       if (currentIndex > 0) {
@@ -356,7 +377,7 @@ async function onKey(evt) {
         items.setSelectedItem(selected.value[0]);
         keyDown.value = false;
         itemTable.value.scrollTo(index);
-      }, 500);
+      }, 1000);
       break;
     case 40: // ArrowDown
       if (currentIndex < lastIndex) {
@@ -372,11 +393,26 @@ async function onKey(evt) {
 await fetchFromServer(0, 100);
 
 try {
-  const request = await requestSources();
-  if (request) {
-    sources.value = request.sort();
+  const sourcesRequest = await requestFilters('sources');
+  if (sourcesRequest) {
+    sources.value = sourcesRequest;
+    sourcesOptions.value = sources.value;
   } else {
     throw new Error('Error fetching sources');
+  }
+  const traitsRequest = await requestFilters('traits');
+  if (traitsRequest) {
+    traits.value = traitsRequest.map((trait) => ({
+      label: trait
+        .split('-')
+        .map((str) => capitalize(str))
+        .join(' ')
+        .replace('Additive', 'Additive '),
+      value: trait
+    }));
+    traitsOptions.value = traits.value;
+  } else {
+    throw new Error('Error fetching traits');
   }
 } catch (error) {
   console.error(error);
@@ -390,15 +426,32 @@ const toggleFullscreen = () => {
     tableHeight.value = 'height: calc(100vh - 122px)';
   }
 };
+
+const filterSourcesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    sources.value = sourcesOptions.value.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+  });
+};
+
+const filterTraitsFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    traits.value = traitsOptions.value.filter((v) => v.value.toLowerCase().indexOf(filter) > -1);
+  });
+};
 </script>
 
 <template>
   <SkeletonTable v-if="skeleton" />
   <div v-else class="tw-w-full q-pa-md md:tw-w-[46%] only-screen">
     <q-table
+      id="v-step-0"
       ref="itemTable"
+      v-model:pagination="pagination"
       class="sticky-header-table tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
       :style="tableHeight"
+      color="primary"
       flat
       bordered
       :rows="rows"
@@ -407,11 +460,14 @@ const toggleFullscreen = () => {
       virtual-scroll
       virtual-scroll-sticky-size-start="50"
       virtual-scroll-sticky-size-end="50"
-      v-model:pagination="pagination"
       :loading="loading"
       :filter="filters"
       rows-per-page-label="Items per page:"
       :rows-per-page-options="[50, 100, 0]"
+      table-header-class="v-step-3"
+      row-key="id"
+      selection="single"
+      :fullscreen="fullscreen"
       @request="onRequest"
       @row-click="
         (_, row: item) => {
@@ -419,22 +475,16 @@ const toggleFullscreen = () => {
           selected = [row];
         }
       "
-      row-key="id"
-      selection="single"
       @focusin="activateNavigation"
       @focusout="deactivateNavigation"
       @keydown="onKey"
-      id="v-step-0"
-      table-header-class="v-step-3"
-      color="primary"
-      :fullscreen="fullscreen"
     >
-      <template v-slot:loading>
+      <template #loading>
         <q-inner-loading showing style="z-index: 2">
           <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
         </q-inner-loading>
       </template>
-      <template v-slot:top>
+      <template #top>
         <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
           <div class="tw-flex tw-flex-shrink">
             <h1 class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
@@ -446,13 +496,13 @@ const toggleFullscreen = () => {
               <ShopBuilder ref="shopBuilderRef" />
               <q-separator vertical />
               <q-btn
+                id="v-step-2"
                 push
                 dense
                 class="tw-p-2"
                 size="md"
                 aria-label="Random shop"
                 @click="shopBuilderRef.generateShop()"
-                id="v-step-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -539,38 +589,41 @@ const toggleFullscreen = () => {
           </div>
         </div>
       </template>
-      <template v-slot:header-cell-source>
+      <template #header-cell-source>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filters.source_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filters.source_filter"
                 :options="Object.freeze(sources)"
                 :label="columns[0].label"
                 :style="columns[0].style"
+                use-input
+                input-debounce="0"
+                @filter="filterSourcesFn"
               />
             </div>
             <div class="col-shrink tw-mx-2"></div>
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-name>
+      <template #header-cell-name>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-input
+                v-model="filters.name_filter"
                 dense
                 outlined
-                v-model="filters.name_filter"
                 :label="columns[1].label"
                 :style="columns[1].style"
               />
@@ -590,7 +643,7 @@ const toggleFullscreen = () => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-level>
+      <template #header-cell-level>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
@@ -603,7 +656,7 @@ const toggleFullscreen = () => {
                 :style="columns[2].style"
                 stack-label
               >
-                <template v-slot:control>
+                <template #control>
                   {{ filters.level_filter.min }} to {{ filters.level_filter.max }}
                 </template>
                 <q-popup-proxy>
@@ -638,22 +691,25 @@ const toggleFullscreen = () => {
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-rarity>
+      <template #header-cell-trait>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filters.trait_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filters.rarity_filter"
-                :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
+                :options="traits"
                 :label="columns[3].label"
                 :style="columns[3].style"
+                use-input
+                input-debounce="0"
+                @filter="filterTraitsFn"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -664,27 +720,27 @@ const toggleFullscreen = () => {
                 size="xs"
                 padding="sm"
                 :icon="biArrowDownUp"
-                aria-label="Sort rarity column"
+                aria-label="Sort traits column"
                 @click="sort(columns[3].name)"
               />
             </div>
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-type>
+      <template #header-cell-rarity>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
+                v-model="filters.rarity_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="filters.type_filter"
-                :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Shield', 'Weapon'])"
+                :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
                 :label="columns[4].label"
                 :style="columns[4].style"
               />
@@ -697,28 +753,61 @@ const toggleFullscreen = () => {
                 size="xs"
                 padding="sm"
                 :icon="biArrowDownUp"
-                aria-label="Sort types column"
+                aria-label="Sort rarity column"
                 @click="sort(columns[4].name)"
               />
             </div>
           </div>
         </q-th>
       </template>
-      <template v-slot:header-cell-id>
+      <template #header-cell-type>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                v-model="filters.type_filter"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Shield', 'Weapon'])"
+                :label="columns[5].label"
+                :style="columns[5].style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort types column"
+                @click="sort(columns[5].name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-id>
         <q-th>
           <q-icon :name="biBasketFill" class="tw-mr-1" size="sm"></q-icon>
         </q-th>
       </template>
-      <template v-slot:body-selection="selected">
+      <template #body-selection="selectedItem">
         <q-btn
-          :props="selected"
+          :props="selectedItem"
           round
           unelevated
           :icon="biBoxArrowUpRight"
           size="sm"
-          @click="openShopSheet(selected.row.core_item.id)"
-          target="_blank"
           aria-label="Open item sheet"
+          target="_blank"
+          @click="openShopSheet(selectedItem.row.core_item.id)"
         >
           <q-tooltip
             class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -729,12 +818,12 @@ const toggleFullscreen = () => {
           </q-tooltip>
         </q-btn>
       </template>
-      <template v-slot:body-cell-source="source">
+      <template #body-cell-source="source">
         <q-td :props="source">
           <q-btn
+            v-if="source.row.core_item.source"
             round
             unelevated
-            v-if="source.row.core_item.source"
             :icon="biBook"
             size="sm"
             padding="sm"
@@ -759,7 +848,7 @@ const toggleFullscreen = () => {
           </q-btn>
         </q-td>
       </template>
-      <template v-slot:body-cell-name="name">
+      <template #body-cell-name="name">
         <q-td :props="name">
           <q-icon
             v-if="
@@ -803,7 +892,26 @@ const toggleFullscreen = () => {
           />
         </q-td>
       </template>
-      <template v-slot:body-cell-type="type">
+      <template #body-cell-trait="trait">
+        <q-td :props="trait">
+          <span
+            v-if="trait.row.core_item.traits"
+            class="tw-block tw-max-w-[250px] tw-whitespace-normal"
+          >
+            {{
+              trait.row.core_item.traits
+                .map((trait: string) => {
+                  return trait
+                    .split('-')
+                    .map((str) => capitalize(str))
+                    .join(' ');
+                })
+                .join(', ')
+            }}
+          </span>
+        </q-td>
+      </template>
+      <template #body-cell-type="type">
         <q-td :props="type">
           <q-icon
             v-if="type.row.core_item.item_type === 'Armor'"
@@ -867,7 +975,7 @@ const toggleFullscreen = () => {
           </q-icon>
         </q-td>
       </template>
-      <template v-slot:body-cell-id="id">
+      <template #body-cell-id="id">
         <q-td :props="id">
           <q-btn
             round
@@ -875,9 +983,9 @@ const toggleFullscreen = () => {
             :icon="biPlusLg"
             size="sm"
             class="tw-mr-1"
-            @click="addItem(id.row)"
-            target="_blank"
             aria-label="Open creature sheet"
+            target="_blank"
+            @click="addItem(id.row)"
           >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -889,7 +997,7 @@ const toggleFullscreen = () => {
           </q-btn>
         </q-td>
       </template>
-      <template v-slot:no-data>
+      <template #no-data>
         <div class="row flex-center q-gutter-sm">
           <q-icon size="2em" :name="matWarning" />
           <span> No item matches the current filters </span>

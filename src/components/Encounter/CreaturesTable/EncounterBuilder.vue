@@ -21,10 +21,12 @@ const dialog = ref(false);
 const tab = ref('General');
 
 const traits = ref<string[]>();
+const traitsOptions = filters.getFilters.traits;
 const alignment = ref<alignments[]>();
 const size = ref<sizes[]>();
 const rarity = ref<rarities[]>();
 const family = ref<string[]>();
+const familiesOptions = filters.getFilters.families;
 const creature_type = ref<string[]>();
 const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
@@ -195,24 +197,40 @@ const saveChanges = () => {
   adventure_group.value = tmpFilters.value.adventure_group;
 };
 
+const filterTraitsFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getFilters.traits = traitsOptions.filter((v) => v.toLowerCase().indexOf(filter) > -1);
+  });
+};
+
+const filterFamiliesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getFilters.families = familiesOptions.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
+  });
+};
+
 defineExpose({ generateEncounter });
 </script>
 
 <template>
-  <q-btn push label="Generator Settings" @click="restoreSettings" id="v-step-2" />
+  <q-btn id="v-step-2" push label="Generator Settings" @click="restoreSettings" />
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center">
         <div class="text-h6 tw-mr-4">Generator Settings</div>
         <q-space />
         <q-btn
+          v-close-popup
           :icon="biXLg"
           size="md"
           padding="sm"
           flat
           round
           dense
-          v-close-popup
           aria-label="Close dialog"
         />
       </q-card-section>
@@ -233,60 +251,66 @@ defineExpose({ generateEncounter });
           <q-card-section style="max-height: 46rem">
             <div class="tw-space-y-3">
               <q-select
+                v-model="tmpFilters.traits"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="tmpFilters.traits"
                 :options="Object.freeze(filters.getFilters.traits)"
+                use-input
+                input-debounce="0"
                 label="Traits"
                 style="max-width: 270px"
+                @filter="filterTraitsFn"
               />
 
               <q-select
+                v-model="tmpFilters.size"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="tmpFilters.size"
                 :options="Object.freeze(filters.getFilters.sizes)"
                 label="Size"
                 style="max-width: 270px"
               />
 
               <q-select
+                v-model="tmpFilters.rarity"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="tmpFilters.rarity"
                 :options="Object.freeze(filters.getFilters.rarities)"
                 label="Rarity"
                 style="max-width: 270px"
               />
 
               <q-select
+                v-model="tmpFilters.family"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="tmpFilters.family"
                 :options="Object.freeze(filters.getFilters.families)"
+                use-input
+                input-debounce="0"
                 label="Family"
                 style="max-width: 270px"
+                @filter="filterFamiliesFn"
               />
 
               <q-select
+                v-model="tmpFilters.creature_type"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="tmpFilters.creature_type"
                 :options="Object.freeze(filters.getFilters.creature_types)"
                 label="Creature Type"
                 style="max-width: 270px"
@@ -320,10 +344,10 @@ defineExpose({ generateEncounter });
               </q-btn>
               <span v-if="tmpFilters.adventure_group_toggle">
                 <q-select
+                  v-model="tmpFilters.adventure_group"
                   dense
                   outlined
                   options-dense
-                  v-model="tmpFilters.adventure_group"
                   :options="Object.freeze(adventureGroupSelect)"
                   label="Adventure Group"
                   class="tw-pt-1 tw-pb-6"
@@ -406,11 +430,11 @@ defineExpose({ generateEncounter });
                 </div>
 
                 <q-select
+                  v-model="tmpFilters.challenge"
                   dense
                   outlined
                   clearable
                   options-dense
-                  v-model="tmpFilters.challenge"
                   :options="
                     Object.freeze(['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'])
                   "
@@ -424,30 +448,30 @@ defineExpose({ generateEncounter });
           <q-card-section class="tw-flex" style="max-height: 46rem">
             <div class="tw-space-y-3">
               <q-select
+                v-model="tmpFilters.alignment"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="tmpFilters.alignment"
                 :options="Object.freeze(filters.getFilters.alignments)"
                 label="Alignment"
                 style="max-width: 270px"
               />
 
               <q-select
+                v-model="tmpFilters.creature_roles"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                v-model="tmpFilters.creature_roles"
                 :options="Object.freeze(filters.getFilters.creature_roles)"
                 label="Roles"
                 style="max-width: 270px"
               />
 
-              <div class="q-gutter-sm tw-pb-[239px]">
+              <div class="q-gutter-sm tw-pb-[292px]">
                 <q-checkbox
                   v-model="tmpFilters.allow_weak_variants"
                   label="Allow Weak?"
@@ -467,20 +491,20 @@ defineExpose({ generateEncounter });
       <q-card-actions>
         <q-btn-group flat>
           <q-btn
+            v-close-popup
             flat
             label="Save changes"
             type="button"
             class="full-width tw-text-blue-600 dark:tw-text-blue-400"
-            v-close-popup
             @click="saveChanges"
           />
           <q-separator vertical />
           <q-btn
+            v-close-popup
             flat
             label="Generate Encounter"
             type="button"
             class="full-width tw-text-blue-600 dark:tw-text-blue-400"
-            v-close-popup
             @click="generateEncounter"
           />
         </q-btn-group>

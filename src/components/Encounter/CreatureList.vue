@@ -161,11 +161,11 @@ const openCreatureSheet = (id: number) => {
 <template>
   <div class="q-pa-md tw-w-full md:tw-w-[27%]">
     <q-layout
+      id="v-step-6"
       view="lHh lpr lFf"
       container
       style="height: calc(100vh - 122px)"
       class="tw-opacity-85 dark:tw-opacity-90 tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
-      id="v-step-6"
     >
       <q-header
         bordered
@@ -211,16 +211,16 @@ const openCreatureSheet = (id: number) => {
                 <q-card-section class="q-pt-none">
                   <q-input
                     ref="encounterNameInput"
-                    dense
                     v-model="newEncounterName"
+                    dense
                     autofocus
-                    @keyup.enter="addEncounter"
                     :rules="[
                       (val) => !!val || 'Field is required',
                       (val) =>
                         !encounters.find((name) => name === val) || 'This encounter already exists'
                     ]"
                     :no-error-icon="true"
+                    @keyup.enter="addEncounter"
                   />
                 </q-card-section>
 
@@ -228,16 +228,16 @@ const openCreatureSheet = (id: number) => {
                   <q-btn
                     flat
                     label="Cancel"
-                    @click="closeDialog"
                     class="tw-text-blue-600 dark:tw-text-blue-400"
                     aria-label="Close dialog"
+                    @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Add encounter"
-                    @click="addEncounter"
                     class="tw-text-blue-600 dark:tw-text-blue-400"
                     aria-label="Add encounter"
+                    @click="addEncounter"
                   />
                 </q-card-actions>
               </q-card>
@@ -274,32 +274,32 @@ const openCreatureSheet = (id: number) => {
                   <q-btn
                     flat
                     label="Cancel"
-                    @click="closeDialog"
                     class="tw-text-blue-600 dark:tw-text-blue-400"
                     aria-label="Close dialog"
+                    @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Remove"
-                    @click="removeEncounter"
                     class="tw-text-red-600 dark:tw-text-red-400"
                     aria-label="Remove encounter"
+                    @click="removeEncounter"
                   />
                 </q-card-actions>
               </q-card>
             </q-dialog>
             <q-select
+              v-model="tmpEncounter.name"
               dense
               style="min-width: 120px; max-width: 120px"
               class="tw-my-auto tw-mr-2"
               outlined
-              v-model="tmpEncounter.name"
               :options="encounters"
               label="Encounters"
               @update:model-value="changeActiveEncounter(tmpEncounter.name)"
             />
           </div>
-          <q-btn flat dense @click="encounter.clearEncounter" aria-label="Clear encounter"
+          <q-btn flat dense aria-label="Clear encounter" @click="encounter.clearEncounter"
             >CLEAR</q-btn
           >
         </div>
@@ -336,9 +336,9 @@ const openCreatureSheet = (id: number) => {
                   :icon="fasScroll"
                   size="sm"
                   class="tw-mr-2"
-                  @click="openCreatureSheet(item.id)"
                   target="_blank"
                   aria-label="Open creature sheet"
+                  @click="openCreatureSheet(item.id)"
                 >
                   <q-tooltip
                     class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
@@ -442,12 +442,12 @@ const openCreatureSheet = (id: number) => {
       >
         <div class="tw-flex tw-mx-4 tw-my-1.5">
           <q-linear-progress
+            id="v-step-7"
             rounded
             size="35px"
             :value="1"
             :color="info.getInfo.color"
             aria-label="Encounter challenge"
-            id="v-step-7"
           >
             <div class="absolute-full flex flex-center">
               <q-badge

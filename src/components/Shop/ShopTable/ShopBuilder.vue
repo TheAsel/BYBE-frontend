@@ -195,20 +195,20 @@ defineExpose({ generateShop });
 </script>
 
 <template>
-  <q-btn push label="Generator Settings" @click="restoreSettings" id="v-step-1" />
+  <q-btn id="v-step-1" push label="Generator Settings" @click="restoreSettings" />
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center">
         <div class="text-h6 tw-mr-4">Generator Settings</div>
         <q-space />
         <q-btn
+          v-close-popup
           :icon="biXLg"
           size="md"
           padding="sm"
           flat
           round
           dense
-          v-close-popup
           aria-label="Close dialog"
         />
       </q-card-section>
@@ -227,24 +227,24 @@ defineExpose({ generateShop });
           </div>
           <div class="tw-flex tw-flex-row tw-justify-center">
             <q-input
+              v-model.number="tmpFilters.equipment_dices.n_of_dices"
               dense
               outlined
-              v-model.number="tmpFilters.equipment_dices.n_of_dices"
-              @update:model-value="validateNumber(false)"
+              class="tw-w-32 tw-pr-2"
               type="number"
               label="Number"
-              class="tw-w-32 tw-pr-2"
+              @update:model-value="validateNumber(false)"
             />
             <q-select
               v-if="!fixedEquipmentDice"
-              dense
-              outlined
               v-model="tmpFilters.equipment_dices.dice_size"
-              :options="Object.freeze(diceSelect)"
               label="Size"
               class="tw-w-32 tw-pl-2"
+              dense
+              outlined
+              :options="Object.freeze(diceSelect)"
             >
-              <template v-slot:option="scope">
+              <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section avatar>
                     <q-icon :name="scope.opt.icon" />
@@ -268,24 +268,24 @@ defineExpose({ generateShop });
           </div>
           <div class="tw-flex tw-flex-row tw-justify-center">
             <q-input
+              v-model.number="tmpFilters.consumable_dices.n_of_dices"
               dense
               outlined
-              v-model.number="tmpFilters.consumable_dices.n_of_dices"
-              @update:model-value="validateNumber(true)"
+              class="tw-w-32 tw-pr-2"
               type="number"
               label="Number"
-              class="tw-w-32 tw-pr-2"
+              @update:model-value="validateNumber(true)"
             />
             <q-select
               v-if="!fixedConsumableDice"
+              v-model="tmpFilters.consumable_dices.dice_size"
               dense
               outlined
-              v-model="tmpFilters.consumable_dices.dice_size"
               :options="Object.freeze(diceSelect)"
               label="Size"
               class="tw-w-32 tw-pl-2"
             >
-              <template v-slot:option="scope">
+              <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section avatar>
                     <q-icon :name="scope.opt.icon" />
@@ -317,10 +317,10 @@ defineExpose({ generateShop });
 
           <div class="tw-flex tw-flex-row">
             <q-select
+              v-model="tmpFilters.shop_template"
               dense
               outlined
               options-dense
-              v-model="tmpFilters.shop_template"
               :options="Object.freeze(['Alchemist', 'Blacksmith', 'General'])"
               label="Shop template"
               class="tw-w-56"
@@ -380,20 +380,20 @@ defineExpose({ generateShop });
       <q-card-actions>
         <q-btn-group flat class="tw-px-1.5">
           <q-btn
+            v-close-popup
             flat
             label="Save changes"
             type="button"
             class="full-width tw-text-blue-600 dark:tw-text-blue-400"
-            v-close-popup
             @click="saveChanges"
           />
           <q-separator vertical />
           <q-btn
+            v-close-popup
             flat
             label="Generate new Shop"
             type="button"
             class="full-width tw-text-blue-600 dark:tw-text-blue-400"
-            v-close-popup
             @click="generateShop"
           />
         </q-btn-group>

@@ -95,7 +95,7 @@ const saveChanges = () => {
 </script>
 
 <template>
-  <q-btn push label="Party Builder" @click="restoreParty" id="v-step-1" />
+  <q-btn id="v-step-1" push label="Party Builder" @click="restoreParty" />
   <q-dialog v-model="dialog" aria-label="Player builder">
     <q-card flat bordered>
       <q-card-section class="items-center">
@@ -103,22 +103,22 @@ const saveChanges = () => {
           <div class="text-h6 tw-mr-4 tw-my-auto">Party Builder</div>
           <q-space />
           <q-btn
+            v-close-popup
             :icon="biXLg"
             size="md"
             padding="sm"
             flat
             round
             dense
-            v-close-popup
             aria-label="Close dialog"
           />
         </div>
         <div class="row">
           <q-select
+            v-model="tmpParty.name"
             dense
             style="width: 180px"
             outlined
-            v-model="tmpParty.name"
             :options="parties"
             label="Active Party"
             @update:model-value="changeActiveParty(tmpParty.name)"
@@ -156,15 +156,15 @@ const saveChanges = () => {
               <q-card-section class="q-pt-none">
                 <q-input
                   ref="partyNameInput"
-                  dense
                   v-model="newPartyName"
+                  dense
                   autofocus
-                  @keyup.enter="addParty"
+                  :no-error-icon="true"
                   :rules="[
                     (val) => !!val || 'Field is required',
                     (val) => !parties.find((name) => name === val) || 'This party already exists'
                   ]"
-                  :no-error-icon="true"
+                  @keyup.enter="addParty"
                 />
               </q-card-section>
 
@@ -172,14 +172,14 @@ const saveChanges = () => {
                 <q-btn
                   flat
                   label="Cancel"
-                  @click="closeDialog"
                   class="tw-text-blue-600 dark:tw-text-blue-400"
+                  @click="closeDialog"
                 />
                 <q-btn
                   flat
                   label="Add party"
-                  @click="addParty"
                   class="tw-text-blue-600 dark:tw-text-blue-400"
+                  @click="addParty"
                 />
               </q-card-actions>
             </q-card>
@@ -217,14 +217,14 @@ const saveChanges = () => {
                 <q-btn
                   flat
                   label="Cancel"
-                  @click="closeDialog"
                   class="tw-text-blue-600 dark:tw-text-blue-400"
+                  @click="closeDialog"
                 />
                 <q-btn
                   flat
                   label="Remove"
-                  @click="removeParty"
                   class="tw-text-red-600 dark:tw-text-red-400"
+                  @click="removeParty"
                 />
               </q-card-actions>
             </q-card>
@@ -239,14 +239,14 @@ const saveChanges = () => {
           <div v-for="(_, index) in tmpParty.members" :key="index" class="row no-wrap items-center">
             <div class="col-grow">
               <q-input
+                v-model.number="tmpParty.members[index]"
+                dense
                 outlined
                 type="number"
                 min="1"
                 max="20"
                 :label="'Player ' + (index + 1)"
-                v-model.number="tmpParty.members[index]"
                 @update:model-value="validateLevel(index)"
-                dense
               />
             </div>
             <div class="col-shrink tw-pl-3">
@@ -254,11 +254,11 @@ const saveChanges = () => {
                 flat
                 round
                 type="button"
-                @click="removePlayer(index)"
                 :icon="biDashLg"
                 size="md"
                 padding="sm"
                 aria-label="Remove player"
+                @click="removePlayer(index)"
               >
               </q-btn>
             </div>
@@ -268,11 +268,11 @@ const saveChanges = () => {
           outline
           type="button"
           class="full-width tw-mt-4 tw-text-blue-600 dark:tw-text-blue-400"
-          aria-label="Add player"
-          @click="addPlayer"
           :icon="biPlusLg"
           size="md"
           padding="sm"
+          aria-label="Add player"
+          @click="addPlayer"
         >
         </q-btn>
       </q-card-section>
@@ -281,11 +281,11 @@ const saveChanges = () => {
 
       <q-card-actions>
         <q-btn
+          v-close-popup
           unelevated
           label="Save changes"
           type="button"
           class="full-width tw-text-blue-600 dark:tw-text-blue-400"
-          v-close-popup
           @click="saveChanges"
         />
       </q-card-actions>

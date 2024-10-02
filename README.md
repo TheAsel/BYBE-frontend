@@ -59,14 +59,10 @@ npm install
 npm run dev
 ```
 
-6. To instead deploy the production build with Quasar (needs [Node.js](https://nodejs.org/) and [Quasar CLI](https://quasar.dev/start/quasar-cli/)), run:
+6. To instead deploy the production build, run:
 
 ```
-npm run build
-```
-
-```
-quasar serve dist/spa --history
+npm run build && npm run start
 ```
 
 ## Installation guide - Docker
@@ -87,7 +83,7 @@ docker build -t bybe-frontend .
 4. Run the docker image:
 
 ```
-docker run -it -p 3000:80 --rm bybe-frontend
+docker run --name bybe-frontend -p 3000:8080 --rm bybe-frontend
 ```
 
 ## Support me
