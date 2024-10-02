@@ -356,6 +356,7 @@ const openEditDialog = () => {
   equipmentOn.value = newTemplate.value.type_filter!.includes('Equipment');
   shieldOn.value = newTemplate.value.type_filter!.includes('Shield');
   weaponOn.value = newTemplate.value.type_filter!.includes('Weapon');
+  selectedTraits.value.forEach((trait) => (trait.state = null));
   selectedTraits.value = [];
   newTemplate.value.trait_blacklist_filter?.forEach((trait) => {
     selectedTraits.value.push({
@@ -794,6 +795,8 @@ defineExpose({ generateShop });
                               <q-toggle
                                 v-model="scope.opt.state"
                                 toggle-indeterminate
+                                :color="scope.opt.state === true ? 'positive' : 'red'"
+                                :keep-color="scope.opt.state != null"
                                 :checked-icon="biCheck"
                                 :unchecked-icon="biX"
                                 @update:model-value="toggleTraits(scope.opt)"
@@ -1224,6 +1227,8 @@ defineExpose({ generateShop });
                               <q-toggle
                                 v-model="scope.opt.state"
                                 toggle-indeterminate
+                                :color="scope.opt.state === true ? 'positive' : 'red'"
+                                :keep-color="scope.opt.state != null"
                                 :checked-icon="biCheck"
                                 :unchecked-icon="biX"
                                 @update:model-value="toggleTraits(scope.opt)"
