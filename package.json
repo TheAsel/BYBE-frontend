@@ -12,7 +12,7 @@
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build",
-    "start": "./node_modules/@quasar/cli/bin/quasar.js serve dist/spa --history --open --hostname localhost"
+    "start": "./node_modules/@quasar/cli/bin/quasar.js serve dist/spa --history --hostname localhost"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.12",
