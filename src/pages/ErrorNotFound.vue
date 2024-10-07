@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
 
 useHead({
@@ -11,12 +10,6 @@ useHead({
     }
   ]
 });
-
-const supportButton = ref(
-  document.querySelectorAll('[id^=kofi-widget-overlay-]').item(0) as HTMLElement
-);
-
-supportButton.value.style.display = 'none';
 </script>
 
 <template>
