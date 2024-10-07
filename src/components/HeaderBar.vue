@@ -488,7 +488,7 @@ const downloadData = () => {
         :class="{ 'tw-hidden': settings.getHiddenNav, 'overflow-hidden': settings.getHiddenNav }"
       >
         <div
-          class="tw-flex tw-flex-col tw-gap-y-4 tw-gap-x-0 tw-mt-5 sm:tw-flex-row sm:tw-items-center sm:tw-justify-end sm:tw-gap-y-0 sm:tw-gap-x-7 sm:tw-mt-0 sm:tw-pl-7"
+          class="tw-flex tw-flex-col tw-gap-y-4 tw-gap-x-0 tw-mt-5 sm:tw-flex-row sm:tw-items-center sm:tw-justify-start sm:tw-gap-y-0 sm:tw-gap-x-7 sm:tw-mt-0 sm:tw-pl-7"
         >
           <router-link
             v-for="item in navigation"
@@ -502,6 +502,15 @@ const downloadData = () => {
             :aria-current="item.to ? 'page' : undefined"
             >{{ item.name }}
           </router-link>
+          <q-space class="sm:tw-block tw-hidden" />
+          <q-separator class="tw-block sm:tw-hidden" />
+          <a
+            href="https://github.com/RakuJa/BYBE-Portable/releases/latest"
+            target="_blank"
+            rel="noopener"
+            class="tw-text-gray-500 hover:tw-text-gray-400 sm:tw-py-4 dark:tw-text-gray-400 dark:hover:tw-text-gray-500"
+            >Download</a
+          >
           <q-separator vertical inset class="sm:tw-block tw-hidden" />
 
           <div class="tw-flex tw-items-center tw-gap-x-4 sm:tw-gap-x-0 tw-relative">
