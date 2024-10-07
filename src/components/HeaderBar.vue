@@ -28,12 +28,10 @@ const settings = settingsStore();
 
 TailwindDarkFix();
 
-const supportButton = ref(
-  document.querySelectorAll('[id^=kofi-widget-overlay-]').item(0) as HTMLElement
-);
-if (supportButton.value) {
-  supportButton.value.classList.add('hide-print');
+interface Widget {
+  draw: (username, type) => void;
 }
+declare let kofiWidgetOverlay: Widget;
 
 const route = useRoute();
 const currentPath = ref(route.path);
@@ -72,34 +70,58 @@ const localSupport = ref(localStorage.getItem('hide_support'));
 switch (localSupport.value) {
   case 'true':
     hideSupport.value = true;
-    if (supportButton.value) {
-      supportButton.value.style.display = 'none';
-    }
     break;
   case 'false':
     hideSupport.value = false;
-    if (supportButton.value) {
-      supportButton.value.style.display = 'block';
-    }
     break;
   default:
     hideSupport.value = false;
-    if (supportButton.value) {
-      supportButton.value.style.display = 'block';
-    }
     localStorage.setItem('hide_support', 'false');
     break;
 }
 
+const loadKofiWidget = () => {
+  return new Promise<void>((resolve, reject) => {
+    let kofiWidget = document.createElement('script');
+    kofiWidget.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
+    kofiWidget.integrity =
+      'sha512-M5C7x3flCdJVRDM/E9jAWOtukG3A+9K2vGYYsi5D8fr49cvowu+aPOS47S/gzuUFfzMy2OJ7IqfBB+NE9kmnEw==';
+    kofiWidget.crossOrigin = 'anonymous';
+    kofiWidget.async = true;
+    kofiWidget.onload = () => {
+      resolve();
+    };
+    kofiWidget.onerror = () => reject(new Error('Failed to load script'));
+    document.body.appendChild(kofiWidget);
+  });
+};
+
+if (!hideSupport.value) {
+  try {
+    await loadKofiWidget();
+    if (kofiWidgetOverlay && typeof kofiWidgetOverlay.draw === 'function') {
+      kofiWidgetOverlay.draw('theasel', {
+        type: 'floating-chat',
+        'floating-chat.donateButton.text': 'Support Us',
+        'floating-chat.donateButton.background-color': '#00b9fe',
+        'floating-chat.donateButton.text-color': '#fff'
+      });
+      let supportButton = document
+        .querySelectorAll('[id^=kofi-widget-overlay-]')
+        .item(0) as HTMLElement;
+
+      supportButton.classList.add('hide-print');
+    } else {
+      throw new Error('Error loading Ko-Fi widget');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const toggleSupport = () => {
   localStorage.setItem('hide_support', JSON.stringify(hideSupport.value));
-  if (supportButton.value) {
-    if (hideSupport.value) {
-      supportButton.value.style.display = 'none';
-    } else {
-      supportButton.value.style.display = 'block';
-    }
-  }
+  window.location.reload();
 };
 
 const all_experimentals = ref(false);
