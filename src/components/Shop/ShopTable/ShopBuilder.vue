@@ -77,32 +77,32 @@ const diceSelect = [
   {
     label: 'D4',
     value: 4,
-    icon: 'img:/dice/d4.png'
+    icon: 'img:/dice/d4.webp'
   },
   {
     label: 'D6',
     value: 6,
-    icon: 'img:/dice/d6.png'
+    icon: 'img:/dice/d6.webp'
   },
   {
     label: 'D8',
     value: 8,
-    icon: 'img:/dice/d8.png'
+    icon: 'img:/dice/d8.webp'
   },
   {
     label: 'D10',
     value: 10,
-    icon: 'img:/dice/d10.png'
+    icon: 'img:/dice/d10.webp'
   },
   {
     label: 'D12',
     value: 12,
-    icon: 'img:/dice/d12.png'
+    icon: 'img:/dice/d12.webp'
   },
   {
     label: 'D20',
     value: 20,
-    icon: 'img:/dice/d20.png'
+    icon: 'img:/dice/d20.webp'
   }
 ];
 
@@ -695,7 +695,7 @@ defineExpose({ generateShop });
             >
               <q-card flat bordered>
                 <q-card-section>
-                  <div class="text-h6">Template Creator</div>
+                  <div class="text-h6 tw-min-w-[260px]">Template Creator</div>
                 </q-card-section>
                 <q-separator />
                 <q-tabs
@@ -751,7 +751,7 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Source"
-                        style="max-width: 235px"
+                        style="max-width: 236px"
                         virtual-scroll-item-size="32"
                         @filter="filterSourcesFn"
                       />
@@ -767,7 +767,7 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Traits"
-                        style="max-width: 235px"
+                        style="max-width: 236px"
                         :virtual-scroll-slice-size="traitOptions.length"
                         @filter="filterTraitsFn"
                       >
@@ -827,7 +827,7 @@ defineExpose({ generateShop });
                         input-debounce="0"
                         label="Rarity"
                         class="tw-mb-2 tw-pb-0.5"
-                        style="max-width: 235px"
+                        style="max-width: 236px"
                       />
                     </q-card-section>
                   </q-tab-panel>
@@ -880,7 +880,7 @@ defineExpose({ generateShop });
                             :label-value="'Min: ' + newTemplate.armor_percentage + '%'"
                             :disable="!armorOn"
                             class="tw-px-3"
-                            style="min-width: 234px"
+                            style="min-width: 236px"
                             aria-label="Armor percentage"
                             role="menuitem"
                           />
@@ -913,7 +913,7 @@ defineExpose({ generateShop });
                             :label-value="'Min: ' + newTemplate.equipment_percentage + '%'"
                             :disable="!equipmentOn"
                             class="tw-px-3"
-                            style="min-width: 234px"
+                            style="min-width: 236px"
                             aria-label="Equipment percentage"
                             role="menuitem"
                           />
@@ -946,7 +946,7 @@ defineExpose({ generateShop });
                             :label-value="'Min: ' + newTemplate.shield_percentage + '%'"
                             :disable="!shieldOn"
                             class="tw-px-3"
-                            style="min-width: 234px"
+                            style="min-width: 236px"
                             aria-label="Shield percentage"
                             role="menuitem"
                           />
@@ -979,7 +979,7 @@ defineExpose({ generateShop });
                             :label-value="'Min: ' + newTemplate.weapon_percentage + '%'"
                             :disable="!weaponOn"
                             class="tw-px-3"
-                            style="min-width: 234px"
+                            style="min-width: 236px"
                             aria-label="Weapon percentage"
                             role="menuitem"
                           />
@@ -1124,7 +1124,7 @@ defineExpose({ generateShop });
             >
               <q-card flat bordered>
                 <q-card-section>
-                  <div class="text-h6">Template Editor</div>
+                  <div class="text-h6 tw-min-w-[260px]">Template Editor</div>
                 </q-card-section>
                 <q-separator />
                 <q-tabs
@@ -1182,7 +1182,7 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Source"
-                        style="max-width: 235px"
+                        style="max-width: 236px"
                         virtual-scroll-item-size="32"
                         @filter="filterSourcesFn"
                       />
@@ -1199,7 +1199,7 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Traits"
-                        style="max-width: 235px"
+                        style="max-width: 236px"
                         :virtual-scroll-slice-size="traitOptions.length"
                         @filter="filterTraitsFn"
                       >
@@ -1259,7 +1259,7 @@ defineExpose({ generateShop });
                         input-debounce="0"
                         label="Rarity"
                         class="tw-mb-2 tw-pb-0.5"
-                        style="max-width: 235px"
+                        style="max-width: 236px"
                       />
                     </q-card-section>
                   </q-tab-panel>
@@ -1314,7 +1314,7 @@ defineExpose({ generateShop });
                             :label-value="'Min: ' + newTemplate.armor_percentage + '%'"
                             :disable="!armorOn"
                             class="tw-px-3"
-                            style="min-width: 234px"
+                            style="min-width: 236px"
                             aria-label="Armor percentage"
                             role="menuitem"
                           />
@@ -1347,7 +1347,7 @@ defineExpose({ generateShop });
                             :label-value="'Min: ' + newTemplate.equipment_percentage + '%'"
                             :disable="!equipmentOn"
                             class="tw-px-3"
-                            style="min-width: 234px"
+                            style="min-width: 236px"
                             aria-label="Equipment percentage"
                             role="menuitem"
                           />
@@ -1380,7 +1380,7 @@ defineExpose({ generateShop });
                             :label-value="'Min: ' + newTemplate.shield_percentage + '%'"
                             :disable="!shieldOn"
                             class="tw-px-3"
-                            style="min-width: 234px"
+                            style="min-width: 236px"
                             aria-label="Shield percentage"
                             role="menuitem"
                           />
@@ -1413,7 +1413,7 @@ defineExpose({ generateShop });
                             :label-value="'Min: ' + newTemplate.weapon_percentage + '%'"
                             :disable="!weaponOn"
                             class="tw-px-3"
-                            style="min-width: 234px"
+                            style="min-width: 236px"
                             aria-label="Weapon percentage"
                             role="menuitem"
                           />

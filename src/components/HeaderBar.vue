@@ -474,7 +474,7 @@ const downloadData = () => {
             flat
             unelevated
             type="button"
-            class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+            class="sm:tw-mr-2 tw-text-gray-800 dark:tw-text-gray-200"
             aria-controls="navbar-collapse"
             aria-label="Toggle navigation"
             :icon="biList"
@@ -496,8 +496,8 @@ const downloadData = () => {
             :to="item.to"
             :class="
               currentPath === item.to
-                ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-400'
-                : 'tw-text-gray-500 hover:tw-text-gray-400 sm:tw-py-4 dark:tw-text-gray-400 dark:hover:tw-text-gray-500'
+                ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-500'
+                : 'sm:tw-py-4 tw-text-gray-800 hover:tw-text-blue-600  dark:tw-text-neutral-200 dark:hover:tw-text-neutral-400'
             "
             :aria-current="item.to ? 'page' : undefined"
             >{{ item.name }}
@@ -508,7 +508,7 @@ const downloadData = () => {
             href="https://github.com/RakuJa/BYBE-Portable/releases/latest"
             target="_blank"
             rel="noopener"
-            class="tw-text-gray-500 hover:tw-text-gray-400 sm:tw-py-4 dark:tw-text-gray-400 dark:hover:tw-text-gray-500"
+            class="tw-text-gray-800 hover:tw-text-blue-600 dark:tw-text-neutral-200 dark:hover:tw-text-neutral-400"
             >Download</a
           >
           <q-separator vertical inset class="sm:tw-block tw-hidden" />
@@ -519,7 +519,7 @@ const downloadData = () => {
               round
               size="sm"
               padding="sm"
-              class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              class="sm:tw-mr-2 tw-text-gray-800 dark:tw-text-gray-200"
               :icon="biGithub"
               href="https://github.com/TheAsel/BYBE-frontend"
               target="_blank"
@@ -531,7 +531,7 @@ const downloadData = () => {
               round
               size="sm"
               padding="sm"
-              class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              class="sm:tw-mr-2 tw-text-gray-800 dark:tw-text-gray-200"
               :icon="$q.dark.isActive ? biSun : biMoon"
               aria-label="Toggle theme"
               @click="themeSwitch"
@@ -542,7 +542,7 @@ const downloadData = () => {
               round
               size="sm"
               padding="sm"
-              class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              class="sm:tw-mr-2 tw-text-gray-800 dark:tw-text-gray-200"
               :icon="biGear"
               target="_blank"
               aria-label="Open settings"
@@ -732,7 +732,7 @@ const downloadData = () => {
               v-if="currentPath === '/encounter' || currentPath === '/shop'"
               flat
               padding="sm"
-              class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              class="tw-text-gray-800 dark:tw-text-gray-200"
               aria-label="Start help tour"
               @click="$tours[currentPath].start()"
             >

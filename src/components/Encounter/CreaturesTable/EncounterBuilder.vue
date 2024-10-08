@@ -223,7 +223,7 @@ defineExpose({ generateEncounter });
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center">
-        <div class="text-h6 tw-mr-4">Generator Settings</div>
+        <div class="text-h6 tw-min-w-[240px]">Generator Settings</div>
         <q-space />
         <q-btn
           v-close-popup
@@ -263,7 +263,7 @@ defineExpose({ generateEncounter });
                 use-input
                 input-debounce="0"
                 label="Traits"
-                style="max-width: 242px"
+                style="max-width: 248px"
                 virtual-scroll-item-size="32"
                 @filter="filterTraitsFn"
               />
@@ -277,7 +277,7 @@ defineExpose({ generateEncounter });
                 options-dense
                 :options="Object.freeze(filters.getCreatureFilters.sizes)"
                 label="Size"
-                style="max-width: 242px"
+                style="max-width: 248px"
               />
 
               <q-select
@@ -289,7 +289,7 @@ defineExpose({ generateEncounter });
                 options-dense
                 :options="Object.freeze(filters.getCreatureFilters.rarities)"
                 label="Rarity"
-                style="max-width: 242px"
+                style="max-width: 248px"
               />
 
               <q-select
@@ -303,7 +303,7 @@ defineExpose({ generateEncounter });
                 use-input
                 input-debounce="0"
                 label="Family"
-                style="max-width: 242px"
+                style="max-width: 248px"
                 virtual-scroll-item-size="32"
                 @filter="filterFamiliesFn"
               />
@@ -317,7 +317,7 @@ defineExpose({ generateEncounter });
                 options-dense
                 :options="Object.freeze(filters.getCreatureFilters.creature_types)"
                 label="Creature Type"
-                style="max-width: 242px"
+                style="max-width: 248px"
               />
               <q-separator />
               <q-toggle
@@ -459,7 +459,7 @@ defineExpose({ generateEncounter });
                 options-dense
                 :options="Object.freeze(filters.getCreatureFilters.alignments)"
                 label="Alignment"
-                style="max-width: 242px"
+                style="width: 248px"
               />
 
               <q-select
@@ -471,7 +471,7 @@ defineExpose({ generateEncounter });
                 options-dense
                 :options="Object.freeze(filters.getCreatureFilters.creature_roles)"
                 label="Roles"
-                style="max-width: 242px"
+                style="width: 248px"
               />
 
               <div class="q-gutter-sm tw-pb-[292px]">
