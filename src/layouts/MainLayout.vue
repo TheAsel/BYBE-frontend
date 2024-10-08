@@ -11,7 +11,6 @@ try {
   const repoInfo = await requestRepoInfo();
   if (repoInfo) {
     newestVersion.value = repoInfo.name.substring(1);
-    console.log(newestVersion.value);
   } else {
     throw new Error('Error fetching repository info');
   }
@@ -39,18 +38,30 @@ try {
       class="tw-relative tw-bottom-0 tw-inset-x-0 tw-text-center tw-py-2 tw-border-t tw-border-gray-200 dark:tw-border-gray-700 tw-backdrop-blur-2xl !tw-bg-white/90 dark:!tw-bg-black/70"
     >
       <div class="tw-max-w-[85rem] tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
-        <p class="tw-text-sm dark:tw-text-white/50 tw-text-black/70">
+        <p class="tw-text-sm tw-text-neutral-500 dark:tw-text-neutral-400">
           BYBE - v{{ version }}
           <a
             v-if="version !== newestVersion"
-            class="tw- tw-text-blue-600 dark:tw-text-blue-400"
+            class="tw- tw-text-blue-600 dark:tw-text-blue-400 tw-decoration-2 hover:tw-underline"
             :href="repoUrl"
             target="_blank"
             rel="noopener"
-            >(Update Available!)</a
           >
-          | <router-link to="/license">Licenses and Policies</router-link> |
-          <a :href="repoUrl" target="_blank" rel="noopener"> What's new </a>
+            (Update Available!)</a
+          >
+          |
+          <router-link to="/license" class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
+            >Licenses and Policies</router-link
+          >
+          |
+          <a
+            class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
+            :href="repoUrl"
+            target="_blank"
+            rel="noopener"
+          >
+            What's new
+          </a>
         </p>
       </div>
     </footer>

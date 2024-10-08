@@ -10,7 +10,6 @@ export async function requestRepoInfo() {
       'https://api.github.com/repos/' + process.env.REPO_URL + '/releases/latest',
       requestOptions
     );
-    console.log(process.env.REPO_URL);
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
