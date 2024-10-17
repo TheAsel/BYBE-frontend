@@ -16,7 +16,11 @@
 
 BYBE is also available offline! We currently support Windows and Linux (AppImage). Click on the button below to download the application for your preferred platform.
 
-[![](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/download-compact.svg)](https://github.com/RakuJa/BYBE-Portable/releases/latest)
+<p align="center">
+  <a href="https://github.com/RakuJa/BYBE-Portable/releases/latest" target="_blank">
+    <img src="https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/download-compact.svg" alt="Download" style="max-width: 100%;">
+  </a>
+</p>
 
 ## Features
 
@@ -30,13 +34,19 @@ BYBE is also available offline! We currently support Windows and Linux (AppImage
 - Fast, mobile friendly, light/dark theme, accessible
 - More to come...
 
-| ![Screenshot of the Encounter Builder page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter_builder.png) |
-| :---------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                                Encounter Builder                                                                |
+![Screenshot of the Encounter Builder page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter_builder.png)
 
-| ![Screenshot of the Shop Generator page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/shop_generator.png) |
-| :---------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                              Shop Generator                                                               |
+<p align="center">
+  Encounter Builder 
+</p>
+<hr/>
+<br/>
+
+![Screenshot of the Shop Generator page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/shop_generator.png)
+
+<p align="center">
+  Shop Generator
+</p>
 
 ## Requirements
 
