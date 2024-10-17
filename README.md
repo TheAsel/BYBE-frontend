@@ -12,6 +12,12 @@
 
 > Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
 
+## Download
+
+BYBE is also available offline! We currently support Windows and Linux (AppImage). Click on the button below to download the application for your preferred platform.
+
+[![Download](https://gist.github.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/download-compact.svg)](https://github.com/RakuJa/BYBE-Portable/releases/latest)
+
 ## Features
 
 - Encounter Builder
@@ -24,9 +30,13 @@
 - Fast, mobile friendly, light/dark theme, accessible
 - More to come...
 
-![Screenshot of the Encounter Builder page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter_builder.png)
+| ![Screenshot of the Encounter Builder page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter_builder.png) |
+| :---------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                                Encounter Builder                                                                |
 
-![Screenshot of the Shop Generator page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/shop_generator.png)
+| ![Screenshot of the Shop Generator page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/shop_generator.png) |
+| :---------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                              Shop Generator                                                               |
 
 ## Requirements
 
