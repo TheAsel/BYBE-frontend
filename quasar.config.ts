@@ -52,7 +52,8 @@ export default configure((/* ctx */) => {
       // publicPath: '/',
       // analyze: true,
       env: {
-        API_URL: process.env.API_URL
+        API_URL: process.env.API_URL,
+        REPO_URL: process.env.REPO_URL
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

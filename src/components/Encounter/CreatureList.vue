@@ -455,7 +455,6 @@ const openCreatureSheet = (id: number) => {
             <div class="absolute-full flex flex-center">
               <q-badge
                 class="tw-absolute tw-text-base"
-                transparent
                 color="grey-10"
                 text-color="white"
                 :label="'Challenge: ' + info.getInfo.challenge"

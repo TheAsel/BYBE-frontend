@@ -36,6 +36,7 @@ const filters = filtersStore();
 const creatures = creaturesStore();
 const encounter = encounterStore();
 const tourActive = ref(false);
+const screenWidth = ref(screen.width);
 
 const scrollUp = ref(false);
 
@@ -358,9 +359,10 @@ const scrollPage = (up: boolean) => {
     <CreaturesTable v-else id="table" />
     <CreatureList id="list" />
     <q-page-sticky
+      v-if="screenWidth < 768"
       position="bottom-right"
       :offset="[18, 18]"
-      class="tw-z-10 tw-opacity-85 tw-block md:tw-hidden"
+      class="tw-z-10 tw-opacity-85 only-screen"
     >
       <q-btn
         v-if="scrollUp"

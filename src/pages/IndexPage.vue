@@ -59,7 +59,7 @@ const cards = [
         v-for="item in cards"
         :key="item.to"
         flat
-        class="tw-group tw-backdrop-blur tw-border tw-bg-white/10 dark:tw-bg-gray-800/40 tw-border-gray-500/20 dark:tw-border-gray-700/40 hover:tw-bg-white/[0.20] hover:dark:tw-bg-white/[.075] tw-flex tw-gap-y-6 tw-w-full tw-h-full tw-rounded-lg tw-p-5 tw-transition-all"
+        class="tw-group tw-backdrop-blur tw-border-2 tw-bg-white/5 dark:tw-bg-gray-800/20 tw-border-gray-200/20 dark:tw-border-neutral-800/20 hover:tw-border-blue-600 hover:dark:tw-border-blue-500 tw-flex tw-gap-y-6 tw-w-full tw-h-full tw-rounded-lg tw-p-5 tw-transition-all"
         :to="item.to"
       >
         <q-icon

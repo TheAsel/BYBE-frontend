@@ -496,7 +496,7 @@ const downloadData = () => {
             flat
             unelevated
             type="button"
-            class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+            class="sm:tw-mr-2 tw-text-gray-800 dark:tw-text-gray-200"
             aria-controls="navbar-collapse"
             aria-label="Toggle navigation"
             :icon="biList"
@@ -510,7 +510,7 @@ const downloadData = () => {
         :class="{ 'tw-hidden': settings.getHiddenNav, 'overflow-hidden': settings.getHiddenNav }"
       >
         <div
-          class="tw-flex tw-flex-col tw-gap-y-4 tw-gap-x-0 tw-mt-5 sm:tw-flex-row sm:tw-items-center sm:tw-justify-end sm:tw-gap-y-0 sm:tw-gap-x-7 sm:tw-mt-0 sm:tw-pl-7"
+          class="tw-flex tw-flex-col tw-gap-y-4 tw-gap-x-0 tw-mt-5 sm:tw-flex-row sm:tw-items-center sm:tw-justify-start sm:tw-gap-y-0 sm:tw-gap-x-7 sm:tw-mt-0 sm:tw-pl-7"
         >
           <router-link
             v-for="item in navigation"
@@ -518,12 +518,21 @@ const downloadData = () => {
             :to="item.to"
             :class="
               currentPath === item.to
-                ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-400'
-                : 'tw-text-gray-500 hover:tw-text-gray-400 sm:tw-py-4 dark:tw-text-gray-400 dark:hover:tw-text-gray-500'
+                ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-500'
+                : 'sm:tw-py-4 tw-text-gray-800 hover:tw-text-blue-600  dark:tw-text-neutral-200 dark:hover:tw-text-neutral-400'
             "
             :aria-current="item.to ? 'page' : undefined"
             >{{ item.name }}
           </router-link>
+          <q-space class="sm:tw-block tw-hidden" />
+          <q-separator class="tw-block sm:tw-hidden" />
+          <a
+            href="https://github.com/RakuJa/BYBE-Portable/releases/latest"
+            target="_blank"
+            rel="noopener"
+            class="tw-text-gray-800 hover:tw-text-blue-600 dark:tw-text-neutral-200 dark:hover:tw-text-neutral-400"
+            >Download</a
+          >
           <q-separator vertical inset class="sm:tw-block tw-hidden" />
 
           <div class="tw-flex tw-items-center tw-gap-x-4 sm:tw-gap-x-0 tw-relative">
@@ -532,7 +541,7 @@ const downloadData = () => {
               round
               size="sm"
               padding="sm"
-              class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              class="sm:tw-mr-2 tw-text-gray-800 dark:tw-text-gray-200"
               :icon="biGithub"
               href="https://github.com/TheAsel/BYBE-frontend"
               target="_blank"
@@ -544,7 +553,7 @@ const downloadData = () => {
               round
               size="sm"
               padding="sm"
-              class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              class="sm:tw-mr-2 tw-text-gray-800 dark:tw-text-gray-200"
               :icon="$q.dark.isActive ? biSun : biMoon"
               aria-label="Toggle theme"
               @click="themeSwitch"
@@ -555,7 +564,7 @@ const downloadData = () => {
               round
               size="sm"
               padding="sm"
-              class="sm:tw-mr-2 tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              class="sm:tw-mr-2 tw-text-gray-800 dark:tw-text-gray-200"
               :icon="biGear"
               target="_blank"
               aria-label="Open settings"
@@ -745,7 +754,7 @@ const downloadData = () => {
               v-if="currentPath === '/encounter' || currentPath === '/shop'"
               flat
               padding="sm"
-              class="tw-text-gray-800 hover:tw-bg-gray-100 dark:tw-text-gray-200 dark:hover:tw-bg-gray-700"
+              class="tw-text-gray-800 dark:tw-text-gray-200"
               aria-label="Start help tour"
               @click="$tours[currentPath].start()"
             >
