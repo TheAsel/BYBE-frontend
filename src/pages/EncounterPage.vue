@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
+import { useQuasar } from 'quasar';
 import { requestCreatures, requestFilters } from 'src/utils/encounter-api-calls';
 import {
   partyStore,
@@ -14,7 +15,7 @@ import type { min_creature } from 'src/types/creature';
 import type { encounter_list } from 'src/types/encounter';
 import CreatureList from 'src/components/Encounter/CreatureList.vue';
 import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
-import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
+import { matArrowDownward, matArrowUpward, matPriorityHigh } from '@quasar/extras/material-icons';
 import SkeletonTable from 'src/components/Encounter/SkeletonTable.vue';
 import CreaturesTable from 'src/components/Encounter/CreaturesTable.vue';
 
@@ -28,6 +29,7 @@ useHead({
   ]
 });
 
+const $q = useQuasar();
 const settings = settingsStore();
 const partyStores = partyStore();
 const filters = filtersStore();
@@ -196,6 +198,12 @@ try {
   }
 } catch (error) {
   console.error(error);
+  $q.notify({
+    progress: true,
+    type: 'warning',
+    message: 'Error loading the creatures',
+    icon: matPriorityHigh
+  });
 }
 
 const steps: Step[] = [

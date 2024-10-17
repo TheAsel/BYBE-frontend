@@ -91,7 +91,7 @@ const steps: Step[] = [
   {
     target: '#v-step-0',
     content:
-      'This is the item list. Click on a row to show its description and on the + to add it to the shop to the right.',
+      'This is the item list. Click on a row to show its description and double click it to add it to the shop to the right.',
     params: {
       placement: 'auto'
     }
@@ -99,7 +99,7 @@ const steps: Step[] = [
   {
     target: '#v-step-1',
     content:
-      'From this window you can define your preferred settings for the random shop generator.',
+      'From this window you can define your preferred settings for the random shop generator and create custom templates.',
     params: {
       placement: 'bottom'
     }
@@ -259,6 +259,7 @@ onUnmounted(() => {
     <v-tour name="/shop" :steps="steps" :options="options" :callbacks="callbacks" />
     <ShopSheet v-if="screenWidth >= 768" class="q-pa-md tw-w-full md:tw-w-[27%]" />
     <ShopTable id="table" />
+    <q-space />
     <ShopSheet v-if="screenWidth < 768" class="q-pa-md tw-w-full md:tw-w-[27%]" />
     <ShopList id="list" />
     <q-page-sticky
