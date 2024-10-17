@@ -85,7 +85,7 @@ const loadKofiWidget = () => {
     let kofiWidget = document.createElement('script');
     kofiWidget.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
     kofiWidget.integrity =
-      'sha512-M5C7x3flCdJVRDM/E9jAWOtukG3A+9K2vGYYsi5D8fr49cvowu+aPOS47S/gzuUFfzMy2OJ7IqfBB+NE9kmnEw==';
+      'sha512-M5C7x3flCdJVRDM/E9jAWOtukG3A+9K2vGYYsi5D8fr49cvowu+aPOS47S/gzuUFfzMy2OJ7IqfBB+NE9kmnEw== sha512-Qq9Wa8l8WJo/UHkeTG+uo0cuHH8TgQ0yN3TXdRSUxhwIpgNRyqeqeCen+JED6L/772FJbduOYvZ31yhxYHegJg==';
     kofiWidget.crossOrigin = 'anonymous';
     kofiWidget.async = true;
     kofiWidget.onload = () => {
