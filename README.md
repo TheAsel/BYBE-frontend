@@ -16,7 +16,7 @@
 
 BYBE is also available offline! We currently support Windows and Linux (AppImage). Click on the button below to download the application for your preferred platform.
 
-[![Download](https://gist.github.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/download-compact.svg)](https://github.com/RakuJa/BYBE-Portable/releases/latest)
+[![](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/download-compact.svg)](https://github.com/RakuJa/BYBE-Portable/releases/latest)
 
 ## Features
 
