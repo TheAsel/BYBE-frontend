@@ -27,14 +27,11 @@ import {
   mdiRing,
   mdiTshirtCrew
 } from '@quasar/extras/mdi-v7';
-import SkeletonTable from 'src/components/Shop/SkeletonTable.vue';
 
 const $q = useQuasar();
 const settings = settingsStore();
 const items = itemsStore();
 const filterStore = filtersStore();
-
-const skeleton = ref(true);
 
 const shopBuilderRef = ref();
 const router = useRouter();
@@ -44,7 +41,7 @@ const navigationActive = ref(false);
 const selected = ref<item[]>([]);
 const keyDown = ref(false);
 const rows = ref<item[]>([]);
-const loading = ref(false);
+const loading = ref(true);
 const pagination = ref({
   sortBy: 'name',
   descending: false,
@@ -142,9 +139,9 @@ const columns: {
   },
   {
     name: 'id',
-    label: 'Shop',
+    label: 'Cart',
     field: (row) => row.core_item.id,
-    required: true,
+    required: false,
     align: 'center',
     sortable: false
   }
@@ -182,13 +179,11 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
     if (request) {
       pagination.value.rowsNumber = request.total;
       rows.value = request.results;
-      skeleton.value = false;
       loading.value = false;
     } else {
       throw new Error('Error loading items');
     }
   } catch (error) {
-    skeleton.value = true;
     console.error(error);
     $q.notify({
       progress: true,
@@ -225,7 +220,7 @@ const resetFilters = () => {
   };
 };
 
-const visibleColumns = ref(['name', 'level', 'type', 'id']);
+const visibleColumns = ref(['name', 'level', 'type', 'rarity']);
 
 const sort = (col: item_columns) => {
   if (filters.value.sort_by === col) {
@@ -445,8 +440,7 @@ const filterTraitsFn = (val, update) => {
 </script>
 
 <template>
-  <SkeletonTable v-if="skeleton" />
-  <div v-else class="tw-w-full q-pa-md md:tw-w-[46%] only-screen">
+  <div class="tw-w-full q-pa-md md:tw-w-[46%] only-screen">
     <q-table
       id="v-step-0"
       ref="itemTable"
@@ -467,7 +461,7 @@ const filterTraitsFn = (val, update) => {
       rows-per-page-label="Items per page:"
       :rows-per-page-options="[50, 100, 0]"
       table-header-class="v-step-3"
-      row-key="id"
+      row-key="name"
       selection="single"
       :fullscreen="fullscreen"
       @request="onRequest"
@@ -475,6 +469,11 @@ const filterTraitsFn = (val, update) => {
         (_, row: item) => {
           items.setSelectedItem(row);
           selected = [row];
+        }
+      "
+      @row-dblclick="
+        (_, row: item) => {
+          addItem(row);
         }
       "
       @focusin="activateNavigation"
