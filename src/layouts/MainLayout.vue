@@ -1,6 +1,22 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import HeaderBar from 'components/HeaderBar.vue';
 import { version } from '../../package.json';
+import { requestRepoInfo } from 'src/utils/github-api';
+
+const newestVersion = ref(version);
+const repoUrl = 'https://github.com/' + process.env.REPO_URL + '/releases/latest';
+
+try {
+  const repoInfo = await requestRepoInfo();
+  if (repoInfo) {
+    newestVersion.value = repoInfo.name.substring(1);
+  } else {
+    throw new Error('Error fetching repository info');
+  }
+} catch (error) {
+  console.error(error);
+}
 </script>
 
 <template>
@@ -22,10 +38,25 @@ import { version } from '../../package.json';
       class="tw-relative tw-bottom-0 tw-inset-x-0 tw-text-center tw-py-2 tw-border-t tw-border-gray-200 dark:tw-border-gray-700 tw-backdrop-blur-2xl !tw-bg-white/90 dark:!tw-bg-black/70"
     >
       <div class="tw-max-w-[85rem] tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
-        <p class="tw-text-sm dark:tw-text-white/50 tw-text-black/70">
-          BYBE - v{{ version }} | <router-link to="/license">Licenses and Policies</router-link> |
+        <p class="tw-text-sm tw-text-neutral-500 dark:tw-text-neutral-400">
+          BYBE - v{{ version }}
           <a
-            href="https://github.com/TheAsel/BYBE-frontend/releases"
+            v-if="version !== newestVersion"
+            class="tw- tw-text-blue-600 dark:tw-text-blue-400 tw-decoration-2 hover:tw-underline"
+            :href="repoUrl"
+            target="_blank"
+            rel="noopener"
+          >
+            (Update Available!)</a
+          >
+          |
+          <router-link to="/license" class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
+            >Licenses and Policies</router-link
+          >
+          |
+          <a
+            class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
+            :href="repoUrl"
             target="_blank"
             rel="noopener"
           >
