@@ -19,14 +19,14 @@
     <li><a href="#-download">Download</a></li>
     <li><a href="#-features">Features</a></li>
     <li>
-      <a href="#-installation">Installation</a>
+      <a href="#️-installation">Installation</a>
       <ul>
         <li><a href="#requirements">Requirements</a></li>
         <li><a href="#local">Local</a></li>
         <li><a href="#docker">Docker</a></li>
       </ul>
     </li>
-    <li><a href="#-support-me">Support Me</a></li>
+    <li><a href="#️-support-me">Support Me</a></li>
 
   </ol>
 </details>
@@ -58,9 +58,7 @@ BYBE is also available offline! We currently support Windows and Linux (AppImage
 <p align="center">
   Encounter Builder 
 </p>
-
----
-
+<hr style="height: .1em" />
 <br/>
 
 ![Screenshot of the Shop Generator page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/shop_generator.png)
