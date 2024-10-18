@@ -58,7 +58,9 @@ BYBE is also available offline! We currently support Windows and Linux (AppImage
 <p align="center">
   Encounter Builder 
 </p>
-<hr style="height: .1em" />
+
+---
+
 <br/>
 
 ![Screenshot of the Shop Generator page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/shop_generator.png)
@@ -134,3 +136,5 @@ If you like this tool, consider supporting me:
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B0Q8YOL)
 
 Also consider supporting [RakuJa](https://github.com/RakuJa), the backend developer. Thank you!
+
+<p align="right"><a href="#bybe---frontend">🔼 Back to top</a></p>
