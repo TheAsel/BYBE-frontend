@@ -12,7 +12,26 @@
 
 > Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
 
-## Download
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#-download">Download</a></li>
+    <li><a href="#-features">Features</a></li>
+    <li>
+      <a href="#-installation">Installation</a>
+      <ul>
+        <li><a href="#requirements">Requirements</a></li>
+        <li><a href="#local">Local</a></li>
+        <li><a href="#docker">Docker</a></li>
+      </ul>
+    </li>
+    <li><a href="#-support-me">Support Me</a></li>
+
+  </ol>
+</details>
+
+## 📥 Download
 
 BYBE is also available offline! We currently support Windows and Linux (AppImage). Click on the button below to download the application for your preferred platform.
 
@@ -22,7 +41,7 @@ BYBE is also available offline! We currently support Windows and Linux (AppImage
   </a>
 </p>
 
-## Features
+## ✨ Features
 
 - Encounter Builder
   - Browse and filter a list of all creatures
@@ -39,7 +58,9 @@ BYBE is also available offline! We currently support Windows and Linux (AppImage
 <p align="center">
   Encounter Builder 
 </p>
-<hr/>
+
+---
+
 <br/>
 
 ![Screenshot of the Shop Generator page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/shop_generator.png)
@@ -48,7 +69,9 @@ BYBE is also available offline! We currently support Windows and Linux (AppImage
   Shop Generator
 </p>
 
-## Requirements
+## 🖥️ Installation
+
+### Requirements
 
 Built using:
 
@@ -57,7 +80,7 @@ Built using:
 - [Quasar](https://quasar.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
-## Installation guide - Local
+### Local
 
 1. Install [Node.js](https://nodejs.org/) on your machine.
 2. Download the [latest release](https://github.com/TheAsel/BYBE-frontend/releases/latest) or clone this repository:
@@ -85,7 +108,7 @@ npm run dev
 npm run build && npm run start
 ```
 
-## Installation guide - Docker
+### Docker
 
 1. Download the [latest release](https://github.com/TheAsel/BYBE-frontend/releases/latest) or clone this repository:
 
@@ -106,7 +129,7 @@ docker build -t bybe-frontend .
 docker run --name bybe-frontend -p 3000:8080 --rm bybe-frontend
 ```
 
-## Support me
+## ❤️ Support me
 
 If you like this tool, consider supporting me:
 
