@@ -33,7 +33,7 @@
 
 ## 📥 Download
 
-BYBE is also available offline! We currently support Windows and Linux (AppImage). Click on the button below to download the application for your preferred platform.
+BYBE is also available offline! We currently support Windows, MacOS and Linux (AppImage). Click on the button below to download the application for your preferred platform.
 
 <p align="center">
   <a href="https://github.com/RakuJa/BYBE-Portable/releases/latest" target="_blank">
