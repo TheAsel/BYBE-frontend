@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import ShopSheet from 'src/components/Shop/ShopSheet.vue';
+import ShopSheet from '../components/Shop/ShopSheet.vue';
 import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
-import type { item } from 'src/types/item';
+import type { item } from '../types/item';
 import { matPriorityHigh, matPrint } from '@quasar/extras/material-icons';
 import { isNull } from 'lodash-es';
-import { requestItemId } from 'src/utils/shop-api-calls';
-import { itemsStore } from 'src/stores/store';
+import { requestItemId } from '../utils/shop-api-calls';
+import { itemsStore } from '../stores/store';
 
 const title = ref('Item Sheet - BYBE');
 

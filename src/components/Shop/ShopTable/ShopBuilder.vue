@@ -13,11 +13,11 @@ import {
   biCheck,
   biX
 } from '@quasar/extras/bootstrap-icons';
-import { filtersStore, itemsStore, settingsStore, templateStore } from 'src/stores/store';
-import { shopGenerator } from 'src/utils/shop-api-calls';
+import { filtersStore, itemsStore, settingsStore, templateStore } from '../../../stores/store';
+import { shopGenerator } from '../../../utils/shop-api-calls';
 import { capitalize, cloneDeep, debounce } from 'lodash-es';
-import { min_item } from 'src/types/item';
-import { template } from 'src/types/template';
+import type { min_item } from '../../../types/item';
+import type { template } from '../../../types/template';
 
 const $q = useQuasar();
 

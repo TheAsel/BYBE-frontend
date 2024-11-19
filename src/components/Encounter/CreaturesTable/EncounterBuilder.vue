@@ -3,12 +3,12 @@ import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { biXLg, biQuestionCircle } from '@quasar/extras/bootstrap-icons';
-import { partyStore, filtersStore, encounterStore, settingsStore } from 'src/stores/store';
-import { encounterGenerator } from 'src/utils/encounter-api-calls';
-import type { alignments, sizes, rarities, challenges, roles } from 'src/types/filters';
-import type { min_creature } from 'src/types/creature';
+import { partyStore, filtersStore, encounterStore, settingsStore } from '../../../stores/store';
+import { encounterGenerator } from '../../../utils/encounter-api-calls';
+import type { alignments, sizes, rarities, challenges, roles } from '../../../types/filters';
+import type { min_creature } from '../../../types/creature';
 import { debounce } from 'lodash-es';
-import { adventure_groups } from 'src/types/encounter';
+import type { adventure_groups } from '../../../types/encounter';
 
 const $q = useQuasar();
 

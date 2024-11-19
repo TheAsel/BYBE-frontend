@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
 import { capitalize } from 'lodash-es';
-import type { party } from 'src/types/party';
-import type { creature, min_creature } from 'src/types/creature';
-import type { encounter, encounter_list } from 'src/types/encounter';
-import type { roles, variants } from 'src/types/filters';
-import type { item, min_item } from 'src/types/item';
-import { shop_list } from 'src/types/shop';
-import { template, template_data } from 'src/types/template';
+import type { party } from '../types/party';
+import type { creature, min_creature } from '../types/creature';
+import type { encounter, encounter_list } from '../types/encounter';
+import type { roles, variants } from '../types/filters';
+import type { item, min_item } from '../types/item';
+import type { shop_list } from '../types/shop';
+import type { template, template_data } from '../types/template';
 
 export const settingsStore = defineStore('settings', {
   state: () => ({

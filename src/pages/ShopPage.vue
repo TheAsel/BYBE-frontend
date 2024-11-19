@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useHead } from '@unhead/vue';
-import ShopTable from 'src/components/Shop/ShopTable.vue';
-import ShopSheet from 'src/components/Shop/ShopSheet.vue';
-import ShopList from 'src/components/Shop/ShopList.vue';
-import { shop_list } from 'src/types/shop';
-import { itemsStore, settingsStore, templateStore } from 'src/stores/store';
-import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
+import ShopTable from '../components/Shop/ShopTable.vue';
+import ShopSheet from '../components/Shop/ShopSheet.vue';
+import ShopList from '../components/Shop/ShopList.vue';
+import type { shop_list } from '../types/shop';
+import { itemsStore, settingsStore, templateStore } from '../stores/store';
+import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
-import { item, min_item } from 'src/types/item';
-import { template } from 'src/types/template';
+import type { item, min_item } from '../types/item';
+import type { template } from '../types/template';
 
 useHead({
   title: 'Shop Generator - BYBE',

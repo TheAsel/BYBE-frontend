@@ -1,5 +1,5 @@
 import type { alignments, rarities, roles, sizes, variants } from './filters';
-import { item } from './item';
+import type { item } from './item';
 
 interface KeyValue {
   [key: string]: number;

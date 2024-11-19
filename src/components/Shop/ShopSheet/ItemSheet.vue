@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { itemsStore, settingsStore } from 'src/stores/store';
+import { itemsStore, settingsStore } from '../../../stores/store';
 import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
 import { useRouter } from 'vue-router';
 

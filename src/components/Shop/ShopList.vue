@@ -2,11 +2,11 @@
 import { ref, watch } from 'vue';
 import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { itemsStore, settingsStore } from 'stores/store';
+import { itemsStore, settingsStore } from '../../stores/store';
 import { useRouter } from 'vue-router';
-import { shop_list } from 'src/types/shop';
-import { min_item } from 'src/types/item';
-import { requestItemId } from 'src/utils/shop-api-calls';
+import type { shop_list } from '../../types/shop';
+import type { min_item } from '../../types/item';
+import { requestItemId } from '../../utils/shop-api-calls';
 import { debounce, isNull } from 'lodash-es';
 import { useQuasar } from 'quasar';
 import {

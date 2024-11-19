@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, toRaw } from 'vue';
-import { requestFilters, requestItems, requestTemplates } from 'src/utils/shop-api-calls';
-import type { item, min_item } from 'src/types/item';
+import { ref, toRaw, onMounted } from 'vue';
+import { requestFilters, requestItems, requestTemplates } from '../../utils/shop-api-calls';
+import type { item, min_item } from '../../types/item';
 import {
   biArrowDownUp,
   biBasketFill,
@@ -13,13 +13,13 @@ import {
   biFullscreen,
   biFullscreenExit
 } from '@quasar/extras/bootstrap-icons';
-import { item_columns, item_filters, rarities } from 'src/types/filters';
-import { filtersStore, itemsStore, settingsStore, templateStore } from 'src/stores/store';
+import type { item_columns, item_filters, rarities } from '../../types/filters';
+import { filtersStore, itemsStore, settingsStore, templateStore } from '../../stores/store';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 import { capitalize, debounce } from 'lodash-es';
 import { useRouter } from 'vue-router';
-import ShopBuilder from 'src/components/Shop/ShopTable/ShopBuilder.vue';
+import ShopBuilder from '../../components/Shop/ShopTable/ShopBuilder.vue';
 import {
   mdiSword,
   mdiShield,
@@ -384,33 +384,6 @@ async function onKey(evt) {
   }
 }
 
-await fetchFromServer(0, 100);
-
-try {
-  const sourcesRequest = await requestFilters('sources');
-  if (sourcesRequest) {
-    filterStore.updateItemSources(sourcesRequest);
-    sourceFilter.value = filterStore.getItemFilters.sources;
-  } else {
-    throw new Error('Error fetching sources');
-  }
-  const traitsRequest = await requestFilters('traits');
-  if (traitsRequest) {
-    filterStore.updateItemTraits(traitsRequest);
-    traitFilter.value = filterStore.getItemFilters.traits;
-  } else {
-    throw new Error('Error fetching traits');
-  }
-  const templatesRequest = await requestTemplates();
-  if (templatesRequest) {
-    templateStore().addDefaultTemplates(templatesRequest);
-  } else {
-    throw new Error('Error fetching templates');
-  }
-} catch (error) {
-  console.error(error);
-}
-
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
@@ -437,6 +410,34 @@ const filterTraitsFn = (val, update) => {
     );
   });
 };
+
+onMounted(async () => {
+  fetchFromServer(0, 100);
+  try {
+    const sourcesRequest = await requestFilters('sources');
+    if (sourcesRequest) {
+      filterStore.updateItemSources(sourcesRequest);
+      sourceFilter.value = filterStore.getItemFilters.sources;
+    } else {
+      throw new Error('Error fetching sources');
+    }
+    const traitsRequest = await requestFilters('traits');
+    if (traitsRequest) {
+      filterStore.updateItemTraits(traitsRequest);
+      traitFilter.value = filterStore.getItemFilters.traits;
+    } else {
+      throw new Error('Error fetching traits');
+    }
+    const templatesRequest = await requestTemplates();
+    if (templatesRequest) {
+      templateStore().addDefaultTemplates(templatesRequest);
+    } else {
+      throw new Error('Error fetching templates');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 <template>

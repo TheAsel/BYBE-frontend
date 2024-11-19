@@ -19,11 +19,11 @@ import {
   fasScroll
 } from '@quasar/extras/fontawesome-v6';
 import { capitalize, debounce } from 'lodash-es';
-import type { creature, min_creature } from 'src/types/creature';
-import { filtersStore, creaturesStore, encounterStore, settingsStore } from 'stores/store';
-import PartyBuilder from 'src/components/Encounter/CreaturesTable/PartyBuilder.vue';
-import EncounterBuilder from 'src/components/Encounter/CreaturesTable/EncounterBuilder.vue';
-import type { roles } from 'src/types/filters';
+import type { creature, min_creature } from '../../types/creature';
+import { filtersStore, creaturesStore, encounterStore, settingsStore } from '../../stores/store';
+import PartyBuilder from '../../components/Encounter/CreaturesTable/PartyBuilder.vue';
+import EncounterBuilder from '../../components/Encounter/CreaturesTable/EncounterBuilder.vue';
+import type { roles } from '../../types/filters';
 import { useRouter } from 'vue-router';
 
 const encounterBuilderRef = ref();

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { party } from 'src/types/party';
+import type { party } from '../../../types/party';
 import { biXLg, biPlusLg, biDashLg, biTrash } from '@quasar/extras/bootstrap-icons';
-import { partyStore } from 'stores/store';
+import { partyStore } from '../../../stores/store';
 
 const partyStores = partyStore();
 const tmpParty = ref<party>({
