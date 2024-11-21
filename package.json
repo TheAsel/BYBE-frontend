@@ -25,7 +25,7 @@
     "vue3-tour": "1.0.3"
   },
   "devDependencies": {
-    "@quasar/app-vite": "^2.0.0-rc.2",
+    "@quasar/app-vite": "^2.0.0-rc.3",
     "@quasar/cli": "2.4.1",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.9.1",

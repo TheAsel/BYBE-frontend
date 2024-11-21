@@ -207,8 +207,7 @@ export default defineConfig((/* ctx */) => {
     bex: {
       // extendBexScriptsConf (esbuildConf) {},
       // extendBexManifestJson (json) {},
-
-      contentScripts: ['my-content-script']
+      extraScripts: []
     }
   };
 });
