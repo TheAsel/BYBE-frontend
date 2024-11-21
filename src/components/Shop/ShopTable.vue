@@ -52,7 +52,7 @@ const pagination = ref({
 const filters = ref<{
   name_filter: string;
   level_filter: { min: number; max: number };
-  trait_filter: { label: string; value: string }[];
+  trait_filter: string[];
   rarity_filter: rarities[];
   type_filter: string[];
   source_filter: string[];
@@ -157,7 +157,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
     body.name_filter = filters.value.name_filter;
   }
   if (filters.value.trait_filter != undefined && filters.value.trait_filter.length > 0) {
-    body.trait_whitelist_filter = filters.value.trait_filter.map((traits) => traits.value);
+    body.trait_whitelist_filter = filters.value.trait_filter;
   }
   if (filters.value.rarity_filter != undefined && filters.value.rarity_filter.length > 0) {
     body.rarity_filter = filters.value.rarity_filter;
