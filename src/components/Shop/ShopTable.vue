@@ -237,7 +237,11 @@ const sort = (col: item_columns) => {
 
 const openShopSheet = (id: number) => {
   const routeData = router.resolve({ name: 'item', query: { id: id } });
-  window.open(routeData.href, '_blank');
+  if (process.env.IS_APP === 'true') {
+    window.open(routeData.href, '_self');
+  } else {
+    window.open(routeData.href, '_blank');
+  }
 };
 
 const addItem = debounce(function (item: item) {

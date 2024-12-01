@@ -53,7 +53,8 @@ export default defineConfig((/* ctx */) => {
       // analyze: true,
       env: {
         API_URL: process.env.API_URL,
-        REPO_URL: process.env.REPO_URL
+        REPO_URL: process.env.REPO_URL,
+        IS_APP: process.env.IS_APP
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
