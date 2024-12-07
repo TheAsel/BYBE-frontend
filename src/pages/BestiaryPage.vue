@@ -180,21 +180,37 @@ const perceptionString = computed(() => {
     senses.forEach((sense) => {
       let found = false;
       creatureData?.extra_data?.actions.forEach((action) => {
-        if (action.slug === sense) {
+        if (action.slug === sense.name) {
           finalString += action.name.toLowerCase() + ', ';
           found = true;
         }
       });
       if (!found) {
-        finalString += sense + ', ';
+        finalString += sense.name;
+        if (sense.acuity) {
+          finalString += ' ' + '(' + sense.acuity + ')';
+        }
+        if (sense.range) {
+          finalString += ' ' + sense.range + ' feet';
+        }
+        finalString += ', ';
       }
     });
-    if (spells != undefined && spells.length > 0 && !senses.includes('truesight')) {
+    if (
+      spells != undefined &&
+      spells.length > 0 &&
+      senses.every((sense) => {
+        return sense.name !== 'truesight';
+      })
+    ) {
       spells.forEach((spell) => {
         if (spell.name === 'True Seeing (Constant)') {
           finalString += 'truesight' + ', ';
         }
       });
+    }
+    if (!creatureData.extra_data.has_vision) {
+      finalString += 'no vision' + ', ';
     }
     if (creatureData?.extra_data?.perception_detail) {
       finalString += creatureData?.extra_data?.perception_detail;
