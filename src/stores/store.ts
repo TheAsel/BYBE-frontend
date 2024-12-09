@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import { capitalize } from 'lodash-es';
 import type { party } from '../types/party';
-import type { creature, min_creature } from '../types/creature';
+import type { min_creature } from '../types/creature';
 import type { encounter, encounter_list } from '../types/encounter';
-import type { roles, variants } from '../types/filters';
+import type { variants } from '../types/filters';
 import type { item, min_item } from '../types/item';
 import type { shop_list } from '../types/shop';
 import type { template, template_data } from '../types/template';
@@ -147,49 +147,6 @@ export const filtersStore = defineStore('filters', {
           .replace('Additive', 'Additive '),
         value: trait
       }));
-    }
-  }
-});
-
-export const creaturesStore = defineStore('creatures', {
-  state: () => ({ creatures: [] as creature[] }),
-  getters: {
-    getCreatures: (state) => state.creatures,
-    getCreatureId: (state) => (id: number) =>
-      state.creatures.find((creature) => creature.core_data.essential.id === id)
-  },
-  actions: {
-    updateCreatures(newCreatures: creature[]) {
-      // calculate the roles of the creature, by picking the percentages that are at least over 50%
-      newCreatures.forEach((creature) => {
-        const rolePercentages: { role: roles; percentage: number }[] = [
-          { role: 'Brute', percentage: creature.core_data.derived.brute_percentage },
-          {
-            role: 'Magical Striker',
-            percentage: creature.core_data.derived.magical_striker_percentage
-          },
-          {
-            role: 'Skill Paragon',
-            percentage: creature.core_data.derived.skill_paragon_percentage
-          },
-          { role: 'Skirmisher', percentage: creature.core_data.derived.skirmisher_percentage },
-          { role: 'Sniper', percentage: creature.core_data.derived.sniper_percentage },
-          { role: 'Soldier', percentage: creature.core_data.derived.soldier_percentage },
-          { role: 'SpellCaster', percentage: creature.core_data.derived.spell_caster_percentage }
-        ];
-        const rolesList: roles[] = [];
-        rolePercentages.forEach((role) => {
-          if (role.percentage >= 50) {
-            rolesList.push(role.role);
-          }
-        });
-        if (rolePercentages.length > 0) {
-          creature.core_data.derived.creature_role = rolesList;
-        } else {
-          creature.core_data.derived.creature_role = ['None'];
-        }
-      });
-      this.creatures = newCreatures;
     }
   }
 });

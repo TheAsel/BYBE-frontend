@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { onMounted, ref } from 'vue';
 import {
   biEraser,
   biArrowDownUp,
@@ -20,27 +20,86 @@ import {
 } from '@quasar/extras/fontawesome-v6';
 import { capitalize, debounce } from 'lodash-es';
 import type { creature, min_creature } from '../../types/creature';
-import { filtersStore, creaturesStore, encounterStore, settingsStore } from '../../stores/store';
+import { filtersStore, encounterStore, settingsStore } from '../../stores/store';
 import PartyBuilder from '../../components/Encounter/CreaturesTable/PartyBuilder.vue';
 import EncounterBuilder from '../../components/Encounter/CreaturesTable/EncounterBuilder.vue';
-import type { roles } from '../../types/filters';
+import type {
+  alignments,
+  creature_columns,
+  creature_filters,
+  rarities,
+  roles,
+  sizes,
+  creature_type
+} from '../../types/filters';
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
+import { requestCreatures, requestFilters } from 'src/utils/encounter-api-calls';
+import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
+
+const $q = useQuasar();
+const settings = settingsStore();
+const filterStore = filtersStore();
+const encounter = encounterStore();
 
 const encounterBuilderRef = ref();
 const router = useRouter();
 
-// ---- Stores declaration
-const settings = settingsStore();
-const filters = filtersStore();
-const creatures = creaturesStore();
-const encounter = encounterStore();
-
+const creatureTable = ref();
+const rows = ref<creature[]>([]);
+const loading = ref(true);
+const pagination = ref({
+  sortBy: 'name',
+  descending: false,
+  page: 1,
+  rowsPerPage: 100,
+  rowsNumber: 0
+});
+const filters = ref<{
+  name_filter: string;
+  level_filter: { min: number; max: number };
+  hp_filter: { min: number; max: number };
+  trait_filter: string[];
+  alignment_filter: alignments[];
+  size_filter: sizes[];
+  rarity_filter: rarities[];
+  family_filter: string[];
+  type_filter: creature_type[];
+  is_melee_filter: boolean;
+  is_ranged_filter: boolean;
+  is_spell_caster_filter: boolean;
+  role_filter: roles[];
+  source_filter: string[];
+  sort_by: creature_columns;
+  order_by: 'ascending' | 'descending';
+}>({
+  name_filter: '',
+  level_filter: { min: -1, max: 25 },
+  hp_filter: { min: 0, max: 680 },
+  trait_filter: [],
+  alignment_filter: [],
+  size_filter: [],
+  rarity_filter: [],
+  family_filter: [],
+  type_filter: [],
+  is_melee_filter: false,
+  is_ranged_filter: false,
+  is_spell_caster_filter: false,
+  role_filter: [],
+  source_filter: [],
+  sort_by: 'name',
+  order_by: 'ascending'
+});
 const fullscreen = ref(false);
 const tableHeight = ref('height: calc(100vh - 122px)');
 
+const sourceFilter = ref<string[]>(filterStore.getCreatureFilters.sources);
+const traitFilter = ref<string[]>(filterStore.getCreatureFilters.traits);
+const familyFilter = ref<string[]>(filterStore.getCreatureFilters.families);
+
 // ---- Columns declaration
 const columns: {
-  name: string;
+  name: creature_columns;
   label: string;
   field: (row: creature) => string | number | string[] | boolean[];
   required?: boolean;
@@ -85,7 +144,7 @@ const columns: {
     style: 'min-width: 100px;'
   },
   {
-    name: 'traits',
+    name: 'trait',
     label: 'Traits',
     field: (row) => row.core_data.traits,
     required: false,
@@ -130,7 +189,7 @@ const columns: {
     style: 'min-width: 125px; max-width: 180px;'
   },
   {
-    name: 'creature_type',
+    name: 'type',
     label: 'Type',
     field: (row) => row.core_data.essential.cr_type,
     required: false,
@@ -152,7 +211,7 @@ const columns: {
     style: 'min-width: 80px;'
   },
   {
-    name: 'creature_role',
+    name: 'role',
     label: 'Role',
     field: (row) => row.core_data.derived.creature_role!,
     required: false,
@@ -162,146 +221,164 @@ const columns: {
   }
 ];
 
-// ---- Filters
-const filterSource = ref<string[]>();
-const filterName = ref<string>();
-const levelRange = ref({ min: -1, max: 25 });
-const hpRange = ref({ min: 0, max: 600 });
-const filterTraits = ref<string[]>();
-const filterAlignment = ref<string[]>();
-const filterSize = ref<string[]>();
-const filterRarity = ref<string[]>();
-const filterFamily = ref<string[]>();
-const filterType = ref<string[]>();
-const filterAttacks = ref([false, false, false]);
-const filterRole = ref<roles[]>();
+const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: number) {
+  const body: creature_filters = {
+    min_level_filter: filters.value.level_filter.min,
+    max_level_filter: filters.value.level_filter.max,
+    min_hp_filter: filters.value.hp_filter.min,
+    max_hp_filter: filters.value.hp_filter.max,
+    pathfinder_version: settings.getPfVersion
+  };
+  if (filters.value.name_filter != '') {
+    body.name_filter = filters.value.name_filter;
+  }
+  if (filters.value.trait_filter != undefined && filters.value.trait_filter.length > 0) {
+    body.trait_whitelist_filter = filters.value.trait_filter;
+  }
+  if (filters.value.alignment_filter != undefined && filters.value.alignment_filter.length > 0) {
+    body.alignment_filter = filters.value.alignment_filter;
+  }
+  if (filters.value.size_filter != undefined && filters.value.size_filter.length > 0) {
+    body.size_filter = filters.value.size_filter;
+  }
+  if (filters.value.rarity_filter != undefined && filters.value.rarity_filter.length > 0) {
+    body.rarity_filter = filters.value.rarity_filter;
+  }
+  if (filters.value.family_filter != undefined && filters.value.family_filter.length > 0) {
+    body.family_filter = filters.value.family_filter;
+  }
+  if (filters.value.type_filter != undefined && filters.value.type_filter.length > 0) {
+    body.type_filter = filters.value.type_filter;
+  }
+  if (filters.value.is_melee_filter) {
+    body.is_melee_filter = filters.value.is_melee_filter;
+  }
+  if (filters.value.is_ranged_filter) {
+    body.is_ranged_filter = filters.value.is_ranged_filter;
+  }
+  if (filters.value.is_spell_caster_filter) {
+    body.is_spell_caster_filter = filters.value.is_spell_caster_filter;
+  }
+  if (filters.value.role_filter != undefined && filters.value.role_filter.length > 0) {
+    body.role_filter = filters.value.role_filter;
+  }
+  if (filters.value.source_filter != undefined && filters.value.source_filter.length > 0) {
+    body.source_filter = filters.value.source_filter;
+  }
+  try {
+    const request = await requestCreatures(
+      startRow,
+      rowsPerPage,
+      filters.value.sort_by,
+      filters.value.order_by,
+      body
+    );
+    if (request) {
+      pagination.value.rowsNumber = request.total;
+      request.results.forEach((creature) => {
+        // calculate the roles of the creature, by picking the percentages that are at least over 50%
+        const rolePercentages: { role: roles; percentage: number }[] = [
+          { role: 'Brute', percentage: creature.core_data.derived.brute_percentage },
+          {
+            role: 'Magical Striker',
+            percentage: creature.core_data.derived.magical_striker_percentage
+          },
+          {
+            role: 'Skill Paragon',
+            percentage: creature.core_data.derived.skill_paragon_percentage
+          },
+          { role: 'Skirmisher', percentage: creature.core_data.derived.skirmisher_percentage },
+          { role: 'Sniper', percentage: creature.core_data.derived.sniper_percentage },
+          { role: 'Soldier', percentage: creature.core_data.derived.soldier_percentage },
+          { role: 'SpellCaster', percentage: creature.core_data.derived.spell_caster_percentage }
+        ];
+        const rolesList: roles[] = [];
+        rolePercentages.forEach((role) => {
+          if (role.percentage >= 50) {
+            rolesList.push(role.role);
+          }
+        });
+        if (rolePercentages.length > 0) {
+          creature.core_data.derived.creature_role = rolesList;
+        } else {
+          creature.core_data.derived.creature_role = ['None'];
+        }
+      });
+      rows.value = request.results;
+      loading.value = false;
+    } else {
+      throw new Error('Error loading creatures');
+    }
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error loading the creatures',
+      icon: matPriorityHigh
+    });
+  }
+}, 300);
 
-const sourcesOptions = filters.getCreatureFilters.sources;
-const traitsOptions = filters.getCreatureFilters.traits;
-const familiesOptions = filters.getCreatureFilters.families;
+async function onRequest(props) {
+  const { page, rowsPerPage } = props.pagination;
 
-// ---- Filter function
-// combines all filters
-const combineFilters = computed(() => {
-  let filteredItems = creatures.getCreatures;
-  let filteredSources = filteredItems.filter((out) => {
-    if (filterSource.value && filterSource.value.length) {
-      return filterSource.value.some((v) => out.core_data.essential.source.includes(v));
-    }
-    return out;
-  });
-  let filteredNames = filteredSources.filter((out) => {
-    if (filterName.value && filterName.value.length) {
-      return out.core_data.essential.name.toLowerCase().includes(filterName.value.toLowerCase());
-    }
-    return out;
-  });
-  let filteredLevel = filteredNames.filter((out) => {
-    if (levelRange.value.max < 25 || levelRange.value.min > -1) {
-      return (
-        out.core_data.essential.base_level <= levelRange.value.max &&
-        out.core_data.essential.base_level >= levelRange.value.min
-      );
-    }
-    return out;
-  });
-  let filteredHp = filteredLevel.filter((out) => {
-    if (hpRange.value.max < 600 || hpRange.value.min > 0) {
-      return (
-        out.core_data.essential.hp <= hpRange.value.max &&
-        out.core_data.essential.hp >= hpRange.value.min
-      );
-    }
-    return out;
-  });
-  let filteredTraits = filteredHp.filter((out) => {
-    if (filterTraits.value && filterTraits.value.length) {
-      return filterTraits.value.some((v) => out.core_data.traits.includes(v.toLowerCase()));
-    }
-    return out;
-  });
-  let filteredAlignment = filteredTraits.filter((out) => {
-    if (filterAlignment.value && filterAlignment.value.length) {
-      return filterAlignment.value.includes(out.core_data.essential.alignment);
-    }
-    return out;
-  });
-  let filteredSize = filteredAlignment.filter((out) => {
-    if (filterSize.value && filterSize.value.length) {
-      return filterSize.value.includes(out.core_data.essential.size);
-    }
-    return out;
-  });
-  let filteredRarity = filteredSize.filter((out) => {
-    if (filterRarity.value && filterRarity.value.length) {
-      return filterRarity.value.includes(out.core_data.essential.rarity);
-    }
-    return out;
-  });
-  let filteredFamily = filteredRarity.filter((out) => {
-    if (filterFamily.value && filterFamily.value.length) {
-      return filterFamily.value.includes(out.core_data.essential.family);
-    }
-    return out;
-  });
-  let filteredType = filteredFamily.filter((out) => {
-    if (filterType.value && filterType.value.length) {
-      return filterType.value.includes(out.core_data.essential.cr_type);
-    }
-    return out;
-  });
-  let filteredAttacks = filteredType.filter((out) => {
-    if (filterAttacks.value[0] || filterAttacks.value[1] || filterAttacks.value[2]) {
-      return (
-        out.core_data.derived.is_melee === filterAttacks.value[0] &&
-        out.core_data.derived.is_ranged === filterAttacks.value[1] &&
-        out.core_data.derived.is_spell_caster === filterAttacks.value[2]
-      );
-    }
-    return out;
-  });
-  let filteredRole = filteredAttacks.filter((out) => {
-    if (filterRole.value && filterRole.value.length) {
-      return filterRole.value.some((v) => out.core_data.derived.creature_role!.includes(v));
-    }
-    return out;
-  });
-  return filteredRole;
-});
+  loading.value = true;
+
+  const startRow = (page - 1) * rowsPerPage;
+
+  pagination.value.page = page;
+  pagination.value.rowsPerPage = rowsPerPage;
+
+  await fetchFromServer(startRow, pagination.value.rowsPerPage);
+}
 
 // ---- Reset filters function
 const resetFilters = () => {
-  filterSource.value = [];
-  filterName.value = '';
-  levelRange.value.min = -1;
-  levelRange.value.max = 25;
-  hpRange.value.min = 0;
-  hpRange.value.max = 600;
-  filterTraits.value = [];
-  filterAlignment.value = [];
-  filterSize.value = [];
-  filterRarity.value = [];
-  filterFamily.value = [];
-  filterType.value = [];
-  filterAttacks.value = [false, false, false];
-  filterRole.value = [];
+  filters.value = {
+    source_filter: [],
+    name_filter: '',
+    level_filter: { min: -1, max: 25 },
+    hp_filter: { min: 0, max: 680 },
+    trait_filter: [],
+    alignment_filter: [],
+    size_filter: [],
+    rarity_filter: [],
+    family_filter: [],
+    type_filter: [],
+    is_melee_filter: false,
+    is_ranged_filter: false,
+    is_spell_caster_filter: false,
+    role_filter: [],
+    sort_by: 'name',
+    order_by: 'ascending'
+  };
 };
 
 // ---- Table and visible columns
-const creatureTable = ref();
-const visibleColumns = ref([
-  'name',
-  'level',
-  'traits',
-  'size',
-  'creature_type',
-  'attacks',
-  'creature_role'
-]);
+const visibleColumns = ref(['name', 'level', 'trait', 'size', 'type', 'attacks', 'role']);
 
 // ---- Column sort function
-const sort = (col: string) => {
-  creatureTable.value.sort(col);
+const sort = (col: creature_columns) => {
+  if (filters.value.sort_by === col) {
+    if (filters.value.order_by === 'ascending') {
+      filters.value.order_by = 'descending';
+    } else {
+      filters.value.order_by = 'ascending';
+    }
+  } else {
+    filters.value.order_by = 'ascending';
+    filters.value.sort_by = col;
+  }
+};
+
+const openCreatureSheet = (id: number) => {
+  const routeData = router.resolve({ name: 'bestiary', query: { id: id } });
+  if (process.env.IS_APP === 'true') {
+    window.open(routeData.href, '_self');
+  } else {
+    window.open(routeData.href, '_blank');
+  }
 };
 
 // ---- Add creature to encounter function
@@ -316,15 +393,6 @@ const addCreature = debounce(function (creature: creature) {
   encounter.addToEncounter(min_creature);
 }, 50);
 
-const openCreatureSheet = (id: number) => {
-  const routeData = router.resolve({ name: 'bestiary', query: { id: id } });
-  if (process.env.IS_APP === 'true') {
-    window.open(routeData.href, '_self');
-  } else {
-    window.open(routeData.href, '_blank');
-  }
-};
-
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
@@ -337,7 +405,7 @@ const toggleFullscreen = () => {
 const filterSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.sources = sourcesOptions.filter(
+    filterStore.getCreatureFilters.sources = sourceFilter.value.filter(
       (v) => v.toLowerCase().indexOf(filter) > -1
     );
   });
@@ -346,7 +414,7 @@ const filterSourcesFn = (val, update) => {
 const filterTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.traits = traitsOptions.filter(
+    filterStore.getCreatureFilters.traits = traitFilter.value.filter(
       (v) => v.toLowerCase().indexOf(filter) > -1
     );
   });
@@ -355,11 +423,70 @@ const filterTraitsFn = (val, update) => {
 const filterFamiliesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.families = familiesOptions.filter(
+    filterStore.getCreatureFilters.families = familyFilter.value.filter(
       (v) => v.toLowerCase().indexOf(filter) > -1
     );
   });
 };
+
+onMounted(async () => {
+  try {
+    const traitsRequest = await requestFilters('traits');
+    if (traitsRequest) {
+      filterStore.updateTraits(traitsRequest);
+      traitFilter.value = filterStore.getCreatureFilters.traits;
+    } else {
+      throw new Error('Error fetching traits');
+    }
+    const alignmentsRequest = await requestFilters('alignments');
+    if (alignmentsRequest) {
+      filterStore.updateAlignments(alignmentsRequest);
+    } else {
+      throw new Error('Error fetching alignments');
+    }
+    const sizesRequest = await requestFilters('sizes');
+    if (sizesRequest) {
+      filterStore.updateSizes(sizesRequest);
+    } else {
+      throw new Error('Error fetching sizes');
+    }
+    const raritiesRequest = await requestFilters('rarities');
+    if (raritiesRequest) {
+      filterStore.updateRarities(raritiesRequest);
+    } else {
+      throw new Error('Error fetching rarities');
+    }
+    const familiesRequest = await requestFilters('families');
+    if (familiesRequest) {
+      filterStore.updateFamilies(familiesRequest);
+      familyFilter.value = filterStore.getCreatureFilters.families;
+    } else {
+      throw new Error('Error fetching families');
+    }
+    const typesRequest = await requestFilters('creature_types');
+    if (typesRequest) {
+      filterStore.updateCreatureType(typesRequest);
+    } else {
+      throw new Error('Error fetching creature_types');
+    }
+    const sourcesRequest = await requestFilters('sources');
+    if (sourcesRequest) {
+      filterStore.updateSources(sourcesRequest);
+      sourceFilter.value = filterStore.getCreatureFilters.sources;
+    } else {
+      throw new Error('Error fetching sources');
+    }
+    const rolesRequest = await requestFilters('creature_roles');
+    if (rolesRequest) {
+      filterStore.updateRoles(rolesRequest);
+    } else {
+      throw new Error('Error fetching creature_roles');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  fetchFromServer(0, 100);
+});
 </script>
 
 <template>
@@ -367,24 +494,34 @@ const filterFamiliesFn = (val, update) => {
     <q-table
       id="v-step-0"
       ref="creatureTable"
-      table-header-class="v-step-5"
+      v-model:pagination="pagination"
       class="sticky-header-table tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
       :style="tableHeight"
+      color="primary"
       flat
       bordered
-      title="Creatures"
-      :rows="combineFilters"
+      :rows="rows"
       :columns="columns"
-      :pagination="{ rowsPerPage: 0 }"
-      :rows-per-page-options="[0]"
       :visible-columns="visibleColumns"
       virtual-scroll
+      virtual-scroll-slice-size="100"
       virtual-scroll-sticky-size-start="50"
       virtual-scroll-item-size="48"
-      no-data-label="No creature matches the current filters"
+      :loading="loading"
+      :filter="filters"
+      rows-per-page-label="Creatures per page:"
+      :rows-per-page-options="[50, 100, 0]"
+      table-header-class="v-step-5"
+      row-key="name"
       :fullscreen="fullscreen"
+      @request="onRequest"
       @row-dblclick="(_, row) => addCreature(row)"
     >
+      <template #loading>
+        <q-inner-loading showing style="z-index: 2">
+          <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
+        </q-inner-loading>
+      </template>
       <template #top>
         <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
           <div class="tw-flex tw-flex-shrink">
@@ -396,7 +533,8 @@ const filterFamiliesFn = (val, update) => {
             <q-btn-group push>
               <PartyBuilder />
               <q-separator vertical />
-              <EncounterBuilder ref="encounterBuilderRef" />
+              <q-btn v-if="loading" id="v-step-2" push label="Generator Settings" />
+              <EncounterBuilder v-else ref="encounterBuilderRef" />
               <q-separator vertical />
               <q-btn
                 id="v-step-3"
@@ -500,13 +638,13 @@ const filterFamiliesFn = (val, update) => {
             <div class="col-grow">
               <KeepAlive>
                 <q-select
-                  v-model="filterSource"
+                  v-model="filters.source_filter"
                   multiple
                   dense
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filters.getCreatureFilters.sources)"
+                  :options="Object.freeze(filterStore.getCreatureFilters.sources)"
                   use-input
                   input-debounce="0"
                   :label="columns[0].label"
@@ -527,7 +665,7 @@ const filterFamiliesFn = (val, update) => {
           >
             <div class="col-grow">
               <q-input
-                v-model="filterName"
+                v-model="filters.name_filter"
                 dense
                 outlined
                 :label="columns[1].label"
@@ -562,12 +700,14 @@ const filterFamiliesFn = (val, update) => {
                 :style="columns[2].style"
                 stack-label
               >
-                <template #control> {{ levelRange.min }} to {{ levelRange.max }} </template>
+                <template #control>
+                  {{ filters.level_filter.min }} to {{ filters.level_filter.max }}
+                </template>
                 <q-popup-proxy>
                   <q-banner rounded>
                     <div class="tw-pt-8 tw-px-1">
                       <q-range
-                        v-model="levelRange"
+                        v-model="filters.level_filter"
                         label-always
                         :min="-1"
                         :max="25"
@@ -608,15 +748,17 @@ const filterFamiliesFn = (val, update) => {
                 :style="columns[3].style"
                 stack-label
               >
-                <template #control> {{ hpRange.min }} to {{ hpRange.max }} </template>
+                <template #control>
+                  {{ filters.hp_filter.min }} to {{ filters.hp_filter.max }}
+                </template>
                 <q-popup-proxy>
                   <q-banner rounded>
                     <div class="tw-pt-8 tw-px-1">
                       <q-range
-                        v-model="hpRange"
+                        v-model="filters.hp_filter"
                         label-always
                         :min="0"
-                        :max="600"
+                        :max="680"
                         style="min-width: 200px"
                         aria-label="Filter HP"
                         role="menuitem"
@@ -641,7 +783,7 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template #header-cell-traits>
+      <template #header-cell-trait>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
@@ -649,13 +791,13 @@ const filterFamiliesFn = (val, update) => {
             <div class="col-grow">
               <KeepAlive>
                 <q-select
-                  v-model="filterTraits"
+                  v-model="filters.trait_filter"
                   multiple
                   dense
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filters.getCreatureFilters.traits)"
+                  :options="Object.freeze(filterStore.getCreatureFilters.traits)"
                   use-input
                   input-debounce="0"
                   :label="columns[4].label"
@@ -687,13 +829,13 @@ const filterFamiliesFn = (val, update) => {
           >
             <div class="col-grow">
               <q-select
-                v-model="filterAlignment"
+                v-model="filters.alignment_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.alignments)"
+                :options="Object.freeze(filterStore.getCreatureFilters.alignments)"
                 :label="columns[5].label"
                 :style="columns[5].style"
               />
@@ -720,13 +862,13 @@ const filterFamiliesFn = (val, update) => {
           >
             <div class="col-grow">
               <q-select
-                v-model="filterSize"
+                v-model="filters.size_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.sizes)"
+                :options="Object.freeze(filterStore.getCreatureFilters.sizes)"
                 :label="columns[6].label"
                 :style="columns[6].style"
               />
@@ -753,13 +895,13 @@ const filterFamiliesFn = (val, update) => {
           >
             <div class="col-grow">
               <q-select
-                v-model="filterRarity"
+                v-model="filters.rarity_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.rarities)"
+                :options="Object.freeze(filterStore.getCreatureFilters.rarities)"
                 :label="columns[7].label"
                 :style="columns[7].style"
               />
@@ -787,13 +929,13 @@ const filterFamiliesFn = (val, update) => {
             <div class="col-grow">
               <KeepAlive>
                 <q-select
-                  v-model="filterFamily"
+                  v-model="filters.family_filter"
                   multiple
                   dense
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filters.getCreatureFilters.families)"
+                  :options="Object.freeze(filterStore.getCreatureFilters.families)"
                   use-input
                   input-debounce="0"
                   :label="columns[8].label"
@@ -818,20 +960,20 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template #header-cell-creature_type>
+      <template #header-cell-type>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
-                v-model="filterType"
+                v-model="filters.type_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.creature_types)"
+                :options="Object.freeze(filterStore.getCreatureFilters.creature_types)"
                 :label="columns[9].label"
                 :style="columns[9].style"
               />
@@ -862,23 +1004,27 @@ const filterFamiliesFn = (val, update) => {
                 outlined
                 :label="columns[10].label"
                 :style="columns[10].style"
-                :stack-label="filterAttacks[0] || filterAttacks[1] || filterAttacks[2]"
+                :stack-label="
+                  filters.is_melee_filter ||
+                  filters.is_ranged_filter ||
+                  filters.is_spell_caster_filter
+                "
               >
                 <template #control>
                   <q-icon
-                    v-if="filterAttacks[0]"
+                    v-if="filters.is_melee_filter"
                     :name="mdiSword"
                     size="xs"
                     aria-label="Melee attacks"
                   />
                   <q-icon
-                    v-if="filterAttacks[1]"
+                    v-if="filters.is_ranged_filter"
                     :name="mdiBowArrow"
                     size="xs"
                     aria-label="Ranged attacks"
                   />
                   <q-icon
-                    v-if="filterAttacks[2]"
+                    v-if="filters.is_spell_caster_filter"
                     :name="mdiMagicStaff"
                     size="xs"
                     aria-label="Spell attacks"
@@ -888,7 +1034,7 @@ const filterFamiliesFn = (val, update) => {
                   <q-banner rounded style="min-width: 100px">
                     <div class="column">
                       <q-toggle
-                        v-model="filterAttacks[0]"
+                        v-model="filters.is_melee_filter"
                         :icon="mdiSword"
                         size="xl"
                         role="menuitemcheckbox"
@@ -905,7 +1051,7 @@ const filterFamiliesFn = (val, update) => {
                       </q-toggle>
 
                       <q-toggle
-                        v-model="filterAttacks[1]"
+                        v-model="filters.is_ranged_filter"
                         :icon="mdiBowArrow"
                         size="xl"
                         role="menuitemcheckbox"
@@ -922,7 +1068,7 @@ const filterFamiliesFn = (val, update) => {
                       </q-toggle>
 
                       <q-toggle
-                        v-model="filterAttacks[2]"
+                        v-model="filters.is_spell_caster_filter"
                         :icon="mdiMagicStaff"
                         size="xl"
                         role="menuitemcheckbox"
@@ -957,20 +1103,20 @@ const filterFamiliesFn = (val, update) => {
           </div>
         </q-th>
       </template>
-      <template #header-cell-creature_role>
+      <template #header-cell-role>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
           >
             <div class="col-grow">
               <q-select
-                v-model="filterRole"
+                v-model="filters.role_filter"
                 multiple
                 dense
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.creature_roles)"
+                :options="Object.freeze(filterStore.getCreatureFilters.creature_roles)"
                 :label="columns[11].label"
                 :style="columns[11].style"
               />
@@ -1072,7 +1218,7 @@ const filterFamiliesFn = (val, update) => {
           />
         </q-td>
       </template>
-      <template #body-cell-traits="traits">
+      <template #body-cell-trait="traits">
         <q-td :props="traits">
           <span
             v-if="traits.row.core_data.traits"
@@ -1124,7 +1270,7 @@ const filterFamiliesFn = (val, update) => {
           </q-icon>
         </q-td>
       </template>
-      <template #body-cell-creature_role="creatureRoles">
+      <template #body-cell-role="creatureRoles">
         <q-td :props="creatureRoles">
           <q-icon
             v-if="creatureRoles.row.core_data.derived.creature_role.includes('Brute')"
@@ -1225,6 +1371,12 @@ const filterFamiliesFn = (val, update) => {
             </q-tooltip>
           </q-icon>
         </q-td>
+      </template>
+      <template #no-data>
+        <div class="row flex-center q-gutter-sm">
+          <q-icon size="2em" :name="matWarning" />
+          <span> No creature matches the current filters </span>
+        </div>
       </template>
     </q-table>
   </div>

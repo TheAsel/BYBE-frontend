@@ -416,7 +416,6 @@ const filterTraitsFn = (val, update) => {
 };
 
 onMounted(async () => {
-  fetchFromServer(0, 100);
   try {
     const sourcesRequest = await requestFilters('sources');
     if (sourcesRequest) {
@@ -441,6 +440,7 @@ onMounted(async () => {
   } catch (error) {
     console.error(error);
   }
+  fetchFromServer(0, 100);
 });
 </script>
 
@@ -459,6 +459,7 @@ onMounted(async () => {
       :columns="columns"
       :visible-columns="visibleColumns"
       virtual-scroll
+      virtual-scroll-slice-size="100"
       virtual-scroll-sticky-size-start="50"
       virtual-scroll-item-size="48"
       :loading="loading"
@@ -499,7 +500,8 @@ onMounted(async () => {
           </div>
           <div class="tw-flex tw-flex-grow tw-justify-center">
             <q-btn-group push>
-              <ShopBuilder ref="shopBuilderRef" />
+              <q-btn v-if="loading" id="v-step-1" push label="Generator Settings" />
+              <ShopBuilder v-else ref="shopBuilderRef" />
               <q-separator vertical />
               <q-btn
                 id="v-step-2"

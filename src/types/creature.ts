@@ -154,6 +154,13 @@ export type creature = {
   };
 };
 
+export type creature_response = {
+  count: number;
+  total: number;
+  next: string;
+  results: creature[];
+};
+
 export type min_creature = {
   id: number;
   archive_link: string;
