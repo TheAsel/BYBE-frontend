@@ -1,5 +1,4 @@
 export type alignments =
-  | 'Any'
   | 'CE'
   | 'CN'
   | 'CG'
