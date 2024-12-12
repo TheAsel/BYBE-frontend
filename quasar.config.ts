@@ -3,12 +3,12 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
-import { configure } from 'quasar/wrappers';
+import { defineConfig } from '#q-app/wrappers';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: ['.env.local', '.env'] });
 
-export default configure((/* ctx */) => {
+export default defineConfig((/* ctx */) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -53,7 +53,8 @@ export default configure((/* ctx */) => {
       // analyze: true,
       env: {
         API_URL: process.env.API_URL,
-        REPO_URL: process.env.REPO_URL
+        REPO_URL: process.env.REPO_URL,
+        IS_APP: process.env.IS_APP
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
@@ -207,8 +208,7 @@ export default configure((/* ctx */) => {
     bex: {
       // extendBexScriptsConf (esbuildConf) {},
       // extendBexManifestJson (json) {},
-
-      contentScripts: ['my-content-script']
+      extraScripts: []
     }
   };
 });

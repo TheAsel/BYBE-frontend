@@ -1,6 +1,6 @@
-import type { creature } from 'src/types/creature';
-import type { adventure_groups, encounter, random_encounter } from 'src/types/encounter';
-import type { alignments, sizes, rarities, challenges, roles, variants } from 'src/types/filters';
+import type { creature } from '../types/creature';
+import type { adventure_groups, encounter, random_encounter } from '../types/encounter';
+import type { alignments, sizes, rarities, challenges, roles, variants } from '../types/filters';
 
 export async function requestCreatures(start: number, page_size: number, version: string) {
   try {

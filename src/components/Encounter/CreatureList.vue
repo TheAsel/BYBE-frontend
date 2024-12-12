@@ -3,9 +3,9 @@ import { ref, watch } from 'vue';
 import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
 import { fasScroll } from '@quasar/extras/fontawesome-v6';
 import { debounce } from 'lodash-es';
-import { partyStore, encounterStore, infoStore, settingsStore } from 'stores/store';
-import { encounterInfo } from 'src/utils/encounter-api-calls';
-import type { encounter_list } from 'src/types/encounter';
+import { partyStore, encounterStore, infoStore, settingsStore } from '../../stores/store';
+import { encounterInfo } from '../../utils/encounter-api-calls';
+import type { encounter_list } from '../../types/encounter';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -154,7 +154,11 @@ const saveChanges = () => {
 
 const openCreatureSheet = (id: number) => {
   const routeData = router.resolve({ name: 'bestiary', query: { id: id } });
-  window.open(routeData.href, '_blank');
+  if (process.env.IS_APP === 'true') {
+    window.open(routeData.href, '_self');
+  } else {
+    window.open(routeData.href, '_blank');
+  }
 };
 </script>
 

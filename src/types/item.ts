@@ -1,4 +1,4 @@
-import { rarities, sizes } from './filters';
+import type { rarities, sizes } from './filters';
 
 export type item = {
   armor_data?: {

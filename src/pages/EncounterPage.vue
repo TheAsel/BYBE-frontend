@@ -2,22 +2,22 @@
 import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
 import { useQuasar } from 'quasar';
-import { requestCreatures, requestFilters } from 'src/utils/encounter-api-calls';
+import { requestCreatures, requestFilters } from '../utils/encounter-api-calls';
 import {
   partyStore,
   filtersStore,
   creaturesStore,
   encounterStore,
   settingsStore
-} from 'stores/store';
-import type { party } from 'src/types/party';
-import type { min_creature } from 'src/types/creature';
-import type { encounter_list } from 'src/types/encounter';
-import CreatureList from 'src/components/Encounter/CreatureList.vue';
-import { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
+} from '../stores/store';
+import type { party } from '../types/party';
+import type { min_creature } from '../types/creature';
+import type { encounter_list } from '../types/encounter';
+import CreatureList from '../components/Encounter/CreatureList.vue';
+import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 import { matArrowDownward, matArrowUpward, matPriorityHigh } from '@quasar/extras/material-icons';
-import SkeletonTable from 'src/components/Encounter/SkeletonTable.vue';
-import CreaturesTable from 'src/components/Encounter/CreaturesTable.vue';
+import SkeletonTable from '../components/Encounter/SkeletonTable.vue';
+import CreaturesTable from '../components/Encounter/CreaturesTable.vue';
 
 useHead({
   title: 'Encounter Builder - BYBE',

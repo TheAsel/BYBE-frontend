@@ -15,13 +15,13 @@ import {
 } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { fasFlaskVial } from '@quasar/extras/fontawesome-v6';
-import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
+import { TailwindDarkFix } from '../utils/tw-dark-fix';
 import { debounce } from 'lodash-es';
-import type { party } from 'src/types/party';
-import type { encounter_list } from 'src/types/encounter';
-import { settingsStore, encounterStore } from 'stores/store';
-import { shop_list } from 'src/types/shop';
-import { template } from 'src/types/template';
+import type { party } from '../types/party';
+import type { encounter_list } from '../types/encounter';
+import { settingsStore, encounterStore } from '../stores/store';
+import type { shop_list } from '../types/shop';
+import type { template } from '../types/template';
 
 const encounter = encounterStore();
 const settings = settingsStore();

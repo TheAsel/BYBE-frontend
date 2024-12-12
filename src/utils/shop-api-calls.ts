@@ -1,6 +1,6 @@
-import type { item_columns, item_filters } from 'src/types/filters';
-import type { item, item_response } from 'src/types/item';
-import { template_data } from 'src/types/template';
+import type { item_columns, item_filters } from '../types/filters';
+import type { item, item_response } from '../types/item';
+import type { template_data } from '../types/template';
 
 export async function requestFilters(filter: 'sources' | 'traits') {
   try {

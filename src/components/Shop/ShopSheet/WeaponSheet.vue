@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { itemsStore, settingsStore } from 'src/stores/store';
+import { itemsStore, settingsStore } from '../../../stores/store';
 import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
 import { useRouter } from 'vue-router';
 import { upperFirst } from 'lodash-es';
@@ -40,7 +40,11 @@ const cleanDescription = (description: string) => {
 
 const openShopSheet = (id: number) => {
   const routeData = router.resolve({ name: 'item', query: { id: id } });
-  window.open(routeData.href, '_blank');
+  if (process.env.IS_APP === 'true') {
+    window.open(routeData.href, '_self');
+  } else {
+    window.open(routeData.href, '_blank');
+  }
 };
 </script>
 

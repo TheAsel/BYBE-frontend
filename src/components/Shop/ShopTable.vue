@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, toRaw } from 'vue';
-import { requestFilters, requestItems, requestTemplates } from 'src/utils/shop-api-calls';
-import type { item, min_item } from 'src/types/item';
+import { ref, toRaw, onMounted } from 'vue';
+import { requestFilters, requestItems, requestTemplates } from '../../utils/shop-api-calls';
+import type { item, min_item } from '../../types/item';
 import {
   biArrowDownUp,
   biBasketFill,
@@ -13,13 +13,13 @@ import {
   biFullscreen,
   biFullscreenExit
 } from '@quasar/extras/bootstrap-icons';
-import { item_columns, item_filters, rarities } from 'src/types/filters';
-import { filtersStore, itemsStore, settingsStore, templateStore } from 'src/stores/store';
+import type { item_columns, item_filters, rarities } from '../../types/filters';
+import { filtersStore, itemsStore, settingsStore, templateStore } from '../../stores/store';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 import { capitalize, debounce } from 'lodash-es';
 import { useRouter } from 'vue-router';
-import ShopBuilder from 'src/components/Shop/ShopTable/ShopBuilder.vue';
+import ShopBuilder from '../../components/Shop/ShopTable/ShopBuilder.vue';
 import {
   mdiSword,
   mdiShield,
@@ -52,7 +52,7 @@ const pagination = ref({
 const filters = ref<{
   name_filter: string;
   level_filter: { min: number; max: number };
-  trait_filter: { label: string; value: string }[];
+  trait_filter: string[];
   rarity_filter: rarities[];
   type_filter: string[];
   source_filter: string[];
@@ -157,7 +157,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
     body.name_filter = filters.value.name_filter;
   }
   if (filters.value.trait_filter != undefined && filters.value.trait_filter.length > 0) {
-    body.trait_whitelist_filter = filters.value.trait_filter.map((traits) => traits.value);
+    body.trait_whitelist_filter = filters.value.trait_filter;
   }
   if (filters.value.rarity_filter != undefined && filters.value.rarity_filter.length > 0) {
     body.rarity_filter = filters.value.rarity_filter;
@@ -237,7 +237,11 @@ const sort = (col: item_columns) => {
 
 const openShopSheet = (id: number) => {
   const routeData = router.resolve({ name: 'item', query: { id: id } });
-  window.open(routeData.href, '_blank');
+  if (process.env.IS_APP === 'true') {
+    window.open(routeData.href, '_self');
+  } else {
+    window.open(routeData.href, '_blank');
+  }
 };
 
 const addItem = debounce(function (item: item) {
@@ -384,33 +388,6 @@ async function onKey(evt) {
   }
 }
 
-await fetchFromServer(0, 100);
-
-try {
-  const sourcesRequest = await requestFilters('sources');
-  if (sourcesRequest) {
-    filterStore.updateItemSources(sourcesRequest);
-    sourceFilter.value = filterStore.getItemFilters.sources;
-  } else {
-    throw new Error('Error fetching sources');
-  }
-  const traitsRequest = await requestFilters('traits');
-  if (traitsRequest) {
-    filterStore.updateItemTraits(traitsRequest);
-    traitFilter.value = filterStore.getItemFilters.traits;
-  } else {
-    throw new Error('Error fetching traits');
-  }
-  const templatesRequest = await requestTemplates();
-  if (templatesRequest) {
-    templateStore().addDefaultTemplates(templatesRequest);
-  } else {
-    throw new Error('Error fetching templates');
-  }
-} catch (error) {
-  console.error(error);
-}
-
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
@@ -437,6 +414,34 @@ const filterTraitsFn = (val, update) => {
     );
   });
 };
+
+onMounted(async () => {
+  fetchFromServer(0, 100);
+  try {
+    const sourcesRequest = await requestFilters('sources');
+    if (sourcesRequest) {
+      filterStore.updateItemSources(sourcesRequest);
+      sourceFilter.value = filterStore.getItemFilters.sources;
+    } else {
+      throw new Error('Error fetching sources');
+    }
+    const traitsRequest = await requestFilters('traits');
+    if (traitsRequest) {
+      filterStore.updateItemTraits(traitsRequest);
+      traitFilter.value = filterStore.getItemFilters.traits;
+    } else {
+      throw new Error('Error fetching traits');
+    }
+    const templatesRequest = await requestTemplates();
+    if (templatesRequest) {
+      templateStore().addDefaultTemplates(templatesRequest);
+    } else {
+      throw new Error('Error fetching templates');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 <template>

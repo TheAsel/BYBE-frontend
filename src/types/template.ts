@@ -1,4 +1,4 @@
-import { rarities } from './filters';
+import type { rarities } from './filters';
 
 export type template = {
   default: boolean;

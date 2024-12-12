@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import HeaderBar from 'components/HeaderBar.vue';
+import HeaderBar from '../components/HeaderBar.vue';
 import { version } from '../../package.json';
-import { requestRepoInfo } from 'src/utils/github-api';
+import { requestRepoInfo } from '../utils/github-api';
 
 const newestVersion = ref(version);
 const repoUrl = 'https://github.com/' + process.env.REPO_URL + '/releases/latest';

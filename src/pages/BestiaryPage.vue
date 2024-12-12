@@ -4,11 +4,11 @@ import { useHead } from '@unhead/vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { matPriorityHigh, matPrint } from '@quasar/extras/material-icons';
-import type { creature } from 'src/types/creature';
-import { requestCreatureId } from 'src/utils/encounter-api-calls';
-import { variants } from 'src/types/filters';
+import type { creature } from '../types/creature';
+import { requestCreatureId } from '../utils/encounter-api-calls';
+import type { variants } from '../types/filters';
 import { isNull, upperFirst } from 'lodash-es';
-import { encounterStore } from 'src/stores/store';
+import { encounterStore } from '../stores/store';
 
 const title = ref('Creature Sheet - BYBE');
 const encounters = encounterStore();

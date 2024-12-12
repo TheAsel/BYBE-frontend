@@ -1,4 +1,4 @@
-import { min_item } from './item';
+import type { min_item } from './item';
 
 export type shop_list = {
   name: string;
