@@ -50,9 +50,11 @@ export type creature = {
     };
     derived: {
       archive_link: string;
-      is_melee: boolean;
-      is_ranged: boolean;
-      is_spell_caster: boolean;
+      attack_list: {
+        melee: boolean;
+        ranged: boolean;
+        spellcaster: boolean;
+      };
       brute_percentage: number;
       magical_striker_percentage: number;
       skill_paragon_percentage: number;

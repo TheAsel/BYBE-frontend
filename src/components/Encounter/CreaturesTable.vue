@@ -65,9 +65,11 @@ const filters = ref<{
   rarity_filter: rarities[];
   family_filter: string[];
   type_filter: creature_type[];
-  is_melee_filter: boolean;
-  is_ranged_filter: boolean;
-  is_spell_caster_filter: boolean;
+  attack_list_filter?: {
+    melee: boolean;
+    ranged: boolean;
+    spellcaster: boolean;
+  };
   role_filter: roles[];
   source_filter: string[];
   sort_by: creature_columns;
@@ -82,9 +84,7 @@ const filters = ref<{
   rarity_filter: [],
   family_filter: [],
   type_filter: [],
-  is_melee_filter: false,
-  is_ranged_filter: false,
-  is_spell_caster_filter: false,
+  attack_list_filter: null,
   role_filter: [],
   source_filter: [],
   sort_by: 'name',
@@ -201,9 +201,9 @@ const columns: {
     name: 'attacks',
     label: 'Attacks',
     field: (row) => [
-      row.core_data.derived.is_melee,
-      row.core_data.derived.is_ranged,
-      row.core_data.derived.is_spell_caster
+      row.core_data.derived.attack_list.melee,
+      row.core_data.derived.attack_list.ranged,
+      row.core_data.derived.attack_list.spellcaster
     ],
     required: false,
     align: 'left',
@@ -250,14 +250,8 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   if (filters.value.type_filter != undefined && filters.value.type_filter.length > 0) {
     body.type_filter = filters.value.type_filter;
   }
-  if (filters.value.is_melee_filter) {
-    body.is_melee_filter = filters.value.is_melee_filter;
-  }
-  if (filters.value.is_ranged_filter) {
-    body.is_ranged_filter = filters.value.is_ranged_filter;
-  }
-  if (filters.value.is_spell_caster_filter) {
-    body.is_spell_caster_filter = filters.value.is_spell_caster_filter;
+  if (filters.value.attack_list_filter) {
+    body.attack_list_filter = filters.value.attack_list_filter;
   }
   if (filters.value.role_filter != undefined && filters.value.role_filter.length > 0) {
     body.role_filter = filters.value.role_filter;
@@ -346,9 +340,7 @@ const resetFilters = () => {
     rarity_filter: [],
     family_filter: [],
     type_filter: [],
-    is_melee_filter: false,
-    is_ranged_filter: false,
-    is_spell_caster_filter: false,
+    attack_list_filter: null,
     role_filter: [],
     sort_by: 'name',
     order_by: 'ascending'
@@ -1005,26 +997,26 @@ onMounted(async () => {
                 :label="columns[10].label"
                 :style="columns[10].style"
                 :stack-label="
-                  filters.is_melee_filter ||
-                  filters.is_ranged_filter ||
-                  filters.is_spell_caster_filter
+                  filters.attack_list_filter?.melee ||
+                  filters.attack_list_filter?.ranged ||
+                  filters.attack_list_filter?.spellcaster
                 "
               >
                 <template #control>
                   <q-icon
-                    v-if="filters.is_melee_filter"
+                    v-if="filters.attack_list_filter?.melee"
                     :name="mdiSword"
                     size="xs"
                     aria-label="Melee attacks"
                   />
                   <q-icon
-                    v-if="filters.is_ranged_filter"
+                    v-if="filters.attack_list_filter?.ranged"
                     :name="mdiBowArrow"
                     size="xs"
                     aria-label="Ranged attacks"
                   />
                   <q-icon
-                    v-if="filters.is_spell_caster_filter"
+                    v-if="filters.attack_list_filter?.spellcaster"
                     :name="mdiMagicStaff"
                     size="xs"
                     aria-label="Spell attacks"
@@ -1034,7 +1026,7 @@ onMounted(async () => {
                   <q-banner rounded style="min-width: 100px">
                     <div class="column">
                       <q-toggle
-                        v-model="filters.is_melee_filter"
+                        v-model="filters.attack_list_filter.melee"
                         :icon="mdiSword"
                         size="xl"
                         role="menuitemcheckbox"
@@ -1051,7 +1043,7 @@ onMounted(async () => {
                       </q-toggle>
 
                       <q-toggle
-                        v-model="filters.is_ranged_filter"
+                        v-model="filters.attack_list_filter.ranged"
                         :icon="mdiBowArrow"
                         size="xl"
                         role="menuitemcheckbox"
@@ -1068,7 +1060,7 @@ onMounted(async () => {
                       </q-toggle>
 
                       <q-toggle
-                        v-model="filters.is_spell_caster_filter"
+                        v-model="filters.attack_list_filter.spellcaster"
                         :icon="mdiMagicStaff"
                         size="xl"
                         role="menuitemcheckbox"
@@ -1236,7 +1228,12 @@ onMounted(async () => {
       </template>
       <template #body-cell-attacks="attacks">
         <q-td :props="attacks">
-          <q-icon v-if="attacks.row.core_data.derived.is_melee" :name="mdiSword" size="sm" left>
+          <q-icon
+            v-if="attacks.row.core_data.derived.attack_list.melee"
+            :name="mdiSword"
+            size="sm"
+            left
+          >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
               anchor="top middle"
@@ -1245,7 +1242,12 @@ onMounted(async () => {
               Melee
             </q-tooltip>
           </q-icon>
-          <q-icon v-if="attacks.row.core_data.derived.is_ranged" :name="mdiBowArrow" size="sm" left>
+          <q-icon
+            v-if="attacks.row.core_data.derived.attack_list.ranged"
+            :name="mdiBowArrow"
+            size="sm"
+            left
+          >
             <q-tooltip
               class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
               anchor="top middle"
@@ -1255,7 +1257,7 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="attacks.row.core_data.derived.is_spell_caster"
+            v-if="attacks.row.core_data.derived.attack_list.spellcaster"
             :name="mdiMagicStaff"
             size="sm"
             left

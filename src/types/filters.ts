@@ -59,9 +59,11 @@ export type creature_filters = {
   rarity_filter?: rarities[];
   family_filter?: string[];
   type_filter?: creature_type[];
-  is_melee_filter?: boolean;
-  is_ranged_filter?: boolean;
-  is_spell_caster_filter?: boolean;
+  attack_list_filter?: {
+    melee: boolean;
+    ranged: boolean;
+    spellcaster: boolean;
+  };
   role_filter?: roles[];
   pathfinder_version: string;
 };
