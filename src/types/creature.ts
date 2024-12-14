@@ -50,18 +50,20 @@ export type creature = {
     };
     derived: {
       archive_link: string;
-      attack_list: {
+      attack_data: {
         melee: boolean;
         ranged: boolean;
         spellcaster: boolean;
       };
-      brute_percentage: number;
-      magical_striker_percentage: number;
-      skill_paragon_percentage: number;
-      skirmisher_percentage: number;
-      sniper_percentage: number;
-      soldier_percentage: number;
-      spell_caster_percentage: number;
+      role_data: {
+        brute: number;
+        magical_striker: number;
+        skill_paragon: number;
+        skirmisher: number;
+        sniper: number;
+        soldier: number;
+        spellcaster: number;
+      };
       creature_role?: roles[];
     };
     traits: string[];

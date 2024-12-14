@@ -65,7 +65,7 @@ const filters = ref<{
   rarity_filter: rarities[];
   family_filter: string[];
   type_filter: creature_type[];
-  attack_list_filter?: {
+  attack_data_filter?: {
     melee: boolean;
     ranged: boolean;
     spellcaster: boolean;
@@ -84,7 +84,7 @@ const filters = ref<{
   rarity_filter: [],
   family_filter: [],
   type_filter: [],
-  attack_list_filter: null,
+  attack_data_filter: null,
   role_filter: [],
   source_filter: [],
   sort_by: 'name',
@@ -198,12 +198,12 @@ const columns: {
     style: 'min-width: 100px'
   },
   {
-    name: 'attacks',
+    name: 'attack',
     label: 'Attacks',
     field: (row) => [
-      row.core_data.derived.attack_list.melee,
-      row.core_data.derived.attack_list.ranged,
-      row.core_data.derived.attack_list.spellcaster
+      row.core_data.derived.attack_data.melee,
+      row.core_data.derived.attack_data.ranged,
+      row.core_data.derived.attack_data.spellcaster
     ],
     required: false,
     align: 'left',
@@ -212,12 +212,12 @@ const columns: {
   },
   {
     name: 'role',
-    label: 'Role',
+    label: 'Roles',
     field: (row) => row.core_data.derived.creature_role!,
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 90px; max-width: 200px;'
+    style: 'min-width: 100px; max-width: 200px;'
   }
 ];
 
@@ -227,6 +227,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
     max_level_filter: filters.value.level_filter.max,
     min_hp_filter: filters.value.hp_filter.min,
     max_hp_filter: filters.value.hp_filter.max,
+    role_threshold: 50,
     pathfinder_version: settings.getPfVersion
   };
   if (filters.value.name_filter != '') {
@@ -250,8 +251,8 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   if (filters.value.type_filter != undefined && filters.value.type_filter.length > 0) {
     body.type_filter = filters.value.type_filter;
   }
-  if (filters.value.attack_list_filter) {
-    body.attack_list_filter = filters.value.attack_list_filter;
+  if (filters.value.attack_data_filter) {
+    body.attack_data_filter = filters.value.attack_data_filter;
   }
   if (filters.value.role_filter != undefined && filters.value.role_filter.length > 0) {
     body.role_filter = filters.value.role_filter;
@@ -272,19 +273,19 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       request.results.forEach((creature) => {
         // calculate the roles of the creature, by picking the percentages that are at least over 50%
         const rolePercentages: { role: roles; percentage: number }[] = [
-          { role: 'Brute', percentage: creature.core_data.derived.brute_percentage },
+          { role: 'Brute', percentage: creature.core_data.derived.role_data.brute },
           {
             role: 'Magical Striker',
-            percentage: creature.core_data.derived.magical_striker_percentage
+            percentage: creature.core_data.derived.role_data.magical_striker
           },
           {
             role: 'Skill Paragon',
-            percentage: creature.core_data.derived.skill_paragon_percentage
+            percentage: creature.core_data.derived.role_data.skill_paragon
           },
-          { role: 'Skirmisher', percentage: creature.core_data.derived.skirmisher_percentage },
-          { role: 'Sniper', percentage: creature.core_data.derived.sniper_percentage },
-          { role: 'Soldier', percentage: creature.core_data.derived.soldier_percentage },
-          { role: 'SpellCaster', percentage: creature.core_data.derived.spell_caster_percentage }
+          { role: 'Skirmisher', percentage: creature.core_data.derived.role_data.skirmisher },
+          { role: 'Sniper', percentage: creature.core_data.derived.role_data.sniper },
+          { role: 'Soldier', percentage: creature.core_data.derived.role_data.soldier },
+          { role: 'Spellcaster', percentage: creature.core_data.derived.role_data.spellcaster }
         ];
         const rolesList: roles[] = [];
         rolePercentages.forEach((role) => {
@@ -340,7 +341,7 @@ const resetFilters = () => {
     rarity_filter: [],
     family_filter: [],
     type_filter: [],
-    attack_list_filter: null,
+    attack_data_filter: null,
     role_filter: [],
     sort_by: 'name',
     order_by: 'ascending'
@@ -348,7 +349,7 @@ const resetFilters = () => {
 };
 
 // ---- Table and visible columns
-const visibleColumns = ref(['name', 'level', 'trait', 'size', 'type', 'attacks', 'role']);
+const visibleColumns = ref(['name', 'level', 'trait', 'size', 'type', 'attack', 'role']);
 
 // ---- Column sort function
 const sort = (col: creature_columns) => {
@@ -985,7 +986,7 @@ onMounted(async () => {
           </div>
         </q-th>
       </template>
-      <template #header-cell-attacks>
+      <template #header-cell-attack>
         <q-th>
           <div
             class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
@@ -997,26 +998,26 @@ onMounted(async () => {
                 :label="columns[10].label"
                 :style="columns[10].style"
                 :stack-label="
-                  filters.attack_list_filter?.melee ||
-                  filters.attack_list_filter?.ranged ||
-                  filters.attack_list_filter?.spellcaster
+                  filters.attack_data_filter?.melee ||
+                  filters.attack_data_filter?.ranged ||
+                  filters.attack_data_filter?.spellcaster
                 "
               >
                 <template #control>
                   <q-icon
-                    v-if="filters.attack_list_filter?.melee"
+                    v-if="filters.attack_data_filter?.melee"
                     :name="mdiSword"
                     size="xs"
                     aria-label="Melee attacks"
                   />
                   <q-icon
-                    v-if="filters.attack_list_filter?.ranged"
+                    v-if="filters.attack_data_filter?.ranged"
                     :name="mdiBowArrow"
                     size="xs"
                     aria-label="Ranged attacks"
                   />
                   <q-icon
-                    v-if="filters.attack_list_filter?.spellcaster"
+                    v-if="filters.attack_data_filter?.spellcaster"
                     :name="mdiMagicStaff"
                     size="xs"
                     aria-label="Spell attacks"
@@ -1026,7 +1027,7 @@ onMounted(async () => {
                   <q-banner rounded style="min-width: 100px">
                     <div class="column">
                       <q-toggle
-                        v-model="filters.attack_list_filter.melee"
+                        v-model="filters.attack_data_filter.melee"
                         :icon="mdiSword"
                         size="xl"
                         role="menuitemcheckbox"
@@ -1043,7 +1044,7 @@ onMounted(async () => {
                       </q-toggle>
 
                       <q-toggle
-                        v-model="filters.attack_list_filter.ranged"
+                        v-model="filters.attack_data_filter.ranged"
                         :icon="mdiBowArrow"
                         size="xl"
                         role="menuitemcheckbox"
@@ -1060,7 +1061,7 @@ onMounted(async () => {
                       </q-toggle>
 
                       <q-toggle
-                        v-model="filters.attack_list_filter.spellcaster"
+                        v-model="filters.attack_data_filter.spellcaster"
                         :icon="mdiMagicStaff"
                         size="xl"
                         role="menuitemcheckbox"
@@ -1226,10 +1227,10 @@ onMounted(async () => {
           </span>
         </q-td>
       </template>
-      <template #body-cell-attacks="attacks">
+      <template #body-cell-attack="attacks">
         <q-td :props="attacks">
           <q-icon
-            v-if="attacks.row.core_data.derived.attack_list.melee"
+            v-if="attacks.row.core_data.derived.attack_data.melee"
             :name="mdiSword"
             size="sm"
             left
@@ -1243,7 +1244,7 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="attacks.row.core_data.derived.attack_list.ranged"
+            v-if="attacks.row.core_data.derived.attack_data.ranged"
             :name="mdiBowArrow"
             size="sm"
             left
@@ -1257,7 +1258,7 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="attacks.row.core_data.derived.attack_list.spellcaster"
+            v-if="attacks.row.core_data.derived.attack_data.spellcaster"
             :name="mdiMagicStaff"
             size="sm"
             left
@@ -1359,7 +1360,7 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="creatureRoles.row.core_data.derived.creature_role.includes('SpellCaster')"
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Spellcaster')"
             :name="fasHatWizard"
             size="sm"
             left
@@ -1369,7 +1370,7 @@ onMounted(async () => {
               anchor="top middle"
               self="bottom middle"
             >
-              SpellCaster
+              Spellcaster
             </q-tooltip>
           </q-icon>
         </q-td>

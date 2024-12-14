@@ -26,7 +26,7 @@ export type roles =
   | 'Skirmisher'
   | 'Sniper'
   | 'Soldier'
-  | 'SpellCaster';
+  | 'Spellcaster';
 
 export type variants = 'Weak' | 'Base' | 'Elite';
 
@@ -42,7 +42,7 @@ export type creature_columns =
   | 'rarity'
   | 'family'
   | 'type'
-  | 'attacks'
+  | 'attack'
   | 'role';
 
 export type creature_filters = {
@@ -59,12 +59,13 @@ export type creature_filters = {
   rarity_filter?: rarities[];
   family_filter?: string[];
   type_filter?: creature_type[];
-  attack_list_filter?: {
+  attack_data_filter?: {
     melee: boolean;
     ranged: boolean;
     spellcaster: boolean;
   };
   role_filter?: roles[];
+  role_threshold: number;
   pathfinder_version: string;
 };
 
