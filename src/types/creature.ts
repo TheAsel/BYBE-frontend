@@ -90,13 +90,21 @@ export type creature = {
         source: string;
       }
     ];
+    has_vision: boolean;
     hp_detail: string;
     items: [item['core_item']];
     language_detail: string;
     languages: string[];
     perception: number;
     perception_detail: string;
-    senses: string[];
+    senses: [
+      {
+        acuity: string;
+        id: number;
+        name: string;
+        range: number;
+      }
+    ];
     skills: [
       {
         description: string;
