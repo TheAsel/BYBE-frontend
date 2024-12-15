@@ -1,29 +1,50 @@
-import type { creature } from '../types/creature';
+import type { creature, creature_response } from '../types/creature';
 import type { adventure_groups, encounter, random_encounter } from '../types/encounter';
-import type { alignments, sizes, rarities, challenges, roles, variants } from '../types/filters';
+import type {
+  alignments,
+  sizes,
+  rarities,
+  challenges,
+  roles,
+  variants,
+  creature_columns,
+  creature_filters
+} from '../types/filters';
 
-export async function requestCreatures(start: number, page_size: number, version: string) {
+export async function requestCreatures(
+  cursor: number,
+  page_size: number,
+  sort_by: creature_columns,
+  order_by: 'ascending' | 'descending',
+  body: creature_filters
+) {
+  if (page_size === 0) {
+    page_size = -1;
+  }
+
   try {
     const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
+      method: 'POST',
+      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
     };
-    const response = await fetch(
+    const request =
       process.env.API_URL +
-        '/bestiary/list?cursor=' +
-        start +
-        '&page_size=' +
-        page_size +
-        '&pathfinder_version=' +
-        version,
-      requestOptions
-    );
+      '/bestiary/list?cursor=' +
+      cursor +
+      '&page_size=' +
+      page_size +
+      '&sort_by=' +
+      sort_by +
+      '&order_by=' +
+      order_by;
+    const response = await fetch(request, requestOptions);
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message || response.status;
       throw new Error(error);
     }
-    return data.results as creature[];
+    return data as creature_response;
   } catch (error) {
     console.error(error);
   }
@@ -112,19 +133,19 @@ export async function encounterInfo(encounter: {
 }
 
 export async function encounterGenerator(body: {
-  traits: string[] | undefined;
-  alignments: alignments[] | undefined;
-  sizes: sizes[] | undefined;
-  rarities: rarities[] | undefined;
-  families: string[] | undefined;
-  creature_types: string[] | undefined;
+  trait_whitelist_filter: string[] | undefined;
+  alignment_filter: alignments[] | undefined;
+  size_filter: sizes[] | undefined;
+  rarity_filter: rarities[] | undefined;
+  family_filter: string[] | undefined;
+  type_filter: string[] | undefined;
   challenge?: challenges;
   party_levels: number[];
   min_creatures?: number;
   max_creatures?: number;
   allow_weak_variants: boolean;
   allow_elite_variants: boolean;
-  creature_roles: roles[] | undefined;
+  role_filter: roles[] | undefined;
   is_pwl_on: boolean;
   pathfinder_version: string;
   adventure_group?: adventure_groups;

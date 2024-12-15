@@ -1,22 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useHead } from '@unhead/vue';
-import { useQuasar } from 'quasar';
-import { requestCreatures, requestFilters } from '../utils/encounter-api-calls';
-import {
-  partyStore,
-  filtersStore,
-  creaturesStore,
-  encounterStore,
-  settingsStore
-} from '../stores/store';
+import { partyStore, encounterStore, settingsStore } from '../stores/store';
 import type { party } from '../types/party';
 import type { min_creature } from '../types/creature';
 import type { encounter_list } from '../types/encounter';
 import CreatureList from '../components/Encounter/CreatureList.vue';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
-import { matArrowDownward, matArrowUpward, matPriorityHigh } from '@quasar/extras/material-icons';
-import SkeletonTable from '../components/Encounter/SkeletonTable.vue';
+import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 import CreaturesTable from '../components/Encounter/CreaturesTable.vue';
 
 useHead({
@@ -29,11 +20,8 @@ useHead({
   ]
 });
 
-const $q = useQuasar();
 const settings = settingsStore();
 const partyStores = partyStore();
-const filters = filtersStore();
-const creatures = creaturesStore();
 const encounter = encounterStore();
 const tourActive = ref(false);
 const screenWidth = ref(screen.width);
@@ -107,104 +95,6 @@ if (localEncounters) {
     localStorage.setItem('encounters', JSON.stringify([defaultEncounter]));
     encounter.updateEncounters([defaultEncounter]);
   }
-}
-
-// ---- API requests
-try {
-  if (
-    filters.getCreatureFilters.traits.length === 0 ||
-    filters.getCreatureFilters.alignments.length === 0 ||
-    filters.getCreatureFilters.sizes.length === 0 ||
-    filters.getCreatureFilters.rarities.length === 0 ||
-    filters.getCreatureFilters.families.length === 0 ||
-    filters.getCreatureFilters.sources.length === 0 ||
-    filters.getCreatureFilters.creature_roles.length === 0 ||
-    creatures.getCreatures.length === 0
-  ) {
-    let [
-      traitsList,
-      alignmentList,
-      sizeList,
-      rarityList,
-      familyList,
-      creatureTypeList,
-      sourceList,
-      roleList,
-      creatureList
-    ] = await Promise.all([
-      requestFilters('traits'),
-      requestFilters('alignments'),
-      requestFilters('sizes'),
-      requestFilters('rarities'),
-      requestFilters('families'),
-      requestFilters('creature_types'),
-      requestFilters('sources'),
-      requestFilters('creature_roles'),
-      requestCreatures(0, -1, settings.getPfVersion)
-    ]);
-
-    if (typeof traitsList != 'undefined') {
-      filters.updateTraits(traitsList);
-    } else {
-      throw new Error('Error loading traits');
-    }
-
-    if (typeof alignmentList != 'undefined') {
-      filters.updateAlignments(alignmentList);
-    } else {
-      throw new Error('Error loading alignments');
-    }
-
-    if (typeof sizeList != 'undefined') {
-      filters.updateSizes(sizeList);
-    } else {
-      throw new Error('Error loading sizes');
-    }
-
-    if (typeof rarityList != 'undefined') {
-      filters.updateRarities(rarityList);
-    } else {
-      throw new Error('Error loading rarities');
-    }
-
-    if (typeof familyList != 'undefined') {
-      filters.updateFamilies(familyList);
-    } else {
-      throw new Error('Error loading families');
-    }
-
-    if (typeof creatureTypeList != 'undefined') {
-      filters.updateCreatureType(creatureTypeList);
-    } else {
-      throw new Error('Error loading creature types');
-    }
-
-    if (typeof sourceList != 'undefined') {
-      filters.updateSources(sourceList);
-    } else {
-      throw new Error('Error loading creature sources');
-    }
-
-    if (typeof roleList != 'undefined') {
-      filters.updateRoles(roleList);
-    } else {
-      throw new Error('Error loading creature roles');
-    }
-
-    if (typeof creatureList != 'undefined') {
-      creatures.updateCreatures(creatureList);
-    } else {
-      throw new Error('Error loading creatures');
-    }
-  }
-} catch (error) {
-  console.error(error);
-  $q.notify({
-    progress: true,
-    type: 'warning',
-    message: 'Error loading the creatures',
-    icon: matPriorityHigh
-  });
 }
 
 const steps: Step[] = [
@@ -355,8 +245,8 @@ const scrollPage = (up: boolean) => {
 <template>
   <div class="row items-center justify-between">
     <v-tour name="/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
-    <SkeletonTable v-if="creatures.getCreatures.length === 0" id="table" />
-    <CreaturesTable v-else id="table" />
+    <CreaturesTable id="table" />
+    <q-space />
     <CreatureList id="list" />
     <q-page-sticky
       v-if="screenWidth < 768"

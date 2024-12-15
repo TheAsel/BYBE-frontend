@@ -50,16 +50,20 @@ export type creature = {
     };
     derived: {
       archive_link: string;
-      is_melee: boolean;
-      is_ranged: boolean;
-      is_spell_caster: boolean;
-      brute_percentage: number;
-      magical_striker_percentage: number;
-      skill_paragon_percentage: number;
-      skirmisher_percentage: number;
-      sniper_percentage: number;
-      soldier_percentage: number;
-      spell_caster_percentage: number;
+      attack_data: {
+        melee: boolean;
+        ranged: boolean;
+        spellcaster: boolean;
+      };
+      role_data: {
+        brute: number;
+        magical_striker: number;
+        skill_paragon: number;
+        skirmisher: number;
+        sniper: number;
+        soldier: number;
+        spellcaster: number;
+      };
       creature_role?: roles[];
     };
     traits: string[];
@@ -152,6 +156,13 @@ export type creature = {
     level: number;
     variant: variants;
   };
+};
+
+export type creature_response = {
+  count: number;
+  total: number;
+  next: string;
+  results: creature[];
 };
 
 export type min_creature = {

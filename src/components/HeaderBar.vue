@@ -115,7 +115,7 @@ if (!hideSupport.value) {
       throw new Error('Error loading Ko-Fi widget');
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 

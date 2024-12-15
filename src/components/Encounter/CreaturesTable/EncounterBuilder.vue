@@ -21,7 +21,7 @@ const dialog = ref(false);
 const tab = ref('General');
 
 const traits = ref<string[]>();
-const traitsOptions = filters.getCreatureFilters.traits;
+const traitsOptions = ref<string[]>(filters.getCreatureFilters.traits);
 const alignment = ref<alignments[]>();
 const size = ref<sizes[]>();
 const rarity = ref<rarities[]>();
@@ -111,33 +111,33 @@ const generateEncounter = debounce(async function () {
   const pf_version = settings.getPfVersion;
 
   const post: {
-    traits: string[] | undefined;
-    alignments: alignments[] | undefined;
-    sizes: sizes[] | undefined;
-    rarities: rarities[] | undefined;
-    families: string[] | undefined;
-    creature_types: string[] | undefined;
+    trait_whitelist_filter: string[] | undefined;
+    alignment_filter: alignments[] | undefined;
+    size_filter: sizes[] | undefined;
+    rarity_filter: rarities[] | undefined;
+    family_filter: string[] | undefined;
+    type_filter: string[] | undefined;
     challenge?: challenges;
     party_levels: number[];
     min_creatures?: number;
     max_creatures?: number;
     allow_weak_variants: boolean;
     allow_elite_variants: boolean;
-    creature_roles: roles[] | undefined;
+    role_filter: roles[] | undefined;
     is_pwl_on: boolean;
     pathfinder_version: string;
     adventure_group?: adventure_groups;
   } = {
-    traits: tmpFilters.value.traits,
-    alignments: tmpFilters.value.alignment,
-    sizes: tmpFilters.value.size,
-    rarities: tmpFilters.value.rarity,
-    families: tmpFilters.value.family,
-    creature_types: tmpFilters.value.creature_type,
+    trait_whitelist_filter: tmpFilters.value.traits,
+    alignment_filter: tmpFilters.value.alignment,
+    size_filter: tmpFilters.value.size,
+    rarity_filter: tmpFilters.value.rarity,
+    family_filter: tmpFilters.value.family,
+    type_filter: tmpFilters.value.creature_type,
     allow_weak_variants: tmpFilters.value.allow_weak_variants,
     allow_elite_variants: tmpFilters.value.allow_elite_variants,
     party_levels: partyLevels,
-    creature_roles: creature_roles.value,
+    role_filter: creature_roles.value,
     is_pwl_on: is_pwl_on,
     pathfinder_version: pf_version
   };
@@ -200,7 +200,7 @@ const saveChanges = () => {
 const filterTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.traits = traitsOptions.filter(
+    filters.getCreatureFilters.traits = traitsOptions.value.filter(
       (v) => v.toLowerCase().indexOf(filter) > -1
     );
   });
