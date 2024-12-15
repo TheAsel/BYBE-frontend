@@ -59,10 +59,10 @@ export type creature_filters = {
   rarity_filter?: rarities[];
   family_filter?: string[];
   type_filter?: creature_type[];
-  attack_data_filter?: {
-    melee: boolean;
-    ranged: boolean;
-    spellcaster: boolean;
+  attack_data_filter: {
+    melee?: boolean | null;
+    ranged?: boolean | null;
+    spellcaster?: boolean | null;
   };
   role_filter?: roles[];
   role_threshold: number;

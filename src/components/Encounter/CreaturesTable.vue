@@ -65,10 +65,10 @@ const filters = ref<{
   rarity_filter: rarities[];
   family_filter: string[];
   type_filter: creature_type[];
-  attack_data_filter?: {
-    melee: boolean;
-    ranged: boolean;
-    spellcaster: boolean;
+  attack_data_filter: {
+    melee: boolean | null;
+    ranged: boolean | null;
+    spellcaster: boolean | null;
   };
   role_filter: roles[];
   source_filter: string[];
@@ -84,7 +84,11 @@ const filters = ref<{
   rarity_filter: [],
   family_filter: [],
   type_filter: [],
-  attack_data_filter: null,
+  attack_data_filter: {
+    melee: null,
+    ranged: null,
+    spellcaster: null
+  },
   role_filter: [],
   source_filter: [],
   sort_by: 'name',
@@ -227,6 +231,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
     max_level_filter: filters.value.level_filter.max,
     min_hp_filter: filters.value.hp_filter.min,
     max_hp_filter: filters.value.hp_filter.max,
+    attack_data_filter: filters.value.attack_data_filter,
     role_threshold: 50,
     pathfinder_version: settings.getPfVersion
   };
@@ -250,9 +255,6 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   }
   if (filters.value.type_filter != undefined && filters.value.type_filter.length > 0) {
     body.type_filter = filters.value.type_filter;
-  }
-  if (filters.value.attack_data_filter) {
-    body.attack_data_filter = filters.value.attack_data_filter;
   }
   if (filters.value.role_filter != undefined && filters.value.role_filter.length > 0) {
     body.role_filter = filters.value.role_filter;
@@ -341,7 +343,11 @@ const resetFilters = () => {
     rarity_filter: [],
     family_filter: [],
     type_filter: [],
-    attack_data_filter: null,
+    attack_data_filter: {
+      melee: null,
+      ranged: null,
+      spellcaster: null
+    },
     role_filter: [],
     sort_by: 'name',
     order_by: 'ascending'
@@ -1029,7 +1035,10 @@ onMounted(async () => {
                       <q-toggle
                         v-model="filters.attack_data_filter.melee"
                         :icon="mdiSword"
+                        :color="filters.attack_data_filter.melee === true ? 'positive' : 'red'"
+                        :keep-color="filters.attack_data_filter.melee != null"
                         size="xl"
+                        toggle-indeterminate
                         role="menuitemcheckbox"
                         aria-checked="false"
                       >
@@ -1046,7 +1055,10 @@ onMounted(async () => {
                       <q-toggle
                         v-model="filters.attack_data_filter.ranged"
                         :icon="mdiBowArrow"
+                        :color="filters.attack_data_filter.ranged === true ? 'positive' : 'red'"
+                        :keep-color="filters.attack_data_filter.ranged != null"
                         size="xl"
+                        toggle-indeterminate
                         role="menuitemcheckbox"
                         aria-checked="false"
                       >
@@ -1063,7 +1075,12 @@ onMounted(async () => {
                       <q-toggle
                         v-model="filters.attack_data_filter.spellcaster"
                         :icon="mdiMagicStaff"
+                        :color="
+                          filters.attack_data_filter.spellcaster === true ? 'positive' : 'red'
+                        "
+                        :keep-color="filters.attack_data_filter.spellcaster != null"
                         size="xl"
+                        toggle-indeterminate
                         role="menuitemcheckbox"
                         aria-checked="false"
                       >
