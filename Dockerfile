@@ -2,7 +2,7 @@
 FROM node:22.12.0-alpine AS build-stage
 WORKDIR /bybe
 COPY . .
-RUN npm install && npm run build
+RUN npm install --ignore-scripts && npm run build
 
 ### STAGE 2: Deploy ###
 FROM nginxinc/nginx-unprivileged:1.27.3-alpine AS deploy-stage
