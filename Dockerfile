@@ -1,8 +1,8 @@
 ### STAGE 1: Build ###
-FROM oven/bun:1.1.42-alpine AS build-stage
+FROM node:22.12.0-alpine AS build-stage
 WORKDIR /bybe
 COPY . .
-RUN bun install --production && bun run build
+RUN npm install && npm run build
 
 ### STAGE 2: Deploy ###
 FROM nginxinc/nginx-unprivileged:1.27.3-alpine AS deploy-stage
