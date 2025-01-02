@@ -1,13 +1,13 @@
 import type { repo_info } from '../types/github';
 
-export async function requestRepoInfo() {
+export async function requestRepoInfo(repo: string) {
   try {
     const requestOptions = {
       method: 'GET',
       headers: { accept: 'application/json' }
     };
     const response = await fetch(
-      'https://api.github.com/repos/' + process.env.REPO_URL + '/releases/latest',
+      'https://api.github.com/repos/' + repo + '/releases/latest',
       requestOptions
     );
     const data = await response.json();

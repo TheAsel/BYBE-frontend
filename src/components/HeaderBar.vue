@@ -521,18 +521,21 @@ const downloadData = () => {
                 ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-500'
                 : 'sm:tw-py-4 tw-text-gray-800 hover:tw-text-blue-600  dark:tw-text-neutral-200 dark:hover:tw-text-neutral-400'
             "
-            :aria-current="item.to ? 'page' : undefined"
+            :aria-current="currentPath === item.to ? 'page' : undefined"
             >{{ item.name }}
           </router-link>
           <q-space class="sm:tw-block tw-hidden" />
           <q-separator class="tw-block sm:tw-hidden" />
-          <a
-            href="https://github.com/RakuJa/BYBE-Portable/releases/latest"
-            target="_blank"
-            rel="noopener"
-            class="tw-text-gray-800 hover:tw-text-blue-600 dark:tw-text-neutral-200 dark:hover:tw-text-neutral-400"
-            >Download</a
-          >
+          <router-link
+            to="/download"
+            :class="
+              currentPath === '/download'
+                ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-500'
+                : 'sm:tw-py-4 tw-text-gray-800 hover:tw-text-blue-600  dark:tw-text-neutral-200 dark:hover:tw-text-neutral-400'
+            "
+            :aria-current="currentPath === '/download' ? 'page' : undefined"
+            >Download
+          </router-link>
           <q-separator vertical inset class="sm:tw-block tw-hidden" />
 
           <div class="tw-flex tw-items-center tw-gap-x-4 sm:tw-gap-x-0 tw-relative">

@@ -13,11 +13,9 @@ useHead({
 </script>
 
 <template>
-  <div
-    class="creature-sheet tw-opacity-85 dark:tw-opacity-90 q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto"
-  >
+  <div class="tw-opacity-85 dark:tw-opacity-90 q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto">
     <div
-      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
+      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700"
     >
       <q-scroll-area style="height: calc(100vh - 124px)">
         <div class="q-gutter-y-sm tw-p-4">
