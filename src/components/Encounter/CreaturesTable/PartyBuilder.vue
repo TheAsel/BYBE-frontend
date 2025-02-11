@@ -6,8 +6,8 @@ import { partyStore } from '../../../stores/store';
 
 const partyStores = partyStore();
 const tmpParty = ref<party>({
-  name: partyStores.getActiveParty.name,
-  members: [...partyStores.getActiveParty.members]
+  name: partyStores.getActiveParty!.name,
+  members: [...partyStores.getActiveParty!.members]
 });
 const parties = ref(partyStores.getParties.map((party) => party.name));
 
@@ -22,20 +22,20 @@ const removePartyDialog = ref(false);
 const restoreParty = () => {
   dialog.value = true;
   tmpParty.value = {
-    name: partyStores.getActiveParty.name,
-    members: [...partyStores.getActiveParty.members]
+    name: partyStores.getActiveParty!.name,
+    members: [...partyStores.getActiveParty!.members]
   };
 };
 
 const validateLevel = (index: number) => {
   const value = tmpParty.value.members[index];
-  if (value < 1) {
+  if (value && value < 1) {
     tmpParty.value.members[index] = 1;
   }
-  if (value > 20) {
+  if (value && value > 20) {
     tmpParty.value.members[index] = 20;
   }
-  tmpParty.value.members[index] = Math.round(tmpParty.value.members[index]);
+  tmpParty.value.members[index] = Math.round(tmpParty.value.members[index]!);
 };
 
 const addPlayer = () => {
@@ -60,8 +60,8 @@ const addParty = () => {
     partyStores.addParty(newPartyName.value);
     parties.value = partyStores.getParties.map((party) => party.name);
     tmpParty.value = {
-      name: partyStores.getActiveParty.name,
-      members: [...partyStores.getActiveParty.members]
+      name: partyStores.getActiveParty!.name,
+      members: [...partyStores.getActiveParty!.members]
     };
     saveChanges();
     newPartyName.value = '';
@@ -73,8 +73,8 @@ const removeParty = () => {
   partyStores.removeParty();
   parties.value = partyStores.getParties.map((party) => party.name);
   tmpParty.value = {
-    name: partyStores.getActiveParty.name,
-    members: [...partyStores.getActiveParty.members]
+    name: partyStores.getActiveParty!.name,
+    members: [...partyStores.getActiveParty!.members]
   };
   saveChanges();
   removePartyDialog.value = false;
@@ -83,8 +83,8 @@ const removeParty = () => {
 const changeActiveParty = (selected: string) => {
   partyStores.changeActiveParty(partyStores.getPartyIndex(selected));
   tmpParty.value = {
-    name: partyStores.getActiveParty.name,
-    members: [...partyStores.getActiveParty.members]
+    name: partyStores.getActiveParty!.name,
+    members: [...partyStores.getActiveParty!.members]
   };
 };
 

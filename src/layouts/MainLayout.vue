@@ -8,11 +8,15 @@ const newestVersion = ref(version);
 const repoUrl = 'https://github.com/' + process.env.REPO_URL + '/releases/latest';
 
 try {
-  const repoInfo = await requestRepoInfo(process.env.REPO_URL);
-  if (repoInfo) {
-    newestVersion.value = repoInfo.name.substring(1);
+  if (process.env.REPO_URL) {
+    const repoInfo = await requestRepoInfo(process.env.REPO_URL);
+    if (repoInfo) {
+      newestVersion.value = repoInfo.name.substring(1);
+    } else {
+      throw new Error('Error fetching repository info');
+    }
   } else {
-    throw new Error('Error fetching repository info');
+    throw new Error('.env variable REPO_URL not set');
   }
 } catch (error) {
   console.error(error);

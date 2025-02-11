@@ -58,7 +58,7 @@ export const partyStore = defineStore('party', {
     },
     updateParty(partyName: string, newMembers: number[]) {
       const partyIndex = this.getPartyIndex(partyName);
-      if (partyIndex >= 0) {
+      if (this.parties[partyIndex] && partyIndex >= 0) {
         this.parties[partyIndex].members = newMembers;
       }
     },
@@ -167,37 +167,37 @@ export const encounterStore = defineStore('encounter', {
   },
   actions: {
     clearEncounter() {
-      this.encounters[this.activeEncounter].creatures.splice(
+      this.encounters[this.activeEncounter]!.creatures.splice(
         0,
-        this.encounters[this.activeEncounter].creatures.length
+        this.encounters[this.activeEncounter]!.creatures.length
       );
     },
     clearCreature(creature: min_creature) {
-      const index = this.encounters[this.activeEncounter].creatures.indexOf(creature);
-      this.encounters[this.activeEncounter].creatures.splice(index, 1);
+      const index = this.encounters[this.activeEncounter]!.creatures.indexOf(creature);
+      this.encounters[this.activeEncounter]!.creatures.splice(index, 1);
     },
     changeVariant(index: number, variant: variants) {
-      this.encounters[this.activeEncounter].creatures[index].variant = variant;
+      this.encounters[this.activeEncounter]!.creatures[index]!.variant = variant;
     },
     addToEncounter(creature: min_creature, index?: number) {
-      if (index! >= 0) {
+      if (index && index >= 0) {
         if (creature.quantity) {
           creature.quantity++;
         } else {
           creature.quantity = 1;
         }
-        this.encounters[this.activeEncounter].creatures.splice(index!, 1, creature);
+        this.encounters[this.activeEncounter]!.creatures.splice(index, 1, creature);
       } else {
         const newCreature = { ...creature };
         newCreature.quantity = 1;
-        this.encounters[this.activeEncounter].creatures.push(newCreature);
+        this.encounters[this.activeEncounter]!.creatures.push(newCreature);
       }
     },
     removeFromEncounter(index: number) {
-      if (this.encounters[this.activeEncounter].creatures[index].quantity! > 1) {
-        this.encounters[this.activeEncounter].creatures[index].quantity!--;
+      if (this.encounters[this.activeEncounter]!.creatures[index]!.quantity! > 1) {
+        this.encounters[this.activeEncounter]!.creatures[index]!.quantity!--;
       } else {
-        this.encounters[this.activeEncounter].creatures.splice(index, 1);
+        this.encounters[this.activeEncounter]!.creatures.splice(index, 1);
       }
     },
     changeActiveEncounter(encounterIndex: number) {
@@ -224,7 +224,7 @@ export const encounterStore = defineStore('encounter', {
     updateEncounter(encounterName: string, newCreatures: min_creature[]) {
       const encounterIndex = this.getEncounterIndex(encounterName);
       if (encounterIndex >= 0) {
-        this.encounters[encounterIndex].creatures = newCreatures;
+        this.encounters[encounterIndex]!.creatures = newCreatures;
       }
     },
     updateEncounters(newEncounters: encounter_list[]) {
@@ -302,7 +302,7 @@ export const itemsStore = defineStore('items', {
     getGenerating: (state) => state.generating,
     getTotalCost: (state) => {
       let cost = 0;
-      state.shops[state.activeShop].items.forEach((item) => {
+      state.shops[state.activeShop]!.items.forEach((item) => {
         for (let i = 0; i < item.quantity; i++) {
           cost += item.price;
         }
@@ -321,25 +321,25 @@ export const itemsStore = defineStore('items', {
       this.shops = newShopList;
     },
     clearShop() {
-      this.shops[this.activeShop].items.splice(0, this.shops[this.activeShop].items.length);
+      this.shops[this.activeShop]!.items.splice(0, this.shops[this.activeShop]!.items.length);
     },
     clearItem(item: min_item) {
-      const index = this.shops[this.activeShop].items.indexOf(item);
-      this.shops[this.activeShop].items.splice(index, 1);
+      const index = this.shops[this.activeShop]!.items.indexOf(item);
+      this.shops[this.activeShop]!.items.splice(index, 1);
     },
     addToShop(item: min_item, index?: number) {
       if (index! >= 0) {
         item.quantity++;
-        this.shops[this.activeShop].items.splice(index!, 1, item);
+        this.shops[this.activeShop]!.items.splice(index!, 1, item);
       } else {
-        this.shops[this.activeShop].items.push(item);
+        this.shops[this.activeShop]!.items.push(item);
       }
     },
     removeFromShop(index: number) {
-      if (this.shops[this.activeShop].items[index].quantity > 1) {
-        this.shops[this.activeShop].items[index].quantity--;
+      if (this.shops[this.activeShop]!.items[index]!.quantity > 1) {
+        this.shops[this.activeShop]!.items[index]!.quantity--;
       } else {
-        this.shops[this.activeShop].items.splice(index, 1);
+        this.shops[this.activeShop]!.items.splice(index, 1);
       }
     },
     changeActiveShop(shopIndex: number) {
@@ -366,7 +366,7 @@ export const itemsStore = defineStore('items', {
     updateShop(shopName: string, newItems: min_item[]) {
       const shopIndex = this.getShopIndex(shopName);
       if (shopIndex >= 0) {
-        this.shops[shopIndex].items = newItems;
+        this.shops[shopIndex]!.items = newItems;
       }
     },
     updateShops(newShops: shop_list[]) {
@@ -469,12 +469,12 @@ export const templateStore = defineStore('template', {
           source_filter: [],
           trait_blacklist_filter: template.item_traits_blacklist,
           trait_whitelist_filter: template.item_traits_whitelist,
-          rarity_filter: template.item_rarities,
-          type_filter: template.item_types,
-          armor_percentage: template.armor_percentage,
-          equipment_percentage: template.equipment_percentage,
-          shield_percentage: template.shield_percentage,
-          weapon_percentage: template.weapon_percentage
+          rarity_filter: template.item_rarities!,
+          type_filter: template.item_types!,
+          armor_percentage: template.armor_percentage!,
+          equipment_percentage: template.equipment_percentage!,
+          shield_percentage: template.shield_percentage!,
+          weapon_percentage: template.weapon_percentage!
         });
       });
       this.defaultTemplates = newTemplates.length;

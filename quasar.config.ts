@@ -42,6 +42,12 @@ export default defineConfig((/* ctx */) => {
         node: 'node22'
       },
 
+      typescript: {
+        strict: true,
+        vueShim: true
+        // extendTsConfig (tsConfig) {}
+      },
+
       vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
@@ -69,11 +75,10 @@ export default defineConfig((/* ctx */) => {
         [
           'vite-plugin-checker',
           {
-            vueTsc: {
-              tsconfigPath: 'tsconfig.vue-tsc.json'
-            },
+            vueTsc: true,
             eslint: {
-              lintCommand: 'eslint "./**/*.{js,ts,mjs,cjs,vue}"'
+              lintCommand: 'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
+              useFlatConfig: true
             }
           },
           { server: false }

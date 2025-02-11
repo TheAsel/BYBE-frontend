@@ -82,7 +82,7 @@ switch (localSupport.value) {
 
 const loadKofiWidget = () => {
   return new Promise<void>((resolve, reject) => {
-    let kofiWidget = document.createElement('script');
+    const kofiWidget = document.createElement('script');
     kofiWidget.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
     kofiWidget.integrity =
       'sha512-M5C7x3flCdJVRDM/E9jAWOtukG3A+9K2vGYYsi5D8fr49cvowu+aPOS47S/gzuUFfzMy2OJ7IqfBB+NE9kmnEw== sha512-Qq9Wa8l8WJo/UHkeTG+uo0cuHH8TgQ0yN3TXdRSUxhwIpgNRyqeqeCen+JED6L/772FJbduOYvZ31yhxYHegJg==';
@@ -106,7 +106,7 @@ if (!hideSupport.value) {
         'floating-chat.donateButton.background-color': '#00b9fe',
         'floating-chat.donateButton.text-color': '#fff'
       });
-      let supportButton = document
+      const supportButton = document
         .querySelectorAll('[id^=kofi-widget-overlay-]')
         .item(0) as HTMLElement;
 
@@ -759,7 +759,7 @@ const downloadData = () => {
               padding="sm"
               class="tw-text-gray-800 dark:tw-text-gray-200"
               aria-label="Start help tour"
-              @click="$tours[currentPath].start()"
+              @click="$tours[currentPath]!.start()"
             >
               HELP
             </q-btn>

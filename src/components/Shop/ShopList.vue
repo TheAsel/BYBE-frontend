@@ -30,21 +30,21 @@ const newShopName = ref('');
 
 const removeShopDialog = ref(false);
 
-const tmpShop = ref<shop_list>(shop.getActiveShop);
+const tmpShop = ref<shop_list>(shop.getActiveShop!);
 const shops = ref<string[]>(shop.getShops.map((shop) => shop.name));
 
 const lastItem = ref<number>();
 
 tmpShop.value = {
-  name: shop.getActiveShop.name,
-  items: shop.getActiveShop.items
+  name: shop.getActiveShop!.name,
+  items: shop.getActiveShop!.items
 };
 
 // save on shop list change
 watch(shop, () => {
   tmpShop.value = {
-    name: shop.getActiveShop.name,
-    items: shop.getActiveShop.items
+    name: shop.getActiveShop!.name,
+    items: shop.getActiveShop!.items
   };
   saveChanges();
 });
@@ -61,8 +61,8 @@ const addShop = () => {
     shop.addShop(newShopName.value);
     shops.value = shop.getShops.map((shop) => shop.name);
     tmpShop.value = {
-      name: shop.getActiveShop.name,
-      items: [...shop.getActiveShop.items]
+      name: shop.getActiveShop!.name,
+      items: [...shop.getActiveShop!.items]
     };
     saveChanges();
     newShopName.value = '';
@@ -74,8 +74,8 @@ const removeShop = () => {
   shop.removeShop();
   shops.value = shop.getShops.map((shop) => shop.name);
   tmpShop.value = {
-    name: shop.getActiveShop.name,
-    items: [...shop.getActiveShop.items]
+    name: shop.getActiveShop!.name,
+    items: [...shop.getActiveShop!.items]
   };
   saveChanges();
   removeShopDialog.value = false;
@@ -84,8 +84,8 @@ const removeShop = () => {
 const changeActiveShop = (selected: string) => {
   shop.changeActiveShop(shop.getShopIndex(selected));
   tmpShop.value = {
-    name: shop.getActiveShop.name,
-    items: [...shop.getActiveShop.items]
+    name: shop.getActiveShop!.name,
+    items: [...shop.getActiveShop!.items]
   };
 };
 
@@ -107,7 +107,7 @@ const showItem = debounce(async function (item: min_item) {
           message: 'Missing item ID',
           icon: matPriorityHigh
         });
-        router.push({ name: 'shop' });
+        await router.push({ name: 'shop' });
       } else {
         shop.setSelectedItem(itemData);
       }
@@ -267,7 +267,7 @@ const showItem = debounce(async function (item: min_item) {
       </q-header>
 
       <q-page-container v-if="shop.getGenerating == false">
-        <div v-for="(item, index) in shop.getActiveShop.items" :key="index">
+        <div v-for="(item, index) in shop.getActiveShop!.items" :key="index">
           <div class="tw-flex">
             <div class="tw-flex-none tw-w-12 tw-my-auto tw-mx-1">
               <q-btn

@@ -21,16 +21,16 @@ const newEncounterName = ref('');
 
 const removeEncounterDialog = ref(false);
 
-const tmpEncounter = ref<encounter_list>(encounter.getActiveEncounter);
+const tmpEncounter = ref<encounter_list>(encounter.getActiveEncounter!);
 const encounters = ref<string[]>(encounter.getEncounters.map((encounter) => encounter.name));
 
 tmpEncounter.value = {
-  name: encounter.getActiveEncounter.name,
-  creatures: encounter.getActiveEncounter.creatures
+  name: encounter.getActiveEncounter!.name,
+  creatures: encounter.getActiveEncounter!.creatures
 };
 
 const debouncedCall = debounce(async function () {
-  const encounterList = encounter.getActiveEncounter.creatures;
+  const encounterList = encounter.getActiveEncounter!.creatures;
   const enemyLevels: number[] = [];
   for (const creature of encounterList) {
     for (let j = 0; j < creature.quantity!; j++) {
@@ -55,7 +55,7 @@ const debouncedCall = debounce(async function () {
       }
     }
   }
-  const partyLevels = party.getActiveParty.members;
+  const partyLevels = party.getActiveParty!.members;
   const is_pwl_on = ref(false);
   const localPwl = ref(localStorage.getItem('is_pwl_on'));
   switch (localPwl.value) {
@@ -90,22 +90,22 @@ const debouncedCall = debounce(async function () {
 }, 300);
 
 // get info on creature list change
-watch(encounter, () => {
+watch(encounter, async () => {
   tmpEncounter.value = {
-    name: encounter.getActiveEncounter.name,
-    creatures: encounter.getActiveEncounter.creatures
+    name: encounter.getActiveEncounter!.name,
+    creatures: encounter.getActiveEncounter!.creatures
   };
   saveChanges();
-  debouncedCall();
+  await debouncedCall();
 });
 
 // get info on party change
-watch(party, () => {
-  debouncedCall();
+watch(party, async () => {
+  await debouncedCall();
 });
 
 // get info on page load
-debouncedCall();
+await debouncedCall();
 
 const closeDialog = () => {
   newEncounterDialog.value = false;
@@ -119,8 +119,8 @@ const addEncounter = () => {
     encounter.addEncounter(newEncounterName.value);
     encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
     tmpEncounter.value = {
-      name: encounter.getActiveEncounter.name,
-      creatures: [...encounter.getActiveEncounter.creatures]
+      name: encounter.getActiveEncounter!.name,
+      creatures: [...encounter.getActiveEncounter!.creatures]
     };
     saveChanges();
     newEncounterName.value = '';
@@ -132,8 +132,8 @@ const removeEncounter = () => {
   encounter.removeEncounter();
   encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
   tmpEncounter.value = {
-    name: encounter.getActiveEncounter.name,
-    creatures: [...encounter.getActiveEncounter.creatures]
+    name: encounter.getActiveEncounter!.name,
+    creatures: [...encounter.getActiveEncounter!.creatures]
   };
   saveChanges();
   removeEncounterDialog.value = false;
@@ -142,8 +142,8 @@ const removeEncounter = () => {
 const changeActiveEncounter = (selected: string) => {
   encounter.changeActiveEncounter(encounter.getEncounterIndex(selected));
   tmpEncounter.value = {
-    name: encounter.getActiveEncounter.name,
-    creatures: [...encounter.getActiveEncounter.creatures]
+    name: encounter.getActiveEncounter!.name,
+    creatures: [...encounter.getActiveEncounter!.creatures]
   };
 };
 
@@ -312,7 +312,7 @@ const openCreatureSheet = (id: number) => {
         </div>
       </q-header>
       <q-page-container v-if="encounter.getGenerating == false">
-        <div v-for="(item, index) in encounter.getActiveEncounter.creatures" :key="index">
+        <div v-for="(item, index) in encounter.getActiveEncounter!.creatures" :key="index">
           <div class="tw-flex">
             <div class="tw-flex-none tw-w-12 tw-my-auto tw-mx-1">
               <q-btn
