@@ -36,6 +36,11 @@ const routes: RouteRecordRaw[] = [
         path: 'license',
         name: 'license',
         component: () => import('../pages/LicensePage.vue')
+      },
+      {
+        path: 'download',
+        name: 'download',
+        component: () => import('../pages/DownloadPage.vue')
       }
     ]
   },

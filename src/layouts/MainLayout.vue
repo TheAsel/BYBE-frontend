@@ -8,7 +8,7 @@ const newestVersion = ref(version);
 const repoUrl = 'https://github.com/' + process.env.REPO_URL + '/releases/latest';
 
 try {
-  const repoInfo = await requestRepoInfo();
+  const repoInfo = await requestRepoInfo(process.env.REPO_URL);
   if (repoInfo) {
     newestVersion.value = repoInfo.name.substring(1);
   } else {
