@@ -7,7 +7,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "eslint --ext .js,.ts,.vue ./",
+    "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
@@ -43,6 +43,14 @@
     "typescript": "5.7.3",
     "vite-plugin-checker": "^0.8.0",
     "vue-tsc": "^2.2.0"
+  },
+  "overrides": {
+    "vite-plugin-checker": {
+      "vue-tsc": "$vue-tsc"
+    },
+    "@quasar/app-vite": {
+      "pinia": "$pinia"
+    }
   },
   "engines": {
     "node": ">= 22",
