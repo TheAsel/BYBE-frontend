@@ -94,7 +94,7 @@ export async function requestCreatureId(
         variant.toLowerCase() +
         '/' +
         creature_id +
-        '?extra_data=true&combat_data=true&spell_casting_data=true&is_pwl_on=' +
+        '?extra_data=true&combat_data=true&spellcasting_data=true&is_pwl_on=' +
         is_pwl_on,
       requestOptions
     );
