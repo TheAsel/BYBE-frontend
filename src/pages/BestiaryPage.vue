@@ -56,7 +56,7 @@ try {
         message: 'Missing creature ID',
         icon: matPriorityHigh
       });
-      router.push({ name: 'encounter' });
+      await router.push({ name: 'encounter' });
     } else if (creatureVariant.value === 'Base') {
       title.value = creatureData?.core_data.essential.name + ' - BYBE';
     } else {
@@ -100,7 +100,7 @@ try {
       message: 'Invalid creature ID',
       icon: matPriorityHigh
     });
-    router.push({ name: 'encounter' });
+    await router.push({ name: 'encounter' });
   }
 } catch (error) {
   console.error(error);
@@ -132,7 +132,7 @@ const addPlus = (value: number | undefined) => {
 
 const variantStyle = (value: string | number | undefined) => {
   if (value && creatureVariant.value != 'Base') {
-    let valueStr = '<span class="tw-text-red-600"><b>' + value.toString() + '</b></span>';
+    const valueStr = '<span class="tw-text-red-600"><b>' + value.toString() + '</b></span>';
     return valueStr;
   }
   return value;
@@ -209,7 +209,7 @@ const perceptionString = computed(() => {
         }
       });
     }
-    if (!creatureData.extra_data.has_vision) {
+    if (!creatureData!.extra_data!.has_vision) {
       finalString += 'no vision' + ', ';
     }
     if (creatureData?.extra_data?.perception_detail) {

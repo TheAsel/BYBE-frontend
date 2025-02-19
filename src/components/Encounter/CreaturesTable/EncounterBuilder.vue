@@ -106,7 +106,7 @@ const restoreSettings = () => {
 const generateEncounter = debounce(async function () {
   encounter.setGenerating(true);
   saveChanges();
-  const partyLevels = party.getActiveParty.members;
+  const partyLevels = party.getActiveParty!.members;
   const is_pwl_on = encounter.getPwl;
   const pf_version = settings.getPfVersion;
 
@@ -147,7 +147,7 @@ const generateEncounter = debounce(async function () {
   } else {
     post.min_creatures = tmpFilters.value.creatures.min;
     post.max_creatures = tmpFilters.value.creatures.max;
-    post.challenge = tmpFilters.value.challenge;
+    post.challenge = tmpFilters.value.challenge!;
   }
   try {
     const randomEncounter = await encounterGenerator(post);
@@ -156,11 +156,11 @@ const generateEncounter = debounce(async function () {
         encounter.clearEncounter();
         for (let i = 0; i < randomEncounter.count; i++) {
           const min_creature: min_creature = {
-            id: randomEncounter.results[i].core_data.essential.id,
-            archive_link: randomEncounter.results[i].core_data.derived.archive_link,
-            name: randomEncounter.results[i].core_data.essential.name,
-            level: randomEncounter.results[i].core_data.essential.base_level,
-            variant: randomEncounter.results[i].variant_data?.variant
+            id: randomEncounter.results[i]!.core_data.essential.id,
+            archive_link: randomEncounter.results[i]!.core_data.derived.archive_link,
+            name: randomEncounter.results[i]!.core_data.essential.name,
+            level: randomEncounter.results[i]!.core_data.essential.base_level,
+            variant: randomEncounter.results[i]!.variant_data?.variant
           };
           encounter.addToEncounter(min_creature);
         }

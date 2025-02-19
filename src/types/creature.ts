@@ -171,5 +171,5 @@ export type min_creature = {
   name: string;
   level: number;
   quantity?: number;
-  variant?: variants;
+  variant?: variants | undefined;
 };

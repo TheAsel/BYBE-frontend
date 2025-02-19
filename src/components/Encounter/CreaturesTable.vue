@@ -484,7 +484,7 @@ onMounted(async () => {
   } catch (error) {
     console.error(error);
   }
-  fetchFromServer(0, 100);
+  await fetchFromServer(0, 100);
 });
 </script>
 
@@ -646,8 +646,8 @@ onMounted(async () => {
                   :options="Object.freeze(filterStore.getCreatureFilters.sources)"
                   use-input
                   input-debounce="0"
-                  :label="columns[0].label"
-                  :style="columns[0].style"
+                  :label="columns[0]!.label"
+                  :style="columns[0]!.style"
                   virtual-scroll-item-size="32"
                   @filter="filterSourcesFn"
                 />
@@ -667,8 +667,8 @@ onMounted(async () => {
                 v-model="filters.name_filter"
                 dense
                 outlined
-                :label="columns[1].label"
-                :style="columns[1].style"
+                :label="columns[1]!.label"
+                :style="columns[1]!.style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -680,7 +680,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort name column"
-                @click="sort(columns[1].name)"
+                @click="sort(columns[1]!.name)"
               />
             </div>
           </div>
@@ -695,8 +695,8 @@ onMounted(async () => {
               <q-field
                 dense
                 outlined
-                :label="columns[2].label"
-                :style="columns[2].style"
+                :label="columns[2]!.label"
+                :style="columns[2]!.style"
                 stack-label
               >
                 <template #control>
@@ -728,7 +728,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort level column"
-                @click="sort(columns[2].name)"
+                @click="sort(columns[2]!.name)"
               />
             </div>
           </div>
@@ -743,8 +743,8 @@ onMounted(async () => {
               <q-field
                 dense
                 outlined
-                :label="columns[3].label"
-                :style="columns[3].style"
+                :label="columns[3]!.label"
+                :style="columns[3]!.style"
                 stack-label
               >
                 <template #control>
@@ -776,7 +776,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort hp column"
-                @click="sort(columns[3].name)"
+                @click="sort(columns[3]!.name)"
               />
             </div>
           </div>
@@ -799,8 +799,8 @@ onMounted(async () => {
                   :options="Object.freeze(filterStore.getCreatureFilters.traits)"
                   use-input
                   input-debounce="0"
-                  :label="columns[4].label"
-                  :style="columns[4].style"
+                  :label="columns[4]!.label"
+                  :style="columns[4]!.style"
                   virtual-scroll-item-size="32"
                   @filter="filterTraitsFn"
                 />
@@ -815,7 +815,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort traits column"
-                @click="sort(columns[4].name)"
+                @click="sort(columns[4]!.name)"
               />
             </div>
           </div>
@@ -835,8 +835,8 @@ onMounted(async () => {
                 clearable
                 options-dense
                 :options="Object.freeze(filterStore.getCreatureFilters.alignments)"
-                :label="columns[5].label"
-                :style="columns[5].style"
+                :label="columns[5]!.label"
+                :style="columns[5]!.style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -848,7 +848,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort alignment column"
-                @click="sort(columns[5].name)"
+                @click="sort(columns[5]!.name)"
               />
             </div>
           </div>
@@ -868,8 +868,8 @@ onMounted(async () => {
                 clearable
                 options-dense
                 :options="Object.freeze(filterStore.getCreatureFilters.sizes)"
-                :label="columns[6].label"
-                :style="columns[6].style"
+                :label="columns[6]!.label"
+                :style="columns[6]!.style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -881,7 +881,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort size column"
-                @click="sort(columns[6].name)"
+                @click="sort(columns[6]!.name)"
               />
             </div>
           </div>
@@ -901,8 +901,8 @@ onMounted(async () => {
                 clearable
                 options-dense
                 :options="Object.freeze(filterStore.getCreatureFilters.rarities)"
-                :label="columns[7].label"
-                :style="columns[7].style"
+                :label="columns[7]!.label"
+                :style="columns[7]!.style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -914,7 +914,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort rarity column"
-                @click="sort(columns[7].name)"
+                @click="sort(columns[7]!.name)"
               />
             </div>
           </div>
@@ -937,8 +937,8 @@ onMounted(async () => {
                   :options="Object.freeze(filterStore.getCreatureFilters.families)"
                   use-input
                   input-debounce="0"
-                  :label="columns[8].label"
-                  :style="columns[8].style"
+                  :label="columns[8]!.label"
+                  :style="columns[8]!.style"
                   virtual-scroll-item-size="32"
                   @filter="filterFamiliesFn"
                 />
@@ -953,7 +953,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort family column"
-                @click="sort(columns[8].name)"
+                @click="sort(columns[8]!.name)"
               />
             </div>
           </div>
@@ -973,8 +973,8 @@ onMounted(async () => {
                 clearable
                 options-dense
                 :options="Object.freeze(filterStore.getCreatureFilters.creature_types)"
-                :label="columns[9].label"
-                :style="columns[9].style"
+                :label="columns[9]!.label"
+                :style="columns[9]!.style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -986,7 +986,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort creature type column"
-                @click="sort(columns[9].name)"
+                @click="sort(columns[9]!.name)"
               />
             </div>
           </div>
@@ -1001,12 +1001,12 @@ onMounted(async () => {
               <q-field
                 dense
                 outlined
-                :label="columns[10].label"
-                :style="columns[10].style"
+                :label="columns[10]!.label"
+                :style="columns[10]!.style"
                 :stack-label="
-                  filters.attack_data_filter?.melee ||
-                  filters.attack_data_filter?.ranged ||
-                  filters.attack_data_filter?.spellcaster
+                  filters.attack_data_filter?.melee! ||
+                  filters.attack_data_filter?.ranged! ||
+                  filters.attack_data_filter?.spellcaster!
                 "
               >
                 <template #control>
@@ -1107,7 +1107,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort attacks column"
-                @click="sort(columns[10].name)"
+                @click="sort(columns[10]!.name)"
               />
             </div>
           </div>
@@ -1127,8 +1127,8 @@ onMounted(async () => {
                 clearable
                 options-dense
                 :options="Object.freeze(filterStore.getCreatureFilters.creature_roles)"
-                :label="columns[11].label"
-                :style="columns[11].style"
+                :label="columns[11]!.label"
+                :style="columns[11]!.style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -1140,7 +1140,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort creature role column"
-                @click="sort(columns[11].name)"
+                @click="sort(columns[11]!.name)"
               />
             </div>
           </div>

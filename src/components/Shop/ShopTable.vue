@@ -297,18 +297,18 @@ async function onKey(evt) {
 
   switch (evt.keyCode) {
     case 13: // Enter
-      addItem(selected.value[0]);
+      addItem(selected.value[0]!);
       break;
     case 33: // PageUp
       index = 0;
       selected.value = [computedRows[index]];
-      items.setSelectedItem(selected.value[0]);
+      items.setSelectedItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
       break;
     case 34: // PageDown
       index = rowsPerPage - 1;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
-      items.setSelectedItem(selected.value[0]);
+      items.setSelectedItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
       break;
     case 36: // Home
@@ -318,7 +318,7 @@ async function onKey(evt) {
       setTimeout(() => {
         const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]);
+        items.setSelectedItem(selected.value[0]!);
         keyDown.value = false;
         itemTable.value.scrollTo(index);
       }, 1000);
@@ -330,7 +330,7 @@ async function onKey(evt) {
       setTimeout(() => {
         const { computedRows } = itemTable.value;
         selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
-        items.setSelectedItem(selected.value[0]);
+        items.setSelectedItem(selected.value[0]!);
         keyDown.value = false;
         itemTable.value.scrollTo(index - 1);
       }, 1000);
@@ -347,7 +347,7 @@ async function onKey(evt) {
       setTimeout(() => {
         const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]);
+        items.setSelectedItem(selected.value[0]!);
         keyDown.value = false;
         itemTable.value.scrollTo(index);
       }, 1000);
@@ -356,7 +356,7 @@ async function onKey(evt) {
       if (currentIndex > 0) {
         index = currentIndex - 1;
         selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]);
+        items.setSelectedItem(selected.value[0]!);
       }
       itemTable.value.scrollTo(index - 1);
       break;
@@ -372,7 +372,7 @@ async function onKey(evt) {
       setTimeout(() => {
         const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]);
+        items.setSelectedItem(selected.value[0]!);
         keyDown.value = false;
         itemTable.value.scrollTo(index);
       }, 1000);
@@ -381,7 +381,7 @@ async function onKey(evt) {
       if (currentIndex < lastIndex) {
         index = currentIndex + 1;
         selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]);
+        items.setSelectedItem(selected.value[0]!);
       }
       itemTable.value.scrollTo(index);
       break;
@@ -440,7 +440,7 @@ onMounted(async () => {
   } catch (error) {
     console.error(error);
   }
-  fetchFromServer(0, 100);
+  await fetchFromServer(0, 100);
 });
 </script>
 
@@ -612,8 +612,8 @@ onMounted(async () => {
                   clearable
                   options-dense
                   :options="Object.freeze(filterStore.getItemFilters.sources)"
-                  :label="columns[0].label"
-                  :style="columns[0].style"
+                  :label="columns[0]!.label"
+                  :style="columns[0]!.style"
                   use-input
                   input-debounce="0"
                   virtual-scroll-item-size="32"
@@ -635,8 +635,8 @@ onMounted(async () => {
                 v-model="filters.name_filter"
                 dense
                 outlined
-                :label="columns[1].label"
-                :style="columns[1].style"
+                :label="columns[1]!.label"
+                :style="columns[1]!.style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -648,7 +648,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort name column"
-                @click="sort(columns[1].name)"
+                @click="sort(columns[1]!.name)"
               />
             </div>
           </div>
@@ -663,8 +663,8 @@ onMounted(async () => {
               <q-field
                 dense
                 outlined
-                :label="columns[2].label"
-                :style="columns[2].style"
+                :label="columns[2]!.label"
+                :style="columns[2]!.style"
                 stack-label
               >
                 <template #control>
@@ -696,7 +696,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort level column"
-                @click="sort(columns[2].name)"
+                @click="sort(columns[2]!.name)"
               />
             </div>
           </div>
@@ -717,8 +717,8 @@ onMounted(async () => {
                   clearable
                   options-dense
                   :options="filterStore.getItemFilters.traits"
-                  :label="columns[3].label"
-                  :style="columns[3].style"
+                  :label="columns[3]!.label"
+                  :style="columns[3]!.style"
                   map-options
                   emit-value
                   use-input
@@ -737,7 +737,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort traits column"
-                @click="sort(columns[3].name)"
+                @click="sort(columns[3]!.name)"
               />
             </div>
           </div>
@@ -757,8 +757,8 @@ onMounted(async () => {
                 clearable
                 options-dense
                 :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
-                :label="columns[4].label"
-                :style="columns[4].style"
+                :label="columns[4]!.label"
+                :style="columns[4]!.style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -770,7 +770,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort rarity column"
-                @click="sort(columns[4].name)"
+                @click="sort(columns[4]!.name)"
               />
             </div>
           </div>
@@ -790,8 +790,8 @@ onMounted(async () => {
                 clearable
                 options-dense
                 :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Shield', 'Weapon'])"
-                :label="columns[5].label"
-                :style="columns[5].style"
+                :label="columns[5]!.label"
+                :style="columns[5]!.style"
               />
             </div>
             <div class="col-shrink tw-mx-2">
@@ -803,7 +803,7 @@ onMounted(async () => {
                 padding="sm"
                 :icon="biArrowDownUp"
                 aria-label="Sort types column"
-                @click="sort(columns[5].name)"
+                @click="sort(columns[5]!.name)"
               />
             </div>
           </div>

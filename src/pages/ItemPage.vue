@@ -41,7 +41,7 @@ try {
         message: 'Missing item ID',
         icon: matPriorityHigh
       });
-      router.push({ name: 'shop' });
+      await router.push({ name: 'shop' });
     } else {
       title.value = itemData?.core_item.name + ' - BYBE';
       items.setSelectedItem(itemData);
@@ -54,7 +54,7 @@ try {
       message: 'Invalid item ID',
       icon: matPriorityHigh
     });
-    router.push({ name: 'shop' });
+    await router.push({ name: 'shop' });
   }
 } catch (error) {
   console.error(error);

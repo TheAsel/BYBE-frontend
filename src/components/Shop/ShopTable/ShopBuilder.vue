@@ -177,25 +177,27 @@ const generateShop = debounce(async function () {
       }
     ];
   }
-  if (tmpFilters.value.shop_template.default) {
-    post['shop_template'] = tmpFilters.value.shop_template.name;
-  } else {
-    post['source_filter'] = tmpFilters.value.shop_template.source_filter;
-    post['trait_blacklist_filter'] = tmpFilters.value.shop_template.trait_blacklist_filter;
-    post['trait_whitelist_filter'] = tmpFilters.value.shop_template.trait_whitelist_filter;
-    post['rarity_filter'] = tmpFilters.value.shop_template.rarity_filter;
-    post['type_filter'] = tmpFilters.value.shop_template.type_filter;
-    if (tmpFilters.value.shop_template.armor_percentage! > 0) {
-      post['armor_percentage'] = tmpFilters.value.shop_template.armor_percentage;
-    }
-    if (tmpFilters.value.shop_template.equipment_percentage! > 0) {
-      post['equipment_percentage'] = tmpFilters.value.shop_template.equipment_percentage;
-    }
-    if (tmpFilters.value.shop_template.shield_percentage! > 0) {
-      post['shield_percentage'] = tmpFilters.value.shop_template.shield_percentage;
-    }
-    if (tmpFilters.value.shop_template.weapon_percentage! > 0) {
-      post['weapon_percentage'] = tmpFilters.value.shop_template.weapon_percentage;
+  if (tmpFilters.value.shop_template) {
+    if (tmpFilters.value.shop_template.default) {
+      post['shop_template'] = tmpFilters.value.shop_template.name;
+    } else {
+      post['source_filter'] = tmpFilters.value.shop_template.source_filter;
+      post['trait_blacklist_filter'] = tmpFilters.value.shop_template.trait_blacklist_filter;
+      post['trait_whitelist_filter'] = tmpFilters.value.shop_template.trait_whitelist_filter;
+      post['rarity_filter'] = tmpFilters.value.shop_template.rarity_filter;
+      post['type_filter'] = tmpFilters.value.shop_template.type_filter;
+      if (tmpFilters.value.shop_template.armor_percentage! > 0) {
+        post['armor_percentage'] = tmpFilters.value.shop_template.armor_percentage;
+      }
+      if (tmpFilters.value.shop_template.equipment_percentage! > 0) {
+        post['equipment_percentage'] = tmpFilters.value.shop_template.equipment_percentage;
+      }
+      if (tmpFilters.value.shop_template.shield_percentage! > 0) {
+        post['shield_percentage'] = tmpFilters.value.shop_template.shield_percentage;
+      }
+      if (tmpFilters.value.shop_template.weapon_percentage! > 0) {
+        post['weapon_percentage'] = tmpFilters.value.shop_template.weapon_percentage;
+      }
     }
   }
   try {
@@ -205,15 +207,15 @@ const generateShop = debounce(async function () {
         shop.clearShop();
         for (let i = 0; i < randomShop.count; i++) {
           const min_item: min_item = {
-            id: randomShop.results[i].core_item.id,
+            id: randomShop.results[i]!.core_item.id,
             archive_link:
               'https://2e.aonprd.com/Search.aspx?q=' +
-              encodeURIComponent(randomShop.results[i].core_item.name), // TODO: randomShop.results[i].core_item.archive_link,
-            name: randomShop.results[i].core_item.name,
-            level: randomShop.results[i].core_item.level,
-            type: randomShop.results[i].core_item.item_type,
-            price: randomShop.results[i].core_item.price,
-            quantity: randomShop.results[i].core_item.quantity
+              encodeURIComponent(randomShop.results[i]!.core_item.name), // TODO: randomShop.results[i].core_item.archive_link,
+            name: randomShop.results[i]!.core_item.name,
+            level: randomShop.results[i]!.core_item.level,
+            type: randomShop.results[i]!.core_item.item_type,
+            price: randomShop.results[i]!.core_item.price,
+            quantity: randomShop.results[i]!.core_item.quantity
           };
           shop.addToShop(min_item);
         }
@@ -284,7 +286,7 @@ const resetTemplateDialog = () => {
   tab.value = 'General';
 };
 
-const addTemplate = () => {
+const addTemplate = async () => {
   try {
     newNameInput.value.validate();
     if (!newNameInput.value.hasError) {
@@ -321,7 +323,7 @@ const addTemplate = () => {
       resetTemplateDialog();
     } else {
       tab.value = 'General';
-      nextTick(() => {
+      await nextTick(() => {
         newNameInput.value.validate();
       });
     }
@@ -335,7 +337,7 @@ const duplicateTemplate = () => {
     duplicateNameInput.value.validate();
     if (!duplicateNameInput.value.hasError) {
       const newName = newTemplate.value.name;
-      newTemplate.value = cloneDeep(templatesStore.getActiveTemplate);
+      newTemplate.value = cloneDeep(templatesStore.getActiveTemplate!);
       newTemplate.value.name = newName;
       newTemplate.value.default = false;
       templatesStore.addTemplate(newTemplate.value);
@@ -350,8 +352,8 @@ const duplicateTemplate = () => {
   }
 };
 
-const openEditDialog = () => {
-  newTemplate.value = cloneDeep(templatesStore.getActiveTemplate);
+const openEditDialog = async () => {
+  newTemplate.value = cloneDeep(templatesStore.getActiveTemplate!);
   armorOn.value = newTemplate.value.type_filter!.includes('Armor');
   equipmentOn.value = newTemplate.value.type_filter!.includes('Equipment');
   shieldOn.value = newTemplate.value.type_filter!.includes('Shield');
@@ -381,7 +383,7 @@ const openEditDialog = () => {
     });
   });
   editTemplateDialog.value = true;
-  nextTick(() => {
+  await nextTick(() => {
     selectedTraits.value.forEach((trait) => {
       editTraitSelect.value.options.forEach((opt) => {
         if (opt.label === trait.label) {
@@ -392,7 +394,7 @@ const openEditDialog = () => {
   });
 };
 
-const editTemplate = () => {
+const editTemplate = async () => {
   try {
     editNameInput.value.validate();
     if (!editNameInput.value.hasError) {
@@ -427,7 +429,7 @@ const editTemplate = () => {
       }
       newTypes.push('Consumable');
       newTemplate.value.type_filter = newTypes;
-      templatesStore.updateTemplate(templatesStore.getActiveTemplate.name, newTemplate.value);
+      templatesStore.updateTemplate(templatesStore.getActiveTemplate!.name, newTemplate.value);
       template_list.value = templatesStore.getTemplates.map((template) => template.name);
       tmpFilters.value.shop_template = cloneDeep(templatesStore.getActiveTemplate);
       saveChanges();
@@ -435,7 +437,7 @@ const editTemplate = () => {
       resetTemplateDialog();
     } else {
       tab.value = 'General';
-      nextTick(() => {
+      await nextTick(() => {
         editNameInput.value.validate();
       });
     }
@@ -463,7 +465,7 @@ const saveChanges = () => {
   equippable_dices.value = tmpFilters.value.equippable_dices;
   levels.value = tmpFilters.value.levels;
   templatesStore.changeActiveTemplate(
-    templatesStore.getTemplateIndex(tmpFilters.value.shop_template.name)
+    templatesStore.getTemplateIndex(tmpFilters.value.shop_template!.name)
   );
   const customTemplates = templatesStore.getTemplates.filter(
     (template) => template.default === false
@@ -477,7 +479,7 @@ const toggleTraits = (opt) => {
     if (opt.state === null) {
       selectedTraits.value.splice(index, 1);
     } else {
-      selectedTraits.value[index].state = opt.state;
+      selectedTraits.value[index]!.state = opt.state;
     }
   } else {
     selectedTraits.value.push(opt);
@@ -627,23 +629,23 @@ defineExpose({ generateShop });
           <q-separator class="!tw-mt-4" />
           <div class="tw-flex tw-flex-row tw-mx-3">
             <q-select
-              v-model="tmpFilters.shop_template.name"
+              v-model="tmpFilters.shop_template!.name"
               dense
               outlined
               options-dense
               :options="template_list"
               label="Shop template"
               class="tw-w-52"
-              @update:model-value="changeActiveTemplate(tmpFilters.shop_template.name)"
+              @update:model-value="changeActiveTemplate(tmpFilters.shop_template!.name)"
             >
               <q-tooltip
                 class="text-caption text-center tw-max-w-72 tw-text-wrap tw-text-ellipsis tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
                 anchor="top middle"
                 self="bottom middle"
               >
-                <strong>{{ tmpFilters.shop_template.name }}</strong>
+                <strong>{{ tmpFilters.shop_template!.name }}</strong>
                 <br />
-                {{ tmpFilters.shop_template.description }}
+                {{ tmpFilters.shop_template!.description }}
               </q-tooltip>
             </q-select>
             <q-icon flat round size="xs" :name="biQuestionCircle" class="tw-m-auto tw-mr-2">
@@ -779,7 +781,7 @@ defineExpose({ generateShop });
                             :color="scope.opt.state === true ? 'green' : 'red'"
                             :tabindex="scope.tabindex"
                             @remove="
-                              selectedTraits[scope.index].state = null;
+                              selectedTraits[scope.index]!.state = null;
                               scope.removeAtIndex(scope.index);
                             "
                           >
@@ -1093,12 +1095,12 @@ defineExpose({ generateShop });
               flat
               round
               dense
-              :disable="tmpFilters.shop_template.default"
+              :disable="tmpFilters.shop_template!.default"
               aria-label="Edit current template"
               @click="openEditDialog()"
             >
               <q-tooltip
-                v-if="tmpFilters.shop_template.default"
+                v-if="tmpFilters.shop_template!.default"
                 class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
                 anchor="top middle"
                 self="bottom middle"
@@ -1156,7 +1158,7 @@ defineExpose({ generateShop });
                             !template_list.find(
                               (name) =>
                                 name.toLowerCase() === val.toLowerCase() &&
-                                newTemplate.name !== templatesStore.getActiveTemplate.name
+                                newTemplate.name !== templatesStore.getActiveTemplate!.name
                             ) || 'This template already exists'
                         ]"
                       />
@@ -1211,7 +1213,7 @@ defineExpose({ generateShop });
                             :color="scope.opt.state === true ? 'green' : 'red'"
                             :tabindex="scope.tabindex"
                             @remove="
-                              selectedTraits[scope.index].state = null;
+                              selectedTraits[scope.index]!.state = null;
                               scope.removeAtIndex(scope.index);
                             "
                           >
@@ -1282,7 +1284,7 @@ defineExpose({ generateShop });
                             !template_list.find(
                               (name) =>
                                 name.toLowerCase() === val.toLowerCase() &&
-                                newTemplate.name !== templatesStore.getActiveTemplate.name
+                                newTemplate.name !== templatesStore.getActiveTemplate!.name
                             ) || 'This template already exists'
                         ]"
                       />
@@ -1457,12 +1459,12 @@ defineExpose({ generateShop });
               flat
               round
               dense
-              :disable="tmpFilters.shop_template.default"
+              :disable="tmpFilters.shop_template!.default"
               aria-label="Remove current template"
               @click="removeTemplateDialog = true"
             >
               <q-tooltip
-                v-if="tmpFilters.shop_template.default"
+                v-if="tmpFilters.shop_template!.default"
                 class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
                 anchor="top middle"
                 self="bottom middle"
