@@ -170,7 +170,9 @@ const nameString = computed(() => {
 const perceptionString = computed(() => {
   const perception = creatureData?.extra_data?.perception;
   const senses = creatureData?.extra_data?.senses;
-  const spells = creatureData?.spell_caster_data?.spells;
+  const spells = creatureData?.spellcaster_data?.spellcaster_entries
+    .flatMap((entry) => Object.values(entry.spells))
+    .flatMap((spell) => spell.name);
   let finalString = '';
   if (perception != undefined) {
     finalString += finalString +=
@@ -204,7 +206,7 @@ const perceptionString = computed(() => {
       })
     ) {
       spells.forEach((spell) => {
-        if (spell.name === 'True Seeing (Constant)') {
+        if (spell === 'True Seeing (Constant)') {
           finalString += 'truesight' + ', ';
         }
       });
@@ -481,68 +483,77 @@ const speedString = computed(() => {
   return finalString.substring(0, finalString.length - 2);
 });
 
-const spellString = computed(() => {
-  const spells = creatureData?.spell_caster_data?.spells;
-  let finalString = '';
-  const spellLevels: boolean[] = new Array(10).fill(false);
-  finalString +=
-    '<strong>' +
-    creatureData?.spell_caster_data?.spell_caster_entry.spell_casting_name +
-    '</strong>&nbsp;DC ' +
-    creatureData?.spell_caster_data?.spell_caster_entry.spell_casting_dc_mod +
-    ', attack ' +
-    addPlus(creatureData?.spell_caster_data?.spell_caster_entry.spell_casting_atk_mod) +
-    '; ';
-  if (spells != undefined && spells.length > 0) {
-    spells.forEach((spell) => {
-      switch (spell.level) {
-        case 10:
-          if (!spellLevels[10]) {
-            spellLevels[10] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += '; <strong>10th</strong>&nbsp;';
-          }
-          break;
-        case 9:
-        case 8:
-        case 7:
-        case 6:
-        case 5:
-        case 4:
-          if (!spellLevels[spell.level]) {
-            spellLevels[spell.level] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>' + spell.level + 'th</strong>&nbsp;';
-          }
-          break;
-        case 3:
-          if (!spellLevels[3]) {
-            spellLevels[3] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>3rd</strong>&nbsp;';
-          }
-          break;
-        case 2:
-          if (!spellLevels[2]) {
-            spellLevels[2] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>2nd</strong>&nbsp;';
-          }
-          break;
-        case 1:
-          if (!spellLevels[1]) {
-            spellLevels[1] = true;
-            finalString = finalString.substring(0, finalString.length - 2);
-            finalString += ';&nbsp;<strong>1st</strong>&nbsp;';
-          }
-          break;
-        default:
-          break;
-      }
-      finalString += spell.name.toLowerCase() + ', ';
-    });
+const ordinalSuffix = (n: number) => {
+  const j = n % 10,
+    k = n % 100;
+  if (j === 1 && k !== 11) {
+    return n + 'st';
   }
-  return finalString.substring(0, finalString.length - 2);
+  if (j === 2 && k !== 12) {
+    return n + 'nd';
+  }
+  if (j === 3 && k !== 13) {
+    return n + 'rd';
+  }
+  return n + 'th';
+};
+
+const spellString = computed(() => {
+  const finalStrings: string[] = [];
+  creatureData?.spellcaster_data?.spellcaster_entries.forEach((entry) => {
+    let finalString = '';
+    const spellLevels: boolean[] = new Array(11).fill(false);
+    finalString += '<strong>' + entry.spellcaster_data.spellcasting_name + '</strong>';
+    if (entry.spellcaster_data.spellcasting_dc_mod != 0) {
+      finalString += '&nbsp;DC ' + entry.spellcaster_data.spellcasting_dc_mod;
+    }
+    if (entry.spellcaster_data.spellcasting_atk_mod != 0) {
+      finalString += ', attack ' + addPlus(entry.spellcaster_data.spellcasting_atk_mod);
+    }
+    if (
+      creatureData.core_data.essential.focus_points > 0 &&
+      entry.spellcaster_data.type_of_spellcaster === 'focus'
+    ) {
+      finalString += ',&nbsp;' + creatureData.core_data.essential.focus_points;
+
+      if (creatureData.core_data.essential.focus_points > 1) {
+        finalString += ' Focus Points';
+      } else {
+        finalString += ' Focus Point';
+      }
+    }
+    finalString += '; ';
+    entry.spells.sort((a, b) => b.slot - a.slot);
+    if (entry.spellcaster_data.type_of_spellcaster === 'focus') {
+      finalString = finalString.substring(0, finalString.length - 2);
+      finalString +=
+        ';&nbsp;<strong>' +
+        ordinalSuffix(entry.spellcaster_data.heighten_level) +
+        '</strong>&nbsp;';
+      entry.spells.forEach((spell) => {
+        finalString += spell.name.toLowerCase() + ', ';
+      });
+    } else {
+      entry.spells.forEach((spell) => {
+        if (spell.slot === 0 && !spellLevels[0]) {
+          spellLevels[0] = true;
+          finalString = finalString.substring(0, finalString.length - 2);
+          finalString +=
+            ';&nbsp;<strong>Cantrips (' +
+            ordinalSuffix(entry.spellcaster_data.heighten_level) +
+            ')</strong>&nbsp;';
+        } else if (!spellLevels[spell.slot]) {
+          spellLevels[spell.slot] = true;
+          finalString = finalString.substring(0, finalString.length - 2);
+          finalString += ';&nbsp;<strong>' + ordinalSuffix(spell.slot) + '</strong>&nbsp;';
+        }
+        finalString += spell.name.toLowerCase() + ', ';
+      });
+    }
+
+    finalStrings.push(finalString.substring(0, finalString.length - 2) + '<br>');
+  });
+  return finalStrings;
 });
 
 const printPage = () => {
@@ -697,7 +708,7 @@ const printPage = () => {
               <strong>Cha</strong>
               {{ addPlus(creatureData?.extra_data?.ability_scores.charisma) }}
             </div>
-            <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+            <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
               <div
                 v-if="item.category === 'interaction' && item.slug === null"
                 class="tw-text-base tw-text-gray-800 dark:tw-text-white"
@@ -708,11 +719,12 @@ const printPage = () => {
                 </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
-            </div>
+            </template>
             <div
               v-if="
                 creatureData?.combat_data?.weapons != undefined &&
-                creatureData?.combat_data?.weapons.length > 0
+                creatureData?.combat_data?.weapons.length > 0 &&
+                itemString != ''
               "
               class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               v-html="itemString"
@@ -732,7 +744,7 @@ const printPage = () => {
               class="tw-text-base tw-text-gray-800 dark:tw-text-white"
               v-html="healthString"
             ></div>
-            <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+            <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
               <div
                 v-if="
                   item.slug != 'regeneration' &&
@@ -749,7 +761,7 @@ const printPage = () => {
                 </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
-            </div>
+            </template>
           </div>
           <q-separator class="tw-my-2" style="height: 2px" />
           <hr
@@ -768,12 +780,11 @@ const printPage = () => {
               {{ speedString }}
             </div>
 
-            <div
-              v-for="item in creatureData?.combat_data?.weapons"
-              :key="item.item_core.name"
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
-            >
-              <span v-if="item.weapon_data?.weapon_type != 'Generic'">
+            <template v-for="item in creatureData?.combat_data?.weapons" :key="item.item_core.id">
+              <div
+                v-if="item.weapon_data?.weapon_type != 'Generic'"
+                class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              >
                 <strong v-if="item.weapon_data?.weapon_type === 'Melee'">Melee </strong>
                 <strong v-if="item.weapon_data?.weapon_type === 'Ranged'">Ranged </strong>
                 <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
@@ -813,14 +824,12 @@ const printPage = () => {
                     </span>
                   </span>
                 </span>
-              </span>
-            </div>
-            <div
-              v-if="creatureData?.spell_caster_data?.spell_caster_entry.spell_casting_name != null"
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
-              v-html="spellString"
-            ></div>
-            <div v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+              </div>
+            </template>
+            <template v-for="entity in spellString" :key="entity">
+              <div v-html="entity" class="tw-text-base tw-text-gray-800 dark:tw-text-white" />
+            </template>
+            <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
               <div
                 v-if="item.category === 'offensive'"
                 class="tw-text-base tw-text-gray-800 dark:tw-text-white"
@@ -831,7 +840,7 @@ const printPage = () => {
                 </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
-            </div>
+            </template>
           </div>
         </div>
       </q-scroll-area>

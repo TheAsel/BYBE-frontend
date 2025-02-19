@@ -47,6 +47,7 @@ export type creature = {
       remaster: boolean;
       source: string;
       cr_type: string;
+      focus_points: number;
     };
     derived: {
       archive_link: string;
@@ -119,35 +120,41 @@ export type creature = {
     ];
     speeds: KeyValue;
   };
-  spell_caster_data?: {
-    spell_caster_entry: {
-      is_spell_casting_flexible: boolean;
-      spell_casting_atk_mod: number;
-      spell_casting_dc_mod: number;
-      spell_casting_name: string;
-      spell_casting_tradition: string;
-      type_of_spell_caster: string;
-    };
-    spells: [
+  spellcaster_data?: {
+    spellcaster_entries: [
       {
-        action: string;
-        area_type: string;
-        area_value: number;
-        counteraction: boolean;
-        creature_id: number;
-        duration: string;
-        id: number;
-        level: number;
-        license: string;
-        name: string;
-        range: string;
-        rarity: string;
-        remaster: boolean;
-        saving_throw_is_basic: boolean;
-        saving_throw_statistic: string;
-        source: string;
-        sustained: boolean;
-        target: string;
+        spellcaster_data: {
+          heighten_level: number;
+          id: number;
+          is_spellcasting_flexible: number | null;
+          spellcasting_atk_mod: number;
+          spellcasting_dc_mod: number;
+          spellcasting_name: string;
+          spellcasting_tradition: string;
+          type_of_spellcaster: string;
+        };
+        spells: {
+          action: string;
+          area_type: string;
+          area_value: number;
+          counteraction: boolean;
+          creature_id: number;
+          duration: string;
+          id: number;
+          level: number;
+          license: string;
+          name: string;
+          range: string;
+          rarity: string;
+          remaster: boolean;
+          saving_throw_is_basic: boolean;
+          saving_throw_statistic: string;
+          slot: number;
+          source: string;
+          spellcasting_entry_id: number;
+          sustained: boolean;
+          target: string;
+        }[];
       }
     ];
   };
