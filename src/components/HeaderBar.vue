@@ -25,6 +25,7 @@ import type { template } from '../types/template';
 
 const encounter = encounterStore();
 const settings = settingsStore();
+const isApp = process.env.IS_APP;
 
 TailwindDarkFix();
 
@@ -527,6 +528,7 @@ const downloadData = () => {
           <q-space class="sm:tw-block tw-hidden" />
           <q-separator class="tw-block sm:tw-hidden" />
           <router-link
+            v-if="isApp === 'false'"
             to="/download"
             :class="
               currentPath === '/download'
