@@ -180,13 +180,13 @@ export const encounterStore = defineStore('encounter', {
       this.encounters[this.activeEncounter]!.creatures[index]!.variant = variant;
     },
     addToEncounter(creature: min_creature, index?: number) {
-      if (index && index >= 0) {
+      if (index! >= 0) {
         if (creature.quantity) {
           creature.quantity++;
         } else {
           creature.quantity = 1;
         }
-        this.encounters[this.activeEncounter]!.creatures.splice(index, 1, creature);
+        this.encounters[this.activeEncounter]!.creatures.splice(index!, 1, creature);
       } else {
         const newCreature = { ...creature };
         newCreature.quantity = 1;
