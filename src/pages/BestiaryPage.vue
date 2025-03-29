@@ -505,10 +505,17 @@ const spellString = computed(() => {
     const spellLevels: boolean[] = new Array(11).fill(false);
     finalString += '<strong>' + entry.spellcaster_data.spellcasting_name + '</strong>';
     if (entry.spellcaster_data.spellcasting_dc_mod != 0) {
-      finalString += '&nbsp;DC ' + entry.spellcaster_data.spellcasting_dc_mod;
+      finalString += '&nbsp;DC ' + variantStyle(entry.spellcaster_data.spellcasting_dc_mod);
+    }
+    if (creatureVariant.value === 'Elite') {
+      finalString += ' (' + variantStyle('+4 dmg') + ')';
+    }
+    if (creatureVariant.value === 'Weak') {
+      finalString += ' (' + variantStyle('-4 dmg') + ')';
     }
     if (entry.spellcaster_data.spellcasting_atk_mod != 0) {
-      finalString += ', attack ' + addPlus(entry.spellcaster_data.spellcasting_atk_mod);
+      finalString +=
+        ', attack ' + variantStyle(addPlus(entry.spellcaster_data.spellcasting_atk_mod));
     }
     if (
       creatureData.core_data.essential.focus_points > 0 &&
