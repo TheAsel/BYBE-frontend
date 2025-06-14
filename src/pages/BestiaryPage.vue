@@ -401,7 +401,7 @@ const immunityString = () => {
   let finalString = '';
   if (immunities != undefined && immunities.length > 0) {
     immunities.forEach((immunity) => {
-      finalString += immunity.toLowerCase() + ', ';
+      finalString += immunity.toLowerCase().replaceAll('-', ' ') + ', ';
     });
   }
   return finalString.substring(0, finalString.length - 2);
@@ -409,14 +409,42 @@ const immunityString = () => {
 
 const resistanceString = () => {
   const resistances = creatureData?.combat_data?.resistances;
-  const resistKeys = Object.keys(resistances!);
   let finalString = '';
 
-  if (resistKeys.length > 0) {
-    for (const resistance of resistKeys) {
+  if (resistances != undefined && resistances.length > 0) {
+    resistances.forEach((resistance) => {
       finalString +=
-        `${resistance}` + ' ' + `${creatureData?.combat_data?.resistances[resistance]}` + ', ';
-    }
+        `${resistance.core.name.replaceAll('-', ' ')}` + ' ' + `${resistance.core.value}` + ', ';
+
+      if (
+        (resistance.exception_vs != undefined && resistance.exception_vs.length > 0) ||
+        (resistance.double_vs != undefined && resistance.double_vs.length > 0)
+      ) {
+        if (resistance.exception_vs != undefined && resistance.exception_vs.length > 0) {
+          finalString = finalString.substring(0, finalString.length - 2);
+          finalString += ' (except ';
+          resistance.exception_vs.forEach((exception) => {
+            finalString += exception.replaceAll('-', ' ') + ', ';
+          });
+          finalString += '';
+          finalString = finalString.substring(0, finalString.length - 2);
+        }
+
+        if (resistance.double_vs != undefined && resistance.double_vs.length > 0) {
+          if (resistance.exception_vs != undefined && resistance.exception_vs.length > 0) {
+            finalString += ';';
+          }
+          finalString += ' double resistance against ';
+          resistance.double_vs.forEach((double) => {
+            finalString += double.replaceAll('-', ' ') + ', ';
+          });
+          finalString += '';
+          finalString = finalString.substring(0, finalString.length - 2);
+        }
+
+        finalString += ')  ';
+      }
+    });
   }
   return finalString.substring(0, finalString.length - 2);
 };
@@ -428,7 +456,10 @@ const weaknessString = () => {
   if (weakKeys.length > 0) {
     for (const weakness of weakKeys) {
       finalString +=
-        `${weakness}` + ' ' + `${creatureData?.combat_data?.weaknesses[weakness]}` + ', ';
+        `${weakness.replaceAll('-', ' ')}` +
+        ' ' +
+        `${creatureData?.combat_data?.weaknesses[weakness]}` +
+        ', ';
     }
   }
   return finalString.substring(0, finalString.length - 2);
@@ -448,19 +479,19 @@ const healthString = computed(() => {
     creatureData?.combat_data?.immunities != undefined &&
     creatureData?.combat_data?.immunities.length > 0
   ) {
-    finalString += ';&nbsp;<strong>Immunities</strong>&nbsp;' + immunityString();
+    finalString += ';<br><strong>Immunities</strong>&nbsp;' + immunityString();
   }
   if (
     creatureData?.combat_data?.resistances != undefined &&
     Object.keys(creatureData?.combat_data?.resistances).length > 0
   ) {
-    finalString += ';&nbsp;<strong>Resistances</strong>&nbsp;' + resistanceString();
+    finalString += ';<br><strong>Resistances</strong>&nbsp;' + resistanceString();
   }
   if (
     creatureData?.combat_data?.weaknesses != undefined &&
     Object.keys(creatureData?.combat_data?.weaknesses).length > 0
   ) {
-    finalString += ';&nbsp;<strong>Weaknesess</strong>&nbsp;' + weaknessString();
+    finalString += ';<br><strong>Weaknesess</strong>&nbsp;' + weaknessString() + ';';
   }
   return finalString;
 });

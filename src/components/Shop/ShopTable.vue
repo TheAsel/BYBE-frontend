@@ -117,7 +117,7 @@ const columns: {
     required: false,
     align: 'left',
     sortable: true,
-    style: 'min-width: 200px; max-width: 300px;'
+    style: 'min-width: 110px; max-width: 180px;'
   },
   {
     name: 'rarity',

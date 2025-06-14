@@ -15,7 +15,17 @@ export type creature = {
       }
     ];
     immunities: string[];
-    resistances: KeyValue;
+    resistances: [
+      {
+        core: {
+          id: number;
+          name: string;
+          value: number;
+        },
+        double_vs: string[];
+        exception_vs: string[];
+      }
+    ];
     weaknesses: KeyValue;
     saving_throws: {
       fortitude: number;
