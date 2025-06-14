@@ -151,7 +151,7 @@ const startTour = () => {
     tourActive.value = true;
     const tmpCloakFull: item = {
       core_item: {
-        id: 762,
+        id: 3511,
         name: 'Cloak of Illusions',
         bulk: 0.1,
         quantity: 1,
@@ -178,7 +178,7 @@ const startTour = () => {
       }
     };
     const tmpCloak: min_item = {
-      id: 3029,
+      id: 3511,
       archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=3069',
       name: 'Cloak of Illusions',
       level: 7,
@@ -187,7 +187,7 @@ const startTour = () => {
       quantity: 1
     };
     const tmpPotion: min_item = {
-      id: 3029,
+      id: 2967,
       archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=2943',
       name: 'Healing Potion (Moderate)',
       level: 6,

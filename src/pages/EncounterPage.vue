@@ -184,14 +184,14 @@ const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
     const tmpKoboldMage: min_creature = {
-      id: 1721,
+      id: 5009,
       archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3074',
       name: 'Kobold Cavern Mage',
       level: 2,
       variant: 'Base'
     };
     const tmpKoboldWarrior: min_creature = {
-      id: 1260,
+      id: 4977,
       archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3072',
       name: 'Kobold Warrior',
       level: -1,
