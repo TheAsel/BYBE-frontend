@@ -12,14 +12,12 @@ export const settingsStore = defineStore('settings', {
   state: () => ({
     hidden_nav: true,
     experimental_features: false,
-    is_creature_sheet_on: false,
     is_aon_links_on: false,
     pf_version: 'Any'
   }),
   getters: {
     getHiddenNav: (state) => state.hidden_nav,
     getExperimentalFeatures: (state) => state.experimental_features,
-    getCreatureSheets: (state) => state.is_creature_sheet_on,
     getAonLinks: (state) => state.is_aon_links_on,
     getPfVersion: (state) => state.pf_version
   },
@@ -29,9 +27,6 @@ export const settingsStore = defineStore('settings', {
     },
     setExperimentalFeatures(newExperimentalFeatures: boolean) {
       this.experimental_features = newExperimentalFeatures;
-    },
-    setCreatureSheets(newCreatureSheets: boolean) {
-      this.is_creature_sheet_on = newCreatureSheets;
     },
     setAonLinks(newAonLinks: boolean) {
       this.is_aon_links_on = newAonLinks;

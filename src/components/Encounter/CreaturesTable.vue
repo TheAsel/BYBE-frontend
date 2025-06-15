@@ -1179,7 +1179,6 @@ onMounted(async () => {
       <template #body-cell-name="name">
         <q-td :props="name">
           <q-btn
-            v-if="settings.getCreatureSheets"
             round
             unelevated
             :icon="fasScroll"

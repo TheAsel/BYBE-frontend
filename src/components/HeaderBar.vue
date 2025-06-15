@@ -144,9 +144,6 @@ switch (localExperimentals.value) {
 settings.setExperimentalFeatures(all_experimentals.value);
 
 const toggleAllExperimental = () => {
-  is_creature_sheets_on.value = all_experimentals.value;
-  localStorage.setItem('is_creature_sheets_on', JSON.stringify(all_experimentals.value));
-  settings.setCreatureSheets(all_experimentals.value);
   is_aon_links_on.value = all_experimentals.value;
   localStorage.setItem('is_aon_links_on', JSON.stringify(all_experimentals.value));
   settings.setAonLinks(all_experimentals.value);
@@ -192,18 +189,6 @@ switch (localCreatureSheets.value) {
     localStorage.setItem('is_creature_sheets_on', 'false');
     break;
 }
-
-settings.setCreatureSheets(is_creature_sheets_on.value);
-
-const toggleCreatureSheets = () => {
-  localStorage.setItem('is_creature_sheets_on', JSON.stringify(is_creature_sheets_on.value));
-  settings.setCreatureSheets(is_creature_sheets_on.value);
-  if (!is_creature_sheets_on.value) {
-    all_experimentals.value = false;
-    localStorage.setItem('all_experimentals', JSON.stringify(all_experimentals.value));
-    settings.setExperimentalFeatures(all_experimentals.value);
-  }
-};
 
 const is_aon_links_on = ref(false);
 const localAonLinks = ref(localStorage.getItem('is_aon_links_on'));
@@ -693,34 +678,6 @@ const downloadData = () => {
                           Click to learn more
                         </q-tooltip>
                       </q-btn>
-                    </q-card-actions>
-                    <q-separator />
-                    <q-card-actions>
-                      <div class="tw-mx-auto">
-                        <q-icon :name="fasFlaskVial" size="sm" class="tw-mr-2" />
-                        Experimental features
-                      </div>
-                    </q-card-actions>
-                    <q-card-actions>
-                      <q-toggle
-                        v-model="is_creature_sheets_on"
-                        label="Creature sheets"
-                        aria-label="Toggle experimental creature sheets"
-                        @update:model-value="toggleCreatureSheets"
-                      >
-                      </q-toggle>
-                      <q-space />
-                      <q-icon flat round size="xs" :name="biQuestionCircle" class="tw-mr-1.5">
-                        <q-tooltip
-                          class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                          anchor="top middle"
-                          self="bottom middle"
-                        >
-                          <strong>Click on the scroll icon beside the creature's name</strong>
-                          <br />
-                          It will show a creature sheet showing it's attributes
-                        </q-tooltip>
-                      </q-icon>
                     </q-card-actions>
                   </q-tab-panel>
                   <q-tab-panel name="Shop" class="tw-space-y-3">

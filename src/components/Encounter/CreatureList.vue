@@ -3,14 +3,13 @@ import { ref, watch } from 'vue';
 import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
 import { fasScroll } from '@quasar/extras/fontawesome-v6';
 import { debounce } from 'lodash-es';
-import { partyStore, encounterStore, infoStore, settingsStore } from '../../stores/store';
+import { partyStore, encounterStore, infoStore } from '../../stores/store';
 import { encounterInfo } from '../../utils/encounter-api-calls';
 import type { encounter_list } from '../../types/encounter';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const settings = settingsStore();
 const party = partyStore();
 const encounter = encounterStore();
 const info = infoStore();
@@ -337,7 +336,6 @@ const openCreatureSheet = (id: number) => {
             <div class="tw-flex tw-flex-row tw-flex-grow tw-flex-wrap">
               <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
                 <q-btn
-                  v-if="settings.getCreatureSheets"
                   round
                   unelevated
                   :icon="fasScroll"
