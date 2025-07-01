@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
+import {
+  biPlus,
+  biDash,
+  biTrash,
+  biPlusLg,
+  biInputCursorText
+} from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { itemsStore, settingsStore } from '../../stores/store';
 import { useRouter } from 'vue-router';
@@ -28,6 +34,10 @@ const newShopDialog = ref(false);
 const shopNameInput = ref();
 const newShopName = ref('');
 
+const renameShopDialog = ref(false);
+const shopRenameInput = ref();
+const newShopRename = ref('');
+
 const removeShopDialog = ref(false);
 
 const tmpShop = ref<shop_list>(shop.getActiveShop!);
@@ -51,8 +61,10 @@ watch(shop, () => {
 
 const closeDialog = () => {
   newShopDialog.value = false;
+  renameShopDialog.value = false;
   removeShopDialog.value = false;
   newShopName.value = '';
+  newShopRename.value = '';
 };
 
 const addShop = () => {
@@ -67,6 +79,21 @@ const addShop = () => {
     saveChanges();
     newShopName.value = '';
     newShopDialog.value = false;
+  }
+};
+
+const renameShop = () => {
+  shopRenameInput.value.validate();
+  if (!shopRenameInput.value.hasError) {
+    shop.getActiveShop!.name = newShopRename.value;
+    shops.value = shop.getShops.map((shop) => shop.name);
+    tmpShop.value = {
+      name: shop.getActiveShop!.name,
+      items: [...shop.getActiveShop!.items]
+    };
+    saveChanges();
+    newShopRename.value = '';
+    renameShopDialog.value = false;
   }
 };
 
@@ -205,6 +232,74 @@ const showItem = debounce(async function (item: min_item) {
                 </q-card-actions>
               </q-card>
             </q-dialog>
+
+            <q-btn
+              class="tw-my-auto tw-ml-2"
+              :icon="biInputCursorText"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Rename shop"
+              @click="renameShopDialog = true"
+            >
+              <q-tooltip
+                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Rename shop
+              </q-tooltip>
+            </q-btn>
+            <q-dialog
+              v-model="renameShopDialog"
+              aria-label="New shop dialog"
+              @escape-key="closeDialog"
+            >
+              <q-card flat bordered>
+                <q-card-section>
+                  <div class="text-h6">Rename shop</div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                  <q-input
+                    ref="shopRenameInput"
+                    v-model="newShopRename"
+                    dense
+                    autofocus
+                    counter
+                    :maxlength="50"
+                    :no-error-icon="true"
+                    :rules="[
+                      (val) => !!val || 'Field is required',
+                      (val) =>
+                        !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                        'This shop already exists'
+                    ]"
+                    @keyup.enter="renameShop"
+                  />
+                </q-card-section>
+
+                <q-card-actions align="center" class="text-primary">
+                  <q-btn
+                    flat
+                    label="Cancel"
+                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    aria-label="Close dialog"
+                    @click="closeDialog"
+                  />
+                  <q-btn
+                    flat
+                    label="Rename shop"
+                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    aria-label="Rename shop"
+                    @click="renameShop"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+
             <q-btn
               class="tw-my-auto tw-mx-2 tw-p-2"
               :icon="biTrash"

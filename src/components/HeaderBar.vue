@@ -22,6 +22,7 @@ import type { encounter_list } from '../types/encounter';
 import { settingsStore, encounterStore } from '../stores/store';
 import type { shop_list } from '../types/shop';
 import type { template } from '../types/template';
+import type { npc_list } from 'src/types/npcs';
 
 const encounter = encounterStore();
 const settings = settingsStore();
@@ -328,6 +329,26 @@ const validateData = (result: string) => {
             }
           } else {
             throw new Error('Invalid loaded shop format');
+          }
+          break;
+        }
+        case 'npcs': {
+          const parsedNpc = JSON.parse(parsedData[key]);
+          if (Array.isArray(parsedNpc)) {
+            const isCompatible = parsedNpc.every((p) => {
+              return typeof p.name === 'string';
+            });
+            if (isCompatible) {
+              const npcs: npc_list[] = parsedNpc;
+              const npcNames = npcs.map((p) => p.name);
+              if (new Set(npcNames).size !== npcNames.length) {
+                throw new Error('Duplicate loaded npc names');
+              }
+            } else {
+              throw new Error('Invalid loaded npc format');
+            }
+          } else {
+            throw new Error('Invalid loaded npc format');
           }
           break;
         }
@@ -713,7 +734,9 @@ const downloadData = () => {
               </q-card>
             </q-dialog>
             <q-btn
-              v-if="currentPath === '/encounter' || currentPath === '/shop'"
+              v-if="
+                currentPath === '/encounter' || currentPath === '/shop' || currentPath === '/npc'
+              "
               flat
               padding="sm"
               class="tw-text-gray-800 dark:tw-text-gray-200"
