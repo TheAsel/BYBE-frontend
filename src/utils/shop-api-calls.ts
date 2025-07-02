@@ -11,7 +11,7 @@ export async function requestFilters(filter: 'sources' | 'traits') {
     const response = await fetch(process.env.API_URL + '/shop/' + filter, requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as string[];
@@ -29,7 +29,7 @@ export async function requestTemplates() {
     const response = await fetch(process.env.API_URL + '/shop/templates_data', requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as template_data[];
@@ -68,7 +68,7 @@ export async function requestItems(
     const response = await fetch(request, requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as item_response;
@@ -86,7 +86,7 @@ export async function requestItemId(item_id: number) {
     const response = await fetch(process.env.API_URL + '/shop/item/' + item_id, requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data.results as item;
@@ -118,7 +118,7 @@ export async function shopGenerator(body: {
     const response = await fetch(process.env.API_URL + '/shop/generator', requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as item_response;

@@ -12,7 +12,7 @@ export async function requestRepoInfo(repo: string) {
     );
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as repo_info;

@@ -9,7 +9,7 @@ export async function requestParameters(parameter: 'genders' | 'classes' | 'jobs
     const response = await fetch(process.env.API_URL + '/npc/' + parameter, requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as string[];
@@ -27,7 +27,7 @@ export async function requestAncestries() {
     const response = await fetch(process.env.API_URL + '/npc/ancestries', requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as valid_genders[];
@@ -52,7 +52,7 @@ export async function npcGenerator(body: {
     const response = await fetch(process.env.API_URL + '/npc/generator', requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as npc;
@@ -67,8 +67,7 @@ export async function npcParametersGenerator(
   try {
     const requestOptions = {
       method: 'POST',
-      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify([])
+      headers: { accept: 'application/json', 'Content-Type': 'application/json' }
     };
     const response = await fetch(
       process.env.API_URL + '/npc/generator/' + parameter,
@@ -76,7 +75,7 @@ export async function npcParametersGenerator(
     );
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as string;
@@ -98,7 +97,7 @@ export async function npcNamesGenerator(body: {
     const response = await fetch(process.env.API_URL + '/npc/generator/names', requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as string[];

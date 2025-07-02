@@ -534,20 +534,42 @@ export const npcStore = defineStore('npc', {
       { name: 'Default', npc: { gender: '', ancestry: '', class: '', job: '', name: '' } }
     ] as npc_list[],
     activeNpc: 0,
-    generating: false
+    generating: false,
+    locks: {
+      name: false,
+      nickname: false,
+      gender: false,
+      ancestry: false,
+      class: false,
+      job: false
+    }
   }),
   getters: {
     getNpcs: (state) => state.npcs,
     getActive: (state) => state.activeNpc,
     getActiveNpc: (state) => state.npcs[state.activeNpc],
-    getGenerating: (state) => state.generating
+    getGenerating: (state) => state.generating,
+    getLocks: (state) => state.locks
   },
   actions: {
     setActiveNpc(newActiveNpc: number) {
       this.activeNpc = newActiveNpc;
     },
     clearNpc() {
-      const tmpNpc: npc = { gender: '', ancestry: '', class: '', job: '', name: '', nickname: '' };
+      const tmpNpc: npc = {
+        gender: '',
+        ancestry: '',
+        class: '',
+        job: '',
+        name: '',
+        nickname: '',
+        languages: '',
+        description: '',
+        personality: '',
+        quirk: '',
+        relationships: '',
+        ideology: ''
+      };
       this.npcs[this.activeNpc]!.npc = tmpNpc;
     },
     changeActiveNpc(npcIndex: number) {
@@ -560,7 +582,20 @@ export const npcStore = defineStore('npc', {
     addNpc(npcName: string) {
       this.npcs.push({
         name: npcName,
-        npc: { gender: '', ancestry: '', class: '', job: '', name: '', nickname: '' }
+        npc: {
+          gender: '',
+          ancestry: '',
+          class: '',
+          job: '',
+          name: '',
+          nickname: '',
+          languages: '',
+          description: '',
+          personality: '',
+          quirk: '',
+          relationships: '',
+          ideology: ''
+        }
       });
       this.activeNpc = this.npcs.length - 1;
     },
@@ -571,7 +606,20 @@ export const npcStore = defineStore('npc', {
         this.npcs = [
           {
             name: 'Default',
-            npc: { gender: '', ancestry: '', class: '', job: '', name: '', nickname: '' }
+            npc: {
+              gender: '',
+              ancestry: '',
+              class: '',
+              job: '',
+              name: '',
+              nickname: '',
+              languages: '',
+              description: '',
+              personality: '',
+              quirk: '',
+              relationships: '',
+              ideology: ''
+            }
           }
         ];
       }

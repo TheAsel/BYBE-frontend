@@ -10,7 +10,9 @@ import {
   biTrash,
   biPlusLg,
   biInputCursorText,
-  biArrowRepeat
+  biArrowRepeat,
+  biLock,
+  biUnlock
 } from '@quasar/extras/bootstrap-icons';
 
 const $q = useQuasar();
@@ -48,45 +50,53 @@ watch(npcs, () => {
 const generateParameterNpc = debounce(async function (
   parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname'
 ) {
-  npcs.setGenerating(true);
+  if (
+    (!npcs.getLocks.ancestry && parameter == 'ancestry') ||
+    (!npcs.getLocks.class && parameter == 'class') ||
+    (!npcs.getLocks.gender && parameter == 'gender') ||
+    (!npcs.getLocks.job && parameter == 'job') ||
+    (!npcs.getLocks.nickname && parameter == 'nickname')
+  ) {
+    npcs.setGenerating(true);
 
-  try {
-    const newParameter = await npcParametersGenerator(parameter);
-    if (typeof newParameter != 'undefined') {
-      switch (parameter) {
-        case 'ancestry':
-          npcs.getActiveNpc!.npc.ancestry = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-          break;
-        case 'class':
-          npcs.getActiveNpc!.npc.class = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-          break;
-        case 'gender':
-          npcs.getActiveNpc!.npc.gender = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-          break;
-        case 'job':
-          npcs.getActiveNpc!.npc.job = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-          break;
-        case 'nickname':
-          npcs.getActiveNpc!.npc.nickname = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-          break;
+    try {
+      const newParameter = await npcParametersGenerator(parameter);
+      if (typeof newParameter != 'undefined') {
+        switch (parameter) {
+          case 'ancestry':
+            npcs.getActiveNpc!.npc.ancestry = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
+            break;
+          case 'class':
+            npcs.getActiveNpc!.npc.class = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
+            break;
+          case 'gender':
+            npcs.getActiveNpc!.npc.gender = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
+            break;
+          case 'job':
+            npcs.getActiveNpc!.npc.job = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
+            break;
+          case 'nickname':
+            npcs.getActiveNpc!.npc.nickname = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
+            break;
 
-        default:
-          break;
+          default:
+            break;
+        }
+      } else {
+        throw new Error('Error generating npc ' + parameter);
       }
-    } else {
-      throw new Error('Error generating npc ' + parameter);
+    } catch (error) {
+      console.error(error);
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Error generating random npc ' + parameter,
+        icon: matPriorityHigh
+      });
     }
-  } catch (error) {
-    console.error(error);
-    $q.notify({
-      progress: true,
-      type: 'warning',
-      message: 'Error generating random npc' + parameter,
-      icon: matPriorityHigh
-    });
-  }
 
-  npcs.setGenerating(false);
+    npcs.setGenerating(false);
+  }
 }, 300);
 
 let namesIndex = 10;
@@ -94,71 +104,73 @@ let namesList: string[] = [];
 let tmpGender: string;
 let tmpAncestry: string;
 const generateNamesNpc = debounce(async function () {
-  npcs.setGenerating(true);
-
-  if (
-    namesIndex >= namesList.length - 1 ||
-    tmpGender != npcs.getActiveNpc!.npc.gender ||
-    tmpAncestry != npcs.getActiveNpc!.npc.ancestry
-  ) {
-    tmpGender = npcs.getActiveNpc!.npc.gender!;
-    tmpAncestry = npcs.getActiveNpc!.npc.ancestry!;
-
-    const post: {
-      gender?: string | undefined;
-      ancestry?: string | undefined;
-    } = {};
+  if (!npcs.getLocks.name) {
+    npcs.setGenerating(true);
 
     if (
-      npcs.getActiveNpc!.npc.gender &&
-      npcParameters.getNpcParameters.genders.includes(npcs.getActiveNpc!.npc.gender)
+      namesIndex >= namesList.length - 1 ||
+      tmpGender != npcs.getActiveNpc!.npc.gender ||
+      tmpAncestry != npcs.getActiveNpc!.npc.ancestry
     ) {
-      post.gender = npcs.getActiveNpc!.npc.gender.replaceAll(' ', '');
-    }
+      tmpGender = npcs.getActiveNpc!.npc.gender!;
+      tmpAncestry = npcs.getActiveNpc!.npc.ancestry!;
 
-    if (
-      npcs.getActiveNpc!.npc.ancestry &&
-      npcParameters.getNpcParameters.ancestries.includes(npcs.getActiveNpc!.npc.ancestry)
-    ) {
-      post.ancestry = npcs.getActiveNpc!.npc.ancestry.replaceAll(' ', '');
-    }
+      const post: {
+        gender?: string | undefined;
+        ancestry?: string | undefined;
+      } = {};
 
-    if (post.ancestry == 'Leshy' && post.gender) {
-      if (post.gender != 'NonBinary') {
+      if (
+        npcs.getActiveNpc!.npc.gender &&
+        npcParameters.getNpcParameters.genders.includes(npcs.getActiveNpc!.npc.gender)
+      ) {
+        post.gender = npcs.getActiveNpc!.npc.gender.replaceAll(' ', '');
+      }
+
+      if (
+        npcs.getActiveNpc!.npc.ancestry &&
+        npcParameters.getNpcParameters.ancestries.includes(npcs.getActiveNpc!.npc.ancestry)
+      ) {
+        post.ancestry = npcs.getActiveNpc!.npc.ancestry.replaceAll(' ', '');
+      }
+
+      if (post.ancestry == 'Leshy' && post.gender) {
+        if (post.gender != 'NonBinary') {
+          $q.notify({
+            progress: true,
+            type: 'warning',
+            message: 'Invalid gender for this ancestry, defaulting to Non Binary',
+            icon: matPriorityHigh
+          });
+        }
+        post.gender = 'NonBinary';
+      }
+
+      try {
+        const newNames = await npcNamesGenerator(post);
+        if (typeof newNames != 'undefined') {
+          namesIndex = 0;
+          namesList = newNames;
+          npcs.getActiveNpc!.npc.name = namesList[namesIndex];
+        } else {
+          throw new Error('Error generating npc names');
+        }
+      } catch (error) {
+        console.error(error);
         $q.notify({
           progress: true,
           type: 'warning',
-          message: 'Invalid gender for this ancestry, defaulting to Non Binary',
+          message: 'Error generating random npc names',
           icon: matPriorityHigh
         });
       }
-      post.gender = 'NonBinary';
+    } else {
+      namesIndex++;
+      npcs.getActiveNpc!.npc.name = namesList[namesIndex];
     }
 
-    try {
-      const newNames = await npcNamesGenerator(post);
-      if (typeof newNames != 'undefined') {
-        namesIndex = 0;
-        namesList = newNames;
-        npcs.getActiveNpc!.npc.name = namesList[namesIndex];
-      } else {
-        throw new Error('Error generating npc names');
-      }
-    } catch (error) {
-      console.error(error);
-      $q.notify({
-        progress: true,
-        type: 'warning',
-        message: 'Error generating random npc names',
-        icon: matPriorityHigh
-      });
-    }
-  } else {
-    namesIndex++;
-    npcs.getActiveNpc!.npc.name = namesList[namesIndex];
+    npcs.setGenerating(false);
   }
-
-  npcs.setGenerating(false);
 }, 300);
 
 const closeDialog = () => {
@@ -436,15 +448,39 @@ const saveChanges = () => {
         </div>
       </q-header>
       <q-page-container>
-        <div class="tw-w-64 tw-mx-auto tw-mt-4 tw-space-y-3">
-          <div id="v-step-3" class="tw-flex tw-py-1">
+        <div class="tw-grid tw-grid-cols-2 tw-gap-2 tw-m-4">
+          <div id="v-step-3" class="tw-flex tw-mx-auto tw-py-1">
+            <q-btn
+              v-if="npcs.getLocks.name"
+              class="tw-my-auto tw-mr-2"
+              :icon="biLock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Unlock name"
+              @click="npcs.getLocks.name = false"
+            />
+            <q-btn
+              v-else
+              class="tw-my-auto tw-mr-2"
+              :icon="biUnlock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Lock name"
+              @click="npcs.getLocks.name = true"
+            />
             <q-input
               label="Name"
               v-model="npcs.getActiveNpc!.npc.name"
               stack-label
               dense
               outlined
-              maxlength="30"
+              :readonly="npcs.getLocks.name"
             />
             <q-btn
               class="tw-my-auto tw-ml-2"
@@ -458,14 +494,38 @@ const saveChanges = () => {
               @click="generateNamesNpc"
             />
           </div>
-          <div class="tw-flex tw-py-1">
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-btn
+              v-if="npcs.getLocks.nickname"
+              class="tw-my-auto tw-mr-2"
+              :icon="biLock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Unlock nickname"
+              @click="npcs.getLocks.nickname = false"
+            />
+            <q-btn
+              v-else
+              class="tw-my-auto tw-mr-2"
+              :icon="biUnlock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Lock nickname"
+              @click="npcs.getLocks.nickname = true"
+            />
             <q-input
               label="Nickname"
               v-model="npcs.getActiveNpc!.npc.nickname"
               stack-label
               dense
               outlined
-              maxlength="30"
+              :readonly="npcs.getLocks.nickname"
             />
             <q-btn
               class="tw-my-auto tw-ml-2"
@@ -479,14 +539,38 @@ const saveChanges = () => {
               @click="generateParameterNpc('nickname')"
             />
           </div>
-          <div class="tw-flex tw-py-1">
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-btn
+              v-if="npcs.getLocks.gender"
+              class="tw-my-auto tw-mr-2"
+              :icon="biLock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Unlock gender"
+              @click="npcs.getLocks.gender = false"
+            />
+            <q-btn
+              v-else
+              class="tw-my-auto tw-mr-2"
+              :icon="biUnlock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Lock gender"
+              @click="npcs.getLocks.gender = true"
+            />
             <q-input
               label="Gender"
               v-model="npcs.getActiveNpc!.npc.gender"
               stack-label
               dense
               outlined
-              maxlength="20"
+              :readonly="npcs.getLocks.gender"
             />
             <q-btn
               class="tw-my-auto tw-ml-2"
@@ -500,14 +584,38 @@ const saveChanges = () => {
               @click="generateParameterNpc('gender')"
             />
           </div>
-          <div class="tw-flex tw-py-1">
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-btn
+              v-if="npcs.getLocks.ancestry"
+              class="tw-my-auto tw-mr-2"
+              :icon="biLock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Unlock ancestry"
+              @click="npcs.getLocks.ancestry = false"
+            />
+            <q-btn
+              v-else
+              class="tw-my-auto tw-mr-2"
+              :icon="biUnlock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Lock ancestry"
+              @click="npcs.getLocks.ancestry = true"
+            />
             <q-input
               label="Ancestry"
               v-model="npcs.getActiveNpc!.npc.ancestry"
               stack-label
               dense
               outlined
-              maxlength="20"
+              :readonly="npcs.getLocks.ancestry"
             />
             <q-btn
               class="tw-my-auto tw-ml-2"
@@ -521,14 +629,38 @@ const saveChanges = () => {
               @click="generateParameterNpc('ancestry')"
             />
           </div>
-          <div class="tw-flex tw-py-1">
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-btn
+              v-if="npcs.getLocks.class"
+              class="tw-my-auto tw-mr-2"
+              :icon="biLock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Unlock class"
+              @click="npcs.getLocks.class = false"
+            />
+            <q-btn
+              v-else
+              class="tw-my-auto tw-mr-2"
+              :icon="biUnlock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Lock class"
+              @click="npcs.getLocks.class = true"
+            />
             <q-input
               label="Class"
               v-model="npcs.getActiveNpc!.npc.class"
               stack-label
               dense
               outlined
-              maxlength="20"
+              :readonly="npcs.getLocks.class"
             />
             <q-btn
               class="tw-my-auto tw-ml-2"
@@ -542,7 +674,31 @@ const saveChanges = () => {
               @click="generateParameterNpc('class')"
             />
           </div>
-          <div class="tw-flex tw-py-1">
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-btn
+              v-if="npcs.getLocks.job"
+              class="tw-my-auto tw-mr-2"
+              :icon="biLock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Unlock job"
+              @click="npcs.getLocks.job = false"
+            />
+            <q-btn
+              v-else
+              class="tw-my-auto tw-mr-2"
+              :icon="biUnlock"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Lock job"
+              @click="npcs.getLocks.job = true"
+            />
             <q-input
               label="Job"
               v-model="npcs.getActiveNpc!.npc.job"
@@ -550,7 +706,7 @@ const saveChanges = () => {
               multiple
               dense
               outlined
-              maxlength="20"
+              :readonly="npcs.getLocks.job"
             />
             <q-btn
               class="tw-my-auto tw-ml-2"
@@ -562,6 +718,67 @@ const saveChanges = () => {
               dense
               aria-label="Generate job"
               @click="generateParameterNpc('job')"
+            />
+          </div>
+        </div>
+        <q-separator class="tw-my-2 tw-mx-6" style="height: 2px" />
+        <div class="tw-grid tw-grid-cols-2 tw-gap-2 tw-m-4">
+          <div id="v-step-4" class="tw-flex tw-mx-auto tw-py-1">
+            <q-input
+              v-model="npcs.getActiveNpc!.npc.description"
+              outlined
+              dense
+              label="Description"
+              type="textarea"
+            />
+          </div>
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-input
+              v-model="npcs.getActiveNpc!.npc.personality"
+              outlined
+              dense
+              label="Personality"
+              type="textarea"
+            />
+          </div>
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-input
+              label="Languages"
+              v-model="npcs.getActiveNpc!.npc.languages"
+              stack-label
+              multiple
+              dense
+              outlined
+            />
+          </div>
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-input
+              label="Quirks"
+              v-model="npcs.getActiveNpc!.npc.quirk"
+              stack-label
+              multiple
+              dense
+              outlined
+            />
+          </div>
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-input
+              label="Relationships"
+              v-model="npcs.getActiveNpc!.npc.relationships"
+              stack-label
+              multiple
+              dense
+              outlined
+            />
+          </div>
+          <div class="tw-flex tw-mx-auto tw-py-1">
+            <q-input
+              label="Ideology"
+              v-model="npcs.getActiveNpc!.npc.ideology"
+              stack-label
+              multiple
+              dense
+              outlined
             />
           </div>
         </div>

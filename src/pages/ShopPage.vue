@@ -216,7 +216,8 @@ const callbacks: VTourCallbacks = {
 };
 
 function scrollDirection() {
-  const footer = document.querySelector('footer');
+  const footers = document.querySelectorAll('footer');
+  const footer = footers[footers.length - 1];
   const top = footer?.getBoundingClientRect().top;
   if (top) {
     scrollUp.value = top < window.innerHeight;

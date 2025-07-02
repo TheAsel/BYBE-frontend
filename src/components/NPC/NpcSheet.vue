@@ -20,7 +20,7 @@ const openNpcSheet = (id: number) => {
 <template>
   <div class="npc-sheet q-pa-md tw-w-full md:tw-w-[33%]">
     <div
-      id="v-step-4"
+      id="v-step-5"
       class="tw-opacity-85 dark:tw-opacity-90 tw-items-center tw-text-left tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
     >
       <q-scroll-area style="height: calc(100vh - 124px)">
@@ -88,6 +88,72 @@ const openNpcSheet = (id: number) => {
               class="tw-bg-[#522e2c] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
             >
               {{ npcs.getActiveNpc!.npc.job.toUpperCase() }}
+            </div>
+          </div>
+          <div
+            v-if="npcs.getActiveNpc!.npc.languages"
+            class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+          >
+            <strong>Languages </strong>
+            {{ npcs.getActiveNpc!.npc.languages }}
+          </div>
+          <q-separator
+            v-if="npcs.getActiveNpc!.npc.languages"
+            class="tw-my-2"
+            style="height: 2px"
+          />
+          <hr
+            class="only-print"
+            style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+          />
+          <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
+            <div
+              v-if="npcs.getActiveNpc!.npc.description"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+            >
+              <strong>Description </strong>
+              {{ npcs.getActiveNpc!.npc.description }}
+            </div>
+            <div
+              v-if="npcs.getActiveNpc!.npc.personality"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+            >
+              <strong>Personality </strong>
+              {{ npcs.getActiveNpc!.npc.personality }}
+            </div>
+            <div
+              v-if="npcs.getActiveNpc!.npc.quirk"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+            >
+              <strong>Quirks </strong>
+              {{ npcs.getActiveNpc!.npc.quirk }}
+            </div>
+            <q-separator
+              v-if="
+                npcs.getActiveNpc!.npc.description ||
+                npcs.getActiveNpc!.npc.personality ||
+                npcs.getActiveNpc!.npc.quirk
+              "
+              class="tw-my-2"
+              style="height: 2px"
+            />
+            <hr
+              class="only-print"
+              style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+            />
+            <div
+              v-if="npcs.getActiveNpc!.npc.relationships"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+            >
+              <strong>Relationships </strong>
+              {{ npcs.getActiveNpc!.npc.relationships }}
+            </div>
+            <div
+              v-if="npcs.getActiveNpc!.npc.ideology"
+              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+            >
+              <strong>Ideology </strong>
+              {{ npcs.getActiveNpc!.npc.ideology }}
             </div>
           </div>
         </div>

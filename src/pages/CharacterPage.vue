@@ -49,7 +49,20 @@ if (localNpcs) {
     console.error(error);
     const defaultNpc = {
       name: 'Default',
-      npc: { gender: '', ancestry: '', class: '', job: '', name: '', nickname: '' }
+      npc: {
+        gender: '',
+        ancestry: '',
+        class: '',
+        job: '',
+        name: '',
+        nickname: '',
+        languages: '',
+        description: '',
+        personality: '',
+        quirk: '',
+        relationships: '',
+        ideology: ''
+      }
     };
     localStorage.setItem('npcs', JSON.stringify([defaultNpc]));
     npcs.updateNpcs([defaultNpc]);

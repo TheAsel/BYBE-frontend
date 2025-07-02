@@ -10,6 +10,12 @@ export type npc = {
   job: string | undefined;
   name: string | undefined;
   nickname: string | null;
+  languages: string | null;
+  description: string | null;
+  personality: string | null;
+  quirk: string | null;
+  relationships: string | null;
+  ideology: string | null;
 };
 
 export type npc_list = {

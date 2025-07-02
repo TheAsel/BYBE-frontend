@@ -41,7 +41,7 @@ export async function requestCreatures(
     const response = await fetch(request, requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as creature_response;
@@ -69,7 +69,7 @@ export async function requestFilters(
     const response = await fetch(process.env.API_URL + '/bestiary/' + filter, requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as string[];
@@ -100,7 +100,7 @@ export async function requestCreatureId(
     );
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data.results as creature;
@@ -123,7 +123,7 @@ export async function encounterInfo(encounter: {
     const response = await fetch(process.env.API_URL + '/encounter/info', requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as encounter;
@@ -159,7 +159,7 @@ export async function encounterGenerator(body: {
     const response = await fetch(process.env.API_URL + '/encounter/generator', requestOptions);
     const data = await response.json();
     if (!response.ok) {
-      const error = data?.message || response.status;
+      const error = data?.message ?? response.status;
       throw new Error(error);
     }
     return data as random_encounter;

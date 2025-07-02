@@ -51,7 +51,20 @@ if (localNpcs) {
     console.error(error);
     const defaultNpc = {
       name: 'Default',
-      npc: { gender: '', ancestry: '', class: '', job: '', name: '', nickname: '' }
+      npc: {
+        gender: '',
+        ancestry: '',
+        class: '',
+        job: '',
+        name: '',
+        nickname: '',
+        languages: '',
+        description: '',
+        personality: '',
+        quirk: '',
+        relationships: '',
+        ideology: ''
+      }
     };
     localStorage.setItem('npcs', JSON.stringify([defaultNpc]));
     npcs.updateNpcs([defaultNpc]);
@@ -84,14 +97,22 @@ const steps: Step[] = [
   },
   {
     target: '#v-step-3',
-    content: 'Each field can be manually edited or randomly generated.',
+    content: 'Each of these fields can be manually locked, edited or randomly generated.',
     params: {
       placement: 'auto'
     }
   },
   {
     target: '#v-step-4',
-    content: 'This is where the final result of your NPC will be displayed.',
+    content: 'These fields below can only be manually edited instead.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-5',
+    content:
+      'This is where the final result of your NPC will be displayed. Click on the icon to the left of the name to open a new page with the fullscreen sheet.',
     params: {
       placement: 'auto'
     }
@@ -117,7 +138,13 @@ const startTour = () => {
       ancestry: 'Halfling',
       class: 'Rogue',
       job: 'God',
-      nickname: ''
+      nickname: '',
+      languages: 'Common',
+      description: 'The mascot of this site, being always on top of the list',
+      personality: 'Kind and supportive, loves giving feedback',
+      quirk: 'Sometimes his weapons disappear or duplicate',
+      relationships: 'The frontend developer TheAsel and the backend developer RakuJa',
+      ideology: 'The frontend is better than the backend'
     };
 
     npcs.addNpc('Example');
@@ -138,7 +165,8 @@ const callbacks: VTourCallbacks = {
 };
 
 function scrollDirection() {
-  const footer = document.querySelector('footer');
+  const footers = document.querySelectorAll('footer');
+  const footer = footers[footers.length - 1];
   const top = footer?.getBoundingClientRect().top;
   if (top) {
     scrollUp.value = top < window.innerHeight;
