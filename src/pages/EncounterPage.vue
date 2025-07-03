@@ -163,7 +163,7 @@ const steps: Step[] = [
   {
     target: '#v-step-8',
     content:
-      'You can change some settings from here, like enabling Proficiency without Level or experimental features.',
+      'You can enable the variant rule for Proficiency without Level by clicking here and going to the "Encounter" tab.',
     params: {
       placement: 'top'
     }
