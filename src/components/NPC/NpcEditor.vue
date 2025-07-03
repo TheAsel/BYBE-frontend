@@ -732,6 +732,7 @@ const saveChanges = () => {
               class="tw-mx-auto"
               outlined
               dense
+              autogrow
               label="Description"
               type="textarea"
             />
@@ -742,6 +743,7 @@ const saveChanges = () => {
               class="tw-mx-auto"
               outlined
               dense
+              autogrow
               label="Personality"
               type="textarea"
             />
