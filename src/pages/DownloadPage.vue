@@ -3,6 +3,7 @@ import { fabApple, fabLinux, fabWindows } from '@quasar/extras/fontawesome-v6';
 import { matDownload } from '@quasar/extras/material-icons';
 import { useHead } from '@unhead/vue';
 import { onMounted, ref } from 'vue';
+
 import { requestRepoInfo } from '../utils/github-api';
 
 useHead({

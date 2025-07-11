@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { nextTick, ref } from 'vue';
-import { useQuasar } from 'quasar';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { mdiCloseCircle } from '@quasar/extras/mdi-v7';
 import {
-  biXLg,
-  biQuestionCircle,
-  biTrash,
-  biPlusLg,
+  biCheck,
   biCopy,
   biPencilSquare,
-  biCheck,
-  biX
+  biPlusLg,
+  biQuestionCircle,
+  biTrash,
+  biX,
+  biXLg
 } from '@quasar/extras/bootstrap-icons';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
+import { mdiCloseCircle } from '@quasar/extras/mdi-v7';
+import { capitalize, cloneDeep, debounce } from 'lodash-es';
+import { useQuasar } from 'quasar';
+import { nextTick, ref } from 'vue';
+
 import { filtersStore, itemsStore, settingsStore, templateStore } from '../../../stores/store';
 import { shopGenerator } from '../../../utils/shop-api-calls';
-import { capitalize, cloneDeep, debounce } from 'lodash-es';
+
 import type { min_item } from '../../../types/item';
 import type { template } from '../../../types/template';
 

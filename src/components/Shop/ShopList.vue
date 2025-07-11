@@ -1,27 +1,29 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import {
-  biPlus,
   biDash,
-  biTrash,
+  biInputCursorText,
+  biPlus,
   biPlusLg,
-  biInputCursorText
+  biTrash
 } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { itemsStore, settingsStore } from '../../stores/store';
-import { useRouter } from 'vue-router';
-import type { shop_list } from '../../types/shop';
-import type { min_item } from '../../types/item';
-import { requestItemId } from '../../utils/shop-api-calls';
-import { debounce, isNull } from 'lodash-es';
-import { useQuasar } from 'quasar';
 import {
-  mdiSword,
-  mdiShield,
   mdiFoodDrumstick,
   mdiRing,
+  mdiShield,
+  mdiSword,
   mdiTshirtCrew
 } from '@quasar/extras/mdi-v7';
+import { debounce, isNull } from 'lodash-es';
+import { useQuasar } from 'quasar';
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { itemsStore, settingsStore } from '../../stores/store';
+import { requestItemId } from '../../utils/shop-api-calls';
+
+import type { min_item } from '../../types/item';
+import type { shop_list } from '../../types/shop';
 
 const $q = useQuasar();
 

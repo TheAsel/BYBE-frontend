@@ -1,28 +1,30 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useQuasar } from 'quasar';
 import {
-  biList,
-  biGithub,
-  biSun,
-  biMoon,
-  biGear,
-  biXLg,
   biCloudArrowDown,
   biCloudArrowUp,
-  biQuestionCircle
+  biGear,
+  biGithub,
+  biList,
+  biMoon,
+  biQuestionCircle,
+  biSun,
+  biXLg
 } from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { fasFlaskVial } from '@quasar/extras/fontawesome-v6';
-import { TailwindDarkFix } from '../utils/tw-dark-fix';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash-es';
-import type { party } from '../types/party';
+import { useQuasar } from 'quasar';
+import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+
+import { encounterStore, settingsStore } from '../stores/store';
+import { TailwindDarkFix } from '../utils/tw-dark-fix';
+
 import type { encounter_list } from '../types/encounter';
-import { settingsStore, encounterStore } from '../stores/store';
+import type { npc_list } from '../types/npcs';
+import type { party } from '../types/party';
 import type { shop_list } from '../types/shop';
 import type { template } from '../types/template';
-import type { npc_list } from 'src/types/npcs';
 
 const encounter = encounterStore();
 const settings = settingsStore();

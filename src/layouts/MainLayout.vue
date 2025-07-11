@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import HeaderBar from '../components/HeaderBar.vue';
+
 import { version } from '../../package.json';
+import HeaderBar from '../components/HeaderBar.vue';
 import { requestRepoInfo } from '../utils/github-api';
 
 const newestVersion = ref(version);

@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useQuasar } from 'quasar';
-import { npcParametersStore, npcStore } from '../../stores/store';
-import { npcNamesGenerator, npcParametersGenerator } from 'src/utils/npc-api-calls';
-import { debounce } from 'lodash-es';
-import type { npc_list } from '../../types/npcs';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
 import {
-  biTrash,
-  biPlusLg,
-  biInputCursorText,
   biArrowRepeat,
+  biInputCursorText,
   biLock,
+  biPlusLg,
+  biTrash,
   biUnlock
 } from '@quasar/extras/bootstrap-icons';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
+import { debounce } from 'lodash-es';
+import { useQuasar } from 'quasar';
+import { ref, watch } from 'vue';
+
+import { npcParametersStore, npcStore } from '../../stores/store';
+import { npcNamesGenerator, npcParametersGenerator } from '../../utils/npc-api-calls';
+
+import type { npc_list } from '../../types/npcs';
 
 const $q = useQuasar();
 
@@ -48,14 +50,15 @@ watch(npcs, () => {
 });
 
 const generateParameterNpc = debounce(async function (
-  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname'
+  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level'
 ) {
   if (
     (!npcs.getLocks.ancestry && parameter == 'ancestry') ||
     (!npcs.getLocks.class && parameter == 'class') ||
     (!npcs.getLocks.gender && parameter == 'gender') ||
     (!npcs.getLocks.job && parameter == 'job') ||
-    (!npcs.getLocks.nickname && parameter == 'nickname')
+    (!npcs.getLocks.nickname && parameter == 'nickname') ||
+    (!npcs.getLocks.level && parameter == 'level')
   ) {
     npcs.setGenerating(true);
 
@@ -237,7 +240,7 @@ const saveChanges = () => {
 </script>
 
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[33%]">
+  <div class="q-pa-md tw-w-full md:tw-w-[34%]">
     <q-layout
       id="v-step-2"
       view="lHh lpr lFf"
@@ -448,7 +451,7 @@ const saveChanges = () => {
         </div>
       </q-header>
       <q-page-container>
-        <div class="tw-flex tw-flex-col tw-gap-3 tw-my-4 tw-mx-6">
+        <div class="tw-flex tw-flex-col tw-gap-4 tw-my-4 tw-mx-6">
           <div id="v-step-3" class="tw-flex tw-py-1">
             <q-btn
               v-if="npcs.getLocks.name"
@@ -722,6 +725,58 @@ const saveChanges = () => {
               aria-label="Generate job"
               @click="generateParameterNpc('job')"
             />
+          </div>
+          <div class="tw-flex tw-flex-col tw-mb-3">
+            <span class="tw-ml-12 tw-text-gray-800 dark:tw-text-gray-200"> Level: </span>
+            <div class="tw-flex">
+              <q-btn
+                v-if="npcs.getLocks.level"
+                class="tw-flex-none tw-my-auto tw-mr-2"
+                :icon="biLock"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                aria-label="Unlock level"
+                @click="npcs.getLocks.level = false"
+              />
+              <q-btn
+                v-else
+                class="tw-flex-none tw-my-auto tw-mr-2"
+                :icon="biUnlock"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                aria-label="Lock level"
+                @click="npcs.getLocks.level = true"
+              />
+              <q-slider
+                v-model="npcs.getActiveNpc!.npc.level"
+                class="tw-mx-1"
+                markers
+                label-always
+                switch-label-side
+                aria-label="Filter level"
+                role="menuitem"
+                :min="0"
+                :max="20"
+                :readonly="npcs.getLocks.level"
+              />
+              <q-btn
+                class="tw-flex-none tw-my-auto tw-ml-2"
+                :icon="biArrowRepeat"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                aria-label="Generate level"
+                @click="generateParameterNpc('level')"
+              />
+            </div>
           </div>
         </div>
         <q-separator class="tw-my-2 tw-mx-6" style="height: 2px" />

@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import {
-  biPlus,
   biDash,
-  biTrash,
+  biInputCursorText,
+  biPlus,
   biPlusLg,
-  biInputCursorText
+  biTrash
 } from '@quasar/extras/bootstrap-icons';
 import { fasScroll } from '@quasar/extras/fontawesome-v6';
 import { debounce } from 'lodash-es';
-import { partyStore, encounterStore, infoStore } from '../../stores/store';
-import { encounterInfo } from '../../utils/encounter-api-calls';
-import type { encounter_list } from '../../types/encounter';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+
+import { encounterStore, infoStore, partyStore } from '../../stores/store';
+import { encounterInfo } from '../../utils/encounter-api-calls';
+
+import type { encounter_list } from '../../types/encounter';
+import type { variants } from '../../types/filters';
 
 const router = useRouter();
 
@@ -178,8 +181,8 @@ const saveChanges = () => {
   localStorage.setItem('encounters', JSON.stringify(encounter.getEncounters));
 };
 
-const openCreatureSheet = (id: number) => {
-  const routeData = router.resolve({ name: 'bestiary', query: { id: id } });
+const openCreatureSheet = (id: number, variant: variants) => {
+  const routeData = router.resolve({ name: 'bestiary', query: { id: id, variant: variant } });
   if (process.env.IS_APP === 'true') {
     window.open(routeData.href, '_self');
   } else {
@@ -438,7 +441,7 @@ const openCreatureSheet = (id: number) => {
                   class="tw-mr-2"
                   target="_blank"
                   aria-label="Open creature sheet"
-                  @click="openCreatureSheet(item.id)"
+                  @click="openCreatureSheet(item.id, item.variant!)"
                 >
                   <q-tooltip
                     class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"

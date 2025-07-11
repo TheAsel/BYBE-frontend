@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import NpcSheet from '../components/NPC/NpcSheet.vue';
-import { ref } from 'vue';
-import { useHead } from '@unhead/vue';
-import { useRoute } from 'vue-router';
 import { matPrint } from '@quasar/extras/material-icons';
+import { useHead } from '@unhead/vue';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+import NpcSheet from '../components/NPC/NpcSheet.vue';
 import { npcStore } from '../stores/store';
-import type { npc_list } from 'src/types/npcs';
+
+import type { npc_list } from '../types/npcs';
 
 const title = ref('NPC Sheet - BYBE');
 
@@ -50,6 +52,7 @@ if (localNpcs) {
     const defaultNpc = {
       name: 'Default',
       npc: {
+        level: 0,
         gender: '',
         ancestry: '',
         class: '',

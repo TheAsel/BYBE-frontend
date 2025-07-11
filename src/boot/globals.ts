@@ -1,6 +1,6 @@
 import { defineBoot } from '#q-app/wrappers';
-import Vue3Tour from 'vue3-tour';
 import { createHead } from '@unhead/vue/client';
+import Vue3Tour from 'vue3-tour';
 
 const head = createHead();
 

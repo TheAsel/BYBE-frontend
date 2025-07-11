@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useHead } from '@unhead/vue';
-import NpcGenerator from '../components/NPC/NpcGenerator.vue';
-import NpcEditor from '../components/NPC/NpcEditor.vue';
-import NpcSheet from '../components/NPC/NpcSheet.vue';
-import { settingsStore, npcStore } from '../stores/store';
-import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
-import type { npc, npc_list } from 'src/types/npcs';
 import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
+import { useHead } from '@unhead/vue';
+import { ref } from 'vue';
+
+import NpcEditor from '../components/NPC/NpcEditor.vue';
+import NpcGenerator from '../components/NPC/NpcGenerator.vue';
+import NpcSheet from '../components/NPC/NpcSheet.vue';
+import { npcStore, settingsStore } from '../stores/store';
+
+import type { npc, npc_list } from '../types/npcs';
+import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
 useHead({
   title: 'NPC Generator - BYBE',
@@ -52,6 +54,7 @@ if (localNpcs) {
     const defaultNpc = {
       name: 'Default',
       npc: {
+        level: 0,
         gender: '',
         ancestry: '',
         class: '',
@@ -133,6 +136,7 @@ const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
     const tmpLanks: npc = {
+      level: 5,
       name: '"Lucky" Lanks',
       gender: 'Male',
       ancestry: 'Halfling',

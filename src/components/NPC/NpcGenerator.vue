@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { useQuasar } from 'quasar';
-import { npcParametersStore, npcStore } from '../../stores/store';
-import { debounce } from 'lodash-es';
-import { requestParameters, npcGenerator, requestAncestries } from 'src/utils/npc-api-calls';
 import { biEraser } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
+import { debounce } from 'lodash-es';
+import { useQuasar } from 'quasar';
+import { onMounted, ref } from 'vue';
+
+import { npcParametersStore, npcStore } from '../../stores/store';
+import { npcGenerator, requestAncestries, requestParameters } from '../../utils/npc-api-calls';
 
 const $q = useQuasar();
 
@@ -17,11 +18,13 @@ const parameters = ref<{
   ancestries: string[];
   classes: string[];
   jobs: string[];
+  level: { min: number; max: number };
 }>({
   genders: [],
   ancestries: [],
   classes: [],
-  jobs: []
+  jobs: [],
+  level: { min: 0, max: 20 }
 });
 
 const nickname = ref<boolean>(false);
@@ -156,6 +159,7 @@ const resetParameters = () => {
   parameters.value.ancestries = [];
   parameters.value.classes = [];
   parameters.value.jobs = [];
+  parameters.value.level = { min: 0, max: 20 };
   nickname.value = false;
 };
 
@@ -240,12 +244,12 @@ const filterJobsFn = (val, update) => {
         </div>
       </q-header>
       <q-page-container>
-        <div class="tw-flex tw-flex-col tw-mt-4 tw-space-y-3">
-          <div class="tw-mx-auto tw-py-1">
+        <div class="tw-justify-center">
+          <div class="tw-flex tw-flex-col tw-gap-5 tw-my-4 tw-mx-16">
             <q-select
               label="Genders"
               v-model="parameters.genders"
-              class="tw tw-w-64"
+              class="tw-py-1"
               multiple
               dense
               outlined
@@ -256,12 +260,10 @@ const filterJobsFn = (val, update) => {
               :options="Object.freeze(npcParameters.getNpcParameters.genders)"
               @filter="filterGendersFn"
             />
-          </div>
-          <div class="tw-mx-auto tw-py-1">
+
             <q-select
               label="Ancestries"
               v-model="parameters.ancestries"
-              class="tw tw-w-64"
               multiple
               dense
               outlined
@@ -272,12 +274,10 @@ const filterJobsFn = (val, update) => {
               :options="Object.freeze(npcParameters.getNpcParameters.ancestries)"
               @filter="filterAncestriesFn"
             />
-          </div>
-          <div class="tw-mx-auto tw-py-1">
+
             <q-select
               label="Classes"
               v-model="parameters.classes"
-              class="tw tw-w-64"
               multiple
               dense
               outlined
@@ -288,12 +288,9 @@ const filterJobsFn = (val, update) => {
               :options="Object.freeze(npcParameters.getNpcParameters.classes)"
               @filter="filterClassesFn"
             />
-          </div>
-          <div class="tw-mx-auto tw-py-1">
             <q-select
               label="Jobs"
               v-model="parameters.jobs"
-              class="tw tw-w-64"
               multiple
               dense
               outlined
@@ -304,9 +301,22 @@ const filterJobsFn = (val, update) => {
               :options="Object.freeze(npcParameters.getNpcParameters.jobs)"
               @filter="filterJobsFn"
             />
-          </div>
-          <div class="tw-mx-auto tw-py-1">
-            <q-checkbox v-model="nickname" label="Nickname" />
+            <div class="tw-flex tw-flex-col">
+              <span class="tw-text-gray-800 dark:tw-text-gray-200"> Level range: </span>
+              <q-range
+                v-model="parameters.level"
+                class="tw-mb-2"
+                markers
+                label-always
+                switch-label-side
+                role="menuitem"
+                :min="0"
+                :max="20"
+                :left-label-value="'Min: ' + parameters.level.min"
+                :right-label-value="'Max: ' + parameters.level.max"
+              />
+            </div>
+            <q-checkbox class="tw-mx-auto" v-model="nickname" label="Nickname" />
           </div>
         </div>
       </q-page-container>

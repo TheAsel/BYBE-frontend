@@ -2,13 +2,13 @@ import type { creature, creature_response } from '../types/creature';
 import type { adventure_groups, encounter, random_encounter } from '../types/encounter';
 import type {
   alignments,
-  sizes,
-  rarities,
   challenges,
-  roles,
-  variants,
   creature_columns,
-  creature_filters
+  creature_filters,
+  rarities,
+  roles,
+  sizes,
+  variants
 } from '../types/filters';
 
 export async function requestCreatures(

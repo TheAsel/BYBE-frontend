@@ -4,6 +4,7 @@ export type valid_genders = {
 };
 
 export type npc = {
+  level: number | undefined;
   gender: string | undefined;
   ancestry: string | undefined;
   class: string | undefined;

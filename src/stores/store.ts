@@ -1,11 +1,12 @@
-import { defineStore } from 'pinia';
 import { capitalize } from 'lodash-es';
-import type { party } from '../types/party';
+import { defineStore } from 'pinia';
+
 import type { min_creature } from '../types/creature';
-import type { valid_genders, npc, npc_list } from '../types/npcs';
 import type { encounter, encounter_list } from '../types/encounter';
 import type { variants } from '../types/filters';
 import type { item, min_item } from '../types/item';
+import type { npc, npc_list, valid_genders } from '../types/npcs';
+import type { party } from '../types/party';
 import type { shop_list } from '../types/shop';
 import type { template, template_data } from '../types/template';
 
@@ -531,7 +532,7 @@ export const npcParametersStore = defineStore('npcparameters', {
 export const npcStore = defineStore('npc', {
   state: () => ({
     npcs: [
-      { name: 'Default', npc: { gender: '', ancestry: '', class: '', job: '', name: '' } }
+      { name: 'Default', npc: { level: 0, gender: '', ancestry: '', class: '', job: '', name: '' } }
     ] as npc_list[],
     activeNpc: 0,
     generating: false,
@@ -541,7 +542,8 @@ export const npcStore = defineStore('npc', {
       gender: false,
       ancestry: false,
       class: false,
-      job: false
+      job: false,
+      level: false
     }
   }),
   getters: {
@@ -557,6 +559,7 @@ export const npcStore = defineStore('npc', {
     },
     clearNpc() {
       const tmpNpc: npc = {
+        level: 0,
         gender: '',
         ancestry: '',
         class: '',
@@ -583,6 +586,7 @@ export const npcStore = defineStore('npc', {
       this.npcs.push({
         name: npcName,
         npc: {
+          level: 0,
           gender: '',
           ancestry: '',
           class: '',
@@ -607,6 +611,7 @@ export const npcStore = defineStore('npc', {
           {
             name: 'Default',
             npc: {
+              level: 0,
               gender: '',
               ancestry: '',
               class: '',

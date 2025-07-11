@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { npcStore } from '../../stores/store';
 import { biBoxArrowUpRight } from '@quasar/extras/bootstrap-icons';
 import { useRouter } from 'vue-router';
+
+import { npcStore } from '../../stores/store';
 
 const npcs = npcStore();
 
@@ -37,7 +38,7 @@ const openNpcSheet = (id: number) => {
               size="sm"
               padding="sm"
               class="tw-mr-1 tw-my-auto only-screen character-page-element"
-              aria-label="Open item sheet"
+              aria-label="Open NPC sheet"
               @click="openNpcSheet(npcs.getActive)"
             >
               <q-tooltip
@@ -45,7 +46,7 @@ const openNpcSheet = (id: number) => {
                 anchor="top middle"
                 self="bottom middle"
               >
-                Open item sheet
+                Open NPC sheet
               </q-tooltip>
             </q-btn>
             <span class="tw-my-auto">
@@ -57,7 +58,7 @@ const openNpcSheet = (id: number) => {
               </span>
             </span>
             <q-space />
-            <div class="tw-my-1">NPC</div>
+            <div class="tw-my-1">NPC {{ npcs.getActiveNpc!.npc.level }}</div>
           </div>
           <q-separator class="tw-my-2" style="height: 2px" />
           <hr

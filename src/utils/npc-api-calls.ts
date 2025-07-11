@@ -1,4 +1,4 @@
-import type { valid_genders, npc } from '../types/npcs';
+import type { npc, valid_genders } from '../types/npcs';
 
 export async function requestParameters(parameter: 'genders' | 'classes' | 'jobs') {
   try {
@@ -62,7 +62,7 @@ export async function npcGenerator(body: {
 }
 
 export async function npcParametersGenerator(
-  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname'
+  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level'
 ) {
   try {
     const requestOptions = {

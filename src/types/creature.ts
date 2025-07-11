@@ -21,7 +21,7 @@ export type creature = {
           id: number;
           name: string;
           value: number;
-        },
+        };
         double_vs: string[];
         exception_vs: string[];
       }

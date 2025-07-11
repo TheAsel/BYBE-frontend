@@ -1,32 +1,35 @@
 <script setup lang="ts">
-import { ref, toRaw, onMounted } from 'vue';
-import { requestFilters, requestItems, requestTemplates } from '../../utils/shop-api-calls';
-import type { item, min_item } from '../../types/item';
 import {
   biArrowDownUp,
   biBasketFill,
-  biEraser,
-  biPlusLg,
+  biBook,
   biBoxArrowUpRight,
   biCaretRight,
-  biBook,
+  biEraser,
   biFullscreen,
-  biFullscreenExit
+  biFullscreenExit,
+  biPlusLg
 } from '@quasar/extras/bootstrap-icons';
-import type { item_columns, item_filters, rarities } from '../../types/filters';
-import { filtersStore, itemsStore, settingsStore, templateStore } from '../../stores/store';
-import { useQuasar } from 'quasar';
 import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
-import { capitalize, debounce } from 'lodash-es';
-import { useRouter } from 'vue-router';
-import ShopBuilder from '../../components/Shop/ShopTable/ShopBuilder.vue';
 import {
-  mdiSword,
-  mdiShield,
   mdiFoodDrumstick,
   mdiRing,
+  mdiShield,
+  mdiSword,
   mdiTshirtCrew
 } from '@quasar/extras/mdi-v7';
+import { capitalize, debounce } from 'lodash-es';
+import { useQuasar } from 'quasar';
+import { onMounted, ref, toRaw } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { filtersStore, itemsStore, settingsStore, templateStore } from '../../stores/store';
+import { requestFilters, requestItems, requestTemplates } from '../../utils/shop-api-calls';
+
+import ShopBuilder from './ShopTable/ShopBuilder.vue';
+
+import type { item_columns, item_filters, rarities } from '../../types/filters';
+import type { item, min_item } from '../../types/item';
 
 const $q = useQuasar();
 const settings = settingsStore();

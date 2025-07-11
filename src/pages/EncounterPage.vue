@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 import { useHead } from '@unhead/vue';
-import { partyStore, encounterStore, settingsStore } from '../stores/store';
-import type { party } from '../types/party';
+import { ref } from 'vue';
+
+import CreatureList from '../components/Encounter/CreatureList.vue';
+import CreaturesTable from '../components/Encounter/CreaturesTable.vue';
+import { encounterStore, partyStore, settingsStore } from '../stores/store';
+
 import type { min_creature } from '../types/creature';
 import type { encounter_list } from '../types/encounter';
-import CreatureList from '../components/Encounter/CreatureList.vue';
+import type { party } from '../types/party';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
-import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
-import CreaturesTable from '../components/Encounter/CreaturesTable.vue';
 
 useHead({
   title: 'Encounter Builder - BYBE',
