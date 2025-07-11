@@ -50,6 +50,10 @@ BYBE is also available offline! We currently support Windows, MacOS and Linux (A
 - Shop Generator
   - Browse and filter a list of all items
   - Generate random shops with filters and templates
+- NPC Generator
+  - Randomly generate NPC features (name, class, job, etc.)
+  - Manually describe a character description, personality and more
+  - Generate a sheet for your character
 - Fast, mobile friendly, light/dark theme, accessible
 - More to come...
 
@@ -67,6 +71,16 @@ BYBE is also available offline! We currently support Windows, MacOS and Linux (A
 
 <p align="center">
   Shop Generator
+</p>
+
+---
+
+<br/>
+
+![Screenshot of the NPC Generator page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/npc_generator.png)
+
+<p align="center">
+  NPC Generator
 </p>
 
 ## 🖥️ Installation
