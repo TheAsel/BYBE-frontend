@@ -532,7 +532,7 @@ export const npcParametersStore = defineStore('npcparameters', {
 export const npcStore = defineStore('npc', {
   state: () => ({
     npcs: [
-      { name: 'Default', npc: { level: 0, gender: '', ancestry: '', class: '', job: '', name: '' } }
+      { name: 'Default', npc: { level: -1, gender: '', ancestry: '', class: '', job: '', name: '', custom_fields: [{ name: '', body: '' }] } }
     ] as npc_list[],
     activeNpc: 0,
     generating: false,
@@ -559,7 +559,7 @@ export const npcStore = defineStore('npc', {
     },
     clearNpc() {
       const tmpNpc: npc = {
-        level: 0,
+        level: -1,
         gender: '',
         ancestry: '',
         class: '',
@@ -571,7 +571,8 @@ export const npcStore = defineStore('npc', {
         personality: '',
         quirk: '',
         relationships: '',
-        ideology: ''
+        ideology: '',
+        custom_fields: [{ name: '', body: '' }]
       };
       this.npcs[this.activeNpc]!.npc = tmpNpc;
     },
@@ -586,7 +587,7 @@ export const npcStore = defineStore('npc', {
       this.npcs.push({
         name: npcName,
         npc: {
-          level: 0,
+          level: -1,
           gender: '',
           ancestry: '',
           class: '',
@@ -598,7 +599,8 @@ export const npcStore = defineStore('npc', {
           personality: '',
           quirk: '',
           relationships: '',
-          ideology: ''
+          ideology: '',
+          custom_fields: [{ name: '', body: '' }]
         }
       });
       this.activeNpc = this.npcs.length - 1;
@@ -611,7 +613,7 @@ export const npcStore = defineStore('npc', {
           {
             name: 'Default',
             npc: {
-              level: 0,
+              level: -1,
               gender: '',
               ancestry: '',
               class: '',
@@ -623,7 +625,8 @@ export const npcStore = defineStore('npc', {
               personality: '',
               quirk: '',
               relationships: '',
-              ideology: ''
+              ideology: '',
+              custom_fields: [{ name: '', body: '' }]
             }
           }
         ];

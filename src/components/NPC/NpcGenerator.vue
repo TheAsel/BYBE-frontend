@@ -24,7 +24,7 @@ const parameters = ref<{
   ancestries: [],
   classes: [],
   jobs: [],
-  level: { min: 0, max: 20 }
+  level: { min: -1, max: 25 }
 });
 
 const nickname = ref<boolean>(false);
@@ -159,7 +159,7 @@ const resetParameters = () => {
   parameters.value.ancestries = [];
   parameters.value.classes = [];
   parameters.value.jobs = [];
-  parameters.value.level = { min: 0, max: 20 };
+  parameters.value.level = { min: -1, max: 25 };
   nickname.value = false;
 };
 
@@ -310,8 +310,8 @@ const filterJobsFn = (val, update) => {
                 label-always
                 switch-label-side
                 role="menuitem"
-                :min="0"
-                :max="20"
+                :min="-1"
+                :max="25"
                 :left-label-value="'Min: ' + parameters.level.min"
                 :right-label-value="'Max: ' + parameters.level.max"
               />

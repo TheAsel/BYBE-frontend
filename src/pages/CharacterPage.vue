@@ -64,7 +64,8 @@ if (localNpcs) {
         personality: '',
         quirk: '',
         relationships: '',
-        ideology: ''
+        ideology: '',
+        custom_fields: [{ name: '', body: '' }]
       }
     };
     localStorage.setItem('npcs', JSON.stringify([defaultNpc]));

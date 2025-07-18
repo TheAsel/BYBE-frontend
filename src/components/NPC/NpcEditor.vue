@@ -176,6 +176,21 @@ const generateNamesNpc = debounce(async function () {
   }
 }, 300);
 
+const addCustomField = () => {
+  if (typeof npcs.getActiveNpc!.npc.custom_fields === 'undefined') {
+    npcs.getActiveNpc!.npc.custom_fields = [{ name: '', body: '' }];
+  } else {
+    npcs.getActiveNpc!.npc.custom_fields.push({ name: '', body: '' });
+  }
+};
+
+const removeCustomField = (index: number) => {
+  npcs.getActiveNpc!.npc.custom_fields.splice(index, 1);
+  if (npcs.getActiveNpc!.npc.custom_fields.length === 0) {
+    npcs.getActiveNpc!.npc.custom_fields = [{ name: '', body: '' }];
+  }
+};
+
 const closeDialog = () => {
   newNpcDialog.value = false;
   renameNpcDialog.value = false;
@@ -761,8 +776,8 @@ const saveChanges = () => {
                 switch-label-side
                 aria-label="Filter level"
                 role="menuitem"
-                :min="0"
-                :max="20"
+                :min="-1"
+                :max="25"
                 :readonly="npcs.getLocks.level"
               />
               <q-btn
@@ -783,28 +798,6 @@ const saveChanges = () => {
         <div class="tw-grid tw-grid-cols-2 tw-gap-3 tw-my-4 tw-mx-6">
           <div id="v-step-4" class="tw-py-1 tw-mr-2">
             <q-input
-              v-model="npcs.getActiveNpc!.npc.description"
-              class="tw-mx-auto"
-              outlined
-              dense
-              autogrow
-              label="Description"
-              type="textarea"
-            />
-          </div>
-          <div class="tw-py-1 tw-ml-2">
-            <q-input
-              v-model="npcs.getActiveNpc!.npc.personality"
-              class="tw-mx-auto"
-              outlined
-              dense
-              autogrow
-              label="Personality"
-              type="textarea"
-            />
-          </div>
-          <div class="tw-py-1 tw-mr-2">
-            <q-input
               label="Languages"
               v-model="npcs.getActiveNpc!.npc.languages"
               class="tw-mx-auto"
@@ -822,6 +815,28 @@ const saveChanges = () => {
               outlined
               dense
               autogrow
+              type="textarea"
+            />
+          </div>
+          <div class="tw-py-1 tw-mr-2">
+            <q-input
+              v-model="npcs.getActiveNpc!.npc.description"
+              class="tw-mx-auto"
+              outlined
+              dense
+              autogrow
+              label="Description"
+              type="textarea"
+            />
+          </div>
+          <div class="tw-py-1 tw-ml-2">
+            <q-input
+              v-model="npcs.getActiveNpc!.npc.personality"
+              class="tw-mx-auto"
+              outlined
+              dense
+              autogrow
+              label="Personality"
               type="textarea"
             />
           </div>
@@ -846,6 +861,58 @@ const saveChanges = () => {
               autogrow
               type="textarea"
             />
+          </div>
+        </div>
+        <q-separator class="tw-my-2 tw-mx-6" style="height: 2px" />
+        <div id="v-step-5" class="tw-mx-6">
+          <div v-for="(item, index) in npcs.getActiveNpc!.npc.custom_fields" :key="index">
+            <div class="tw-flex tw-gap-6 tw-my-5">
+              <div class="tw-flex-auto">
+                <q-input
+                  :label="'Custom field ' + (index + 1)"
+                  v-model="item.name"
+                  outlined
+                  dense
+                  autogrow
+                  type="textarea"
+                />
+              </div>
+              <div class="tw-flex-auto">
+                <q-input
+                  :label="'Custom text ' + (index + 1)"
+                  v-model="item.body"
+                  outlined
+                  dense
+                  autogrow
+                  type="textarea"
+                />
+              </div>
+              <div class="tw-flex-none tw-my-auto">
+                <q-btn
+                  flat
+                  round
+                  dense
+                  size="sm"
+                  padding="sm"
+                  :icon="biTrash"
+                  aria-label="Remove custom field"
+                  @click="removeCustomField(index)"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="tw-my-5">
+            <q-btn
+              class="full-width"
+              outline
+              size="md"
+              padding="sm"
+              :icon="biPlusLg"
+              type="button"
+              aria-label="Add custom field"
+              @click="addCustomField()"
+            >
+            </q-btn>
           </div>
         </div>
       </q-page-container>

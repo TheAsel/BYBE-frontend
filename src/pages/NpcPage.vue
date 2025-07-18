@@ -66,7 +66,8 @@ if (localNpcs) {
         personality: '',
         quirk: '',
         relationships: '',
-        ideology: ''
+        ideology: '',
+        custom_fields: [{ name: '', body: '' }]
       }
     };
     localStorage.setItem('npcs', JSON.stringify([defaultNpc]));
@@ -114,6 +115,13 @@ const steps: Step[] = [
   },
   {
     target: '#v-step-5',
+    content: 'Here you can modify custom fields. Add new ones by clicking the "+" button.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-6',
     content:
       'This is where the final result of your NPC will be displayed. Click on the icon to the left of the name to open a new page with the fullscreen sheet.',
     params: {
@@ -148,7 +156,8 @@ const startTour = () => {
       personality: 'Kind and supportive, loves giving feedback',
       quirk: 'Sometimes his weapons disappear or duplicate',
       relationships: 'The frontend developer TheAsel and the backend developer RakuJa',
-      ideology: 'The frontend is better than the backend'
+      ideology: 'The frontend is better than the backend',
+      custom_fields: [{ name: '', body: '' }]
     };
 
     npcs.addNpc('Example');

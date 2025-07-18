@@ -17,6 +17,10 @@ export type npc = {
   quirk: string | null;
   relationships: string | null;
   ideology: string | null;
+  custom_fields: {
+    name: string | null;
+    body: string | null;
+  }[]
 };
 
 export type npc_list = {

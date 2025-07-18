@@ -21,7 +21,7 @@ const openNpcSheet = (id: number) => {
 <template>
   <div class="npc-sheet q-pa-md tw-w-full md:tw-w-[33%]">
     <div
-      id="v-step-5"
+      id="v-step-6"
       class="tw-opacity-85 dark:tw-opacity-90 tw-items-center tw-text-left tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
     >
       <q-scroll-area style="height: calc(100vh - 124px)">
@@ -98,8 +98,21 @@ const openNpcSheet = (id: number) => {
             <strong>Languages </strong>
             {{ npcs.getActiveNpc!.npc.languages }}
           </div>
+          <div
+            v-if="npcs.getActiveNpc!.npc.quirk"
+            class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+          >
+            <strong>Quirks </strong>
+            {{ npcs.getActiveNpc!.npc.quirk }}
+          </div>
           <q-separator
-            v-if="npcs.getActiveNpc!.npc.languages"
+            v-if="
+              (npcs.getActiveNpc!.npc.languages || npcs.getActiveNpc!.npc.quirk) &&
+              (npcs.getActiveNpc!.npc.description ||
+                npcs.getActiveNpc!.npc.personality ||
+                npcs.getActiveNpc!.npc.relationships ||
+                npcs.getActiveNpc!.npc.ideology)
+            "
             class="tw-my-2"
             style="height: 2px"
           />
@@ -123,26 +136,6 @@ const openNpcSheet = (id: number) => {
               {{ npcs.getActiveNpc!.npc.personality }}
             </div>
             <div
-              v-if="npcs.getActiveNpc!.npc.quirk"
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
-            >
-              <strong>Quirks </strong>
-              {{ npcs.getActiveNpc!.npc.quirk }}
-            </div>
-            <q-separator
-              v-if="
-                npcs.getActiveNpc!.npc.description ||
-                npcs.getActiveNpc!.npc.personality ||
-                npcs.getActiveNpc!.npc.quirk
-              "
-              class="tw-my-2"
-              style="height: 2px"
-            />
-            <hr
-              class="only-print"
-              style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
-            />
-            <div
               v-if="npcs.getActiveNpc!.npc.relationships"
               class="tw-text-base tw-text-gray-800 dark:tw-text-white"
             >
@@ -155,6 +148,32 @@ const openNpcSheet = (id: number) => {
             >
               <strong>Ideology </strong>
               {{ npcs.getActiveNpc!.npc.ideology }}
+            </div>
+          </div>
+          <q-separator
+            v-if="
+              (npcs.getActiveNpc!.npc.languages ||
+                npcs.getActiveNpc!.npc.quirk ||
+                npcs.getActiveNpc!.npc.description ||
+                npcs.getActiveNpc!.npc.personality ||
+                npcs.getActiveNpc!.npc.relationships ||
+                npcs.getActiveNpc!.npc.ideology) &&
+              (npcs.getActiveNpc!.npc.custom_fields.some((item) => item.name) ||
+                npcs.getActiveNpc!.npc.custom_fields.some((item) => item.body))
+            "
+            class="tw-my-2"
+            style="height: 2px"
+          />
+          <hr
+            class="only-print"
+            style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+          />
+          <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
+            <div v-for="(item, index) in npcs.getActiveNpc!.npc.custom_fields" :key="index">
+              <div v-if="item" class="tw-text-base tw-text-gray-800 dark:tw-text-white">
+                <strong>{{ item.name }} </strong>
+                {{ item.body }}
+              </div>
             </div>
           </div>
         </div>
