@@ -502,6 +502,7 @@ export const npcParametersStore = defineStore('npcparameters', {
     npcParameters: {
       genders: [] as string[],
       ancestries: [] as string[],
+      cultures: [] as string[],
       valid_genders: [] as valid_genders[],
       classes: [] as string[],
       jobs: [] as string[]
@@ -516,6 +517,9 @@ export const npcParametersStore = defineStore('npcparameters', {
     },
     updateAncestries(newAncestries: string[]) {
       this.npcParameters.ancestries = newAncestries.map(splitPascalCase);
+    },
+    updateCultures(newCultures: string[]) {
+      this.npcParameters.cultures = newCultures.map(splitPascalCase);
     },
     updateValidGenders(newValidGenders: valid_genders[]) {
       this.npcParameters.valid_genders = newValidGenders;
@@ -532,7 +536,20 @@ export const npcParametersStore = defineStore('npcparameters', {
 export const npcStore = defineStore('npc', {
   state: () => ({
     npcs: [
-      { name: 'Default', npc: { level: -1, gender: '', ancestry: '', class: '', job: '', name: '', custom_fields: [{ name: '', body: '' }] } }
+      {
+        name: 'Default',
+        npc: {
+          level: -1,
+          gender: '',
+          ancestry: '',
+          culture: '',
+          class: '',
+          job: '',
+          name: '',
+          custom_fields: [{ name: '', body: '' }]
+        },
+        culture: false
+      }
     ] as npc_list[],
     activeNpc: 0,
     generating: false,
@@ -541,6 +558,7 @@ export const npcStore = defineStore('npc', {
       nickname: false,
       gender: false,
       ancestry: false,
+      culture: false,
       class: false,
       job: false,
       level: false
@@ -562,6 +580,7 @@ export const npcStore = defineStore('npc', {
         level: -1,
         gender: '',
         ancestry: '',
+        culture: '',
         class: '',
         job: '',
         name: '',
@@ -590,6 +609,7 @@ export const npcStore = defineStore('npc', {
           level: -1,
           gender: '',
           ancestry: '',
+          culture: '',
           class: '',
           job: '',
           name: '',
@@ -601,7 +621,8 @@ export const npcStore = defineStore('npc', {
           relationships: '',
           ideology: '',
           custom_fields: [{ name: '', body: '' }]
-        }
+        },
+        culture: false
       });
       this.activeNpc = this.npcs.length - 1;
     },
@@ -616,6 +637,7 @@ export const npcStore = defineStore('npc', {
               level: -1,
               gender: '',
               ancestry: '',
+              culture: '',
               class: '',
               job: '',
               name: '',
@@ -627,7 +649,8 @@ export const npcStore = defineStore('npc', {
               relationships: '',
               ideology: '',
               custom_fields: [{ name: '', body: '' }]
-            }
+            },
+            culture: false
           }
         ];
       }

@@ -7,6 +7,7 @@ export type npc = {
   level: number | undefined;
   gender: string | undefined;
   ancestry: string | undefined;
+  culture: string | undefined;
   class: string | undefined;
   job: string | undefined;
   name: string | undefined;
@@ -20,10 +21,11 @@ export type npc = {
   custom_fields: {
     name: string | null;
     body: string | null;
-  }[]
+  }[];
 };
 
 export type npc_list = {
   name: string;
   npc: npc;
+  culture: boolean;
 };

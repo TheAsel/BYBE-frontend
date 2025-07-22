@@ -16,12 +16,14 @@ const npcs = npcStore();
 const parameters = ref<{
   genders: string[];
   ancestries: string[];
+  cultures: string[];
   classes: string[];
   jobs: string[];
   level: { min: number; max: number };
 }>({
   genders: [],
   ancestries: [],
+  cultures: [],
   classes: [],
   jobs: [],
   level: { min: -1, max: 25 }
@@ -31,6 +33,7 @@ const nickname = ref<boolean>(false);
 
 const genderFilter = ref<string[]>(npcParameters.getNpcParameters.genders);
 const ancestryFilter = ref<string[]>(npcParameters.getNpcParameters.ancestries);
+const culturesFilter = ref<string[]>(npcParameters.getNpcParameters.cultures);
 const classFilter = ref<string[]>(npcParameters.getNpcParameters.classes);
 const jobFilter = ref<string[]>(npcParameters.getNpcParameters.jobs);
 
@@ -52,6 +55,13 @@ onMounted(async () => {
       ancestryFilter.value = npcParameters.getNpcParameters.ancestries;
     } else {
       throw new Error('Error fetching ancestries');
+    }
+    const culturesRequest = await requestParameters('cultures');
+    if (culturesRequest) {
+      npcParameters.updateCultures(culturesRequest.sort());
+      culturesFilter.value = npcParameters.getNpcParameters.cultures;
+    } else {
+      throw new Error('Error fetching cultures');
     }
     const classesRequest = await requestParameters('classes');
     if (classesRequest) {
@@ -77,9 +87,16 @@ const generateNpc = debounce(async function () {
 
   const post: {
     gender_filter?: string[] | undefined;
-    ancestry_filter?: string[] | undefined;
+    name_origin_filter?: {
+      FromAncestry?: string[];
+      FromCulture?: string[];
+    };
     class_filter?: string[] | undefined;
     job_filter?: string[] | undefined;
+    level_filter?: {
+      min_level: number | undefined;
+      max_level: number | undefined;
+    };
     generate_nickname: boolean;
   } = {
     generate_nickname: nickname.value
@@ -92,11 +109,26 @@ const generateNpc = debounce(async function () {
     post.gender_filter = tmpGenders;
   }
 
-  if (parameters.value.ancestries && parameters.value.ancestries.length > 0) {
+  if (
+    !npcs.getActiveNpc!.culture &&
+    parameters.value.ancestries &&
+    parameters.value.ancestries.length > 0
+  ) {
     const tmpAncestries = parameters.value.ancestries.map((_ancestry) => {
       return _ancestry.replaceAll(' ', '');
     });
-    post.ancestry_filter = tmpAncestries;
+    post.name_origin_filter = { FromAncestry: tmpAncestries };
+  }
+
+  if (
+    npcs.getActiveNpc!.culture &&
+    parameters.value.cultures &&
+    parameters.value.cultures.length > 0
+  ) {
+    const tmpCultures = parameters.value.cultures.map((_culture) => {
+      return _culture.replaceAll(' ', '');
+    });
+    post.name_origin_filter = { FromCulture: tmpCultures };
   }
 
   if (parameters.value.classes && parameters.value.classes.length > 0) {
@@ -112,6 +144,11 @@ const generateNpc = debounce(async function () {
     });
     post.job_filter = tmpJobs;
   }
+
+  post.level_filter = {
+    min_level: parameters.value.level.min,
+    max_level: parameters.value.level.max
+  };
 
   try {
     const randomNpc = await npcGenerator(post);
@@ -130,6 +167,10 @@ const generateNpc = debounce(async function () {
         randomNpc.ancestry = randomNpc.ancestry!.replace(/([a-z])([A-Z])/g, '$1 $2');
         npcs.getActiveNpc!.npc.ancestry = randomNpc.ancestry;
       }
+      if (!npcs.getLocks.culture) {
+        randomNpc.culture = randomNpc.culture!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.culture = randomNpc.culture;
+      }
       if (!npcs.getLocks.class) {
         randomNpc.class = randomNpc.class!.replace(/([a-z])([A-Z])/g, '$1 $2');
         npcs.getActiveNpc!.npc.class = randomNpc.class;
@@ -137,6 +178,9 @@ const generateNpc = debounce(async function () {
       if (!npcs.getLocks.job) {
         randomNpc.job = randomNpc.job!.replace(/([a-z])([A-Z])/g, '$1 $2');
         npcs.getActiveNpc!.npc.job = randomNpc.job;
+      }
+      if (!npcs.getLocks.level) {
+        npcs.getActiveNpc!.npc.level = randomNpc.level;
       }
     } else {
       throw new Error('Error generating random npc');
@@ -157,6 +201,7 @@ const generateNpc = debounce(async function () {
 const resetParameters = () => {
   parameters.value.genders = [];
   parameters.value.ancestries = [];
+  parameters.value.cultures = [];
   parameters.value.classes = [];
   parameters.value.jobs = [];
   parameters.value.level = { min: -1, max: 25 };
@@ -176,6 +221,15 @@ const filterAncestriesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
     npcParameters.getNpcParameters.ancestries = ancestryFilter.value.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
+  });
+};
+
+const filterCulturesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    npcParameters.getNpcParameters.cultures = culturesFilter.value.filter(
       (v) => v.toLowerCase().indexOf(filter) > -1
     );
   });
@@ -261,19 +315,45 @@ const filterJobsFn = (val, update) => {
               @filter="filterGendersFn"
             />
 
-            <q-select
-              label="Ancestries"
-              v-model="parameters.ancestries"
-              multiple
-              dense
-              outlined
-              clearable
-              options-dense
-              use-input
-              input-debounce="0"
-              :options="Object.freeze(npcParameters.getNpcParameters.ancestries)"
-              @filter="filterAncestriesFn"
-            />
+            <div class="tw-flex">
+              <q-select
+                v-if="!npcs.getActiveNpc!.culture"
+                label="Ancestries"
+                v-model="parameters.ancestries"
+                class="tw-flex-grow"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                use-input
+                input-debounce="0"
+                :options="Object.freeze(npcParameters.getNpcParameters.ancestries)"
+                @filter="filterAncestriesFn"
+              />
+              <q-select
+                v-else
+                label="Cultures"
+                v-model="parameters.cultures"
+                class="tw-flex-grow"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                use-input
+                input-debounce="0"
+                :options="Object.freeze(npcParameters.getNpcParameters.cultures)"
+                @filter="filterCulturesFn"
+              />
+              <q-toggle
+                v-model="npcs.getActiveNpc!.culture"
+                label="Use Culture"
+                class="tw-flex-shrink tw-mx-2"
+                aria-label="Toggle Culture"
+              >
+              </q-toggle>
+            </div>
 
             <q-select
               label="Classes"

@@ -2,5 +2,8 @@
   "extends": "./.quasar/tsconfig.json",
   "compilerOptions": {
     "noImplicitAny": false
+  },
+  "vueCompilerOptions": {
+    "globalTypesPath": "./vue-global-types.d.ts"
   }
 }

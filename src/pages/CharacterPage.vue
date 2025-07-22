@@ -55,6 +55,7 @@ if (localNpcs) {
         level: 0,
         gender: '',
         ancestry: '',
+        culture: '',
         class: '',
         job: '',
         name: '',
@@ -66,7 +67,8 @@ if (localNpcs) {
         relationships: '',
         ideology: '',
         custom_fields: [{ name: '', body: '' }]
-      }
+      },
+      culture: false
     };
     localStorage.setItem('npcs', JSON.stringify([defaultNpc]));
     npcs.updateNpcs([defaultNpc]);

@@ -73,10 +73,16 @@ const openNpcSheet = (id: number) => {
               {{ npcs.getActiveNpc!.npc.gender.toUpperCase() }}
             </div>
             <div
-              v-if="npcs.getActiveNpc!.npc.ancestry"
+              v-if="!npcs.getActiveNpc!.culture && npcs.getActiveNpc!.npc.ancestry"
               class="tw-bg-[#28765d] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
             >
               {{ npcs.getActiveNpc!.npc.ancestry.toUpperCase() }}
+            </div>
+            <div
+              v-if="npcs.getActiveNpc!.culture && npcs.getActiveNpc!.npc.culture"
+              class="tw-bg-[#28765d] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
+            >
+              {{ npcs.getActiveNpc!.npc.culture.toUpperCase() }}
             </div>
             <div
               v-if="npcs.getActiveNpc!.npc.class"

@@ -1,6 +1,6 @@
 import type { npc, valid_genders } from '../types/npcs';
 
-export async function requestParameters(parameter: 'genders' | 'classes' | 'jobs') {
+export async function requestParameters(parameter: 'genders' | 'classes' | 'jobs' | 'cultures') {
   try {
     const requestOptions = {
       method: 'GET',
@@ -38,9 +38,16 @@ export async function requestAncestries() {
 
 export async function npcGenerator(body: {
   gender_filter?: string[] | undefined;
-  ancestry_filter?: string[] | undefined;
+  name_origin_filter?: {
+    FromAncestry?: string[] | undefined;
+    FromCulture?: string[] | undefined;
+  };
   class_filter?: string[] | undefined;
   job_filter?: string[] | undefined;
+  level_filter?: {
+    min_level: number | undefined;
+    max_level: number | undefined;
+  };
   generate_nickname: boolean;
 }) {
   try {
@@ -62,7 +69,7 @@ export async function npcGenerator(body: {
 }
 
 export async function npcParametersGenerator(
-  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level'
+  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level' | 'culture'
 ) {
   try {
     const requestOptions = {
@@ -79,6 +86,24 @@ export async function npcParametersGenerator(
       throw new Error(error);
     }
     return data as string;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function npcLevelGenerator() {
+  try {
+    const requestOptions = {
+      method: 'POST',
+      headers: { accept: 'application/json', 'Content-Type': 'application/json' }
+    };
+    const response = await fetch(process.env.API_URL + '/npc/generator/level', requestOptions);
+    const data = await response.json();
+    if (!response.ok) {
+      const error = data?.message ?? response.status;
+      throw new Error(error);
+    }
+    return data as number;
   } catch (error) {
     console.error(error);
   }
