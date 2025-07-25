@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { useHead } from '@unhead/vue';
 import {
+  biArrowRightShort,
   biCalculator,
-  biShop,
+  biHouses,
+  biPencil,
   biPersonVcard,
-  biArrowRightShort
+  biShop
 } from '@quasar/extras/bootstrap-icons';
+import { useHead } from '@unhead/vue';
 
 useHead({
   title: 'BYBE - Pathfinder 2e GM Tools',
@@ -36,8 +38,22 @@ const cards = [
     name: 'NPC Generator',
     to: '/npc',
     description: "Quickly generate an NPC's name, ancestry, background and quirks.",
-    subtext: 'Work in progress...',
+    subtext: 'Try it out',
     icon: biPersonVcard
+  },
+  {
+    name: 'Monster Generator',
+    to: '/monster',
+    description: 'Create custom monsters with the help of custom generation.',
+    subtext: 'Work in progress...',
+    icon: biPencil
+  },
+  {
+    name: 'City Planner',
+    to: '/city',
+    description: 'Combine what you created with the other tools to plan an entire city.',
+    subtext: 'Work in progress...',
+    icon: biHouses
   }
 ];
 </script>

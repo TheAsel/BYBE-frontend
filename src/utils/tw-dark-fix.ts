@@ -1,5 +1,5 @@
-import { watch } from 'vue';
 import { Dark } from 'quasar';
+import { watch } from 'vue';
 
 let prefix = '';
 

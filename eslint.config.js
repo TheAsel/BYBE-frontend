@@ -1,9 +1,10 @@
 import js from '@eslint/js';
-import globals from 'globals';
-import pluginVue from 'eslint-plugin-vue';
 import pluginQuasar from '@quasar/app-vite/eslint';
-import vueTsEslintConfig from '@vue/eslint-config-typescript';
 import prettierSkipFormatting from '@vue/eslint-config-prettier/skip-formatting';
+import vueTsEslintConfig from '@vue/eslint-config-typescript';
+import importPlugin from 'eslint-plugin-import';
+import pluginVue from 'eslint-plugin-vue';
+import globals from 'globals';
 
 export default [
   {
@@ -34,6 +35,60 @@ export default [
    *   -> Above, plus rules to enforce subjective community defaults to ensure consistency.
    */
   ...pluginVue.configs['flat/essential'],
+
+  {
+    plugins: {
+      import: importPlugin
+    },
+    rules: {
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+            'object',
+            'type'
+          ],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+          distinctGroup: true
+        }
+      ],
+
+      'sort-imports': [
+        'error',
+        {
+          ignoreCase: true,
+          ignoreDeclarationSort: true,
+          ignoreMemberSort: false,
+          memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single']
+        }
+      ],
+
+      'import/no-unresolved': 'error',
+      'import/named': 'error',
+      'import/default': 'error',
+      'import/namespace': 'error',
+      'import/no-absolute-path': 'error',
+      'import/no-dynamic-require': 'error',
+      'import/no-self-import': 'error',
+      'import/no-cycle': 'error',
+      'import/no-useless-path-segments': 'error',
+      'import/no-relative-packages': 'error'
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          project: './tsconfig.json'
+        }
+      }
+    }
+  },
 
   {
     files: ['**/*.ts', '**/*.vue'],

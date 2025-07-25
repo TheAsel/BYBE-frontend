@@ -1,10 +1,12 @@
-import { defineStore } from 'pinia';
 import { capitalize } from 'lodash-es';
-import type { party } from '../types/party';
+import { defineStore } from 'pinia';
+
 import type { min_creature } from '../types/creature';
 import type { encounter, encounter_list } from '../types/encounter';
 import type { variants } from '../types/filters';
 import type { item, min_item } from '../types/item';
+import type { npc, npc_list, valid_genders } from '../types/npcs';
+import type { party } from '../types/party';
 import type { shop_list } from '../types/shop';
 import type { template, template_data } from '../types/template';
 
@@ -487,6 +489,186 @@ export const templateStore = defineStore('template', {
     removeTemplate() {
       this.templates.splice(this.activeTemplate, 1);
       this.changeActiveTemplate(this.getTemplateIndex('General'));
+    }
+  }
+});
+
+function splitPascalCase(input: string): string {
+  return input.replace(/([a-z])([A-Z])/g, '$1 $2');
+}
+
+export const npcParametersStore = defineStore('npcparameters', {
+  state: () => ({
+    npcParameters: {
+      genders: [] as string[],
+      ancestries: [] as string[],
+      cultures: [] as string[],
+      valid_genders: [] as valid_genders[],
+      classes: [] as string[],
+      jobs: [] as string[]
+    }
+  }),
+  getters: {
+    getNpcParameters: (state) => state.npcParameters
+  },
+  actions: {
+    updateGenders(newGenders: string[]) {
+      this.npcParameters.genders = newGenders.map(splitPascalCase);
+    },
+    updateAncestries(newAncestries: string[]) {
+      this.npcParameters.ancestries = newAncestries.map(splitPascalCase);
+    },
+    updateCultures(newCultures: string[]) {
+      this.npcParameters.cultures = newCultures.map(splitPascalCase);
+    },
+    updateValidGenders(newValidGenders: valid_genders[]) {
+      this.npcParameters.valid_genders = newValidGenders;
+    },
+    updateClasses(newClasses: string[]) {
+      this.npcParameters.classes = newClasses.map(splitPascalCase);
+    },
+    updateJobs(newJobs: string[]) {
+      this.npcParameters.jobs = newJobs.map(splitPascalCase);
+    }
+  }
+});
+
+export const npcStore = defineStore('npc', {
+  state: () => ({
+    npcs: [
+      {
+        name: 'Default',
+        npc: {
+          level: -1,
+          gender: '',
+          ancestry: '',
+          culture: '',
+          class: '',
+          job: '',
+          name: '',
+          custom_fields: [{ name: '', body: '' }]
+        },
+        culture: false
+      }
+    ] as npc_list[],
+    activeNpc: 0,
+    generating: false,
+    locks: {
+      name: false,
+      nickname: false,
+      gender: false,
+      ancestry: false,
+      culture: false,
+      class: false,
+      job: false,
+      level: false
+    }
+  }),
+  getters: {
+    getNpcs: (state) => state.npcs,
+    getActive: (state) => state.activeNpc,
+    getActiveNpc: (state) => state.npcs[state.activeNpc],
+    getGenerating: (state) => state.generating,
+    getLocks: (state) => state.locks
+  },
+  actions: {
+    setActiveNpc(newActiveNpc: number) {
+      this.activeNpc = newActiveNpc;
+    },
+    clearNpc() {
+      const tmpNpc: npc = {
+        level: -1,
+        gender: '',
+        ancestry: '',
+        culture: '',
+        class: '',
+        job: '',
+        name: '',
+        nickname: '',
+        languages: '',
+        description: '',
+        personality: '',
+        quirk: '',
+        relationships: '',
+        ideology: '',
+        custom_fields: [{ name: '', body: '' }]
+      };
+      this.npcs[this.activeNpc]!.npc = tmpNpc;
+    },
+    changeActiveNpc(npcIndex: number) {
+      if (npcIndex >= this.npcs.length || npcIndex < 0) {
+        this.activeNpc = 0;
+      } else {
+        this.activeNpc = npcIndex;
+      }
+    },
+    addNpc(npcName: string) {
+      this.npcs.push({
+        name: npcName,
+        npc: {
+          level: -1,
+          gender: '',
+          ancestry: '',
+          culture: '',
+          class: '',
+          job: '',
+          name: '',
+          nickname: '',
+          languages: '',
+          description: '',
+          personality: '',
+          quirk: '',
+          relationships: '',
+          ideology: '',
+          custom_fields: [{ name: '', body: '' }]
+        },
+        culture: false
+      });
+      this.activeNpc = this.npcs.length - 1;
+    },
+    removeNpc() {
+      this.npcs.splice(this.activeNpc, 1);
+      this.activeNpc = 0;
+      if (this.npcs.length <= 0) {
+        this.npcs = [
+          {
+            name: 'Default',
+            npc: {
+              level: -1,
+              gender: '',
+              ancestry: '',
+              culture: '',
+              class: '',
+              job: '',
+              name: '',
+              nickname: '',
+              languages: '',
+              description: '',
+              personality: '',
+              quirk: '',
+              relationships: '',
+              ideology: '',
+              custom_fields: [{ name: '', body: '' }]
+            },
+            culture: false
+          }
+        ];
+      }
+    },
+    getNpcIndex(npcName: string): number {
+      return this.npcs.map((npc) => npc.name).indexOf(npcName);
+    },
+    updateNpc(npcName: string, newNpc: npc) {
+      const npcIndex = this.getNpcIndex(npcName);
+      if (npcIndex >= 0) {
+        this.npcs[npcIndex]!.npc = newNpc;
+      }
+    },
+    updateNpcs(newNpcs: npc_list[]) {
+      this.npcs = newNpcs;
+    },
+    setGenerating(newGenerating: boolean) {
+      this.generating = newGenerating;
     }
   }
 });

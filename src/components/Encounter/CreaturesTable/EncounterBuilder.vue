@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useQuasar } from 'quasar';
+import { biQuestionCircle, biXLg } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { biXLg, biQuestionCircle } from '@quasar/extras/bootstrap-icons';
-import { partyStore, filtersStore, encounterStore, settingsStore } from '../../../stores/store';
-import { encounterGenerator } from '../../../utils/encounter-api-calls';
-import type { alignments, sizes, rarities, challenges, roles } from '../../../types/filters';
-import type { min_creature } from '../../../types/creature';
 import { debounce } from 'lodash-es';
+import { useQuasar } from 'quasar';
+import { ref } from 'vue';
+
+import { encounterStore, filtersStore, partyStore, settingsStore } from '../../../stores/store';
+import { encounterGenerator } from '../../../utils/encounter-api-calls';
+
+import type { min_creature } from '../../../types/creature';
 import type { adventure_groups } from '../../../types/encounter';
+import type { alignments, challenges, rarities, roles, sizes } from '../../../types/filters';
 
 const $q = useQuasar();
 

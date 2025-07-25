@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 import { useHead } from '@unhead/vue';
-import { partyStore, encounterStore, settingsStore } from '../stores/store';
-import type { party } from '../types/party';
+import { ref } from 'vue';
+
+import CreatureList from '../components/Encounter/CreatureList.vue';
+import CreaturesTable from '../components/Encounter/CreaturesTable.vue';
+import { encounterStore, partyStore, settingsStore } from '../stores/store';
+
 import type { min_creature } from '../types/creature';
 import type { encounter_list } from '../types/encounter';
-import CreatureList from '../components/Encounter/CreatureList.vue';
+import type { party } from '../types/party';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
-import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
-import CreaturesTable from '../components/Encounter/CreaturesTable.vue';
 
 useHead({
   title: 'Encounter Builder - BYBE',
@@ -163,7 +165,7 @@ const steps: Step[] = [
   {
     target: '#v-step-8',
     content:
-      'You can change some settings from here, like enabling Proficiency without Level or experimental features.',
+      'You can enable the variant rule for Proficiency without Level by clicking here and going to the "Encounter" tab.',
     params: {
       placement: 'top'
     }
@@ -216,7 +218,8 @@ const callbacks: VTourCallbacks = {
 };
 
 function scrollDirection() {
-  const footer = document.querySelector('footer');
+  const footers = document.querySelectorAll('footer');
+  const footer = footers[footers.length - 1];
   const top = footer?.getBoundingClientRect().top;
   if (top) {
     scrollUp.value = top < window.innerHeight;

@@ -1,25 +1,28 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useQuasar } from 'quasar';
 import {
-  biList,
-  biGithub,
-  biSun,
-  biMoon,
-  biGear,
-  biXLg,
   biCloudArrowDown,
   biCloudArrowUp,
-  biQuestionCircle
+  biGear,
+  biGithub,
+  biList,
+  biMoon,
+  biQuestionCircle,
+  biSun,
+  biXLg
 } from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { fasFlaskVial } from '@quasar/extras/fontawesome-v6';
-import { TailwindDarkFix } from '../utils/tw-dark-fix';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash-es';
-import type { party } from '../types/party';
+import { useQuasar } from 'quasar';
+import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+
+import { encounterStore, settingsStore } from '../stores/store';
+import { TailwindDarkFix } from '../utils/tw-dark-fix';
+
 import type { encounter_list } from '../types/encounter';
-import { settingsStore, encounterStore } from '../stores/store';
+import type { npc_list } from '../types/npcs';
+import type { party } from '../types/party';
 import type { shop_list } from '../types/shop';
 import type { template } from '../types/template';
 
@@ -226,7 +229,9 @@ watch(
 const navigation = [
   { name: 'Encounter Builder', to: '/encounter' },
   { name: 'Shop Generator', to: '/shop' },
-  { name: 'NPC Generator', to: '/npc' }
+  { name: 'NPC Generator', to: '/npc' },
+  { name: 'Monster Generator', to: '/monster' },
+  { name: 'City Planner', to: '/city' }
 ];
 
 const $q = useQuasar();
@@ -328,6 +333,26 @@ const validateData = (result: string) => {
             }
           } else {
             throw new Error('Invalid loaded shop format');
+          }
+          break;
+        }
+        case 'npcs': {
+          const parsedNpc = JSON.parse(parsedData[key]);
+          if (Array.isArray(parsedNpc)) {
+            const isCompatible = parsedNpc.every((p) => {
+              return typeof p.name === 'string';
+            });
+            if (isCompatible) {
+              const npcs: npc_list[] = parsedNpc;
+              const npcNames = npcs.map((p) => p.name);
+              if (new Set(npcNames).size !== npcNames.length) {
+                throw new Error('Duplicate loaded npc names');
+              }
+            } else {
+              throw new Error('Invalid loaded npc format');
+            }
+          } else {
+            throw new Error('Invalid loaded npc format');
           }
           break;
         }
@@ -509,6 +534,12 @@ const downloadData = () => {
             "
             :aria-current="currentPath === item.to ? 'page' : undefined"
             >{{ item.name }}
+            <span
+              v-if="item.name === 'NPC Generator'"
+              class="dark:tw-text-yellow-400 tw-text-amber-500 tw-align-top tw-text-xs"
+            >
+              NEW
+            </span>
           </router-link>
           <q-space class="sm:tw-block tw-hidden" />
           <q-separator class="tw-block sm:tw-hidden" />
@@ -713,7 +744,9 @@ const downloadData = () => {
               </q-card>
             </q-dialog>
             <q-btn
-              v-if="currentPath === '/encounter' || currentPath === '/shop'"
+              v-if="
+                currentPath === '/encounter' || currentPath === '/shop' || currentPath === '/npc'
+              "
               flat
               padding="sm"
               class="tw-text-gray-800 dark:tw-text-gray-200"

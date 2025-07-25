@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { itemsStore, settingsStore } from '../../../stores/store';
 import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
-import { useRouter } from 'vue-router';
 import { upperFirst } from 'lodash-es';
+import { useRouter } from 'vue-router';
+
+import { itemsStore, settingsStore } from '../../../stores/store';
 
 const settings = settingsStore();
 const items = itemsStore();

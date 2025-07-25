@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
-import { useHead } from '@unhead/vue';
-import ShopTable from '../components/Shop/ShopTable.vue';
-import ShopSheet from '../components/Shop/ShopSheet.vue';
-import ShopList from '../components/Shop/ShopList.vue';
-import type { shop_list } from '../types/shop';
-import { itemsStore, settingsStore, templateStore } from '../stores/store';
-import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
+import { useHead } from '@unhead/vue';
+import { onMounted, onUnmounted, ref } from 'vue';
+
+import ShopList from '../components/Shop/ShopList.vue';
+import ShopSheet from '../components/Shop/ShopSheet.vue';
+import ShopTable from '../components/Shop/ShopTable.vue';
+import { itemsStore, settingsStore, templateStore } from '../stores/store';
+
 import type { item, min_item } from '../types/item';
+import type { shop_list } from '../types/shop';
 import type { template } from '../types/template';
+import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
 useHead({
   title: 'Shop Generator - BYBE',
@@ -216,7 +218,8 @@ const callbacks: VTourCallbacks = {
 };
 
 function scrollDirection() {
-  const footer = document.querySelector('footer');
+  const footers = document.querySelectorAll('footer');
+  const footer = footers[footers.length - 1];
   const top = footer?.getBoundingClientRect().top;
   if (top) {
     scrollUp.value = top < window.innerHeight;

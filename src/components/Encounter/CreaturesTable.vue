@@ -1,41 +1,44 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
 import {
-  biEraser,
   biArrowDownUp,
   biBook,
+  biEraser,
   biFullscreen,
   biFullscreenExit
 } from '@quasar/extras/bootstrap-icons';
-import { mdiSword, mdiBowArrow, mdiMagicStaff } from '@quasar/extras/mdi-v7';
 import {
-  fasHandFist,
-  fasMeteor,
-  fasUserNinja,
   fasCrosshairs,
-  fasUserShield,
-  fasHatWizard,
   fasGraduationCap,
-  fasScroll
+  fasHandFist,
+  fasHatWizard,
+  fasMeteor,
+  fasScroll,
+  fasUserNinja,
+  fasUserShield
 } from '@quasar/extras/fontawesome-v6';
+import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
+import { mdiBowArrow, mdiMagicStaff, mdiSword } from '@quasar/extras/mdi-v7';
 import { capitalize, debounce } from 'lodash-es';
+import { useQuasar } from 'quasar';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { encounterStore, filtersStore, settingsStore } from '../../stores/store';
+import { requestCreatures, requestFilters } from '../../utils/encounter-api-calls';
+
+import EncounterBuilder from './CreaturesTable/EncounterBuilder.vue';
+import PartyBuilder from './CreaturesTable/PartyBuilder.vue';
+
 import type { creature, min_creature } from '../../types/creature';
-import { filtersStore, encounterStore, settingsStore } from '../../stores/store';
-import PartyBuilder from '../../components/Encounter/CreaturesTable/PartyBuilder.vue';
-import EncounterBuilder from '../../components/Encounter/CreaturesTable/EncounterBuilder.vue';
 import type {
   alignments,
   creature_columns,
   creature_filters,
+  creature_type,
   rarities,
   roles,
-  sizes,
-  creature_type
+  sizes
 } from '../../types/filters';
-import { useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
-import { requestCreatures, requestFilters } from 'src/utils/encounter-api-calls';
-import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 
 const $q = useQuasar();
 const settings = settingsStore();

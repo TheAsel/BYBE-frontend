@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { biPlus, biDash, biTrash, biPlusLg } from '@quasar/extras/bootstrap-icons';
+import {
+  biDash,
+  biInputCursorText,
+  biPlus,
+  biPlusLg,
+  biTrash
+} from '@quasar/extras/bootstrap-icons';
 import { fasScroll } from '@quasar/extras/fontawesome-v6';
 import { debounce } from 'lodash-es';
-import { partyStore, encounterStore, infoStore } from '../../stores/store';
-import { encounterInfo } from '../../utils/encounter-api-calls';
-import type { encounter_list } from '../../types/encounter';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+
+import { encounterStore, infoStore, partyStore } from '../../stores/store';
+import { encounterInfo } from '../../utils/encounter-api-calls';
+
+import type { encounter_list } from '../../types/encounter';
+import type { variants } from '../../types/filters';
 
 const router = useRouter();
 
@@ -17,6 +26,10 @@ const info = infoStore();
 const newEncounterDialog = ref(false);
 const encounterNameInput = ref();
 const newEncounterName = ref('');
+
+const renameEncounterDialog = ref(false);
+const encounterRenameInput = ref();
+const newEncounterRename = ref('');
 
 const removeEncounterDialog = ref(false);
 
@@ -108,8 +121,10 @@ await debouncedCall();
 
 const closeDialog = () => {
   newEncounterDialog.value = false;
+  renameEncounterDialog.value = false;
   removeEncounterDialog.value = false;
   newEncounterName.value = '';
+  newEncounterRename.value = '';
 };
 
 const addEncounter = () => {
@@ -124,6 +139,21 @@ const addEncounter = () => {
     saveChanges();
     newEncounterName.value = '';
     newEncounterDialog.value = false;
+  }
+};
+
+const renameEncounter = () => {
+  encounterRenameInput.value.validate();
+  if (!encounterRenameInput.value.hasError) {
+    encounter.getActiveEncounter!.name = newEncounterRename.value;
+    encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
+    tmpEncounter.value = {
+      name: encounter.getActiveEncounter!.name,
+      creatures: [...encounter.getActiveEncounter!.creatures]
+    };
+    saveChanges();
+    newEncounterRename.value = '';
+    renameEncounterDialog.value = false;
   }
 };
 
@@ -151,8 +181,8 @@ const saveChanges = () => {
   localStorage.setItem('encounters', JSON.stringify(encounter.getEncounters));
 };
 
-const openCreatureSheet = (id: number) => {
-  const routeData = router.resolve({ name: 'bestiary', query: { id: id } });
+const openCreatureSheet = (id: number, variant: variants) => {
+  const routeData = router.resolve({ name: 'bestiary', query: { id: id, variant: variant } });
   if (process.env.IS_APP === 'true') {
     window.open(routeData.href, '_self');
   } else {
@@ -248,6 +278,74 @@ const openCreatureSheet = (id: number) => {
                 </q-card-actions>
               </q-card>
             </q-dialog>
+
+            <q-btn
+              class="tw-my-auto tw-ml-2"
+              :icon="biInputCursorText"
+              size="sm"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Rename encounter"
+              @click="renameEncounterDialog = true"
+            >
+              <q-tooltip
+                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Rename encounter
+              </q-tooltip>
+            </q-btn>
+            <q-dialog
+              v-model="renameEncounterDialog"
+              aria-label="New encounter dialog"
+              @escape-key="closeDialog"
+            >
+              <q-card flat bordered>
+                <q-card-section>
+                  <div class="text-h6">Rename encounter</div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                  <q-input
+                    ref="encounterRenameInput"
+                    v-model="newEncounterRename"
+                    dense
+                    autofocus
+                    counter
+                    :maxlength="50"
+                    :no-error-icon="true"
+                    :rules="[
+                      (val) => !!val || 'Field is required',
+                      (val) =>
+                        !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                        'This encounter already exists'
+                    ]"
+                    @keyup.enter="renameEncounter"
+                  />
+                </q-card-section>
+
+                <q-card-actions align="center" class="text-primary">
+                  <q-btn
+                    flat
+                    label="Cancel"
+                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    aria-label="Close dialog"
+                    @click="closeDialog"
+                  />
+                  <q-btn
+                    flat
+                    label="Rename encounter"
+                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    aria-label="Rename encounter"
+                    @click="renameEncounter"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+
             <q-btn
               class="tw-my-auto tw-mx-2 tw-p-2"
               :icon="biTrash"
@@ -343,7 +441,7 @@ const openCreatureSheet = (id: number) => {
                   class="tw-mr-2"
                   target="_blank"
                   aria-label="Open creature sheet"
-                  @click="openCreatureSheet(item.id)"
+                  @click="openCreatureSheet(item.id, item.variant!)"
                 >
                   <q-tooltip
                     class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"

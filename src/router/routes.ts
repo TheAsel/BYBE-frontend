@@ -23,6 +23,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../pages/NpcPage.vue')
       },
       {
+        path: 'character',
+        name: 'character',
+        component: () => import('../pages/CharacterPage.vue')
+      },
+      {
         path: 'shop',
         name: 'shop',
         component: () => import('../pages/ShopPage.vue')
@@ -31,6 +36,16 @@ const routes: RouteRecordRaw[] = [
         path: 'item',
         name: 'item',
         component: () => import('../pages/ItemPage.vue')
+      },
+      {
+        path: 'monster',
+        name: 'monster',
+        component: () => import('../pages/MonsterPage.vue')
+      },
+      {
+        path: 'city',
+        name: 'city',
+        component: () => import('../pages/CityPage.vue')
       },
       {
         path: 'license',

@@ -21,6 +21,11 @@
 		<priority>1.0</priority>
 	</url>
 	<url>
+		<loc>https://bybe.fly.dev/character</loc>
+		<lastmod>2025-07-03</lastmod>
+		<priority>1.0</priority>
+	</url>
+	<url>
 		<loc>https://bybe.fly.dev/shop</loc>
 		<lastmod>2024-07-24</lastmod>
 		<priority>1.0</priority>
@@ -28,6 +33,16 @@
 	<url>
 		<loc>https://bybe.fly.dev/item</loc>
 		<lastmod>2024-07-24</lastmod>
+		<priority>1.0</priority>
+	</url>
+	<url>
+		<loc>https://bybe.fly.dev/monster</loc>
+		<lastmod>2025-07-03</lastmod>
+		<priority>1.0</priority>
+	</url>
+	<url>
+		<loc>https://bybe.fly.dev/city</loc>
+		<lastmod>2025-07-03</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>

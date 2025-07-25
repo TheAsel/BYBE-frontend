@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { matPrint, matPriorityHigh } from '@quasar/extras/material-icons';
 import { useHead } from '@unhead/vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
-import { matPriorityHigh, matPrint } from '@quasar/extras/material-icons';
-import type { creature } from '../types/creature';
-import { requestCreatureId } from '../utils/encounter-api-calls';
-import type { variants } from '../types/filters';
 import { isNull, upperFirst } from 'lodash-es';
+import { useQuasar } from 'quasar';
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
 import { encounterStore } from '../stores/store';
+import { requestCreatureId } from '../utils/encounter-api-calls';
+
+import type { creature } from '../types/creature';
+import type { variants } from '../types/filters';
 
 const title = ref('Creature Sheet - BYBE');
 const encounters = encounterStore();
