@@ -534,6 +534,12 @@ const downloadData = () => {
             "
             :aria-current="currentPath === item.to ? 'page' : undefined"
             >{{ item.name }}
+            <span
+              v-if="item.name === 'NPC Generator'"
+              class="dark:tw-text-yellow-400 tw-text-amber-500 tw-align-top tw-text-xs"
+            >
+              NEW
+            </span>
           </router-link>
           <q-space class="sm:tw-block tw-hidden" />
           <q-separator class="tw-block sm:tw-hidden" />

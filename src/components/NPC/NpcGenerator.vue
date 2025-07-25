@@ -319,7 +319,7 @@ const filterJobsFn = (val, update) => {
               @filter="filterGendersFn"
             />
 
-            <div class="tw-flex">
+            <div class="tw-flex tw-flex-wrap">
               <q-select
                 v-if="!npcs.getActiveNpc!.culture"
                 label="Ancestries"
