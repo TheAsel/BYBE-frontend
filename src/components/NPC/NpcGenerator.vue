@@ -118,6 +118,8 @@ const generateNpc = debounce(async function () {
       return _ancestry.replaceAll(' ', '');
     });
     post.name_origin_filter = { FromAncestry: tmpAncestries };
+  } else if (!npcs.getActiveNpc!.culture) {
+    post.name_origin_filter = { FromAncestry: [] };
   }
 
   if (
@@ -129,6 +131,8 @@ const generateNpc = debounce(async function () {
       return _culture.replaceAll(' ', '');
     });
     post.name_origin_filter = { FromCulture: tmpCultures };
+  } else if (npcs.getActiveNpc!.culture) {
+    post.name_origin_filter = { FromCulture: [] };
   }
 
   if (parameters.value.classes && parameters.value.classes.length > 0) {
