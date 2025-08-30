@@ -7,6 +7,7 @@ import { requestRepoInfo } from '../utils/github-api';
 
 const newestVersion = ref(version);
 const repoUrl = 'https://github.com/' + process.env.REPO_URL + '/releases/latest';
+const isApp = process.env.IS_APP;
 
 try {
   if (process.env.REPO_URL) {
@@ -46,7 +47,7 @@ try {
         <p class="tw-text-sm tw-text-neutral-500 dark:tw-text-neutral-400">
           BYBE - v{{ version }}
           <a
-            v-if="version !== newestVersion"
+            v-if="version !== newestVersion && isApp !== 'true'"
             class="tw- tw-text-blue-600 dark:tw-text-blue-400 tw-decoration-2 hover:tw-underline"
             :href="repoUrl"
             target="_blank"
