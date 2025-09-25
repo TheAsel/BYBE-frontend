@@ -81,3 +81,5 @@ export type item_filters = {
   source_filter?: string[];
   pathfinder_version: string;
 };
+
+export type games = 'pf2e' | 'sf2e';

@@ -1,0 +1,1474 @@
+<script setup lang="ts">
+import {
+  biArrowDownUp,
+  biBook,
+  biEraser,
+  biFullscreen,
+  biFullscreenExit
+} from '@quasar/extras/bootstrap-icons';
+import {
+  fasCrosshairs,
+  fasGraduationCap,
+  fasHandFist,
+  fasHatWizard,
+  fasMeteor,
+  fasScroll,
+  fasUserNinja,
+  fasUserShield
+} from '@quasar/extras/fontawesome-v6';
+import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
+import { mdiBowArrow, mdiMagicStaff, mdiSword } from '@quasar/extras/mdi-v7';
+import { capitalize, debounce } from 'lodash-es';
+import { useQuasar } from 'quasar';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { encounterStore, filtersStore, settingsStore } from '../../../stores/store';
+import { requestCreatures, requestFilters } from '../../../utils/encounter-api-calls';
+
+import EncounterBuilder from './CreaturesTable/EncounterBuilder.vue';
+import PartyBuilder from './CreaturesTable/PartyBuilder.vue';
+
+import type { creature, min_creature } from '../../../types/creature';
+import type {
+  alignments,
+  creature_columns,
+  creature_filters,
+  creature_type,
+  rarities,
+  roles,
+  sizes
+} from '../../../types/filters';
+
+const $q = useQuasar();
+const settings = settingsStore();
+const filterStore = filtersStore();
+const encounter = encounterStore();
+
+const encounterBuilderRef = ref();
+const router = useRouter();
+
+const creatureTable = ref();
+const rows = ref<creature[]>([]);
+const loading = ref(true);
+const pagination = ref({
+  sortBy: 'name',
+  descending: false,
+  page: 1,
+  rowsPerPage: 100,
+  rowsNumber: 0
+});
+const filters = ref<{
+  name_filter: string;
+  level_filter: { min: number; max: number };
+  hp_filter: { min: number; max: number };
+  trait_filter: string[];
+  alignment_filter: alignments[];
+  size_filter: sizes[];
+  rarity_filter: rarities[];
+  family_filter: string[];
+  type_filter: creature_type[];
+  attack_data_filter: {
+    melee: boolean | null;
+    ranged: boolean | null;
+    spellcaster: boolean | null;
+  };
+  role_filter: roles[];
+  source_filter: string[];
+  sort_by: creature_columns;
+  order_by: 'ascending' | 'descending';
+}>({
+  name_filter: '',
+  level_filter: { min: -1, max: 25 },
+  hp_filter: { min: 0, max: 680 },
+  trait_filter: [],
+  alignment_filter: [],
+  size_filter: [],
+  rarity_filter: [],
+  family_filter: [],
+  type_filter: [],
+  attack_data_filter: {
+    melee: null,
+    ranged: null,
+    spellcaster: null
+  },
+  role_filter: [],
+  source_filter: [],
+  sort_by: 'name',
+  order_by: 'ascending'
+});
+const fullscreen = ref(false);
+const tableHeight = ref('height: calc(100vh - 126px)');
+
+const sourceFilter = ref<string[]>(filterStore.getCreatureFilters.sources);
+const traitFilter = ref<string[]>(filterStore.getCreatureFilters.traits);
+const familyFilter = ref<string[]>(filterStore.getCreatureFilters.families);
+
+// ---- Columns declaration
+const columns: {
+  name: creature_columns;
+  label: string;
+  field: (row: creature) => string | number | string[] | boolean[];
+  required?: boolean;
+  align?: 'left' | 'right' | 'center';
+  sortable?: boolean;
+  style?: string;
+}[] = [
+  {
+    name: 'source',
+    label: 'Source',
+    field: (row) => row.core_data.essential.source,
+    required: false,
+    align: 'center',
+    sortable: true,
+    style: 'min-width: 120px; max-width: 120px;'
+  },
+  {
+    name: 'name',
+    label: 'Name',
+    field: (row) => row.core_data.essential.name,
+    required: true,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 225px;'
+  },
+  {
+    name: 'level',
+    label: 'Level',
+    field: (row) => row.core_data.essential.base_level,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 80px;'
+  },
+  {
+    name: 'hp',
+    label: 'HP',
+    field: (row) => row.core_data.essential.hp,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 100px;'
+  },
+  {
+    name: 'trait',
+    label: 'Traits',
+    field: (row) => row.core_data.traits,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 110px; max-width: 180px;'
+  },
+  {
+    name: 'alignment',
+    label: 'Alignment',
+    field: (row) => row.core_data.essential.alignment,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 135px; max-width: 180px;'
+  },
+  {
+    name: 'size',
+    label: 'Size',
+    field: (row) => row.core_data.essential.size,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 100px; max-width: 180px;'
+  },
+  {
+    name: 'rarity',
+    label: 'Rarity',
+    field: (row) => row.core_data.essential.rarity,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 100px; max-width: 180px;'
+  },
+  {
+    name: 'family',
+    label: 'Family',
+    field: (row) => row.core_data.essential.family,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 125px; max-width: 180px;'
+  },
+  {
+    name: 'type',
+    label: 'Type',
+    field: (row) => row.core_data.essential.cr_type,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 100px'
+  },
+  {
+    name: 'attack',
+    label: 'Attacks',
+    field: (row) => [
+      row.core_data.derived.attack_data.melee,
+      row.core_data.derived.attack_data.ranged,
+      row.core_data.derived.attack_data.spellcaster
+    ],
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 80px;'
+  },
+  {
+    name: 'role',
+    label: 'Roles',
+    field: (row) => row.core_data.derived.creature_role!,
+    required: false,
+    align: 'left',
+    sortable: true,
+    style: 'min-width: 100px; max-width: 200px;'
+  }
+];
+
+const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: number) {
+  const body: creature_filters = {
+    min_level_filter: filters.value.level_filter.min,
+    max_level_filter: filters.value.level_filter.max,
+    min_hp_filter: filters.value.hp_filter.min,
+    max_hp_filter: filters.value.hp_filter.max,
+    attack_data_filter: filters.value.attack_data_filter,
+    role_threshold: 50,
+    pathfinder_version: settings.getPfVersion
+  };
+  if (filters.value.name_filter != '') {
+    body.name_filter = filters.value.name_filter;
+  }
+  if (filters.value.trait_filter != undefined && filters.value.trait_filter.length > 0) {
+    body.trait_whitelist_filter = filters.value.trait_filter;
+  }
+  if (filters.value.alignment_filter != undefined && filters.value.alignment_filter.length > 0) {
+    body.alignment_filter = filters.value.alignment_filter;
+  }
+  if (filters.value.size_filter != undefined && filters.value.size_filter.length > 0) {
+    body.size_filter = filters.value.size_filter;
+  }
+  if (filters.value.rarity_filter != undefined && filters.value.rarity_filter.length > 0) {
+    body.rarity_filter = filters.value.rarity_filter;
+  }
+  if (filters.value.family_filter != undefined && filters.value.family_filter.length > 0) {
+    body.family_filter = filters.value.family_filter;
+  }
+  if (filters.value.type_filter != undefined && filters.value.type_filter.length > 0) {
+    body.type_filter = filters.value.type_filter;
+  }
+  if (filters.value.role_filter != undefined && filters.value.role_filter.length > 0) {
+    body.role_filter = filters.value.role_filter;
+  }
+  if (filters.value.source_filter != undefined && filters.value.source_filter.length > 0) {
+    body.source_filter = filters.value.source_filter;
+  }
+  try {
+    const request = await requestCreatures(
+      'pf2e',
+      startRow,
+      rowsPerPage,
+      filters.value.sort_by,
+      filters.value.order_by,
+      body
+    );
+    if (request) {
+      pagination.value.rowsNumber = request.total;
+      request.results.forEach((creature) => {
+        // calculate the roles of the creature, by picking the percentages that are at least over 50%
+        const rolePercentages: { role: roles; percentage: number }[] = [
+          { role: 'Brute', percentage: creature.core_data.derived.role_data.brute },
+          {
+            role: 'Magical Striker',
+            percentage: creature.core_data.derived.role_data.magical_striker
+          },
+          {
+            role: 'Skill Paragon',
+            percentage: creature.core_data.derived.role_data.skill_paragon
+          },
+          { role: 'Skirmisher', percentage: creature.core_data.derived.role_data.skirmisher },
+          { role: 'Sniper', percentage: creature.core_data.derived.role_data.sniper },
+          { role: 'Soldier', percentage: creature.core_data.derived.role_data.soldier },
+          { role: 'Spellcaster', percentage: creature.core_data.derived.role_data.spellcaster }
+        ];
+        const rolesList: roles[] = [];
+        rolePercentages.forEach((role) => {
+          if (role.percentage >= 50) {
+            rolesList.push(role.role);
+          }
+        });
+        if (rolePercentages.length > 0) {
+          creature.core_data.derived.creature_role = rolesList;
+        } else {
+          creature.core_data.derived.creature_role = ['None'];
+        }
+      });
+      rows.value = request.results;
+      loading.value = false;
+    } else {
+      throw new Error('Error loading creatures');
+    }
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error loading the creatures',
+      icon: matPriorityHigh
+    });
+  }
+}, 300);
+
+async function onRequest(props) {
+  const { page, rowsPerPage } = props.pagination;
+
+  loading.value = true;
+
+  const startRow = (page - 1) * rowsPerPage;
+
+  pagination.value.page = page;
+  pagination.value.rowsPerPage = rowsPerPage;
+
+  await fetchFromServer(startRow, pagination.value.rowsPerPage);
+}
+
+// ---- Reset filters function
+const resetFilters = () => {
+  filters.value = {
+    source_filter: [],
+    name_filter: '',
+    level_filter: { min: -1, max: 25 },
+    hp_filter: { min: 0, max: 680 },
+    trait_filter: [],
+    alignment_filter: [],
+    size_filter: [],
+    rarity_filter: [],
+    family_filter: [],
+    type_filter: [],
+    attack_data_filter: {
+      melee: null,
+      ranged: null,
+      spellcaster: null
+    },
+    role_filter: [],
+    sort_by: 'name',
+    order_by: 'ascending'
+  };
+};
+
+// ---- Table and visible columns
+const visibleColumns = ref(['name', 'level', 'trait', 'size', 'type', 'attack', 'role']);
+
+// ---- Column sort function
+const sort = (col: creature_columns) => {
+  if (filters.value.sort_by === col) {
+    if (filters.value.order_by === 'ascending') {
+      filters.value.order_by = 'descending';
+    } else {
+      filters.value.order_by = 'ascending';
+    }
+  } else {
+    filters.value.order_by = 'ascending';
+    filters.value.sort_by = col;
+  }
+};
+
+const openCreatureSheet = (id: number) => {
+  const routeData = router.resolve({ name: 'pf2e_bestiary', query: { id: id } });
+  if (process.env.IS_APP === 'true') {
+    window.open(routeData.href, '_self');
+  } else {
+    window.open(routeData.href, '_blank');
+  }
+};
+
+// ---- Add creature to encounter function
+const addCreature = debounce(function (creature: creature) {
+  const min_creature: min_creature = {
+    game: 'pf2e',
+    id: creature.core_data.essential.id,
+    archive_link: creature.core_data.derived.archive_link,
+    name: creature.core_data.essential.name,
+    level: creature.core_data.essential.base_level,
+    variant: 'Base'
+  };
+  encounter.addToEncounter(min_creature);
+}, 50);
+
+const toggleFullscreen = () => {
+  fullscreen.value = !fullscreen.value;
+  if (fullscreen.value) {
+    tableHeight.value = 'height: 100%; opacity: 1';
+  } else {
+    tableHeight.value = 'height: calc(100vh - 126px)';
+  }
+};
+
+const filterSourcesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filterStore.getCreatureFilters.sources = sourceFilter.value.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
+  });
+};
+
+const filterTraitsFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filterStore.getCreatureFilters.traits = traitFilter.value.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
+  });
+};
+
+const filterFamiliesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filterStore.getCreatureFilters.families = familyFilter.value.filter(
+      (v) => v.toLowerCase().indexOf(filter) > -1
+    );
+  });
+};
+
+onMounted(async () => {
+  try {
+    const traitsRequest = await requestFilters('pf2e', 'traits');
+    if (traitsRequest) {
+      filterStore.updateTraits(traitsRequest);
+      traitFilter.value = filterStore.getCreatureFilters.traits;
+    } else {
+      throw new Error('Error fetching traits');
+    }
+    const alignmentsRequest = await requestFilters('pf2e', 'alignments');
+    if (alignmentsRequest) {
+      filterStore.updateAlignments(alignmentsRequest);
+    } else {
+      throw new Error('Error fetching alignments');
+    }
+    const sizesRequest = await requestFilters('pf2e', 'sizes');
+    if (sizesRequest) {
+      filterStore.updateSizes(sizesRequest);
+    } else {
+      throw new Error('Error fetching sizes');
+    }
+    const raritiesRequest = await requestFilters('pf2e', 'rarities');
+    if (raritiesRequest) {
+      filterStore.updateRarities(raritiesRequest);
+    } else {
+      throw new Error('Error fetching rarities');
+    }
+    const familiesRequest = await requestFilters('pf2e', 'families');
+    if (familiesRequest) {
+      filterStore.updateFamilies(familiesRequest);
+      familyFilter.value = filterStore.getCreatureFilters.families;
+    } else {
+      throw new Error('Error fetching families');
+    }
+    const typesRequest = await requestFilters('pf2e', 'creature_types');
+    if (typesRequest) {
+      filterStore.updateCreatureType(typesRequest);
+    } else {
+      throw new Error('Error fetching creature_types');
+    }
+    const sourcesRequest = await requestFilters('pf2e', 'sources');
+    if (sourcesRequest) {
+      filterStore.updateSources(sourcesRequest);
+      sourceFilter.value = filterStore.getCreatureFilters.sources;
+    } else {
+      throw new Error('Error fetching sources');
+    }
+    const rolesRequest = await requestFilters('pf2e', 'creature_roles');
+    if (rolesRequest) {
+      filterStore.updateRoles(rolesRequest);
+    } else {
+      throw new Error('Error fetching creature_roles');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  await fetchFromServer(0, 100);
+});
+</script>
+
+<template>
+  <div class="q-pa-md tw-w-full md:tw-w-[73%]">
+    <q-table
+      id="v-step-0"
+      ref="creatureTable"
+      v-model:pagination="pagination"
+      class="sticky-header-table tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      :style="tableHeight"
+      color="primary"
+      flat
+      bordered
+      :rows="rows"
+      :columns="columns"
+      :visible-columns="visibleColumns"
+      virtual-scroll
+      virtual-scroll-slice-size="100"
+      virtual-scroll-sticky-size-start="50"
+      virtual-scroll-item-size="48"
+      :loading="loading"
+      :filter="filters"
+      rows-per-page-label="Creatures per page:"
+      :rows-per-page-options="[50, 100, 0]"
+      table-header-class="v-step-5"
+      row-key="name"
+      :fullscreen="fullscreen"
+      @request="onRequest"
+      @row-dblclick="(_, row) => addCreature(row)"
+    >
+      <template #loading>
+        <q-inner-loading showing style="z-index: 2">
+          <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
+        </q-inner-loading>
+      </template>
+      <template #top>
+        <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
+          <div class="tw-flex tw-flex-shrink">
+            <h1 class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
+              Creatures
+            </h1>
+          </div>
+          <div class="tw-flex tw-flex-grow tw-justify-center">
+            <q-btn-group push>
+              <PartyBuilder />
+              <q-separator vertical />
+              <q-btn v-if="loading" id="v-step-2" push label="Generator Settings" />
+              <EncounterBuilder v-else ref="encounterBuilderRef" />
+              <q-separator vertical />
+              <q-btn
+                id="v-step-3"
+                push
+                dense
+                class="tw-p-2"
+                size="md"
+                aria-label="Random encounter"
+                @click="encounterBuilderRef.generateEncounter()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 512.021 512.021"
+                  fill="currentColor"
+                  aria-label="D20 dice"
+                >
+                  <path
+                    d="M490.421,137.707c-0.085-1.003-0.149-2.005-0.555-2.987c-0.107-0.256-0.32-0.427-0.448-0.683
+			                 c-0.277-0.533-0.597-0.981-0.96-1.472c-0.725-1.003-1.536-1.835-2.517-2.517c-0.256-0.171-0.363-0.491-0.64-0.64l-224-128
+			                 c-3.285-1.877-7.296-1.877-10.581,0l-224,128c-0.256,0.171-0.363,0.469-0.619,0.64c-1.024,0.704-1.899,1.557-2.645,2.624
+			                 c-0.299,0.427-0.597,0.811-0.832,1.28c-0.149,0.277-0.384,0.469-0.512,0.768c-0.469,1.173-0.619,2.389-0.661,3.584
+			                 c0,0.128-0.107,0.256-0.107,0.384v0.171c0,0.021,0,0.021,0,0.043v234.304c0,0.021,0,0.064,0,0.085v0.064
+			                 c0,0.213,0.149,0.405,0.171,0.619c0.085,1.493,0.32,2.987,1.045,4.352c0.043,0.085,0.128,0.107,0.171,0.192
+			                 c0.277,0.491,0.768,0.811,1.131,1.259c0.789,0.981,1.557,1.941,2.603,2.603c0.107,0.064,0.149,0.192,0.235,0.235l224,128
+			                 c1.664,0.939,3.477,1.408,5.312,1.408s3.648-0.469,5.291-1.408l224-128c0.107-0.064,0.149-0.192,0.256-0.256
+			                 c0.981-0.597,1.664-1.493,2.411-2.389c0.427-0.512,1.003-0.896,1.323-1.472c0.043-0.064,0.107-0.107,0.149-0.171
+			                 c0.576-1.109,0.683-2.325,0.853-3.52c0.064-0.491,0.384-0.939,0.384-1.451V138.688
+			                 C490.677,138.347,490.443,138.048,490.421,137.707z M455.52,136.981l-78.251,31.296L291.211,43.093L455.52,136.981z
+			                 M256.011,29.504l97.067,141.184H158.944L256.011,29.504z M220.747,43.115l-86.037,125.163L56.48,136.981L220.747,43.115z
+			                 M42.677,154.432l80.768,32.32L42.677,332.16V154.432z M138.635,203.392l98.325,178.773L49.248,364.288L138.635,203.392z
+			                 M245.344,482.965l-165.12-94.336l165.12,15.573V482.965z M256.011,372.544l-99.285-180.523h198.571L256.011,372.544z
+			                 M266.677,482.965v-78.571l165.035-15.723L266.677,482.965z M274.997,382.357l98.411-178.901l89.365,160.853L274.997,382.357z
+			                 M469.344,332.203l-80.811-145.451l80.811-32.32V332.203z"
+                  />
+                </svg>
+                <q-tooltip
+                  class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Generate random encounter
+                </q-tooltip>
+              </q-btn>
+            </q-btn-group>
+          </div>
+          <div class="tw-flex tw-flex-shrink">
+            <q-btn
+              flat
+              round
+              dense
+              class="tw-mx-2"
+              :icon="biEraser"
+              size="md"
+              padding="sm"
+              aria-label="Clear filters"
+              @click="resetFilters"
+            >
+              <q-tooltip
+                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Clear Filters
+              </q-tooltip>
+            </q-btn>
+            <div id="v-step-4">
+              <q-select
+                v-model="visibleColumns"
+                multiple
+                outlined
+                dense
+                options-dense
+                display-value="Display columns"
+                emit-value
+                map-options
+                :options="Object.freeze(columns)"
+                option-value="name"
+                style="min-width: 150px"
+              />
+            </div>
+            <q-btn
+              flat
+              round
+              dense
+              class="tw-ml-2 !tw-p-3"
+              :icon="fullscreen ? biFullscreenExit : biFullscreen"
+              size="sm"
+              aria-label="Toggle fullscreen"
+              @click="toggleFullscreen"
+            />
+          </div>
+        </div>
+      </template>
+      <template #header-cell-source>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <KeepAlive>
+                <q-select
+                  v-model="filters.source_filter"
+                  multiple
+                  dense
+                  outlined
+                  clearable
+                  options-dense
+                  :options="Object.freeze(filterStore.getCreatureFilters.sources)"
+                  use-input
+                  input-debounce="0"
+                  :label="columns[0]!.label"
+                  :style="columns[0]!.style"
+                  virtual-scroll-item-size="32"
+                  @filter="filterSourcesFn"
+                />
+              </KeepAlive>
+            </div>
+            <div class="col-shrink tw-mx-2"></div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-name>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-input
+                v-model="filters.name_filter"
+                dense
+                outlined
+                :label="columns[1]!.label"
+                :style="columns[1]!.style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort name column"
+                @click="sort(columns[1]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-level>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-field
+                dense
+                outlined
+                :label="columns[2]!.label"
+                :style="columns[2]!.style"
+                stack-label
+              >
+                <template #control>
+                  {{ filters.level_filter.min }} to {{ filters.level_filter.max }}
+                </template>
+                <q-popup-proxy>
+                  <q-banner rounded>
+                    <div class="tw-pt-8 tw-px-1">
+                      <q-range
+                        v-model="filters.level_filter"
+                        label-always
+                        :min="-1"
+                        :max="25"
+                        style="min-width: 200px"
+                        aria-label="Filter level"
+                        role="menuitem"
+                      />
+                    </div>
+                  </q-banner>
+                </q-popup-proxy>
+              </q-field>
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort level column"
+                @click="sort(columns[2]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-hp>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-field
+                dense
+                outlined
+                :label="columns[3]!.label"
+                :style="columns[3]!.style"
+                stack-label
+              >
+                <template #control>
+                  {{ filters.hp_filter.min }} to {{ filters.hp_filter.max }}
+                </template>
+                <q-popup-proxy>
+                  <q-banner rounded>
+                    <div class="tw-pt-8 tw-px-1">
+                      <q-range
+                        v-model="filters.hp_filter"
+                        label-always
+                        :min="0"
+                        :max="680"
+                        style="min-width: 200px"
+                        aria-label="Filter HP"
+                        role="menuitem"
+                      />
+                    </div>
+                  </q-banner>
+                </q-popup-proxy>
+              </q-field>
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort hp column"
+                @click="sort(columns[3]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-trait>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <KeepAlive>
+                <q-select
+                  v-model="filters.trait_filter"
+                  multiple
+                  dense
+                  outlined
+                  clearable
+                  options-dense
+                  :options="Object.freeze(filterStore.getCreatureFilters.traits)"
+                  use-input
+                  input-debounce="0"
+                  :label="columns[4]!.label"
+                  :style="columns[4]!.style"
+                  virtual-scroll-item-size="32"
+                  @filter="filterTraitsFn"
+                />
+              </KeepAlive>
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort traits column"
+                @click="sort(columns[4]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-alignment>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                v-model="filters.alignment_filter"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filterStore.getCreatureFilters.alignments)"
+                :label="columns[5]!.label"
+                :style="columns[5]!.style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort alignment column"
+                @click="sort(columns[5]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-size>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                v-model="filters.size_filter"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filterStore.getCreatureFilters.sizes)"
+                :label="columns[6]!.label"
+                :style="columns[6]!.style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort size column"
+                @click="sort(columns[6]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-rarity>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                v-model="filters.rarity_filter"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filterStore.getCreatureFilters.rarities)"
+                :label="columns[7]!.label"
+                :style="columns[7]!.style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort rarity column"
+                @click="sort(columns[7]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-family>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <KeepAlive>
+                <q-select
+                  v-model="filters.family_filter"
+                  multiple
+                  dense
+                  outlined
+                  clearable
+                  options-dense
+                  :options="Object.freeze(filterStore.getCreatureFilters.families)"
+                  use-input
+                  input-debounce="0"
+                  :label="columns[8]!.label"
+                  :style="columns[8]!.style"
+                  virtual-scroll-item-size="32"
+                  @filter="filterFamiliesFn"
+                />
+              </KeepAlive>
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort family column"
+                @click="sort(columns[8]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-type>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                v-model="filters.type_filter"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filterStore.getCreatureFilters.creature_types)"
+                :label="columns[9]!.label"
+                :style="columns[9]!.style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort creature type column"
+                @click="sort(columns[9]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-attack>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-field
+                dense
+                outlined
+                :label="columns[10]!.label"
+                :style="columns[10]!.style"
+                :stack-label="
+                  filters.attack_data_filter?.melee! ||
+                  filters.attack_data_filter?.ranged! ||
+                  filters.attack_data_filter?.spellcaster!
+                "
+              >
+                <template #control>
+                  <q-icon
+                    v-if="filters.attack_data_filter?.melee"
+                    :name="mdiSword"
+                    size="xs"
+                    aria-label="Melee attacks"
+                  />
+                  <q-icon
+                    v-if="filters.attack_data_filter?.ranged"
+                    :name="mdiBowArrow"
+                    size="xs"
+                    aria-label="Ranged attacks"
+                  />
+                  <q-icon
+                    v-if="filters.attack_data_filter?.spellcaster"
+                    :name="mdiMagicStaff"
+                    size="xs"
+                    aria-label="Spell attacks"
+                  />
+                </template>
+                <q-popup-proxy>
+                  <q-banner rounded style="min-width: 100px">
+                    <div class="column">
+                      <q-toggle
+                        v-model="filters.attack_data_filter.melee"
+                        :icon="mdiSword"
+                        :color="filters.attack_data_filter.melee === true ? 'positive' : 'red'"
+                        :keep-color="filters.attack_data_filter.melee != null"
+                        size="xl"
+                        toggle-indeterminate
+                        role="menuitemcheckbox"
+                        aria-checked="false"
+                      >
+                        <q-tooltip
+                          class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[4, 4]"
+                        >
+                          Melee
+                        </q-tooltip>
+                      </q-toggle>
+
+                      <q-toggle
+                        v-model="filters.attack_data_filter.ranged"
+                        :icon="mdiBowArrow"
+                        :color="filters.attack_data_filter.ranged === true ? 'positive' : 'red'"
+                        :keep-color="filters.attack_data_filter.ranged != null"
+                        size="xl"
+                        toggle-indeterminate
+                        role="menuitemcheckbox"
+                        aria-checked="false"
+                      >
+                        <q-tooltip
+                          class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[4, 4]"
+                        >
+                          Ranged
+                        </q-tooltip>
+                      </q-toggle>
+
+                      <q-toggle
+                        v-model="filters.attack_data_filter.spellcaster"
+                        :icon="mdiMagicStaff"
+                        :color="
+                          filters.attack_data_filter.spellcaster === true ? 'positive' : 'red'
+                        "
+                        :keep-color="filters.attack_data_filter.spellcaster != null"
+                        size="xl"
+                        toggle-indeterminate
+                        role="menuitemcheckbox"
+                        aria-checked="false"
+                      >
+                        <q-tooltip
+                          class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[4, 4]"
+                        >
+                          Spells
+                        </q-tooltip>
+                      </q-toggle>
+                    </div>
+                  </q-banner>
+                </q-popup-proxy>
+              </q-field>
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort attacks column"
+                @click="sort(columns[10]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #header-cell-role>
+        <q-th>
+          <div
+            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+          >
+            <div class="col-grow">
+              <q-select
+                v-model="filters.role_filter"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filterStore.getCreatureFilters.creature_roles)"
+                :label="columns[11]!.label"
+                :style="columns[11]!.style"
+              />
+            </div>
+            <div class="col-shrink tw-mx-2">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                padding="sm"
+                :icon="biArrowDownUp"
+                aria-label="Sort creature role column"
+                @click="sort(columns[11]!.name)"
+              />
+            </div>
+          </div>
+        </q-th>
+      </template>
+      <template #body-cell-source="source">
+        <q-td :props="source">
+          <q-btn
+            v-if="source.row.core_data.essential.source"
+            round
+            unelevated
+            :icon="biBook"
+            size="sm"
+            padding="sm"
+            :href="
+              'https://paizo.com/search?q=' +
+              encodeURIComponent(source.row.core_data.essential.source) +
+              '&what=products&includeUnrated=true&includeUnavailable=true'
+            "
+            target="_blank"
+            rel="noopener"
+            aria-label="Search source on Paizo store"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              <i class="tw-whitespace-nowrap">
+                {{ source.row.core_data.essential.source }}
+              </i>
+            </q-tooltip>
+          </q-btn>
+        </q-td>
+      </template>
+      <template #body-cell-name="name">
+        <q-td :props="name">
+          <q-btn
+            round
+            unelevated
+            :icon="fasScroll"
+            size="sm"
+            class="tw-mr-1"
+            target="_blank"
+            aria-label="Open creature sheet"
+            @click="openCreatureSheet(name.row.core_data.essential.id)"
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Open creature sheet
+            </q-tooltip>
+          </q-btn>
+          <a
+            v-if="name.row.core_data.derived.archive_link"
+            :href="name.row.core_data.derived.archive_link"
+            target="_blank"
+            rel="noopener"
+            class="tw-inline tw-align-middle"
+          >
+            <span
+              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-max-w-[250px] tw-whitespace-normal"
+              >{{ name.value }}</span
+            >
+          </a>
+          <span v-else class="tw-align-middle">{{ name.value }}</span>
+          <q-chip
+            v-if="name.row.core_data.essential.remaster && settings.getPfVersion === 'Any'"
+            dense
+            color="blue"
+            text-color="white"
+            class="tw-ml-1 tw-text-xs"
+            label="Remaster"
+          />
+          <q-chip
+            v-if="!name.row.core_data.essential.remaster && settings.getPfVersion === 'Any'"
+            dense
+            color="red-10"
+            text-color="white"
+            class="tw-ml-1 tw-text-xs"
+            label="Legacy"
+          />
+        </q-td>
+      </template>
+      <template #body-cell-trait="traits">
+        <q-td :props="traits">
+          <span
+            v-if="traits.row.core_data.traits"
+            class="tw-block tw-max-w-[250px] tw-whitespace-normal"
+          >
+            {{
+              traits.row.core_data.traits
+                .map((trait: string) => {
+                  return capitalize(trait);
+                })
+                .join(', ')
+            }}
+          </span>
+        </q-td>
+      </template>
+      <template #body-cell-attack="attacks">
+        <q-td :props="attacks">
+          <q-icon
+            v-if="attacks.row.core_data.derived.attack_data.melee"
+            :name="mdiSword"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Melee
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="attacks.row.core_data.derived.attack_data.ranged"
+            :name="mdiBowArrow"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Ranged
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="attacks.row.core_data.derived.attack_data.spellcaster"
+            :name="mdiMagicStaff"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Spells
+            </q-tooltip>
+          </q-icon>
+        </q-td>
+      </template>
+      <template #body-cell-role="creatureRoles">
+        <q-td :props="creatureRoles">
+          <q-icon
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Brute')"
+            :name="fasHandFist"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Brute
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Magical Striker')"
+            :name="fasMeteor"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Magical Striker
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Skill Paragon')"
+            :name="fasGraduationCap"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Skill Paragon
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Skirmisher')"
+            :name="fasUserNinja"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Skirmisher
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Sniper')"
+            :name="fasCrosshairs"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Sniper
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Soldier')"
+            :name="fasUserShield"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Soldier
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Spellcaster')"
+            :name="fasHatWizard"
+            size="sm"
+            left
+          >
+            <q-tooltip
+              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Spellcaster
+            </q-tooltip>
+          </q-icon>
+        </q-td>
+      </template>
+      <template #no-data>
+        <div class="row flex-center q-gutter-sm">
+          <q-icon size="2em" :name="matWarning" />
+          <span> No creature matches the current filters </span>
+        </div>
+      </template>
+    </q-table>
+  </div>
+</template>
+
+<style>
+.sticky-header-table {
+  .q-table__top {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  thead tr th {
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    position: sticky;
+    z-index: 1;
+    background-color: #ffffff;
+    border-left: none;
+    border-right: none;
+    border-width: 1px;
+    border-color: #e5e7eb;
+  }
+
+  thead tr:first-child th {
+    top: 0;
+  }
+
+  td {
+    border-bottom: none;
+  }
+
+  .q-table__bottom {
+    border-color: #e5e7eb;
+  }
+}
+
+.q-table--dark thead tr th {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+tr:nth-child(even) {
+  background-color: #f3f4f6 !important;
+}
+
+.q-table--dark tr:nth-child(even) {
+  background-color: #374151 !important;
+}
+
+.q-table--dark td {
+  border-bottom: none;
+  border-color: #374151 !important;
+}
+
+.q-table--dark .q-table__bottom {
+  border-color: #374151;
+}
+</style>
+
+<style scoped>
+.q-select:deep(.q-field__native) > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

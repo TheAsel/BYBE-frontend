@@ -1,111 +1,52 @@
 <script setup lang="ts">
-import {
-  biArrowRightShort,
-  biCalculator,
-  biHouses,
-  biPencil,
-  biPersonVcard,
-  biShop
-} from '@quasar/extras/bootstrap-icons';
 import { useHead } from '@unhead/vue';
 
+import { settingsStore } from 'src/stores/store';
+
 useHead({
-  title: 'BYBE - Pathfinder 2e GM Tools',
+  title: 'BYBE - Homepage',
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev'
+      href: 'https://bybe.fly.dev/'
     }
   ]
 });
 
-const cards = [
-  {
-    name: 'Encounter Builder',
-    to: '/encounter',
-    description: 'Balance or randomly create combat encounters.',
-    subtext: 'Try it out',
-    icon: biCalculator
-  },
-  {
-    name: 'Shop Generator',
-    to: '/shop',
-    description: 'Create various types of shops of a specific level.',
-    subtext: 'Try it out',
-    icon: biShop
-  },
-  {
-    name: 'NPC Generator',
-    to: '/npc',
-    description: "Quickly generate an NPC's name, ancestry, background and quirks.",
-    subtext: 'Try it out',
-    icon: biPersonVcard
-  },
-  {
-    name: 'Monster Generator',
-    to: '/monster',
-    description: 'Create custom monsters with the help of custom generation.',
-    subtext: 'Work in progress...',
-    icon: biPencil
-  },
-  {
-    name: 'City Planner',
-    to: '/city',
-    description: 'Combine what you created with the other tools to plan an entire city.',
-    subtext: 'Work in progress...',
-    icon: biHouses
-  }
-];
+const settings = settingsStore();
 </script>
 
 <template>
   <div
-    style="min-height: calc(100vh - 90px)"
+    style="min-height: calc(100vh - 94px)"
     class="tw-max-w-[80rem] tw-px-4 tw-pb-10 sm:tw-px-6 lg:tw-px-8 lg:tw-py-14 tw-mx-auto"
   >
-    <div class="tw-max-w-2xl tw-mx-auto tw-text-center tw-my-4 lg:tw-mb-14">
+    <div class="tw-max-w-3xl tw-mx-auto tw-text-center tw-my-4 lg:tw-mb-14">
       <h1 class="tw-block text-h4 text-bold tw-text-white sm:tw-text-4xl">Welcome to BYBE</h1>
       <h2 class="tw-mt-3 text-h6 tw-text-gray-200">
-        BYBE provides tools to help Pathfinder 2e Game Masters.
+        BYBE provides tools to help Pathfinder 2e and Starfinder 2e Game Masters.
       </h2>
     </div>
-    <div class="tw-grid sm:tw-grid-cols-2 lg:tw-grid-cols-3 tw-gap-6">
-      <!-- Cards -->
-      <router-link
-        v-for="item in cards"
-        :key="item.to"
-        flat
-        class="tw-group tw-backdrop-blur tw-border-2 tw-bg-white/5 dark:tw-bg-gray-800/20 tw-border-gray-200/20 dark:tw-border-neutral-800/20 hover:tw-border-blue-600 hover:dark:tw-border-blue-500 tw-flex tw-gap-y-6 tw-w-full tw-h-full tw-rounded-lg tw-p-5 tw-transition-all"
-        :to="item.to"
-      >
-        <q-icon
-          :name="item.icon"
-          class="tw-flex-shrink-0 tw-w-8 tw-h-8 tw-mt-4 tw-mr-6 tw-text-gray-200"
-        />
-
-        <div>
-          <div>
-            <h3 class="tw-block text-bold tw-text-white">
-              {{ item.name }}
-            </h3>
-            <p class="tw-text-gray-300">
-              {{ item.description }}
-            </p>
-          </div>
-
-          <p
-            class="tw-mt-3 tw-inline-flex tw-items-center tw-gap-x-2 tw-text-sm text-medium tw-text-gray-200"
-          >
-            {{ item.subtext }}
-            <q-icon
-              :name="biArrowRightShort"
-              class="tw-transition tw-ease-in-out group-hover:tw-translate-x-1"
-              size="sm"
-            />
-          </p>
-        </div>
+    <div class="tw-max-w-[56rem] tw-mx-auto tw-grid sm:tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-16">
+      <router-link to="/pf2e" @click="settings.setGame('pf2e')">
+        <q-card
+          class="tw-rounded-3xl tw-backdrop-blur tw-border-2 tw-bg-white/5 dark:tw-bg-gray-800/20 tw-border-gray-200/20 dark:tw-border-neutral-800/20 hover:tw-border-blue-600 hover:dark:tw-border-blue-500 tw-transition-all"
+        >
+          <q-img src="/pf2e-banner.webp">
+            <div class="absolute-bottom text-h6 text-center">Pathfinder 2e</div>
+          </q-img>
+        </q-card>
       </router-link>
-      <!-- Ends Card -->
+
+      <router-link to="/sf2e" @click="settings.setGame('sf2e')">
+        <q-card
+          class="tw-rounded-3xl tw-backdrop-blur tw-border-2 tw-bg-white/5 dark:tw-bg-gray-800/20 tw-border-gray-200/20 dark:tw-border-neutral-800/20 hover:tw-border-blue-600 hover:dark:tw-border-blue-500 tw-transition-all"
+        >
+          <q-img src="/sf2e-banner.webp">
+            <div class="absolute-bottom text-h6 text-center">Starfinder 2e</div>
+          </q-img>
+        </q-card>
+      </router-link>
     </div>
   </div>
 </template>

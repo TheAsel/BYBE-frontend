@@ -15,7 +15,7 @@ import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import { encounterStore, settingsStore } from '../stores/store';
 import { TailwindDarkFix } from '../utils/tw-dark-fix';
@@ -25,6 +25,7 @@ import type { npc_list } from '../types/npcs';
 import type { party } from '../types/party';
 import type { shop_list } from '../types/shop';
 import type { template } from '../types/template';
+import type { games } from 'src/types/filters';
 
 const encounter = encounterStore();
 const settings = settingsStore();
@@ -37,6 +38,7 @@ interface Widget {
 }
 declare let kofiWidgetOverlay: Widget;
 
+const router = useRouter();
 const route = useRoute();
 const currentPath = ref(route.path);
 
@@ -177,22 +179,6 @@ const togglePwL = () => {
   encounter.setPwL(is_pwl_on.value);
 };
 
-const is_creature_sheets_on = ref(false);
-const localCreatureSheets = ref(localStorage.getItem('is_creature_sheets_on'));
-
-switch (localCreatureSheets.value) {
-  case 'true':
-    is_creature_sheets_on.value = true;
-    break;
-  case 'false':
-    is_creature_sheets_on.value = false;
-    break;
-  default:
-    is_creature_sheets_on.value = false;
-    localStorage.setItem('is_creature_sheets_on', 'false');
-    break;
-}
-
 const is_aon_links_on = ref(false);
 const localAonLinks = ref(localStorage.getItem('is_aon_links_on'));
 
@@ -230,9 +216,41 @@ const navigation = [
   { name: 'Encounter Builder', to: '/encounter' },
   { name: 'Shop Generator', to: '/shop' },
   { name: 'NPC Generator', to: '/npc' },
-  { name: 'Monster Generator', to: '/monster' },
+  { name: 'Creature Generator', to: '/creature' },
   { name: 'City Planner', to: '/city' }
 ];
+
+const gameOptions = [
+  {
+    label: 'Pathfinder 2e',
+    value: 'pf2e',
+    src: '/pf2e-logo.webp'
+  },
+  {
+    label: 'Starfinder 2e',
+    value: 'sf2e',
+    src: '/sf2e-logo.webp'
+  }
+];
+
+function changeGame(value: games) {
+  settings.setGame(value);
+
+  if (!value) return;
+
+  const opt = gameOptions.find((o) => o.value === value);
+  if (!opt) return;
+
+  // current full path, e.g. "/pf2e/encounter"
+  const path = route.fullPath;
+
+  // replace the prefix (first segment after "/")
+  const firstSegment = route.path.split('/')[1];
+  if (firstSegment === 'sf2e' || firstSegment == 'pf2e') {
+    const newPath = path.replace(/^\/[^/]+/, `/${opt.value}`);
+    void router.push(newPath);
+  }
+}
 
 const $q = useQuasar();
 const theme = ref(localStorage.getItem('theme'));
@@ -415,11 +433,6 @@ const validateData = (result: string) => {
             throw new Error('Invalid loaded theme value');
           }
           break;
-        case 'is_creature_sheets_on':
-          if (parsedData[key] != 'true' && parsedData[key] != 'false') {
-            throw new Error('Invalid loaded creature sheets value');
-          }
-          break;
         case 'is_pwl_on':
           if (parsedData[key] != 'true' && parsedData[key] != 'false') {
             throw new Error('Invalid loaded pwl value');
@@ -480,8 +493,8 @@ const downloadData = () => {
     >
       <div class="tw-flex tw-items-center tw-justify-between">
         <router-link
-          flat
-          class="text-h5 tw-flex tw-flex-nowrap dark:tw-text-white tw-my-auto"
+          v-if="currentPath === '/' || currentPath === '/download'"
+          class="tw-my-2.5 text-h5 tw-flex tw-flex-nowrap dark:tw-text-white"
           to="/"
         >
           <q-avatar size="36px">
@@ -502,6 +515,75 @@ const downloadData = () => {
           </q-avatar>
           <div class="tw-my-auto tw-ml-4 tw-text-gray-800 dark:tw-text-gray-200">BYBE</div>
         </router-link>
+        <router-link
+          v-else
+          flat
+          class="text-h5 tw-flex tw-flex-nowrap dark:tw-text-white tw-my-auto"
+          :to="'/' + settings.getGame"
+        >
+          <q-avatar size="36px">
+            <img
+              v-if="theme === 'light'"
+              width="36px"
+              height="36px"
+              src="/favicon-64x64-light.png"
+              alt="Light BYBE logo"
+            />
+            <img
+              v-else
+              width="36px"
+              height="36px"
+              src="/favicon-64x64-dark.png"
+              alt="Dark BYBE logo"
+            />
+          </q-avatar>
+          <div class="tw-my-auto tw-ml-4 tw-text-gray-800 dark:tw-text-gray-200">BYBE</div>
+        </router-link>
+        <q-select
+          v-if="currentPath != '/' && currentPath != '/download'"
+          class="tw-ml-6"
+          v-model="settings.getGame"
+          :options="gameOptions"
+          :readonly="
+            currentPath == '/pf2e/bestiary' ||
+            currentPath == '/pf2e/item' ||
+            currentPath == '/sf2e/bestiary' ||
+            currentPath == '/sf2e/item'
+          "
+          emit-value
+          map-options
+          borderless
+        >
+          <!-- How the selected item appears -->
+          <template #selected-item="scope">
+            <q-img
+              :src="scope.opt.src"
+              :alt="scope.opt.label"
+              fit="contain"
+              style="width: 160px; height: 40px"
+            />
+          </template>
+
+          <!-- How each dropdown option appears -->
+          <template #option="scope">
+            <q-item clickable v-ripple @click="changeGame(scope.opt.value)">
+              <q-item-section avatar>
+                <q-img
+                  :src="scope.opt.src"
+                  :alt="scope.opt.label"
+                  fit="contain"
+                  style="width: 160px; height: 40px"
+                />
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-separator
+          v-if="currentPath != '/' && currentPath != '/download'"
+          vertical
+          inset
+          class="sm:tw-block tw-hidden tw-ml-4"
+        />
         <div class="sm:tw-hidden">
           <q-btn
             flat
@@ -520,32 +602,36 @@ const downloadData = () => {
         class="tw-grow sm:tw-block"
         :class="{ 'tw-hidden': settings.getHiddenNav, 'overflow-hidden': settings.getHiddenNav }"
       >
-        <div
-          class="tw-flex tw-flex-col tw-gap-y-4 tw-gap-x-0 tw-mt-5 sm:tw-flex-row sm:tw-items-center sm:tw-justify-start sm:tw-gap-y-0 sm:tw-gap-x-7 sm:tw-mt-0 sm:tw-pl-7"
-        >
-          <router-link
-            v-for="item in navigation"
-            :key="item.name"
-            :to="item.to"
-            :class="
-              currentPath === item.to
-                ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-500'
-                : 'sm:tw-py-4 tw-text-gray-800 hover:tw-text-blue-600  dark:tw-text-neutral-200 dark:hover:tw-text-neutral-400'
-            "
-            :aria-current="currentPath === item.to ? 'page' : undefined"
-            >{{ item.name }}
-            <span
-              v-if="item.name === 'NPC Generator'"
-              class="dark:tw-text-yellow-400 tw-text-amber-500 tw-align-top tw-text-xs"
-            >
-              NEW
-            </span>
-          </router-link>
+        <div class="tw-flex tw-flex-col sm:tw-flex-row">
+          <div
+            v-if="currentPath != '/' && currentPath != '/download'"
+            class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center sm:tw-justify-start tw-gap-y-4 sm:tw-gap-y-0 tw-gap-x-0 sm:tw-gap-x-7 tw-mt-5 sm:tw-mt-0 sm:tw-pl-7"
+          >
+            <router-link
+              v-for="item in navigation"
+              :key="item.name"
+              :to="'/' + settings.getGame + item.to"
+              :class="
+                currentPath === '/' + settings.getGame + item.to
+                  ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-500'
+                  : 'sm:tw-py-4 tw-text-gray-800 hover:tw-text-blue-600  dark:tw-text-neutral-200 dark:hover:tw-text-neutral-400'
+              "
+              :aria-current="currentPath === item.to ? 'page' : undefined"
+              >{{ item.name }}
+              <span
+                v-if="item.name === 'NPC Generator'"
+                class="dark:tw-text-yellow-400 tw-text-amber-500 tw-align-top tw-text-xs"
+              >
+                NEW
+              </span>
+            </router-link>
+          </div>
           <q-space class="sm:tw-block tw-hidden" />
-          <q-separator class="tw-block sm:tw-hidden" />
+          <q-separator class="tw-block sm:tw-hidden tw-my-4" />
           <router-link
             v-if="isApp === 'false'"
             to="/download"
+            class="tw-mb-2 sm:tw-mb-0"
             :class="
               currentPath === '/download'
                 ? 'tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-500'
@@ -554,7 +640,8 @@ const downloadData = () => {
             :aria-current="currentPath === '/download' ? 'page' : undefined"
             >Download
           </router-link>
-          <q-separator vertical inset class="sm:tw-block tw-hidden" />
+
+          <q-separator vertical inset class="sm:tw-block tw-hidden sm:tw-mx-7" />
 
           <div class="tw-flex tw-items-center tw-gap-x-4 sm:tw-gap-x-0 tw-relative">
             <q-btn
@@ -745,7 +832,9 @@ const downloadData = () => {
             </q-dialog>
             <q-btn
               v-if="
-                currentPath === '/encounter' || currentPath === '/shop' || currentPath === '/npc'
+                currentPath === '/' + settings.getGame + '/encounter' ||
+                currentPath === '/' + settings.getGame + '/shop' ||
+                currentPath === '/' + settings.getGame + '/npc'
               "
               flat
               padding="sm"

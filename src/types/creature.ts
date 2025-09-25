@@ -1,4 +1,4 @@
-import type { alignments, rarities, roles, sizes, variants } from './filters';
+import type { alignments, games, rarities, roles, sizes, variants } from './filters';
 import type { item } from './item';
 
 interface KeyValue {
@@ -183,6 +183,7 @@ export type creature_response = {
 };
 
 export type min_creature = {
+  game: games;
   id: number;
   archive_link: string;
   name: string;

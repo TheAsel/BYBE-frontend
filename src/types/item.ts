@@ -1,4 +1,4 @@
-import type { rarities, sizes } from './filters';
+import type { games, rarities, sizes } from './filters';
 
 export type item = {
   armor_data?: {
@@ -75,6 +75,7 @@ export type item_response = {
 };
 
 export type min_item = {
+  game: games;
   id: number;
   archive_link: string;
   name: string;

@@ -5,6 +5,7 @@ import type {
   challenges,
   creature_columns,
   creature_filters,
+  games,
   rarities,
   roles,
   sizes,
@@ -12,6 +13,7 @@ import type {
 } from '../types/filters';
 
 export async function requestCreatures(
+  game: games,
   cursor: number,
   page_size: number,
   sort_by: creature_columns,
@@ -30,6 +32,8 @@ export async function requestCreatures(
     };
     const request =
       process.env.API_URL +
+      '/' +
+      game +
       '/bestiary/list?cursor=' +
       cursor +
       '&page_size=' +
@@ -51,6 +55,7 @@ export async function requestCreatures(
 }
 
 export async function requestFilters(
+  game: games,
   filter:
     | 'traits'
     | 'alignments'
@@ -66,7 +71,10 @@ export async function requestFilters(
       method: 'GET',
       headers: { accept: 'application/json' }
     };
-    const response = await fetch(process.env.API_URL + '/bestiary/' + filter, requestOptions);
+    const response = await fetch(
+      process.env.API_URL + '/' + game + '/bestiary/' + filter,
+      requestOptions
+    );
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message ?? response.status;
@@ -79,6 +87,7 @@ export async function requestFilters(
 }
 
 export async function requestCreatureId(
+  game: games,
   creature_id: number,
   variant: variants,
   is_pwl_on: boolean
@@ -90,6 +99,8 @@ export async function requestCreatureId(
     };
     const response = await fetch(
       process.env.API_URL +
+        '/' +
+        game +
         '/bestiary/' +
         variant.toLowerCase() +
         '/' +
@@ -109,18 +120,24 @@ export async function requestCreatureId(
   }
 }
 
-export async function encounterInfo(encounter: {
-  enemy_levels: number[];
-  is_pwl_on: boolean;
-  party_levels: number[];
-}) {
+export async function encounterInfo(
+  game: games,
+  encounter: {
+    enemy_levels: number[];
+    is_pwl_on: boolean;
+    party_levels: number[];
+  }
+) {
   try {
     const requestOptions = {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(encounter)
     };
-    const response = await fetch(process.env.API_URL + '/encounter/info', requestOptions);
+    const response = await fetch(
+      process.env.API_URL + '/' + game + '/encounter/info',
+      requestOptions
+    );
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message ?? response.status;
@@ -132,31 +149,37 @@ export async function encounterInfo(encounter: {
   }
 }
 
-export async function encounterGenerator(body: {
-  trait_whitelist_filter: string[] | undefined;
-  alignment_filter: alignments[] | undefined;
-  size_filter: sizes[] | undefined;
-  rarity_filter: rarities[] | undefined;
-  family_filter: string[] | undefined;
-  type_filter: string[] | undefined;
-  challenge?: challenges;
-  party_levels: number[];
-  min_creatures?: number;
-  max_creatures?: number;
-  allow_weak_variants: boolean;
-  allow_elite_variants: boolean;
-  role_filter: roles[] | undefined;
-  is_pwl_on: boolean;
-  pathfinder_version: string;
-  adventure_group?: adventure_groups;
-}) {
+export async function encounterGenerator(
+  game: games,
+  body: {
+    trait_whitelist_filter: string[] | undefined;
+    alignment_filter: alignments[] | undefined;
+    size_filter: sizes[] | undefined;
+    rarity_filter: rarities[] | undefined;
+    family_filter: string[] | undefined;
+    type_filter: string[] | undefined;
+    challenge?: challenges;
+    party_levels: number[];
+    min_creatures?: number;
+    max_creatures?: number;
+    allow_weak_variants: boolean;
+    allow_elite_variants: boolean;
+    role_filter: roles[] | undefined;
+    is_pwl_on: boolean;
+    pathfinder_version: string;
+    adventure_group?: adventure_groups;
+  }
+) {
   try {
     const requestOptions = {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     };
-    const response = await fetch(process.env.API_URL + '/encounter/generator', requestOptions);
+    const response = await fetch(
+      process.env.API_URL + '/' + game + '/encounter/generator',
+      requestOptions
+    );
     const data = await response.json();
     if (!response.ok) {
       const error = data?.message ?? response.status;

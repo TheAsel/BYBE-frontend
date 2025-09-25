@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 
 import type { min_creature } from '../types/creature';
 import type { encounter, encounter_list } from '../types/encounter';
-import type { variants } from '../types/filters';
+import type { games, variants } from '../types/filters';
 import type { item, min_item } from '../types/item';
 import type { npc, npc_list, valid_genders } from '../types/npcs';
 import type { party } from '../types/party';
@@ -15,13 +15,15 @@ export const settingsStore = defineStore('settings', {
     hidden_nav: true,
     experimental_features: false,
     is_aon_links_on: false,
-    pf_version: 'Any'
+    pf_version: 'Any',
+    game: 'pf2e' as games
   }),
   getters: {
     getHiddenNav: (state) => state.hidden_nav,
     getExperimentalFeatures: (state) => state.experimental_features,
     getAonLinks: (state) => state.is_aon_links_on,
-    getPfVersion: (state) => state.pf_version
+    getPfVersion: (state) => state.pf_version,
+    getGame: (state) => state.game
   },
   actions: {
     setHiddenNav(newHiddenNav: boolean) {
@@ -35,6 +37,9 @@ export const settingsStore = defineStore('settings', {
     },
     setPfVersion(newPfVersion: string) {
       this.pf_version = newPfVersion;
+    },
+    setGame(newGame: games) {
+      this.game = newGame;
     }
   }
 });

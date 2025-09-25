@@ -58,7 +58,7 @@ onMounted(async () => {
     >
       <q-tab-panels v-model="tab" animated class="tw-bg-white/0">
         <q-tab-panel name="windows">
-          <div style="height: calc(100vh - 234px)" class="row items-center justify-evenly">
+          <div style="height: calc(100vh - 238px)" class="row items-center justify-evenly">
             <div class="tw-text-center tw-py-10 tw-px-4 sm:tw-px-6 lg:tw-px-8">
               <h1
                 class="tw-block tw-text-2xl tw-font-bold tw-text-gray-800 dark:tw-text-neutral-200 sm:tw-text-4xl"
@@ -87,7 +87,7 @@ onMounted(async () => {
           </div>
         </q-tab-panel>
         <q-tab-panel name="macos">
-          <div style="min-height: calc(100vh - 234px)" class="row items-center justify-evenly">
+          <div style="min-height: calc(100vh - 238px)" class="row items-center justify-evenly">
             <div class="tw-text-center tw-py-10 tw-px-4 sm:tw-px-6 lg:tw-px-8">
               <h1
                 class="tw-block tw-text-2xl tw-font-bold tw-text-gray-800 dark:tw-text-neutral-200 sm:tw-text-4xl"
@@ -143,7 +143,7 @@ onMounted(async () => {
           </div>
         </q-tab-panel>
         <q-tab-panel name="linux">
-          <div style="min-height: calc(100vh - 234px)" class="row items-center justify-evenly">
+          <div style="min-height: calc(100vh - 238px)" class="row items-center justify-evenly">
             <div class="tw-text-center tw-py-10 tw-px-4 sm:tw-px-6 lg:tw-px-8">
               <h1
                 class="tw-block tw-text-2xl tw-font-bold tw-text-gray-800 dark:tw-text-neutral-200 sm:tw-text-4xl"

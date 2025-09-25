@@ -1,13 +1,49 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+import { settingsStore } from 'src/stores/store';
 
 import { version } from '../../package.json';
 import HeaderBar from '../components/HeaderBar.vue';
 import { requestRepoInfo } from '../utils/github-api';
 
 const newestVersion = ref(version);
-const repoUrl = 'https://github.com/' + process.env.REPO_URL + '/releases/latest';
 const isApp = process.env.IS_APP;
+const repoUrl = process.env.REPO_URL;
+const latestRelease = 'https://github.com/' + repoUrl + '/releases/latest';
+
+const settings = settingsStore();
+
+const route = useRoute();
+const isHome = computed(() => {
+  return route.path === '/' || route.path === '/download';
+});
+
+onMounted(() => {
+  const firstSegment = route.path.split('/')[1];
+  if (firstSegment == 'sf2e') {
+    settings.setGame('sf2e');
+  } else {
+    settings.setGame('pf2e');
+  }
+});
+
+const backgroundStyle = computed(() => {
+  let imageUrl: string;
+
+  if (isHome.value) {
+    imageUrl = '/home-background.webp';
+  } else {
+    imageUrl = settings.getGame === 'sf2e' ? '/sf2e-background.webp' : '/pf2e-background.webp';
+  }
+  return {
+    backgroundImage: `url('${imageUrl}')`,
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+    position: 'absolute'
+  };
+});
 
 try {
   if (process.env.REPO_URL) {
@@ -26,15 +62,7 @@ try {
 </script>
 
 <template>
-  <q-layout
-    view="hHh lpr fFf"
-    style="
-      background-image: url('/background.webp');
-      background-position: center;
-      background-size: cover;
-      position: absolute;
-    "
-  >
+  <q-layout view="hHh lpr fFf" :style="backgroundStyle">
     <HeaderBar class="tw-backdrop-blur-2xl !tw-bg-white/90 dark:!tw-bg-black/70" />
 
     <q-page-container class="!tw-pb-0 tw-min-h-[90vh]">
@@ -49,20 +77,31 @@ try {
           <a
             v-if="version !== newestVersion && isApp !== 'true'"
             class="tw- tw-text-blue-600 dark:tw-text-blue-400 tw-decoration-2 hover:tw-underline"
-            :href="repoUrl"
+            :href="latestRelease"
             target="_blank"
             rel="noopener"
           >
             (Update Available!)</a
           >
           |
-          <router-link to="/license" class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
-            >Licenses and Policies</router-link
-          >
-          |
+          <span v-if="!isHome">
+            <router-link
+              v-if="settings.getGame == 'sf2e'"
+              to="/sf2e/license"
+              class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
+              >Licenses and Policies</router-link
+            >
+            <router-link
+              v-else
+              to="/pf2e/license"
+              class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
+              >Licenses and Policies</router-link
+            >
+            |
+          </span>
           <a
             class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
-            :href="repoUrl"
+            :href="latestRelease"
             target="_blank"
             rel="noopener"
           >
