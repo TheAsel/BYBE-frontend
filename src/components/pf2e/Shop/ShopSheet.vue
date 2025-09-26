@@ -13,12 +13,12 @@ const items = itemsStore();
   <div class="item-sheet">
     <div
       id="v-step-5"
-      class="tw-opacity-85 dark:tw-opacity-90 tw-items-center tw-text-left tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
+      class="tw:opacity-85 tw:dark:opacity-90 tw:items-center tw:text-left tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700 hide-print"
     >
       <q-scroll-area style="height: calc(100vh - 128px)">
         <div
           v-if="items.getSelectedItem && items.getSelectedItem.core_item"
-          class="q-gutter-y-xs tw-p-4 show-print"
+          class="q-gutter-y-xs tw:p-4 show-print"
         >
           <ArmorSheet v-if="items.getSelectedItem.core_item.item_type === 'Armor'" />
           <ItemSheet
@@ -30,7 +30,7 @@ const items = itemsStore();
           <ShieldSheet v-if="items.getSelectedItem.core_item.item_type === 'Shield'" />
           <WeaponSheet v-if="items.getSelectedItem.core_item.item_type === 'Weapon'" />
         </div>
-        <div v-else class="tw-text-center tw-text-lg tw-pt-[38vh]">
+        <div v-else class="tw:text-center tw:text-lg tw:pt-[38vh]">
           Click on an item to display its description
         </div>
       </q-scroll-area>

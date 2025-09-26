@@ -207,28 +207,28 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
 </script>
 
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[27%]">
+  <div class="q-pa-md tw:w-full tw:md:w-[27%]">
     <q-layout
       id="v-step-6"
       view="lHh lpr lFf"
       container
       style="height: calc(100vh - 126px)"
-      class="tw-opacity-85 dark:tw-opacity-90 tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      class="tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
     >
       <q-header
         bordered
-        class="tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800 dark:!tw-border-gray-700"
+        class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-0.5">
+        <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
           <div
-            class="text-subtitle1 font-bold tw-whitespace-nowrap tw-py-2.5 tw-pr-4 tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800"
+            class="text-subtitle1 font-bold tw:whitespace-nowrap tw:py-2.5 tw:pr-4 tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800!"
           >
             Cost: {{ info.getInfo.experience }} XP
           </div>
           <q-space />
-          <div class="tw-flex">
+          <div class="tw:flex">
             <q-btn
-              class="tw-my-auto tw-ml-2 tw-p-2"
+              class="tw:my-auto! tw:max-h-[33.15px]!"
               :icon="biPlusLg"
               size="sm"
               padding="sm"
@@ -239,7 +239,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
               @click="newEncounterDialog = true"
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -279,14 +279,14 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
                     aria-label="Close dialog"
                     @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Add encounter"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
                     aria-label="Add encounter"
                     @click="addEncounter"
                   />
@@ -295,7 +295,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
             </q-dialog>
 
             <q-btn
-              class="tw-my-auto tw-ml-2"
+              class="tw:my-auto! tw:ml-2! tw:max-h-[33.15px]!"
               :icon="biInputCursorText"
               size="sm"
               padding="sm"
@@ -306,7 +306,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
               @click="renameEncounterDialog = true"
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -346,14 +346,14 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
                     aria-label="Close dialog"
                     @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Rename encounter"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
                     aria-label="Rename encounter"
                     @click="renameEncounter"
                   />
@@ -362,7 +362,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
             </q-dialog>
 
             <q-btn
-              class="tw-my-auto tw-mx-2 tw-p-2"
+              class="tw:my-auto! tw:mx-2! tw:max-h-[33.15px]!"
               :icon="biTrash"
               size="sm"
               padding="sm"
@@ -373,7 +373,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
               @click="removeEncounterDialog = true"
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -393,14 +393,14 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
                     aria-label="Close dialog"
                     @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Remove"
-                    class="tw-text-red-600 dark:tw-text-red-400"
+                    class="tw:text-red-600! tw:dark:text-red-400!"
                     aria-label="Remove encounter"
                     @click="removeEncounter"
                   />
@@ -411,7 +411,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
               v-model="tmpEncounter.name"
               dense
               style="min-width: 120px; max-width: 120px"
-              class="tw-my-auto tw-mr-2"
+              class="tw:my-auto tw:mr-2"
               outlined
               :options="encounters"
               label="Encounters"
@@ -425,8 +425,8 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
       </q-header>
       <q-page-container v-if="encounter.getGenerating == false">
         <div v-for="(item, index) in encounter.getActiveEncounter!.creatures" :key="index">
-          <div class="tw-flex">
-            <div class="tw-flex-none tw-w-12 tw-my-auto tw-mx-1">
+          <div class="tw:flex">
+            <div class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
               <q-btn
                 unelevated
                 :ripple="false"
@@ -446,27 +446,27 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                 @click="encounter.removeFromEncounter(index)"
               />
             </div>
-            <div class="tw-flex tw-flex-row tw-flex-grow tw-flex-wrap">
-              <div class="tw-flex-1 tw-my-auto tw-mx-1" style="min-width: 100px">
+            <div class="tw:flex tw:flex-row tw:grow tw:flex-wrap">
+              <div class="tw:flex-1 tw:my-auto tw:mx-1" style="min-width: 100px">
                 <q-btn
                   round
                   unelevated
                   :icon="fasScroll"
                   size="sm"
-                  class="tw-mr-2"
+                  class="tw:mr-2!"
                   target="_blank"
                   aria-label="Open creature sheet"
                   @click="openCreatureSheet(item.game, item.id, item.variant!)"
                 >
                   <q-tooltip
-                    class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                     anchor="top middle"
                     self="bottom middle"
                   >
                     Open creature sheet
                   </q-tooltip>
                 </q-btn>
-                <span class="tw-align-middle">
+                <span class="tw:align-middle">
                   {{ item.quantity }}
                   <a
                     v-if="item.archive_link"
@@ -481,7 +481,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                     rel="noopener"
                   >
                     <span
-                      class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                      class="tw:text-blue-600! tw:decoration-2 tw:hover:underline tw:dark:text-blue-400!"
                       >{{ item.name }}</span
                     >
                   </a>
@@ -489,7 +489,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                   — Lv. {{ item.level }}
                 </span>
               </div>
-              <div class="tw-flex-initial tw-my-auto tw-mx-1">
+              <div class="tw:flex-initial tw:my-auto tw:mx-1">
                 <q-btn-group unelevated flat spread>
                   <q-btn
                     flat
@@ -497,8 +497,8 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                     size="15px"
                     :class="
                       item.variant === 'Weak'
-                        ? 'tw-text-green-500'
-                        : 'dark:tw-text-gray-200 tw-text-gray-400'
+                        ? 'tw:text-green-500!'
+                        : 'tw:dark:text-gray-200! tw:text-gray-400!'
                     "
                     padding="xs"
                     class="text-weight-bold"
@@ -510,8 +510,8 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                     size="15px"
                     :class="
                       item.variant === 'Base'
-                        ? 'tw-text-blue-500'
-                        : 'dark:tw-text-gray-200 tw-text-gray-400'
+                        ? 'tw:text-blue-500!'
+                        : 'tw:dark:text-gray-200! tw:text-gray-400!'
                     "
                     padding="xs"
                     class="text-weight-bold"
@@ -523,8 +523,8 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                     size="15px"
                     :class="
                       item.variant === 'Elite'
-                        ? 'tw-text-orange-500'
-                        : 'dark:tw-text-gray-200 tw-text-gray-400'
+                        ? 'tw:text-orange-500!'
+                        : 'tw:dark:text-gray-200! tw:text-gray-400!'
                     "
                     padding="xs"
                     class="text-weight-bold"
@@ -533,7 +533,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                 </q-btn-group>
               </div>
             </div>
-            <div class="tw-flex-initial tw-my-auto tw-ml-1 tw-mr-3">
+            <div class="tw:flex-initial tw:my-auto tw:ml-1 tw:mr-3">
               <q-btn
                 unelevated
                 :ripple="false"
@@ -546,19 +546,19 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
               />
             </div>
           </div>
-          <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
+          <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
         </div>
       </q-page-container>
-      <q-page-container v-else class="tw-flex" style="height: 78vh">
-        <div class="tw-m-auto">
-          <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
+      <q-page-container v-else class="tw:flex" style="height: 78vh">
+        <div class="tw:m-auto">
+          <q-spinner-gears class="tw:mx-auto tw:text-black tw:dark:text-white" size="5em" />
         </div>
       </q-page-container>
       <q-footer
         bordered
-        class="tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800 dark:!tw-border-gray-700"
+        class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw-flex tw-mx-4 tw-my-1.5">
+        <div class="tw:flex tw:mx-4 tw:my-1.5">
           <q-linear-progress
             id="v-step-7"
             rounded
@@ -569,7 +569,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
           >
             <div class="absolute-full flex flex-center">
               <q-badge
-                class="tw-absolute tw-text-base"
+                class="tw:absolute tw:text-base!"
                 color="grey-10"
                 text-color="white"
                 :label="'Challenge: ' + info.getInfo.challenge"

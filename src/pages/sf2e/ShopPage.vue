@@ -262,16 +262,16 @@ onUnmounted(() => {
 <template>
   <div class="row items-center justify-between">
     <v-tour name="/sf2e/shop" :steps="steps" :options="options" :callbacks="callbacks" />
-    <ShopSheet v-if="screenWidth >= 768" class="q-pa-md tw-w-full md:tw-w-[27%]" />
+    <ShopSheet v-if="screenWidth >= 768" class="q-pa-md tw:w-full tw:md:w-[27%]" />
     <ShopTable id="table" />
     <q-space />
-    <ShopSheet v-if="screenWidth < 768" class="q-pa-md tw-w-full md:tw-w-[27%]" />
+    <ShopSheet v-if="screenWidth < 768" class="q-pa-md tw:w-full tw:md:w-[27%]" />
     <ShopList id="list" />
     <q-page-sticky
       v-if="screenWidth < 768"
       position="bottom-right"
       :offset="[18, 18]"
-      class="tw-z-10 tw-opacity-85 only-screen"
+      class="tw:z-10 tw:opacity-85 only-screen"
     >
       <q-btn
         v-if="scrollUp"

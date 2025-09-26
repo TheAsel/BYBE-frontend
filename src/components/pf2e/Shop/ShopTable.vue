@@ -72,7 +72,7 @@ const filters = ref<{
   order_by: 'ascending'
 });
 const fullscreen = ref(false);
-const tableHeight = ref('height: calc(100vh - 128px)');
+const tableHeight = ref('height: calc(100vh - 126px)');
 
 const sourceFilter = ref<string[]>(filterStore.getItemFilters.sources);
 const traitFilter = ref<{ label: string; value: string }[]>(filterStore.getItemFilters.traits);
@@ -454,12 +454,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="tw-w-full q-pa-md md:tw-w-[46%] only-screen">
+  <div class="tw:w-full q-pa-md tw:md:w-[46%] only-screen">
     <q-table
       id="v-step-0"
       ref="itemTable"
       v-model:pagination="pagination"
-      class="sticky-header-table tw-opacity-85 dark:tw-opacity-90 tw-bg-white tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-overflow-hidden dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      class="sticky-header-table tw:opacity-85 tw:dark:opacity-90 tw:bg-white! tw:border tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       :style="tableHeight"
       color="primary"
       flat
@@ -497,17 +497,17 @@ onMounted(async () => {
     >
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
-          <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
+          <q-spinner-gears class="tw:mx-auto tw:text-black tw:dark:text-white" size="5em" />
         </q-inner-loading>
       </template>
       <template #top>
-        <div class="tw-flex tw-flex-grow tw-flex-wrap tw-gap-2 tw-justify-center">
-          <div class="tw-flex tw-flex-shrink">
-            <h1 class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
+        <div class="tw:flex tw:grow tw:flex-wrap tw:gap-2 tw:justify-center">
+          <div class="tw:flex tw:shrink">
+            <h1 class="text-h6 tw:my-auto font-bold tw:text-gray-800 tw:dark:text-gray-200">
               Items
             </h1>
           </div>
-          <div class="tw-flex tw-flex-grow tw-justify-center">
+          <div class="tw:flex tw:grow tw:justify-center">
             <q-btn-group push>
               <q-btn v-if="loading" id="v-step-1" push label="Generator Settings" />
               <ShopBuilder v-else ref="shopBuilderRef" />
@@ -516,7 +516,7 @@ onMounted(async () => {
                 id="v-step-2"
                 push
                 dense
-                class="tw-p-2"
+                class="tw:p-2!"
                 size="md"
                 aria-label="Random shop"
                 @click="shopBuilderRef.generateShop()"
@@ -549,7 +549,7 @@ onMounted(async () => {
                   />
                 </svg>
                 <q-tooltip
-                  class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                   anchor="top middle"
                   self="bottom middle"
                 >
@@ -558,12 +558,12 @@ onMounted(async () => {
               </q-btn>
             </q-btn-group>
           </div>
-          <div class="tw-flex tw-flex-shrink">
+          <div class="tw:flex tw:shrink">
             <q-btn
               flat
               round
               dense
-              class="tw-mr-2"
+              class="tw:mr-2!"
               :icon="biEraser"
               size="md"
               padding="sm"
@@ -571,7 +571,7 @@ onMounted(async () => {
               @click="resetFilters"
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -597,7 +597,7 @@ onMounted(async () => {
               flat
               round
               dense
-              class="tw-ml-2 !tw-p-3"
+              class="tw:ml-2! tw:p-3!"
               :icon="fullscreen ? biFullscreenExit : biFullscreen"
               size="sm"
               aria-label="Toggle fullscreen"
@@ -609,7 +609,7 @@ onMounted(async () => {
       <template #header-cell-source>
         <q-th>
           <div
-            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+            class="row no-wrap items-center tw:border-r tw:border-gray-200 tw:dark:border-gray-700"
           >
             <div class="col-grow">
               <KeepAlive>
@@ -630,14 +630,14 @@ onMounted(async () => {
                 />
               </KeepAlive>
             </div>
-            <div class="col-shrink tw-mx-2"></div>
+            <div class="col-shrink tw:mx-2"></div>
           </div>
         </q-th>
       </template>
       <template #header-cell-name>
         <q-th>
           <div
-            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+            class="row no-wrap items-center tw:border-r tw:border-gray-200 tw:dark:border-gray-700"
           >
             <div class="col-grow">
               <q-input
@@ -648,7 +648,7 @@ onMounted(async () => {
                 :style="columns[1]!.style"
               />
             </div>
-            <div class="col-shrink tw-mx-2">
+            <div class="col-shrink tw:mx-2">
               <q-btn
                 flat
                 round
@@ -666,7 +666,7 @@ onMounted(async () => {
       <template #header-cell-level>
         <q-th>
           <div
-            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+            class="row no-wrap items-center tw:border-r tw:border-gray-200 tw:dark:border-gray-700"
           >
             <div class="col-grow">
               <q-field
@@ -681,7 +681,7 @@ onMounted(async () => {
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
-                    <div class="tw-pt-8 tw-px-1">
+                    <div class="tw:pt-8 tw:px-1">
                       <q-range
                         v-model="filters.level_filter"
                         label-always
@@ -696,7 +696,7 @@ onMounted(async () => {
                 </q-popup-proxy>
               </q-field>
             </div>
-            <div class="col-shrink tw-mx-2">
+            <div class="col-shrink tw:mx-2">
               <q-btn
                 flat
                 round
@@ -714,7 +714,7 @@ onMounted(async () => {
       <template #header-cell-trait>
         <q-th>
           <div
-            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+            class="row no-wrap items-center tw:border-r tw:border-gray-200 tw:dark:border-gray-700"
           >
             <div class="col-grow">
               <KeepAlive>
@@ -737,7 +737,7 @@ onMounted(async () => {
                 />
               </KeepAlive>
             </div>
-            <div class="col-shrink tw-mx-2">
+            <div class="col-shrink tw:mx-2">
               <q-btn
                 flat
                 round
@@ -755,7 +755,7 @@ onMounted(async () => {
       <template #header-cell-rarity>
         <q-th>
           <div
-            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+            class="row no-wrap items-center tw:border-r tw:border-gray-200 tw:dark:border-gray-700"
           >
             <div class="col-grow">
               <q-select
@@ -770,7 +770,7 @@ onMounted(async () => {
                 :style="columns[4]!.style"
               />
             </div>
-            <div class="col-shrink tw-mx-2">
+            <div class="col-shrink tw:mx-2">
               <q-btn
                 flat
                 round
@@ -788,7 +788,7 @@ onMounted(async () => {
       <template #header-cell-type>
         <q-th>
           <div
-            class="row no-wrap items-center tw-border-r tw-border-gray-200 dark:tw-border-gray-700"
+            class="row no-wrap items-center tw:border-r tw:border-gray-200 tw:dark:border-gray-700"
           >
             <div class="col-grow">
               <q-select
@@ -803,7 +803,7 @@ onMounted(async () => {
                 :style="columns[5]!.style"
               />
             </div>
-            <div class="col-shrink tw-mx-2">
+            <div class="col-shrink tw:mx-2">
               <q-btn
                 flat
                 round
@@ -820,7 +820,7 @@ onMounted(async () => {
       </template>
       <template #header-cell-id>
         <q-th>
-          <q-icon :name="biBasketFill" class="tw-mr-1" size="sm"></q-icon>
+          <q-icon :name="biBasketFill" class="tw:mr-1" size="sm"></q-icon>
         </q-th>
       </template>
       <template #body-selection="selectedItem">
@@ -835,7 +835,7 @@ onMounted(async () => {
           @click="openShopSheet(selectedItem.row.core_item.id)"
         >
           <q-tooltip
-            class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+            class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
             anchor="top middle"
             self="bottom middle"
           >
@@ -862,11 +862,11 @@ onMounted(async () => {
             aria-label="Search source on Paizo store"
           >
             <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
               self="bottom middle"
             >
-              <i class="tw-whitespace-nowrap">
+              <i class="tw:whitespace-nowrap">
                 {{ source.row.core_item.source }}
               </i>
             </q-tooltip>
@@ -880,7 +880,7 @@ onMounted(async () => {
               items.getSelectedItem?.core_item &&
               name.row.core_item.id === items.getSelectedItem?.core_item.id
             "
-            class="tw-mr-1 tw-align-middle"
+            class="tw:mr-1 tw:align-middle"
             size="xs"
             :name="biCaretRight"
           />
@@ -893,20 +893,20 @@ onMounted(async () => {
             "
             target="_blank"
             rel="noopener"
-            class="tw-inline tw-align-middle"
+            class="tw:inline tw:align-middle"
           >
             <span
-              class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400 tw-max-w-[250px] tw-whitespace-normal"
+              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-[250px] tw:whitespace-normal"
               >{{ name.row.core_item.name }}</span
             >
           </a>
-          <span v-else class="tw-align-middle">{{ name.row.core_item.name }}</span>
+          <span v-else class="tw:align-middle">{{ name.row.core_item.name }}</span>
           <q-chip
             v-if="name.row.core_item.remaster && settings.getPfVersion === 'Any'"
             dense
             color="blue"
             text-color="white"
-            class="tw-ml-1 tw-text-xs"
+            class="tw:ml-1! tw:text-xs!"
             label="Remaster"
           />
           <q-chip
@@ -914,7 +914,7 @@ onMounted(async () => {
             dense
             color="red-10"
             text-color="white"
-            class="tw-ml-1 tw-text-xs"
+            class="tw:ml-1! tw:text-xs!"
             label="Legacy"
           />
         </q-td>
@@ -923,7 +923,7 @@ onMounted(async () => {
         <q-td :props="trait">
           <span
             v-if="trait.row.core_item.traits"
-            class="tw-block tw-max-w-[250px] tw-whitespace-normal"
+            class="tw:block tw:max-w-[250px] tw:whitespace-normal"
           >
             {{
               trait.row.core_item.traits
@@ -947,7 +947,7 @@ onMounted(async () => {
             left
           >
             <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
               self="bottom middle"
             >
@@ -961,7 +961,7 @@ onMounted(async () => {
             left
           >
             <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
               self="bottom middle"
             >
@@ -975,7 +975,7 @@ onMounted(async () => {
             left
           >
             <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
               self="bottom middle"
             >
@@ -984,7 +984,7 @@ onMounted(async () => {
           </q-icon>
           <q-icon v-if="type.row.core_item.item_type === 'Shield'" :name="mdiShield" size="sm" left>
             <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
               self="bottom middle"
             >
@@ -993,7 +993,7 @@ onMounted(async () => {
           </q-icon>
           <q-icon v-if="type.row.core_item.item_type === 'Weapon'" :name="mdiSword" size="sm" left>
             <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
               self="bottom middle"
             >
@@ -1009,13 +1009,13 @@ onMounted(async () => {
             unelevated
             :icon="biPlusLg"
             size="sm"
-            class="tw-mr-1"
+            class="tw:mr-1"
             aria-label="Open creature sheet"
             target="_blank"
             @click="addItem(id.row)"
           >
             <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
               self="bottom middle"
             >

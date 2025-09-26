@@ -10,7 +10,7 @@
   </a>
 </p>
 
-> Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
+> Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e and Starfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
 
 <!-- TABLE OF CONTENTS -->
 <details>

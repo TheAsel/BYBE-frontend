@@ -259,7 +259,7 @@ const scrollPage = (up: boolean) => {
       v-if="screenWidth < 768"
       position="bottom-right"
       :offset="[18, 18]"
-      class="tw-z-10 tw-opacity-85 only-screen"
+      class="tw:z-10 tw:opacity-85 only-screen"
     >
       <q-btn
         v-if="scrollUp"

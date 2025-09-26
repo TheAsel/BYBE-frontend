@@ -134,7 +134,7 @@ const addPlus = (value: number | undefined) => {
 
 const variantStyle = (value: string | number | undefined) => {
   if (value && creatureVariant.value != 'Base') {
-    const valueStr = '<span class="tw-text-red-600"><b>' + value.toString() + '</b></span>';
+    const valueStr = '<span class="tw:text-red-600"><b>' + value.toString() + '</b></span>';
     return valueStr;
   }
   return value;
@@ -603,20 +603,20 @@ const printPage = () => {
 
 <template>
   <div
-    class="creature-sheet tw-opacity-85 dark:tw-opacity-90 q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto"
+    class="creature-sheet tw:opacity-85 tw:dark:opacity-90 q-pa-md tw:w-full tw:md:w-228! tw:mx-auto"
   >
     <div
-      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 hide-print"
+      class="tw:items-center tw:text-left tw:max-w-220 tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700 hide-print"
     >
       <q-scroll-area style="height: calc(100vh - 128px)">
-        <div class="q-gutter-y-xs tw-p-4 show-print">
+        <div class="q-gutter-y-xs tw:p-4 show-print">
           <div
-            class="tw-flex tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white"
+            class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
             style="font-family: 'Orbitron Bold', sans-serif; font-variant-caps: small-caps"
           >
             <a
               v-if="creatureData?.core_data.derived.archive_link"
-              class="tw-my-auto"
+              class="tw:my-auto"
               :href="
                 creatureData.core_data.derived.archive_link +
                 '&Weak=' +
@@ -628,74 +628,74 @@ const printPage = () => {
               rel="noopener"
             >
               <h1
-                class="tw-leading-8 tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                class="tw:text-3xl! tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
               >
                 {{ nameString }}
               </h1>
             </a>
-            <h1 v-else class="tw-leading-8 tw-my-auto">{{ nameString }}</h1>
+            <h1 v-else class="tw:text-3xl! tw:leading-8 tw:my-auto">{{ nameString }}</h1>
             <q-space />
             <q-select
               v-model="creatureVariant"
-              class="tw-mx-4 tw-my-auto tw-text-2xl only-screen"
+              class="tw:mx-4 tw:my-auto tw:text-2xl! only-screen"
               :options="Object.freeze(['Weak', 'Base', 'Elite'])"
               borderless
               dense
               options-dense
               @update:model-value="changeVariant(creatureVariant)"
             />
-            <div class="tw-my-auto">
+            <div class="tw:my-auto">
               {{ creatureData?.core_data.essential.cr_type }}
-              <span :class="{ 'tw-text-red-600': creatureVariant != 'Base' }">{{
+              <span :class="{ 'tw:text-red-600': creatureVariant != 'Base' }">{{
                 creatureData?.variant_data?.level
               }}</span>
             </div>
           </div>
-          <q-separator class="tw-my-2" style="height: 2px" />
+          <q-separator class="tw:my-2!" style="height: 2px" />
           <hr
             class="only-print"
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
-          <div class="tw-flex tw-flex-wrap tw-font-bold tw-text-sm tw-text-white">
+          <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white">
             <div
               v-if="creatureData?.core_data.essential.rarity === 'Uncommon'"
-              class="tw-bg-[#c45500] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
+              class="tw:bg-[#c45500] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ creatureData?.core_data.essential.rarity.toUpperCase() }}
             </div>
             <div
               v-else-if="creatureData?.core_data.essential.rarity === 'Rare'"
-              class="tw-bg-[#0c1466] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
+              class="tw:bg-[#0c1466] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ creatureData?.core_data.essential.rarity.toUpperCase() }}
             </div>
             <div
               v-else-if="creatureData?.core_data.essential.rarity === 'Unique'"
-              class="tw-bg-[#800080] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
+              class="tw:bg-[#800080] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ creatureData?.core_data.essential.rarity.toUpperCase() }}
             </div>
             <div
               v-if="creatureData?.core_data.essential.alignment != 'No Alignment'"
-              class="tw-bg-[#4287f5] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
+              class="tw:bg-[#4287f5] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ creatureData?.core_data.essential.alignment.toUpperCase() }}
             </div>
-            <div class="tw-bg-[#478c42] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1">
+            <div class="tw:bg-[#478c42] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1">
               {{ creatureData?.core_data.essential.size.toUpperCase() }}
             </div>
             <div
               v-for="item in creatureData?.core_data.traits"
               :key="item"
-              class="tw-bg-[#522e2c] tw-border-2 tw-border-[#d8c483] tw-my-1 tw-p-1"
+              class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ item.toUpperCase() }}
             </div>
           </div>
-          <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
+          <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
             <div
               v-if="creatureData?.core_data.essential.source"
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              class="tw:text-base tw:text-gray-800 tw:dark:text-white"
             >
               <strong>Source </strong>
               <a
@@ -708,14 +708,14 @@ const printPage = () => {
                 rel="noopener"
               >
                 <i
-                  class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                  class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
                 >
                   {{ creatureData?.core_data.essential.source }}
                 </i>
               </a>
             </div>
             <div
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               v-html="perceptionString"
             ></div>
             <div
@@ -723,7 +723,7 @@ const printPage = () => {
                 creatureData?.extra_data?.languages != undefined &&
                 creatureData?.extra_data?.languages.length > 0
               "
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               v-html="languageString"
             ></div>
             <div
@@ -731,10 +731,10 @@ const printPage = () => {
                 creatureData?.extra_data?.skills != undefined &&
                 creatureData?.extra_data?.skills.length > 0
               "
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               v-html="skillString"
             ></div>
-            <div class="tw-text-base tw-text-gray-800 dark:tw-text-white">
+            <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
               <strong>Str</strong>
               {{ addPlus(creatureData?.extra_data?.ability_scores.strength) }},
               <strong>Dex</strong>
@@ -751,10 +751,10 @@ const printPage = () => {
             <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
               <div
                 v-if="item.category === 'interaction' && item.slug === null"
-                class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+                class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               >
                 <strong>{{ item.name + ' ' }}</strong>
-                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
                   >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
                 </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
@@ -766,22 +766,22 @@ const printPage = () => {
                 creatureData?.combat_data?.weapons.length > 0 &&
                 itemString != ''
               "
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               v-html="itemString"
             ></div>
           </div>
-          <q-separator class="tw-my-2" style="height: 2px" />
+          <q-separator class="tw:my-2!" style="height: 2px" />
           <hr
             class="only-print"
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
-          <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
+          <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
             <div
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               v-html="defenceString"
             ></div>
             <div
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               v-html="healthString"
             ></div>
             <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
@@ -793,28 +793,28 @@ const printPage = () => {
                   item.description != '' &&
                   item.category === 'defensive'
                 "
-                class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+                class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               >
                 <strong>{{ item.name + ' ' }}</strong>
-                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
                   >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
                 </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
               </div>
             </template>
           </div>
-          <q-separator class="tw-my-2" style="height: 2px" />
+          <q-separator class="tw:my-2!" style="height: 2px" />
           <hr
             class="only-print"
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
-          <div class="tw-indent-[-0.5rem] tw-pl-2 q-gutter-y-xs">
+          <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
             <div
               v-if="
                 creatureData?.extra_data?.speeds != undefined &&
                 Object.keys(creatureData?.extra_data?.speeds).length > 0
               "
-              class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+              class="tw:text-base tw:text-gray-800 tw:dark:text-white"
             >
               <strong>Speed</strong>
               {{ speedString }}
@@ -823,15 +823,15 @@ const printPage = () => {
             <template v-for="item in creatureData?.combat_data?.weapons" :key="item.item_core.id">
               <div
                 v-if="item.weapon_data?.weapon_type != 'Generic'"
-                class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+                class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               >
                 <strong v-if="item.weapon_data?.weapon_type === 'Melee'">Melee </strong>
                 <strong v-if="item.weapon_data?.weapon_type === 'Ranged'">Ranged </strong>
-                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
                   >1</span
                 >
                 <i>{{ ' ' + item.item_core.name.toLowerCase() + ' ' }} </i>
-                <span :class="{ 'tw-text-red-600 tw-font-bold': creatureVariant != 'Base' }"
+                <span :class="{ 'tw:text-red-600 tw:font-bold': creatureVariant != 'Base' }"
                   >{{ addPlus(item.weapon_data?.to_hit_bonus!) }}
                   <span v-if="item.item_core.traits.includes('agile')"
                     >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 4) }}/{{
@@ -850,7 +850,7 @@ const printPage = () => {
                     {{ weapon.dice.n_of_dices }}d{{ weapon.dice.dice_size
                     }}<span
                       v-if="weapon.bonus_dmg != 0"
-                      :class="{ 'tw-text-red-600 tw-font-bold': creatureVariant != 'Base' }"
+                      :class="{ 'tw:text-red-600 tw:font-bold': creatureVariant != 'Base' }"
                       >{{ addPlus(weapon.bonus_dmg) }}</span
                     >
                     {{ weapon.dmg_type }}
@@ -867,15 +867,15 @@ const printPage = () => {
               </div>
             </template>
             <template v-for="entity in spellString" :key="entity">
-              <div v-html="entity" class="tw-text-base tw-text-gray-800 dark:tw-text-white" />
+              <div v-html="entity" class="tw:text-base tw:text-gray-800 tw:dark:text-white" />
             </template>
             <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
               <div
                 v-if="item.category === 'offensive'"
-                class="tw-text-base tw-text-gray-800 dark:tw-text-white"
+                class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               >
                 <strong>{{ item.name + ' ' }}</strong>
-                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw-text-2xl"
+                <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
                   >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
                 </span>
                 <span v-html="' ' + cleanDescription(item.description)"></span>
@@ -889,7 +889,7 @@ const printPage = () => {
   <q-page-sticky
     position="bottom-right"
     :offset="[18, 18]"
-    class="tw-z-10 only-screen tw-opacity-85"
+    class="tw:z-10 only-screen tw:opacity-85"
   >
     <q-btn
       fab

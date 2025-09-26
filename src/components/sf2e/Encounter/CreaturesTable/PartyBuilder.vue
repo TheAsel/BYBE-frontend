@@ -101,8 +101,8 @@ const saveChanges = () => {
   <q-dialog v-model="dialog" aria-label="Player builder">
     <q-card flat bordered>
       <q-card-section class="items-center">
-        <div class="row tw-mb-2">
-          <div class="text-h6 tw-mr-4 tw-my-auto">Party Builder</div>
+        <div class="row tw:mb-2">
+          <div class="text-h6 tw:mr-4 tw:my-auto">Party Builder</div>
           <q-space />
           <q-btn
             v-close-popup
@@ -126,7 +126,7 @@ const saveChanges = () => {
             @update:model-value="changeActiveParty(tmpParty.name)"
           />
           <q-btn
-            class="tw-my-auto tw-mx-2"
+            class="tw:my-auto! tw:mx-2! tw:max-h-[33.15px]!"
             :icon="biPlusLg"
             size="sm"
             padding="sm"
@@ -137,7 +137,7 @@ const saveChanges = () => {
             @click="newPartyDialog = true"
           >
             <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
               self="bottom middle"
             >
@@ -177,20 +177,20 @@ const saveChanges = () => {
                 <q-btn
                   flat
                   label="Cancel"
-                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                  class="tw:text-blue-600! tw:dark:text-blue-400!"
                   @click="closeDialog"
                 />
                 <q-btn
                   flat
                   label="Add party"
-                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                  class="tw:text-blue-600! tw:dark:text-blue-400!"
                   @click="addParty"
                 />
               </q-card-actions>
             </q-card>
           </q-dialog>
           <q-btn
-            class="tw-my-auto"
+            class="tw:my-auto! tw:max-h-[33.15px]!"
             :icon="biTrash"
             size="sm"
             padding="sm"
@@ -201,7 +201,7 @@ const saveChanges = () => {
             @click="removePartyDialog = true"
           >
             <q-tooltip
-              class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
               self="bottom middle"
             >
@@ -221,13 +221,13 @@ const saveChanges = () => {
                 <q-btn
                   flat
                   label="Cancel"
-                  class="tw-text-blue-600 dark:tw-text-blue-400"
+                  class="tw:text-blue-600! tw:dark:text-blue-400!"
                   @click="closeDialog"
                 />
                 <q-btn
                   flat
                   label="Remove"
-                  class="tw-text-red-600 dark:tw-text-red-400"
+                  class="tw:text-red-600! tw:dark:text-red-400!"
                   @click="removeParty"
                 />
               </q-card-actions>
@@ -239,7 +239,7 @@ const saveChanges = () => {
       <q-separator />
 
       <q-card-section style="max-height: 60vh" class="scroll">
-        <div class="tw-space-y-4">
+        <div class="tw:space-y-4">
           <div v-for="(_, index) in tmpParty.members" :key="index" class="row no-wrap items-center">
             <div class="col-grow">
               <q-input
@@ -253,7 +253,7 @@ const saveChanges = () => {
                 @update:model-value="validateLevel(index)"
               />
             </div>
-            <div class="col-shrink tw-pl-3">
+            <div class="col-shrink tw:pl-3">
               <q-btn
                 flat
                 round
@@ -271,7 +271,7 @@ const saveChanges = () => {
         <q-btn
           outline
           type="button"
-          class="full-width tw-mt-4 tw-text-blue-600 dark:tw-text-blue-400"
+          class="full-width tw:mt-4! tw:text-blue-600! tw:dark:text-blue-400!"
           :icon="biPlusLg"
           size="md"
           padding="sm"
@@ -289,7 +289,7 @@ const saveChanges = () => {
           unelevated
           label="Save changes"
           type="button"
-          class="full-width tw-text-blue-600 dark:tw-text-blue-400"
+          class="full-width tw:text-blue-600! tw:dark:text-blue-400!"
           @click="saveChanges"
         />
       </q-card-actions>

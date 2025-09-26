@@ -259,31 +259,31 @@ const filterJobsFn = (val, update) => {
 </script>
 
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[33%]">
+  <div class="q-pa-md tw:w-full tw:md:w-[33%]">
     <q-layout
       id="v-step-0"
       view="lHh lpr lFf"
       container
-      style="height: calc(100vh - 128px)"
-      class="tw-opacity-85 dark:tw-opacity-90 tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      style="height: calc(100vh - 126px)"
+      class="tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200 tw:rounded-xl tw:shadow-sm tw:bg-white tw:dark:bg-gray-800 tw:dark:border-gray-700"
     >
       <q-header
         bordered
-        class="tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800 dark:!tw-border-gray-700"
+        class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-0.5">
-          <div class="tw-flex tw-flex-shrink">
-            <span class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
+        <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
+          <div class="tw:flex tw:shrink">
+            <span class="text-h6 tw:my-auto font-bold tw:text-gray-800 tw:dark:text-gray-200">
               NPC Generator
             </span>
           </div>
           <q-space />
-          <div class="tw-flex tw-py-1">
+          <div class="tw:flex tw:py-1">
             <q-btn
               flat
               round
               dense
-              class="tw-mx-2"
+              class="tw:mx-2!"
               :icon="biEraser"
               size="md"
               padding="sm"
@@ -291,7 +291,7 @@ const filterJobsFn = (val, update) => {
               @click="resetParameters"
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -302,12 +302,12 @@ const filterJobsFn = (val, update) => {
         </div>
       </q-header>
       <q-page-container>
-        <div class="tw-justify-center">
-          <div class="tw-flex tw-flex-col tw-gap-5 tw-my-4 tw-mx-16">
+        <div class="tw:justify-center">
+          <div class="tw:flex tw:flex-col tw:gap-5 tw:my-4 tw:mx-16">
             <q-select
               label="Genders"
               v-model="parameters.genders"
-              class="tw-py-1"
+              class="tw:py-1"
               multiple
               dense
               outlined
@@ -319,12 +319,12 @@ const filterJobsFn = (val, update) => {
               @filter="filterGendersFn"
             />
 
-            <div class="tw-flex tw-flex-wrap">
+            <div class="tw:flex tw:flex-wrap">
               <q-select
                 v-if="!npcs.getActiveNpc!.culture"
                 label="Ancestries"
                 v-model="parameters.ancestries"
-                class="tw-flex-grow"
+                class="tw:grow"
                 multiple
                 dense
                 outlined
@@ -339,7 +339,7 @@ const filterJobsFn = (val, update) => {
                 v-else
                 label="Cultures"
                 v-model="parameters.cultures"
-                class="tw-flex-grow"
+                class="tw:grow"
                 multiple
                 dense
                 outlined
@@ -353,7 +353,7 @@ const filterJobsFn = (val, update) => {
               <q-toggle
                 v-model="npcs.getActiveNpc!.culture"
                 label="Use Culture"
-                class="tw-flex-shrink tw-mx-2"
+                class="tw:shrink tw:mx-2"
                 aria-label="Toggle Culture"
               >
               </q-toggle>
@@ -385,11 +385,11 @@ const filterJobsFn = (val, update) => {
               :options="Object.freeze(npcParameters.getNpcParameters.jobs)"
               @filter="filterJobsFn"
             />
-            <div class="tw-flex tw-flex-col">
-              <span class="tw-text-gray-800 dark:tw-text-gray-200"> Level range: </span>
+            <div class="tw:flex tw:flex-col">
+              <span class="tw:text-gray-800 tw:dark:text-gray-200"> Level range: </span>
               <q-range
                 v-model="parameters.level"
-                class="tw-mb-2"
+                class="tw:mb-2"
                 markers
                 label-always
                 switch-label-side
@@ -400,23 +400,23 @@ const filterJobsFn = (val, update) => {
                 :right-label-value="'Max: ' + parameters.level.max"
               />
             </div>
-            <q-checkbox class="tw-mx-auto" v-model="nickname" label="Nickname" />
+            <q-checkbox class="tw:mx-auto" v-model="nickname" label="Nickname" />
           </div>
         </div>
       </q-page-container>
       <q-footer
-        class="tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800 dark:!tw-border-gray-700"
+        class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw-flex tw-flex-grow tw-justify-center">
+        <div class="tw:flex tw:grow tw:justify-center">
           <q-btn
             id="v-step-1"
             color="primary"
             push
             label="Generate NPC"
             @click="generateNpc"
-            class="tw-mb-2 tw-px-16"
+            class="tw:mb-2! tw:px-16!"
           >
-            <q-icon right class="tw-py-2">
+            <q-icon right class="tw:py-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="22"

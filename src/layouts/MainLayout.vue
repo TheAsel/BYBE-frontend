@@ -63,20 +63,20 @@ try {
 
 <template>
   <q-layout view="hHh lpr fFf" :style="backgroundStyle">
-    <HeaderBar class="tw-backdrop-blur-2xl !tw-bg-white/90 dark:!tw-bg-black/70" />
+    <HeaderBar class="tw:backdrop-blur-2xl tw:bg-white/90! tw:dark:bg-black/70!" />
 
-    <q-page-container class="!tw-pb-0 tw-min-h-[90vh]">
+    <q-page-container class="tw:pb-0! tw:min-h-[90vh]">
       <router-view />
     </q-page-container>
     <footer
-      class="tw-relative tw-bottom-0 tw-inset-x-0 tw-text-center tw-py-2 tw-border-t tw-border-gray-200 dark:tw-border-gray-700 tw-backdrop-blur-2xl !tw-bg-white/90 dark:!tw-bg-black/70"
+      class="tw:relative tw:bottom-0 tw:inset-x-0 tw:text-center tw:py-2 tw:my-0! tw:border-t tw:border-gray-200 tw:dark:border-gray-700 tw:backdrop-blur-2xl tw:bg-white/90! tw:dark:bg-black/70!"
     >
-      <div class="tw-max-w-[85rem] tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
-        <p class="tw-text-sm tw-text-neutral-500 dark:tw-text-neutral-400">
+      <div class="tw:max-w-340 tw:mx-auto tw:px-4 tw:sm:px-6 tw:lg:px-8">
+        <p class="tw:text-sm tw:text-neutral-500 tw:dark:text-neutral-400 tw:mb-0!">
           BYBE - v{{ version }}
           <a
             v-if="version !== newestVersion && isApp !== 'true'"
-            class="tw- tw-text-blue-600 dark:tw-text-blue-400 tw-decoration-2 hover:tw-underline"
+            class="tw:text-blue-600 tw:dark:text-blue-400 tw:decoration-2 tw:hover:underline"
             :href="latestRelease"
             target="_blank"
             rel="noopener"
@@ -88,19 +88,19 @@ try {
             <router-link
               v-if="settings.getGame == 'sf2e'"
               to="/sf2e/license"
-              class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
+              class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
               >Licenses and Policies</router-link
             >
             <router-link
               v-else
               to="/pf2e/license"
-              class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
+              class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
               >Licenses and Policies</router-link
             >
             |
           </span>
           <a
-            class="hover:tw-text-gray-900 hover:dark:tw-text-neutral-300"
+            class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
             :href="latestRelease"
             target="_blank"
             rel="noopener"
@@ -273,7 +273,7 @@ body.v-tour--active {
     color: black !important;
   }
 
-  .tw-flex-wrap > * {
+  .tw\:flex-wrap > * {
     margin: 0 !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
@@ -286,19 +286,19 @@ body.v-tour--active {
     line-height: 1.2rem !important;
   }
 
-  .tw-text-2xl {
+  .tw\:text-2xl {
     font-size: 18px !important;
     padding-top: 1vh !important;
     line-height: 0.2rem !important;
     color: black !important;
   }
 
-  .tw-text-sm {
+  .tw\:text-sm {
     font-size: 12px !important;
     color: black !important;
   }
 
-  .tw-text-base {
+  .tw\:text-base {
     font-size: 14px !important;
     color: black !important;
   }

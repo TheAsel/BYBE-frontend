@@ -3,7 +3,7 @@ import { watch } from 'vue';
 
 let prefix = '';
 
-prefix = 'tw-';
+prefix = 'tw:';
 
 export function TailwindDarkFix() {
   function override_dark_setup_for_tailwind(val: boolean) {

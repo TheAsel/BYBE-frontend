@@ -68,11 +68,11 @@ const printPage = () => {
 </script>
 
 <template>
-  <ShopSheet class="tw-mx-auto item-page q-pa-md tw-w-full md:tw-w-[57rem]" />
+  <ShopSheet class="tw:mx-auto item-page q-pa-md tw:w-full tw:md:w-228" />
   <q-page-sticky
     position="bottom-right"
     :offset="[18, 18]"
-    class="tw-z-10 only-screen tw-opacity-85"
+    class="tw:z-10 only-screen tw:opacity-85"
   >
     <q-btn fab :icon="matPrint" color="primary" aria-label="Print item sheet" @click="printPage" />
   </q-page-sticky>

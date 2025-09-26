@@ -151,28 +151,28 @@ const showItem = debounce(async function (item: min_item) {
 </script>
 
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[27%] only-screen">
+  <div class="q-pa-md tw:w-full tw:md:w-[27%] only-screen">
     <q-layout
       id="v-step-4"
       view="lHh lpr lFf"
       container
-      style="height: calc(100vh - 128px)"
-      class="tw-opacity-85 dark:tw-opacity-90 tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      style="height: calc(100vh - 126px)"
+      class="tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
     >
       <q-header
         bordered
-        class="tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800 dark:!tw-border-gray-700"
+        class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-0.5">
-          <div class="tw-flex tw-flex-shrink">
-            <span class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
+        <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
+          <div class="tw:flex tw:shrink">
+            <span class="text-h6 tw:my-auto font-bold tw:text-gray-800! tw:dark:text-gray-200!">
               Shop
             </span>
           </div>
           <q-space />
-          <div class="tw-flex tw-py-1">
+          <div class="tw:flex tw:py-1">
             <q-btn
-              class="tw-my-auto tw-ml-2"
+              class="tw:my-auto! tw:max-h-[33.15px]!"
               :icon="biPlusLg"
               size="sm"
               padding="sm"
@@ -183,7 +183,7 @@ const showItem = debounce(async function (item: min_item) {
               @click="newShopDialog = true"
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -223,14 +223,14 @@ const showItem = debounce(async function (item: min_item) {
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Close dialog"
                     @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Add shop"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Add shop"
                     @click="addShop"
                   />
@@ -239,7 +239,7 @@ const showItem = debounce(async function (item: min_item) {
             </q-dialog>
 
             <q-btn
-              class="tw-my-auto tw-ml-2"
+              class="tw:my-auto! tw:ml-2! tw:max-h-[33.15px]!"
               :icon="biInputCursorText"
               size="sm"
               padding="sm"
@@ -250,7 +250,7 @@ const showItem = debounce(async function (item: min_item) {
               @click="renameShopDialog = true"
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -290,14 +290,14 @@ const showItem = debounce(async function (item: min_item) {
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Close dialog"
                     @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Rename shop"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Rename shop"
                     @click="renameShop"
                   />
@@ -306,7 +306,7 @@ const showItem = debounce(async function (item: min_item) {
             </q-dialog>
 
             <q-btn
-              class="tw-my-auto tw-mx-2 tw-p-2"
+              class="tw:my-auto! tw:mx-2! tw:max-h-[33.15px]!"
               :icon="biTrash"
               size="sm"
               padding="sm"
@@ -317,7 +317,7 @@ const showItem = debounce(async function (item: min_item) {
               @click="removeShopDialog = true"
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -337,14 +337,14 @@ const showItem = debounce(async function (item: min_item) {
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Close dialog"
                     @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Remove"
-                    class="tw-text-red-600 dark:tw-text-red-400"
+                    class="tw:text-red-600 tw:dark:text-red-400"
                     aria-label="Remove shop"
                     @click="removeShop"
                   />
@@ -355,7 +355,7 @@ const showItem = debounce(async function (item: min_item) {
               v-model="tmpShop.name"
               dense
               style="min-width: 120px; max-width: 120px"
-              class="tw-my-auto tw-mr-2"
+              class="tw:my-auto tw:mr-2"
               outlined
               :options="shops"
               label="Shops"
@@ -368,8 +368,8 @@ const showItem = debounce(async function (item: min_item) {
 
       <q-page-container v-if="shop.getGenerating == false">
         <div v-for="(item, index) in shop.getActiveShop!.items" :key="index">
-          <div class="tw-flex">
-            <div class="tw-flex-none tw-w-12 tw-my-auto tw-mx-1">
+          <div class="tw:flex">
+            <div class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
               <q-btn
                 unelevated
                 :ripple="false"
@@ -389,19 +389,19 @@ const showItem = debounce(async function (item: min_item) {
                 @click="shop.removeFromShop(index)"
               />
             </div>
-            <div class="tw-flex tw-flex-row tw-flex-grow cursor-pointer" @click="showItem(item)">
-              <div class="tw-flex-grow tw-my-auto tw-mx-1" style="min-width: 100px">
+            <div class="tw:flex tw:flex-row tw:grow cursor-pointer" @click="showItem(item)">
+              <div class="tw:grow tw:my-auto tw:mx-1" style="min-width: 100px">
                 <q-chip
                   v-if="item.type === 'Armor'"
                   text-color="white"
                   :clickable="false"
                   :ripple="false"
-                  class="tw-p-1 tw-invisible"
+                  class="tw:p-1! tw:invisible"
                   aria-label="Armor item type"
                 >
-                  <q-avatar class="tw-visible" :icon="mdiTshirtCrew" color="blue">
+                  <q-avatar class="tw:visible" :icon="mdiTshirtCrew" color="blue">
                     <q-tooltip
-                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                       anchor="top middle"
                       self="bottom middle"
                     >
@@ -414,12 +414,12 @@ const showItem = debounce(async function (item: min_item) {
                   text-color="white"
                   :clickable="false"
                   :ripple="false"
-                  class="tw-p-1 tw-invisible"
+                  class="tw:p-1! tw:invisible"
                   aria-label="Consumable item type"
                 >
-                  <q-avatar class="tw-visible" :icon="mdiFoodDrumstick" color="orange">
+                  <q-avatar class="tw:visible" :icon="mdiFoodDrumstick" color="orange">
                     <q-tooltip
-                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                       anchor="top middle"
                       self="bottom middle"
                     >
@@ -432,12 +432,12 @@ const showItem = debounce(async function (item: min_item) {
                   text-color="white"
                   :clickable="false"
                   :ripple="false"
-                  class="tw-p-1 tw-invisible"
+                  class="tw:p-1! tw:invisible"
                   aria-label="Equipment item type"
                 >
-                  <q-avatar class="tw-visible" :icon="mdiRing" color="green">
+                  <q-avatar class="tw:visible" :icon="mdiRing" color="green">
                     <q-tooltip
-                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                       anchor="top middle"
                       self="bottom middle"
                     >
@@ -450,12 +450,12 @@ const showItem = debounce(async function (item: min_item) {
                   text-color="white"
                   :clickable="false"
                   :ripple="false"
-                  class="tw-p-1 tw-invisible"
+                  class="tw:p-1! tw:invisible"
                   aria-label="Shield item type"
                 >
-                  <q-avatar class="tw-visible" :icon="mdiShield" color="purple">
+                  <q-avatar class="tw:visible" :icon="mdiShield" color="purple">
                     <q-tooltip
-                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                       anchor="top middle"
                       self="bottom middle"
                     >
@@ -468,12 +468,12 @@ const showItem = debounce(async function (item: min_item) {
                   text-color="white"
                   :clickable="false"
                   :ripple="false"
-                  class="tw-p-1 tw-invisible"
+                  class="tw:p-1! tw:invisible"
                   aria-label="Weapon item type"
                 >
-                  <q-avatar class="tw-visible" :icon="mdiSword" color="red">
+                  <q-avatar class="tw:visible" :icon="mdiSword" color="red">
                     <q-tooltip
-                      class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                       anchor="top middle"
                       self="bottom middle"
                     >
@@ -481,7 +481,7 @@ const showItem = debounce(async function (item: min_item) {
                     </q-tooltip>
                   </q-avatar>
                 </q-chip>
-                <span class="tw-align-middle">
+                <span class="tw:align-middle">
                   {{ item.quantity }}
                   <a
                     v-if="item.archive_link && settings.getAonLinks"
@@ -490,7 +490,7 @@ const showItem = debounce(async function (item: min_item) {
                     rel="noopener"
                   >
                     <span
-                      class="tw-text-blue-600 tw-decoration-2 hover:tw-underline dark:tw-text-blue-400"
+                      class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
                       >{{ item.name }}</span
                     >
                   </a>
@@ -498,11 +498,11 @@ const showItem = debounce(async function (item: min_item) {
                   — Lv. {{ item.level }}
                 </span>
               </div>
-              <div class="tw-flex-shrink tw-text-nowrap tw-my-auto tw-mx-1">
+              <div class="tw:shrink tw:text-nowrap tw:my-auto tw:mx-1">
                 {{ (item.price * item.quantity!) / 10 + ' credits' }}
               </div>
             </div>
-            <div class="tw-flex-none tw-my-auto tw-ml-1 tw-mr-3">
+            <div class="tw:flex-none tw:my-auto tw:ml-1 tw:mr-3">
               <q-btn
                 unelevated
                 :ripple="false"
@@ -516,20 +516,20 @@ const showItem = debounce(async function (item: min_item) {
               />
             </div>
           </div>
-          <q-separator class="tw-bg-gray-200 dark:tw-bg-gray-700" />
+          <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
         </div>
       </q-page-container>
-      <q-page-container v-else class="tw-flex" style="height: 78vh">
-        <div class="tw-m-auto">
-          <q-spinner-gears class="tw-mx-auto tw-text-black dark:tw-text-white" size="5em" />
+      <q-page-container v-else class="tw:flex" style="height: 78vh">
+        <div class="tw:m-auto">
+          <q-spinner-gears class="tw:mx-auto tw:text-black tw:dark:text-white" size="5em" />
         </div>
       </q-page-container>
       <q-footer
         bordered
-        class="tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800 dark:!tw-border-gray-700"
+        class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw-flex tw-mx-4">
-          <div class="text-subtitle1 font-bold tw-whitespace-nowrap tw-py-2.5 tw-pr-4">
+        <div class="tw:flex tw:mx-4">
+          <div class="text-subtitle1 font-bold tw:whitespace-nowrap tw:py-2.5 tw:pr-4">
             Total cost: {{ shop.getTotalCost / 10 + ' credits' }}
           </div>
         </div>

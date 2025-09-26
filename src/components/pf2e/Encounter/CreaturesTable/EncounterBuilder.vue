@@ -226,7 +226,7 @@ defineExpose({ generateEncounter });
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center">
-        <div class="text-h6 tw-min-w-[240px]">Generator Settings</div>
+        <div class="text-h6 tw:min-w-[240px]">Generator Settings</div>
         <q-space />
         <q-btn
           v-close-popup
@@ -254,7 +254,7 @@ defineExpose({ generateEncounter });
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="General">
           <q-card-section style="max-height: 46rem">
-            <div class="tw-space-y-3">
+            <div class="tw:space-y-3!">
               <q-select
                 v-model="tmpFilters.traits"
                 multiple
@@ -322,11 +322,11 @@ defineExpose({ generateEncounter });
                 label="Creature Type"
                 style="max-width: 248px"
               />
-              <q-separator />
+              <q-separator class="tw:mb-3!" />
               <q-toggle
                 v-model="tmpFilters.adventure_group_toggle"
                 label="Use Adventure Groups"
-                class="tw-mr-2"
+                class="tw:mr-2! tw:my-auto!"
                 aria-label="Toggle Adventure Groups"
               >
               </q-toggle>
@@ -334,6 +334,7 @@ defineExpose({ generateEncounter });
                 flat
                 round
                 size="sm"
+                class="tw:my-auto!"
                 :icon="biQuestionCircle"
                 href="https://2e.aonprd.com/Rules.aspx?ID=2717"
                 target="_blank"
@@ -341,7 +342,7 @@ defineExpose({ generateEncounter });
                 aria-label="Link to explanation for adventure groups"
               >
                 <q-tooltip
-                  class="text-caption text-center tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  class="text-caption text-center tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                   anchor="top middle"
                   self="bottom middle"
                 >
@@ -357,11 +358,11 @@ defineExpose({ generateEncounter });
                   options-dense
                   :options="Object.freeze(adventureGroupSelect)"
                   label="Adventure Group"
-                  class="tw-pt-1 tw-pb-6"
+                  class="tw:pt-1! tw:pb-6!"
                 />
                 <p
                   v-if="tmpFilters.adventure_group.value === 'BossAndLackeys'"
-                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  class="tw:mb-[0px]! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Boss and Lackeys (120 XP)</strong>
                   <br />
@@ -369,7 +370,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'BossAndLieutenant'"
-                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  class="tw:mb-[0px]! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Boss and Lieutenant (120 XP)</strong>
                   <br />
@@ -377,7 +378,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'EliteEnemies'"
-                  class="tw-mb-[21px] text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  class="tw:mb-[21px]! text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Elite Enemies (120 XP)</strong>
                   <br />
@@ -385,7 +386,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'LieutenantAndLackeys'"
-                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  class="tw:mb-[0px]! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Lieutenant and Lackeys (80 XP)</strong>
                   <br />
@@ -393,7 +394,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'MatedPair'"
-                  class="tw-mb-[21px] text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  class="tw:mb-[21px]! text-center tw:bg-gray-200! tw:text-black tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Mated Pair (80 XP)</strong>
                   <br />
@@ -401,7 +402,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'Troop'"
-                  class="text-center text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  class="tw:mb-[0px]! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Troop (80 XP)</strong>
                   <br />
@@ -409,7 +410,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'MookSquad'"
-                  class="tw-mb-[21px] text-center tw-bg-gray-200 tw-text-black dark:tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                  class="tw:mb-[21px]! text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Mook Squad (60 XP)</strong>
                   <br />
@@ -417,8 +418,8 @@ defineExpose({ generateEncounter });
                 </p>
               </span>
               <span v-else>
-                <div class="tw-pb-7">
-                  <q-badge outline class="tw-text-sm"> Number of creatures: </q-badge>
+                <div class="tw:pb-7">
+                  <q-badge outline class="tw:text-sm!"> Number of creatures: </q-badge>
 
                   <q-range
                     v-model="tmpFilters.creatures"
@@ -428,7 +429,7 @@ defineExpose({ generateEncounter });
                     markers
                     :left-label-value="'Min: ' + tmpFilters.creatures.min"
                     :right-label-value="'Max: ' + tmpFilters.creatures.max"
-                    class="tw-px-3 tw-pt-1"
+                    class="tw:px-3 tw:pt-1"
                     aria-label="Creature numbers"
                     role="menuitem"
                     switch-label-side
@@ -451,8 +452,8 @@ defineExpose({ generateEncounter });
           </q-card-section>
         </q-tab-panel>
         <q-tab-panel name="Advanced">
-          <q-card-section class="tw-flex" style="max-height: 46rem">
-            <div class="tw-space-y-3">
+          <q-card-section class="tw:flex" style="max-height: 46rem">
+            <div class="tw:space-y-3!">
               <q-select
                 v-model="tmpFilters.alignment"
                 multiple
@@ -477,16 +478,16 @@ defineExpose({ generateEncounter });
                 style="width: 248px"
               />
 
-              <div class="q-gutter-sm tw-pb-[292px]">
+              <div class="q-gutter-sm tw:mt-3! tw:pb-[292px]">
                 <q-checkbox
                   v-model="tmpFilters.allow_weak_variants"
                   label="Allow Weak?"
-                  class="tw-mx-1"
+                  class="tw:mx-1!"
                 />
                 <q-checkbox
                   v-model="tmpFilters.allow_elite_variants"
                   label="Allow Elite?"
-                  class="tw-mx-1"
+                  class="tw:mx-1!"
                 />
               </div>
             </div>
@@ -501,7 +502,7 @@ defineExpose({ generateEncounter });
             flat
             label="Save changes"
             type="button"
-            class="full-width tw-text-blue-600 dark:tw-text-blue-400"
+            class="full-width tw:text-blue-600! tw:dark:text-blue-400!"
             @click="saveChanges"
           />
           <q-separator vertical />
@@ -510,7 +511,7 @@ defineExpose({ generateEncounter });
             flat
             label="Generate Encounter"
             type="button"
-            class="full-width tw-text-blue-600 dark:tw-text-blue-400"
+            class="full-width tw:text-blue-600! tw:dark:text-blue-400!"
             @click="generateEncounter"
           />
         </q-btn-group>

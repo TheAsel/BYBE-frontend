@@ -278,45 +278,47 @@ const saveChanges = () => {
 </script>
 
 <template>
-  <div class="q-pa-md tw-w-full md:tw-w-[34%]">
+  <div class="q-pa-md tw:w-full tw:md:w-[34%]">
     <q-layout
       id="v-step-2"
       view="lHh lpr lFf"
       container
-      style="height: calc(100vh - 128px)"
-      class="tw-opacity-85 dark:tw-opacity-90 tw-overflow-auto tw-border tw-border-gray-200 tw-rounded-xl tw-shadow-sm tw-bg-white dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      style="height: calc(100vh - 126px)"
+      class="tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200 tw:rounded-xl tw:shadow-sm tw:bg-white tw:dark:bg-gray-800 tw:dark:border-gray-700"
     >
       <q-header
         bordered
-        class="tw-text-gray-800 dark:tw-text-gray-200 tw-bg-white dark:tw-bg-gray-800 dark:!tw-border-gray-700"
+        class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-0.5">
-          <div class="tw-flex tw-flex-shrink">
-            <span class="text-h6 tw-my-auto font-bold tw-text-gray-800 dark:tw-text-gray-200">
+        <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
+          <div class="tw:flex tw:shrink">
+            <span class="text-h6 tw:my-auto font-bold tw:text-gray-800 tw:dark:text-gray-200">
               NPC Editor
             </span>
           </div>
           <q-space />
-          <div class="tw-flex tw-py-1">
-            <q-btn
-              class="tw-my-auto tw-ml-2"
-              :icon="biPlusLg"
-              size="sm"
-              padding="sm"
-              flat
-              round
-              dense
-              aria-label="Add new NPC"
-              @click="newNpcDialog = true"
-            >
-              <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                anchor="top middle"
-                self="bottom middle"
+          <div class="tw:flex tw:py-1!">
+            <div class="tw:my-auto!">
+              <q-btn
+                class="tw:ml-2!"
+                :icon="biPlusLg"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                aria-label="Add new NPC"
+                @click="newNpcDialog = true"
               >
-                Add new NPC
-              </q-tooltip>
-            </q-btn>
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Add new NPC
+                </q-tooltip>
+              </q-btn>
+            </div>
             <q-dialog v-model="newNpcDialog" aria-label="New npc dialog" @escape-key="closeDialog">
               <q-card flat bordered>
                 <q-card-section>
@@ -346,40 +348,41 @@ const saveChanges = () => {
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Close dialog"
                     @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Add NPC"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Add NPC"
                     @click="addNpc"
                   />
                 </q-card-actions>
               </q-card>
             </q-dialog>
-
-            <q-btn
-              class="tw-my-auto tw-ml-2"
-              :icon="biInputCursorText"
-              size="sm"
-              padding="sm"
-              flat
-              round
-              dense
-              aria-label="Rename NPC"
-              @click="renameNpcDialog = true"
-            >
-              <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                anchor="top middle"
-                self="bottom middle"
+            <div class="tw:my-auto!">
+              <q-btn
+                class="tw:ml-2!"
+                :icon="biInputCursorText"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                aria-label="Rename NPC"
+                @click="renameNpcDialog = true"
               >
-                Rename NPC
-              </q-tooltip>
-            </q-btn>
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Rename NPC
+                </q-tooltip>
+              </q-btn>
+            </div>
             <q-dialog
               v-model="renameNpcDialog"
               aria-label="New npc dialog"
@@ -413,40 +416,41 @@ const saveChanges = () => {
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Close dialog"
                     @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Rename NPC"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Rename NPC"
                     @click="renameNpc"
                   />
                 </q-card-actions>
               </q-card>
             </q-dialog>
-
-            <q-btn
-              class="tw-my-auto tw-mx-2 tw-p-2"
-              :icon="biTrash"
-              size="sm"
-              padding="sm"
-              flat
-              round
-              dense
-              aria-label="Remove current NPC"
-              @click="removeNpcDialog = true"
-            >
-              <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
-                anchor="top middle"
-                self="bottom middle"
+            <div class="tw:my-auto!">
+              <q-btn
+                class="tw:mx-2! tw:p-2!"
+                :icon="biTrash"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                aria-label="Remove current NPC"
+                @click="removeNpcDialog = true"
               >
-                Delete NPC
-              </q-tooltip>
-            </q-btn>
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Delete NPC
+                </q-tooltip>
+              </q-btn>
+            </div>
             <q-dialog
               v-model="removeNpcDialog"
               aria-label="Remove npc dialog"
@@ -460,14 +464,14 @@ const saveChanges = () => {
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600 tw:dark:text-blue-400"
                     aria-label="Close dialog"
                     @click="closeDialog"
                   />
                   <q-btn
                     flat
                     label="Remove"
-                    class="tw-text-red-600 dark:tw-text-red-400"
+                    class="tw:text-red-600 tw:dark:text-red-400"
                     aria-label="Remove NPC"
                     @click="removeNpc"
                   />
@@ -478,7 +482,7 @@ const saveChanges = () => {
               v-model="tmpNpc.name"
               dense
               style="min-width: 120px; max-width: 120px"
-              class="tw-my-auto tw-mr-2"
+              class="tw:my-auto tw:mr-2"
               outlined
               :options="npcList"
               label="NPCs"
@@ -489,11 +493,11 @@ const saveChanges = () => {
         </div>
       </q-header>
       <q-page-container>
-        <div class="tw-flex tw-flex-col tw-gap-4 tw-my-4 tw-mx-6">
-          <div id="v-step-3" class="tw-flex tw-py-1">
+        <div class="tw:flex tw:flex-col tw:gap-4 tw:my-4 tw:mx-6">
+          <div id="v-step-3" class="tw:flex tw:py-1">
             <q-btn
               v-if="npcs.getLocks.name"
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
               padding="sm"
@@ -505,7 +509,7 @@ const saveChanges = () => {
             />
             <q-btn
               v-else
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biUnlock"
               size="sm"
               padding="sm"
@@ -518,14 +522,14 @@ const saveChanges = () => {
             <q-input
               label="Name"
               v-model="npcs.getActiveNpc!.npc.name"
-              class="tw-flex-grow"
+              class="tw:grow"
               stack-label
               dense
               outlined
               :readonly="npcs.getLocks.name"
             />
             <q-btn
-              class="tw-flex-none tw-my-auto tw-ml-2"
+              class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
               padding="sm"
@@ -535,10 +539,10 @@ const saveChanges = () => {
               aria-label="Generate name"
               @click="generateNamesNpc"
             />
-            <span class="tw-mx-2" />
+            <span class="tw:mx-2" />
             <q-btn
               v-if="npcs.getLocks.nickname"
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
               padding="sm"
@@ -550,7 +554,7 @@ const saveChanges = () => {
             />
             <q-btn
               v-else
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biUnlock"
               size="sm"
               padding="sm"
@@ -563,14 +567,14 @@ const saveChanges = () => {
             <q-input
               label="Nickname"
               v-model="npcs.getActiveNpc!.npc.nickname"
-              class="tw-flex-grow"
+              class="tw:grow"
               stack-label
               dense
               outlined
               :readonly="npcs.getLocks.nickname"
             />
             <q-btn
-              class="tw-flex-none tw-my-auto tw-ml-2"
+              class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
               padding="sm"
@@ -581,10 +585,10 @@ const saveChanges = () => {
               @click="generateParameterNpc('nickname')"
             />
           </div>
-          <div class="tw-flex tw-py-1">
+          <div class="tw:flex tw:py-1">
             <q-btn
               v-if="npcs.getLocks.gender"
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
               padding="sm"
@@ -596,7 +600,7 @@ const saveChanges = () => {
             />
             <q-btn
               v-else
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biUnlock"
               size="sm"
               padding="sm"
@@ -609,14 +613,14 @@ const saveChanges = () => {
             <q-input
               label="Gender"
               v-model="npcs.getActiveNpc!.npc.gender"
-              class="tw-flex-grow"
+              class="tw:grow"
               stack-label
               dense
               outlined
               :readonly="npcs.getLocks.gender"
             />
             <q-btn
-              class="tw-flex-none tw-my-auto tw-ml-2"
+              class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
               padding="sm"
@@ -626,8 +630,8 @@ const saveChanges = () => {
               aria-label="Generate gender"
               @click="generateParameterNpc('gender')"
             />
-            <span class="tw-mx-2" />
-            <span v-if="!npcs.getActiveNpc!.culture" class="tw-flex-none tw-my-auto tw-mr-2">
+            <span class="tw:mx-2" />
+            <span v-if="!npcs.getActiveNpc!.culture" class="tw:flex-none tw:my-auto! tw:mr-2!">
               <q-btn
                 v-if="npcs.getLocks.ancestry"
                 :icon="biLock"
@@ -651,7 +655,7 @@ const saveChanges = () => {
                 @click="npcs.getLocks.ancestry = true"
               />
             </span>
-            <span v-else class="tw-flex-none tw-my-auto tw-mr-2">
+            <span v-else class="tw:flex-none tw:my-auto! tw:mr-2!">
               <q-btn
                 v-if="npcs.getLocks.culture"
                 :icon="biLock"
@@ -679,7 +683,7 @@ const saveChanges = () => {
               v-if="!npcs.getActiveNpc!.culture"
               label="Ancestry"
               v-model="npcs.getActiveNpc!.npc.ancestry"
-              class="tw-flex-grow"
+              class="tw:grow"
               stack-label
               dense
               outlined
@@ -689,7 +693,7 @@ const saveChanges = () => {
               v-else
               label="Culture"
               v-model="npcs.getActiveNpc!.npc.culture"
-              class="tw-flex-grow"
+              class="tw:grow"
               stack-label
               dense
               outlined
@@ -697,7 +701,7 @@ const saveChanges = () => {
             />
             <q-btn
               v-if="!npcs.getActiveNpc!.culture"
-              class="tw-flex-none tw-my-auto tw-ml-2"
+              class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
               padding="sm"
@@ -709,7 +713,7 @@ const saveChanges = () => {
             />
             <q-btn
               v-else
-              class="tw-flex-none tw-my-auto tw-ml-2"
+              class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
               padding="sm"
@@ -720,10 +724,10 @@ const saveChanges = () => {
               @click="generateParameterNpc('culture')"
             />
           </div>
-          <div class="tw-flex tw-py-1">
+          <div class="tw:flex tw:py-1">
             <q-btn
               v-if="npcs.getLocks.class"
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
               padding="sm"
@@ -735,7 +739,7 @@ const saveChanges = () => {
             />
             <q-btn
               v-else
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biUnlock"
               size="sm"
               padding="sm"
@@ -748,14 +752,14 @@ const saveChanges = () => {
             <q-input
               label="Class"
               v-model="npcs.getActiveNpc!.npc.class"
-              class="tw-flex-grow"
+              class="tw:grow"
               stack-label
               dense
               outlined
               :readonly="npcs.getLocks.class"
             />
             <q-btn
-              class="tw-flex-none tw-my-auto tw-ml-2"
+              class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
               padding="sm"
@@ -765,10 +769,10 @@ const saveChanges = () => {
               aria-label="Generate class"
               @click="generateParameterNpc('class')"
             />
-            <span class="tw-mx-2" />
+            <span class="tw:mx-2" />
             <q-btn
               v-if="npcs.getLocks.job"
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
               padding="sm"
@@ -780,7 +784,7 @@ const saveChanges = () => {
             />
             <q-btn
               v-else
-              class="tw-flex-none tw-my-auto tw-mr-2"
+              class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biUnlock"
               size="sm"
               padding="sm"
@@ -793,7 +797,7 @@ const saveChanges = () => {
             <q-input
               label="Job"
               v-model="npcs.getActiveNpc!.npc.job"
-              class="tw-flex-grow"
+              class="tw:grow"
               stack-label
               multiple
               dense
@@ -801,7 +805,7 @@ const saveChanges = () => {
               :readonly="npcs.getLocks.job"
             />
             <q-btn
-              class="tw-flex-none tw-my-auto tw-ml-2"
+              class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
               padding="sm"
@@ -812,12 +816,12 @@ const saveChanges = () => {
               @click="generateParameterNpc('job')"
             />
           </div>
-          <div class="tw-flex tw-flex-col tw-mb-3">
-            <span class="tw-ml-12 tw-text-gray-800 dark:tw-text-gray-200"> Level: </span>
-            <div class="tw-flex">
+          <div class="tw:flex tw:flex-col tw:mb-3">
+            <span class="tw:ml-12 tw:text-gray-800 tw:dark:text-gray-200"> Level: </span>
+            <div class="tw:flex">
               <q-btn
                 v-if="npcs.getLocks.level"
-                class="tw-flex-none tw-my-auto tw-mr-2"
+                class="tw:flex-none tw:my-auto! tw:mr-2!"
                 :icon="biLock"
                 size="sm"
                 padding="sm"
@@ -829,7 +833,7 @@ const saveChanges = () => {
               />
               <q-btn
                 v-else
-                class="tw-flex-none tw-my-auto tw-mr-2"
+                class="tw:flex-none tw:my-auto! tw:mr-2!"
                 :icon="biUnlock"
                 size="sm"
                 padding="sm"
@@ -841,7 +845,7 @@ const saveChanges = () => {
               />
               <q-slider
                 v-model="npcs.getActiveNpc!.npc.level"
-                class="tw-mx-1"
+                class="tw:mx-1"
                 markers
                 label-always
                 switch-label-side
@@ -852,7 +856,7 @@ const saveChanges = () => {
                 :readonly="npcs.getLocks.level"
               />
               <q-btn
-                class="tw-flex-none tw-my-auto tw-ml-2"
+                class="tw:flex-none tw:my-auto! tw:ml-2!"
                 :icon="biArrowRepeat"
                 size="sm"
                 padding="sm"
@@ -865,34 +869,34 @@ const saveChanges = () => {
             </div>
           </div>
         </div>
-        <q-separator class="tw-my-2 tw-mx-6" style="height: 2px" />
-        <div class="tw-grid tw-grid-cols-2 tw-gap-3 tw-my-4 tw-mx-6">
-          <div id="v-step-4" class="tw-py-1 tw-mr-2">
+        <q-separator class="tw:my-2! tw:mx-6!" style="height: 2px" />
+        <div class="tw:grid tw:grid-cols-2 tw:gap-3 tw:my-4 tw:mx-6">
+          <div id="v-step-4" class="tw:py-1 tw:mr-2">
             <q-input
               label="Languages"
               v-model="npcs.getActiveNpc!.npc.languages"
-              class="tw-mx-auto"
+              class="tw:mx-auto"
               outlined
               dense
               autogrow
               type="textarea"
             />
           </div>
-          <div class="tw-py-1 tw-ml-2">
+          <div class="tw:py-1 tw:ml-2">
             <q-input
               label="Quirks"
               v-model="npcs.getActiveNpc!.npc.quirk"
-              class="tw-mx-auto"
+              class="tw:mx-auto"
               outlined
               dense
               autogrow
               type="textarea"
             />
           </div>
-          <div class="tw-py-1 tw-mr-2">
+          <div class="tw:py-1 tw:mr-2">
             <q-input
               v-model="npcs.getActiveNpc!.npc.description"
-              class="tw-mx-auto"
+              class="tw:mx-auto"
               outlined
               dense
               autogrow
@@ -900,10 +904,10 @@ const saveChanges = () => {
               type="textarea"
             />
           </div>
-          <div class="tw-py-1 tw-ml-2">
+          <div class="tw:py-1 tw:ml-2">
             <q-input
               v-model="npcs.getActiveNpc!.npc.personality"
-              class="tw-mx-auto"
+              class="tw:mx-auto"
               outlined
               dense
               autogrow
@@ -911,22 +915,22 @@ const saveChanges = () => {
               type="textarea"
             />
           </div>
-          <div class="tw-py-1 tw-mr-2">
+          <div class="tw:py-1 tw:mr-2">
             <q-input
               label="Relationships"
               v-model="npcs.getActiveNpc!.npc.relationships"
-              class="tw-mx-auto"
+              class="tw:mx-auto"
               outlined
               dense
               autogrow
               type="textarea"
             />
           </div>
-          <div class="tw-py-1 tw-ml-2">
+          <div class="tw:py-1 tw:ml-2">
             <q-input
               label="Ideology"
               v-model="npcs.getActiveNpc!.npc.ideology"
-              class="tw-mx-auto"
+              class="tw:mx-auto"
               outlined
               dense
               autogrow
@@ -934,11 +938,11 @@ const saveChanges = () => {
             />
           </div>
         </div>
-        <q-separator class="tw-my-2 tw-mx-6" style="height: 2px" />
-        <div id="v-step-5" class="tw-mx-6">
+        <q-separator class="tw:my-2! tw:mx-6!" style="height: 2px" />
+        <div id="v-step-5" class="tw:mx-6">
           <div v-for="(item, index) in npcs.getActiveNpc!.npc.custom_fields" :key="index">
-            <div class="tw-flex tw-gap-6 tw-my-5">
-              <div class="tw-flex-auto">
+            <div class="tw:flex tw:gap-6 tw:my-5">
+              <div class="tw:flex-auto">
                 <q-input
                   :label="'Custom field ' + (index + 1)"
                   v-model="item.name"
@@ -948,7 +952,7 @@ const saveChanges = () => {
                   type="textarea"
                 />
               </div>
-              <div class="tw-flex-auto">
+              <div class="tw:flex-auto">
                 <q-input
                   :label="'Custom text ' + (index + 1)"
                   v-model="item.body"
@@ -958,7 +962,7 @@ const saveChanges = () => {
                   type="textarea"
                 />
               </div>
-              <div class="tw-flex-none tw-my-auto">
+              <div class="tw:flex-none tw:my-auto">
                 <q-btn
                   flat
                   round
@@ -972,7 +976,7 @@ const saveChanges = () => {
               </div>
             </div>
           </div>
-          <div class="tw-my-5">
+          <div class="tw:my-5">
             <q-btn
               class="full-width"
               outline

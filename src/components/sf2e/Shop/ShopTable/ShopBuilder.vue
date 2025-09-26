@@ -516,7 +516,7 @@ defineExpose({ generateShop });
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center">
-        <div class="text-h6 tw-mr-4">Generator Settings</div>
+        <div class="text-h6 tw:mr-4">Generator Settings</div>
         <q-space />
         <q-btn
           v-close-popup
@@ -531,23 +531,23 @@ defineExpose({ generateShop });
       </q-card-section>
       <q-separator />
       <q-card-section style="max-height: 46rem">
-        <div class="tw-space-y-3">
+        <div class="tw:space-y-3">
           <div>
-            <q-badge outline class="tw-text-sm"> Equippable items: </q-badge>
+            <q-badge outline class="tw:text-sm!"> Equippable items: </q-badge>
             <q-toggle
               v-model="fixedEquipmentDice"
               label="Fixed number?"
               dense
               size="xs"
-              class="!tw-my-auto tw-pb-1 tw-ml-8 tw-text-xs"
+              class="tw:my-auto! tw:pb-1 tw:ml-8 tw:text-xs"
             />
           </div>
-          <div class="tw-flex tw-flex-row tw-justify-center">
+          <div class="tw:flex tw:flex-row tw:justify-center">
             <q-input
               v-model.number="tmpFilters.equippable_dices.n_of_dices"
               dense
               outlined
-              class="tw-w-32 tw-pr-2"
+              class="tw:w-32 tw:pr-2"
               type="number"
               label="Number"
               @update:model-value="validateNumber(false)"
@@ -556,7 +556,7 @@ defineExpose({ generateShop });
               v-if="!fixedEquipmentDice"
               v-model="tmpFilters.equippable_dices.dice_size"
               label="Size"
-              class="tw-w-32 tw-pl-2"
+              class="tw:w-32 tw:pl-2"
               dense
               outlined
               :options="Object.freeze(diceSelect)"
@@ -574,21 +574,21 @@ defineExpose({ generateShop });
             </q-select>
           </div>
           <div>
-            <q-badge outline class="tw-text-sm"> Consumable items: </q-badge>
+            <q-badge outline class="tw:text-sm!"> Consumable items: </q-badge>
             <q-toggle
               v-model="fixedConsumableDice"
               label="Fixed number?"
               dense
               size="xs"
-              class="!tw-my-auto tw-pb-1 tw-ml-[22px] tw-text-xs"
+              class="tw:my-auto! tw:pb-1 tw:ml-[22px] tw:text-xs"
             />
           </div>
-          <div class="tw-flex tw-flex-row tw-justify-center">
+          <div class="tw:flex tw:flex-row tw:justify-center">
             <q-input
               v-model.number="tmpFilters.consumable_dices.n_of_dices"
               dense
               outlined
-              class="tw-w-32 tw-pr-2"
+              class="tw:w-32 tw:pr-2"
               type="number"
               label="Number"
               @update:model-value="validateNumber(true)"
@@ -600,7 +600,7 @@ defineExpose({ generateShop });
               outlined
               :options="Object.freeze(diceSelect)"
               label="Size"
-              class="tw-w-32 tw-pl-2"
+              class="tw:w-32 tw:pl-2"
             >
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
@@ -614,8 +614,8 @@ defineExpose({ generateShop });
               </template>
             </q-select>
           </div>
-          <div class="tw-pb-4">
-            <q-badge outline class="tw-text-sm"> Level of items: </q-badge>
+          <div class="tw:pb-4">
+            <q-badge outline class="tw:text-sm!"> Level of items: </q-badge>
             <q-range
               v-model="tmpFilters.levels"
               label-always
@@ -625,14 +625,14 @@ defineExpose({ generateShop });
               :left-label-value="'Min: ' + tmpFilters.levels.min"
               :right-label-value="'Max: ' + tmpFilters.levels.max"
               style="max-width: 270px"
-              class="tw-px-3 tw-pt-1"
+              class="tw:px-3 tw:pt-1"
               aria-label="Items level range"
               role="menuitem"
               switch-label-side
             />
           </div>
-          <q-separator class="!tw-mt-4" />
-          <div class="tw-flex tw-flex-row tw-mx-3">
+          <q-separator class="tw:mt-4! tw:mb-3!" />
+          <div class="tw:flex tw:flex-row tw:mx-3">
             <q-select
               v-model="tmpFilters.shop_template!.name"
               dense
@@ -640,11 +640,11 @@ defineExpose({ generateShop });
               options-dense
               :options="template_list"
               label="Shop template"
-              class="tw-w-52"
+              class="tw:w-52"
               @update:model-value="changeActiveTemplate(tmpFilters.shop_template!.name)"
             >
               <q-tooltip
-                class="text-caption text-center tw-max-w-72 tw-text-wrap tw-text-ellipsis tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption text-center tw:max-w-72 tw:text-wrap tw:text-ellipsis tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -653,9 +653,9 @@ defineExpose({ generateShop });
                 {{ tmpFilters.shop_template!.description }}
               </q-tooltip>
             </q-select>
-            <q-icon flat round size="xs" :name="biQuestionCircle" class="tw-m-auto tw-mr-2">
+            <q-icon flat round size="xs" :name="biQuestionCircle" class="tw:m-auto tw:mr-2">
               <q-tooltip
-                class="text-caption text-left tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption text-left tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -669,9 +669,9 @@ defineExpose({ generateShop });
               </q-tooltip>
             </q-icon>
           </div>
-          <div class="tw-flex tw-flex-row tw-justify-center">
+          <div class="tw:flex tw:flex-row tw:justify-center">
             <q-btn
-              class="tw-m-auto"
+              class="tw:m-auto!"
               :icon="biPlusLg"
               size="sm"
               padding="sm"
@@ -685,7 +685,7 @@ defineExpose({ generateShop });
               "
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -702,7 +702,7 @@ defineExpose({ generateShop });
             >
               <q-card flat bordered>
                 <q-card-section>
-                  <div class="text-h6 tw-min-w-[260px]">Template Creator</div>
+                  <div class="text-h6 tw:min-w-[260px]!">Template Creator</div>
                 </q-card-section>
                 <q-separator />
                 <q-tabs
@@ -716,8 +716,8 @@ defineExpose({ generateShop });
                   <q-tab name="Advanced" label="Advanced" />
                 </q-tabs>
                 <q-tab-panels v-model="tab" animated>
-                  <q-tab-panel name="General" class="tw-px-3">
-                    <q-card-section class="tw-space-y-3" style="max-height: 46rem">
+                  <q-tab-panel name="General" class="tw:px-3!">
+                    <q-card-section class="tw:space-y-3" style="max-height: 46rem">
                       <q-input
                         ref="newNameInput"
                         v-model="newTemplate.name"
@@ -746,7 +746,7 @@ defineExpose({ generateShop });
                         label="Description"
                         type="textarea"
                       />
-                      <q-separator class="!tw-my-4" />
+                      <q-separator class="tw:my-4!" />
                       <q-select
                         v-model="newTemplate.source_filter"
                         multiple
@@ -782,7 +782,7 @@ defineExpose({ generateShop });
                           <q-chip
                             removable
                             dense
-                            class="tw-text-white"
+                            class="tw:text-white"
                             :color="scope.opt.state === true ? 'green' : 'red'"
                             :tabindex="scope.tabindex"
                             @remove="
@@ -814,7 +814,7 @@ defineExpose({ generateShop });
                         <template v-if="selectedTraits.length > 0" #append>
                           <q-icon
                             :name="mdiCloseCircle"
-                            class="tw-text-[#7d838b] hover:tw-text-[#bcbfc3] cursor-pointer"
+                            class="tw:text-[#7d838b] tw:hover:text-[#bcbfc3] cursor-pointer"
                             @click.stop.prevent="
                               selectedTraits.forEach((trait) => (trait.state = null));
                               selectedTraits = [];
@@ -833,13 +833,13 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Rarity"
-                        class="tw-mb-2 tw-pb-0.5"
+                        class="tw:mb-2 tw:pb-0.5"
                         style="max-width: 236px"
                       />
                     </q-card-section>
                   </q-tab-panel>
-                  <q-tab-panel name="Advanced" class="tw-px-3">
-                    <q-card-section class="tw-flex" style="max-height: 46rem">
+                  <q-tab-panel name="Advanced" class="tw:px-3! tw:mb-2!">
+                    <q-card-section class="tw:flex" style="max-height: 46rem">
                       <q-input
                         ref="newNameInput"
                         v-model="newTemplate.name"
@@ -848,7 +848,7 @@ defineExpose({ generateShop });
                         autofocus
                         label="Name"
                         counter
-                        class="tw-hidden"
+                        class="tw:hidden!"
                         :maxlength="50"
                         :no-error-icon="true"
                         :rules="[
@@ -859,9 +859,9 @@ defineExpose({ generateShop });
                             ) || 'This template already exists'
                         ]"
                       />
-                      <div class="tw-space-y-3">
-                        <div class="tw-flex tw-flex-col">
-                          <div class="tw-flex tw-flex-row">
+                      <div class="tw:space-y-3">
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
                             <q-checkbox
                               v-model="armorOn"
                               label="Enable Armors?"
@@ -886,15 +886,15 @@ defineExpose({ generateShop });
                             :step="5"
                             :label-value="'Min: ' + newTemplate.armor_percentage + '%'"
                             :disable="!armorOn"
-                            class="tw-px-3"
+                            class="tw:px-3"
                             style="min-width: 236px"
                             aria-label="Armor percentage"
                             role="menuitem"
                           />
                           <q-separator />
                         </div>
-                        <div class="tw-flex tw-flex-col">
-                          <div class="tw-flex tw-flex-row">
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
                             <q-checkbox
                               v-model="equipmentOn"
                               label="Enable Equipments?"
@@ -919,15 +919,15 @@ defineExpose({ generateShop });
                             :step="5"
                             :label-value="'Min: ' + newTemplate.equipment_percentage + '%'"
                             :disable="!equipmentOn"
-                            class="tw-px-3"
+                            class="tw:px-3"
                             style="min-width: 236px"
                             aria-label="Equipment percentage"
                             role="menuitem"
                           />
                           <q-separator />
                         </div>
-                        <div class="tw-flex tw-flex-col">
-                          <div class="tw-flex tw-flex-row">
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
                             <q-checkbox
                               v-model="shieldOn"
                               label="Enable Shields?"
@@ -952,15 +952,15 @@ defineExpose({ generateShop });
                             :step="5"
                             :label-value="'Min: ' + newTemplate.shield_percentage + '%'"
                             :disable="!shieldOn"
-                            class="tw-px-3"
+                            class="tw:px-3"
                             style="min-width: 236px"
                             aria-label="Shield percentage"
                             role="menuitem"
                           />
                           <q-separator />
                         </div>
-                        <div class="tw-flex tw-flex-col">
-                          <div class="tw-flex tw-flex-row">
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
                             <q-checkbox
                               v-model="weaponOn"
                               label="Enable Weapons?"
@@ -985,7 +985,7 @@ defineExpose({ generateShop });
                             :step="5"
                             :label-value="'Min: ' + newTemplate.weapon_percentage + '%'"
                             :disable="!weaponOn"
-                            class="tw-px-3"
+                            class="tw:px-3"
                             style="min-width: 236px"
                             aria-label="Weapon percentage"
                             role="menuitem"
@@ -998,13 +998,13 @@ defineExpose({ generateShop });
                 <q-separator />
 
                 <q-card-actions align="center" class="text-primary">
-                  <q-btn-group flat class="tw-px-1.5">
+                  <q-btn-group flat class="tw:px-1.5">
                     <q-btn
                       v-close-popup
                       flat
                       label="Cancel"
                       type="button"
-                      class="full-width !tw-px-6 tw-text-blue-600 dark:tw-text-blue-400"
+                      class="full-width tw:px-6! tw:text-blue-600! tw:dark:text-blue-400!"
                       @click="
                         resetTemplateDialog();
                         newTemplateDialog = false;
@@ -1015,7 +1015,7 @@ defineExpose({ generateShop });
                       flat
                       label="Add template"
                       type="button"
-                      class="full-width !tw-px-6 tw-text-blue-600 dark:tw-text-blue-400"
+                      class="full-width tw:px-6! tw:text-blue-600! tw:dark:text-blue-400!"
                       @click="addTemplate()"
                     />
                   </q-btn-group>
@@ -1023,7 +1023,7 @@ defineExpose({ generateShop });
               </q-card>
             </q-dialog>
             <q-btn
-              class="tw-m-auto"
+              class="tw:m-auto!"
               :icon="biCopy"
               size="sm"
               padding="sm"
@@ -1037,7 +1037,7 @@ defineExpose({ generateShop });
               "
             >
               <q-tooltip
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -1078,14 +1078,14 @@ defineExpose({ generateShop });
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
                     aria-label="Close dialog"
                     @click="duplicateTemplateDialog = false"
                   />
                   <q-btn
                     flat
                     label="Duplicate"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
                     aria-label="Duplicate template"
                     @click="duplicateTemplate"
                   />
@@ -1093,7 +1093,7 @@ defineExpose({ generateShop });
               </q-card>
             </q-dialog>
             <q-btn
-              class="tw-m-auto"
+              class="tw:m-auto!"
               :icon="biPencilSquare"
               size="sm"
               padding="sm"
@@ -1106,7 +1106,7 @@ defineExpose({ generateShop });
             >
               <q-tooltip
                 v-if="tmpFilters.shop_template!.default"
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -1114,7 +1114,7 @@ defineExpose({ generateShop });
               </q-tooltip>
               <q-tooltip
                 v-else
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -1131,7 +1131,7 @@ defineExpose({ generateShop });
             >
               <q-card flat bordered>
                 <q-card-section>
-                  <div class="text-h6 tw-min-w-[260px]">Template Editor</div>
+                  <div class="text-h6 tw:min-w-[260px]">Template Editor</div>
                 </q-card-section>
                 <q-separator />
                 <q-tabs
@@ -1145,8 +1145,8 @@ defineExpose({ generateShop });
                   <q-tab name="Advanced" label="Advanced" />
                 </q-tabs>
                 <q-tab-panels v-model="tab" animated>
-                  <q-tab-panel name="General" class="tw-px-3">
-                    <q-card-section class="tw-space-y-3" style="max-height: 46rem">
+                  <q-tab-panel name="General" class="tw:px-3!">
+                    <q-card-section class="tw:space-y-3" style="max-height: 46rem">
                       <q-input
                         ref="editNameInput"
                         v-model="newTemplate.name"
@@ -1177,7 +1177,7 @@ defineExpose({ generateShop });
                         label="Description"
                         type="textarea"
                       />
-                      <q-separator class="!tw-my-4" />
+                      <q-separator class="tw:my-4!" />
                       <q-select
                         v-model="newTemplate.source_filter"
                         multiple
@@ -1214,7 +1214,7 @@ defineExpose({ generateShop });
                           <q-chip
                             removable
                             dense
-                            class="tw-text-white"
+                            class="tw:text-white"
                             :color="scope.opt.state === true ? 'green' : 'red'"
                             :tabindex="scope.tabindex"
                             @remove="
@@ -1246,7 +1246,7 @@ defineExpose({ generateShop });
                         <template v-if="selectedTraits.length > 0" #append>
                           <q-icon
                             :name="mdiCloseCircle"
-                            class="tw-text-[#7d838b] hover:tw-text-[#bcbfc3] cursor-pointer"
+                            class="tw:text-[#7d838b] tw:hover:text-[#bcbfc3] cursor-pointer"
                             @click.stop.prevent="
                               selectedTraits.forEach((trait) => (trait.state = null));
                               selectedTraits = [];
@@ -1265,13 +1265,13 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Rarity"
-                        class="tw-mb-2 tw-pb-0.5"
+                        class="tw:mb-2 tw:pb-0.5"
                         style="max-width: 236px"
                       />
                     </q-card-section>
                   </q-tab-panel>
-                  <q-tab-panel name="Advanced" class="tw-px-3">
-                    <q-card-section class="tw-flex" style="max-height: 46rem">
+                  <q-tab-panel name="Advanced" class="tw:px-3! tw:mb-2!">
+                    <q-card-section class="tw:flex" style="max-height: 46rem">
                       <q-input
                         ref="editNameInput"
                         v-model="newTemplate.name"
@@ -1280,7 +1280,7 @@ defineExpose({ generateShop });
                         autofocus
                         label="Name"
                         counter
-                        class="tw-hidden"
+                        class="tw:hidden!"
                         :maxlength="50"
                         :no-error-icon="true"
                         :rules="[
@@ -1293,9 +1293,9 @@ defineExpose({ generateShop });
                             ) || 'This template already exists'
                         ]"
                       />
-                      <div class="tw-space-y-3">
-                        <div class="tw-flex tw-flex-col">
-                          <div class="tw-flex tw-flex-row">
+                      <div class="tw:space-y-3">
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
                             <q-checkbox
                               v-model="armorOn"
                               label="Enable Armors?"
@@ -1320,15 +1320,15 @@ defineExpose({ generateShop });
                             :step="5"
                             :label-value="'Min: ' + newTemplate.armor_percentage + '%'"
                             :disable="!armorOn"
-                            class="tw-px-3"
+                            class="tw:px-3"
                             style="min-width: 236px"
                             aria-label="Armor percentage"
                             role="menuitem"
                           />
                           <q-separator />
                         </div>
-                        <div class="tw-flex tw-flex-col">
-                          <div class="tw-flex tw-flex-row">
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
                             <q-checkbox
                               v-model="equipmentOn"
                               label="Enable Equipments?"
@@ -1353,15 +1353,15 @@ defineExpose({ generateShop });
                             :step="5"
                             :label-value="'Min: ' + newTemplate.equipment_percentage + '%'"
                             :disable="!equipmentOn"
-                            class="tw-px-3"
+                            class="tw:px-3"
                             style="min-width: 236px"
                             aria-label="Equipment percentage"
                             role="menuitem"
                           />
                           <q-separator />
                         </div>
-                        <div class="tw-flex tw-flex-col">
-                          <div class="tw-flex tw-flex-row">
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
                             <q-checkbox
                               v-model="shieldOn"
                               label="Enable Shields?"
@@ -1386,15 +1386,15 @@ defineExpose({ generateShop });
                             :step="5"
                             :label-value="'Min: ' + newTemplate.shield_percentage + '%'"
                             :disable="!shieldOn"
-                            class="tw-px-3"
+                            class="tw:px-3"
                             style="min-width: 236px"
                             aria-label="Shield percentage"
                             role="menuitem"
                           />
                           <q-separator />
                         </div>
-                        <div class="tw-flex tw-flex-col">
-                          <div class="tw-flex tw-flex-row">
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
                             <q-checkbox
                               v-model="weaponOn"
                               label="Enable Weapons?"
@@ -1419,7 +1419,7 @@ defineExpose({ generateShop });
                             :step="5"
                             :label-value="'Min: ' + newTemplate.weapon_percentage + '%'"
                             :disable="!weaponOn"
-                            class="tw-px-3"
+                            class="tw:px-3"
                             style="min-width: 236px"
                             aria-label="Weapon percentage"
                             role="menuitem"
@@ -1432,13 +1432,13 @@ defineExpose({ generateShop });
                 <q-separator />
 
                 <q-card-actions align="center" class="text-primary">
-                  <q-btn-group flat class="tw-px-1.5">
+                  <q-btn-group flat class="tw:px-1.5">
                     <q-btn
                       v-close-popup
                       flat
                       label="Cancel"
                       type="button"
-                      class="full-width !tw-px-6 tw-text-blue-600 dark:tw-text-blue-400"
+                      class="full-width tw:px-6! tw:text-blue-600! tw:dark:text-blue-400!"
                       @click="
                         resetTemplateDialog();
                         editTemplateDialog = false;
@@ -1449,7 +1449,7 @@ defineExpose({ generateShop });
                       flat
                       label="Edit template"
                       type="button"
-                      class="full-width !tw-px-6 tw-text-blue-600 dark:tw-text-blue-400"
+                      class="full-width tw:px-6! tw:text-blue-600! tw:dark:text-blue-400!"
                       @click="editTemplate()"
                     />
                   </q-btn-group>
@@ -1457,7 +1457,7 @@ defineExpose({ generateShop });
               </q-card>
             </q-dialog>
             <q-btn
-              class="tw-m-auto"
+              class="tw:m-auto!"
               :icon="biTrash"
               size="sm"
               padding="sm"
@@ -1470,7 +1470,7 @@ defineExpose({ generateShop });
             >
               <q-tooltip
                 v-if="tmpFilters.shop_template!.default"
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -1478,7 +1478,7 @@ defineExpose({ generateShop });
               </q-tooltip>
               <q-tooltip
                 v-else
-                class="text-caption tw-bg-gray-700 tw-text-gray-200 tw-rounded-md tw-shadow-sm dark:tw-bg-slate-700"
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
                 self="bottom middle"
               >
@@ -1498,13 +1498,13 @@ defineExpose({ generateShop });
                   <q-btn
                     flat
                     label="Cancel"
-                    class="tw-text-blue-600 dark:tw-text-blue-400"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
                     @click="removeTemplateDialog = false"
                   />
                   <q-btn
                     flat
                     label="Remove"
-                    class="tw-text-red-600 dark:tw-text-red-400"
+                    class="tw:text-red-600! tw:dark:text-red-400!"
                     @click="removeTemplate"
                   />
                 </q-card-actions>
@@ -1515,13 +1515,13 @@ defineExpose({ generateShop });
       </q-card-section>
       <q-separator />
       <q-card-actions>
-        <q-btn-group flat class="tw-px-1.5">
+        <q-btn-group flat class="tw:px-1.5">
           <q-btn
             v-close-popup
             flat
             label="Save changes"
             type="button"
-            class="full-width tw-text-blue-600 dark:tw-text-blue-400"
+            class="full-width tw:text-blue-600! tw:dark:text-blue-400!"
             @click="saveChanges"
           />
           <q-separator vertical />
@@ -1530,7 +1530,7 @@ defineExpose({ generateShop });
             flat
             label="Generate new Shop"
             type="button"
-            class="full-width tw-text-blue-600 dark:tw-text-blue-400"
+            class="full-width tw:text-blue-600! tw:dark:text-blue-400!"
             @click="generateShop"
           />
         </q-btn-group>

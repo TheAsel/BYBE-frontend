@@ -13,35 +13,35 @@ useHead({
 </script>
 
 <template>
-  <div class="tw-opacity-85 dark:tw-opacity-90 q-pa-md tw-w-full md:tw-w-[57rem] tw-mx-auto">
+  <div class="tw:opacity-85 tw:dark:opacity-90 q-pa-md tw:w-full tw:md:w-228 tw:mx-auto">
     <div
-      class="tw-items-center tw-text-left tw-max-w-[55rem] tw-rounded-xl tw-border tw-bg-white tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700"
+      class="tw:items-center tw:text-left tw:max-w-220 tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700"
     >
       <q-scroll-area style="height: calc(100vh - 128px)">
-        <div class="q-gutter-y-sm tw-p-4 tw-text-left tw-text-gray-800 dark:tw-text-white">
-          <h1 class="tw-text-center tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white">
+        <div class="q-gutter-y-sm tw:p-4! tw:text-left tw:text-gray-800 tw:dark:text-white">
+          <h1 class="tw:text-center tw:font-bold! tw:text-2xl! tw:text-gray-800 tw:dark:text-white">
             Background Art
           </h1>
           <p>
             Credit for the background art goes to Jorge Jacinto. Check him out at
             <a
-              class="tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-400"
+              class="tw:text-blue-600 tw:dark:text-blue-400"
               href="https://www.jorgejacinto.com"
               target="_blank"
               rel="noopener"
               >jorgejacinto.com</a
             >.
           </p>
-          <br />
+
           <q-separator />
-          <br />
-          <h1 class="tw-text-center tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white">
+
+          <h1 class="tw:text-center tw:font-bold! tw:text-2xl! tw:text-gray-800 tw:dark:text-white">
             Community Use Policy
           </h1>
           <p>
             BYBE uses trademarks and/or copyrights owned by Paizo Inc., used under Paizo's Community
             Use Policy (<a
-              class="tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-400"
+              class="tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-400"
               href="https://paizo.com/licenses/communityuse"
               target="_blank"
               rel="noopener"
@@ -50,18 +50,17 @@ useHead({
             not published, endorsed, or specifically approved by Paizo. For more information about
             Paizo Inc. and Paizo products, visit
             <a
-              class="tw-text-blue-600 sm:tw-py-4 dark:tw-text-blue-400"
+              class="tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-400"
               href="https://paizo.com"
               target="_blank"
               rel="noopener"
               >paizo.com</a
             >.
           </p>
-          <br />
-          <q-separator />
-          <br />
 
-          <h1 class="tw-text-center tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white">
+          <q-separator />
+
+          <h1 class="tw:text-center tw:font-bold! tw:text-2xl! tw:text-gray-800 tw:dark:text-white">
             ORC NOTICE
           </h1>
           <p>
@@ -69,12 +68,12 @@ useHead({
             9-307-067 and available online at various locations. All warranties are disclaimed as
             set forth therein.
           </p>
-          <br />
-          <h1 class="tw-text-center tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white">
+
+          <h1 class="tw:text-center tw:font-bold! tw:text-2xl! tw:text-gray-800 tw:dark:text-white">
             Attribution Notice
           </h1>
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Core Books
           </h2>
@@ -113,9 +112,9 @@ useHead({
             Tonya Woldridge.
           </p>
           <p><b> Pathfinder NPC Core </b>© 2025, Paizo Inc.; Authors: TBD.</p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Rage of Elements
           </h2>
@@ -126,9 +125,9 @@ useHead({
             Solomon St. John, Michael Sayre, Mark Seifter, Shahreena Shahrani, Shay Snow, Levi
             Steadman, Mari Tokuda, Ruvaid Virk, Andrew White, and Linda Zayas-Palmer.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Howl of the Wild
           </h2>
@@ -141,9 +140,9 @@ useHead({
             Murphy, Dave Nelson, Mikhail Rekun, Kai Revius, Ember Rose, Simone D. Sallé, Michael
             Sayre, Shay Snow, Levi Steadman, Kyle Tam, Ruvaid Virk, and Andrew White.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             War of Immortals
           </h2>
@@ -154,16 +153,16 @@ useHead({
             Erik Mona, AJ Neuro, Joaquin Kyle “Makapatag” Saavedra, Tony Saunders, Andrew Stoeckle,
             Greg A. Vaughan, and Ruvaid Virk.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Guns and Gears Remastered
           </h2>
           <p><b> Pathfinder Guns & Gears Remastered </b>© 2025, Paizo Inc.; Authors: TBD.</p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Adventures and Adventure Paths
           </h2>
@@ -226,9 +225,9 @@ useHead({
             <b> Pathfinder Adventure Path #212: A Voice in the Blight </b>© 2025, Paizo Inc.;
             Author: Rigby Bendele.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Society
           </h2>
@@ -308,9 +307,9 @@ useHead({
             <b> Pathfinder Society Guide to Play (Second Edition) </b>© 2024, The Organized Play
             Foundation
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Lost Omens
           </h2>
@@ -351,9 +350,9 @@ useHead({
             Roberts, Navaar Seik-Jackson, Shahreena Shahrani, Gina Susanna, Tan Shao Han, Esther
             Wallace, and Landon Winkler.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Free Adventures
           </h2>
@@ -361,16 +360,16 @@ useHead({
             <b> Pathfinder Free RPG Day Adventure 2024: The Great Toy Heist </b>© 2024, Paizo Inc.;
             Author: Jason Keeley.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Paizo Blog
           </h2>
           <p><b> Fine-tuning Ancestries </b>© 2023, Paizo Inc.; Author: Jason Bulmahn.</p>
           <p><b> Apex of Power </b>© 2023, Paizo Inc.; Author: Jason Bulmahn.</p>
-          <br />
-          <h1 class="tw-text-center tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white">
+
+          <h1 class="tw:text-center tw:font-bold! tw:text-2xl! tw:text-gray-800 tw:dark:text-white">
             Reserved Material
           </h1>
           <p>
@@ -381,26 +380,26 @@ useHead({
             artworks, characters, dialogue, locations, organizations, plots, storylines, and trade
             dress.
           </p>
-          <br />
-          <h1 class="tw-text-center tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white">
+
+          <h1 class="tw:text-center tw:font-bold! tw:text-2xl! tw:text-gray-800 tw:dark:text-white">
             Expressly Designated Licensed Material
           </h1>
           <p>This product contains no Expressly Designated Licensed Material.</p>
-          <br />
+
           <q-separator />
-          <br />
-          <h1 class="tw-text-center tw-font-bold tw-text-2xl tw-text-gray-800 dark:tw-text-white">
+
+          <h1 class="tw:text-center tw:font-bold! tw:text-2xl! tw:text-gray-800 tw:dark:text-white">
             OPEN GAME LICENSE
           </h1>
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Version 1.0a
           </h2>
 
           The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000
           Wizards of the Coast, Inc ("Wizards"). All Rights Reserved.
-          <ul class="q-gutter-y-sm tw-pl-4">
+          <ul class="q-gutter-y-sm tw:pl-4">
             <li>
               <b>1. Definitions</b>: (a)"Contributors" means the copyright and/or trademark owners
               who have contributed Open Game Content; (b)"Derivative Material" means copyrighted
@@ -513,9 +512,9 @@ useHead({
               Coast, Inc.
             </li>
           </ul>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Core Books
           </h2>
@@ -571,9 +570,9 @@ useHead({
             Tonya Woldridge.
           </p>
           <p><b> Pathfinder NPC Core </b>© 2025, Paizo Inc.</p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Bestiary
           </h2>
@@ -615,9 +614,9 @@ useHead({
             David N. Ross, Michael Sayre, Mark Seifter, Chris S. Sims, Jeffrey Swank, Jason Tondro,
             Tonya Woldridge, and Linda Zayas-Palmer.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Bestiary 2
           </h2>
@@ -783,9 +782,9 @@ useHead({
             Patrick Renie, Alistair Rigg, Alex Riggs, David N. Ross, David Schwartz, Mark Seifter,
             Amber Stewart, Jeffrey Swank, Russ Taylor, and Jason Tondro.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Bestiary 3
           </h2>
@@ -808,9 +807,9 @@ useHead({
             Snow, Pidj Sorensen, Kendra Leigh Speedling, Tan Shao Han, William Thompson, Jason
             Tondro, Clark Valentine, Ruvaid Virk, Skylar Wall, Andrew White, and Landon Winkler.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Secrets of Magic
           </h2>
@@ -855,9 +854,9 @@ useHead({
             Valentine, Ruvaid Virk, Andrew White, Landon Winkler, Tonya Woldridge, and Isis
             Wozniakowska.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Guns and Gears
           </h2>
@@ -869,9 +868,9 @@ useHead({
             Sydney Meeker, Kendra Leigh Speedling, Michael Sayre., Mark Seifter, Andrew Stoeckle,
             Calliope Lee Taylor, Andrew White, and Scott D. Young.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Book of the Dead
           </h2>
@@ -887,9 +886,9 @@ useHead({
             Mortimer, Quinn Murphy, Jessica Redekop, Mikhail Rekun, Solomon St. John, Michael Sayre,
             Mark Seifter, Sen.H.H.S., Kendra Leigh Speedling, Jason Tondro, Andrew White.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Dark Archive
           </h2>
@@ -906,9 +905,9 @@ useHead({
             <b> Pathfinder Dark Archive Web Supplement: In Darkness </b>© 2022, Paizo Inc.; Author:
             James Case.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Treasure Vault
           </h2>
@@ -919,9 +918,9 @@ useHead({
             Loza, Jacob W. Michaels, Matt Morris, Dave Nelson, Stephen Radney-McFarland, Jessica
             Redekop, Andrew Stoeckle, Mari Tokuda, and Andrew White.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Adventures and Adventure Paths
           </h2>
@@ -1261,9 +1260,9 @@ useHead({
             <b> Pathfinder Adventure Path #200: The Seven Dooms of Sandpoint </b>© 2024, Paizo
             Inc.; Author: James Jacobs.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Society
           </h2>
@@ -1888,9 +1887,9 @@ useHead({
             <b> Pathfinder Society Guide to Play (Second Edition) </b>© 2020, The Organized Play
             Foundation
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Lost Omens
           </h2>
@@ -2052,9 +2051,9 @@ useHead({
             Morris, Dave Nelson, Nathan Reinecke, Mikhail Rekun, Erin Roberts, Owen K.C. Stephens,
             Andrew White, and Shan Wolf.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Free Adventures
           </h2>
@@ -2078,9 +2077,9 @@ useHead({
             <b> Pathfinder Free RPG Day Adventure 2023: A Few Flowers More </b>© 2023, Paizo Inc.;
             Author: Linda Zayas-Palmer.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             One Shots
           </h2>
@@ -2116,9 +2115,9 @@ useHead({
             <b> Pathfinder One-Shot #4: Mark of the Mantis Pregenerated Characters </b>© 2022,
             Paizo Inc.; Author: John Compton
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Decks
           </h2>
@@ -2136,9 +2135,9 @@ useHead({
           </p>
           <p><b> Pathfinder Hero Point Deck </b>© 2021, Paizo Inc.; Author: Jason Bulmahn</p>
           <p><b> Pathfinder Harrow Deck </b>© 2023, Paizo Inc.; Author: TBD</p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Paizo Blog
           </h2>
@@ -2277,9 +2276,9 @@ useHead({
             <b> Meet the Iconics: Valeros </b>© 2010, Paizo Inc.; Author: James L. Sutter;
             Illustrator: Wayne Reynolds.
           </p>
-          <br />
+
           <h2
-            class="tw-text-center tw-font-bold tw-text-base tw-mt-0 tw-text-gray-800 dark:tw-text-white"
+            class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
           >
             Other
           </h2>
