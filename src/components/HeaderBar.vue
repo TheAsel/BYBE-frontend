@@ -207,12 +207,7 @@ const unhide = debounce(function () {
             </q-item>
           </template>
         </q-select>
-        <q-separator
-          v-if="currentPath != '/' && currentPath != '/download'"
-          vertical
-          inset
-          class="tw:sm:block tw:hidden tw:ml-4!"
-        />
+
         <div class="tw:sm:hidden">
           <q-btn
             flat
@@ -234,8 +229,15 @@ const unhide = debounce(function () {
         <div class="tw:flex tw:flex-col tw:sm:flex-row">
           <div
             v-if="currentPath != '/' && currentPath != '/download'"
-            class="tw:flex tw:flex-col tw:sm:flex-row tw:sm:items-center tw:sm:justify-start tw:gap-y-4 tw:sm:gap-y-0 tw:gap-x-0 tw:sm:gap-x-7 tw:mt-5 tw:sm:mt-0 tw:sm:pl-7"
+            class="tw:flex tw:flex-col tw:sm:flex-row tw:sm:items-center tw:sm:justify-start tw:gap-y-4 tw:sm:gap-y-0 tw:gap-x-0 tw:sm:gap-x-7 tw:mt-5 tw:sm:mt-0"
           >
+            <q-separator
+              v-if="currentPath != '/' && currentPath != '/download'"
+              vertical
+              inset
+              class="tw:sm:block tw:hidden tw:ml-4!"
+            />
+
             <router-link
               v-for="item in navigation"
               :key="item.name"
@@ -247,20 +249,17 @@ const unhide = debounce(function () {
               "
               :aria-current="currentPath === item.to ? 'page' : undefined"
               >{{ item.name }}
-              <span
-                v-if="item.name === 'NPC Generator'"
-                class="tw:dark:text-yellow-400 tw:text-amber-500 tw:align-top tw:text-xs"
-              >
-                NEW
-              </span>
             </router-link>
           </div>
+
           <q-space class="tw:sm:block tw:hidden" />
+
           <q-separator class="tw:block tw:sm:hidden tw:my-4!" />
+
           <router-link
             v-if="isApp === 'false'"
             to="/download"
-            class="tw:mb-4! tw:sm:mb-0!"
+            class="tw:flex tw:items-center tw:mb-4! tw:sm:mb-0! tw:ml-0! tw:sm:ml-6!"
             :class="
               currentPath === '/download'
                 ? 'tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-500'

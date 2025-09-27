@@ -53,7 +53,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'creature',
         name: 'pf2e_creature',
-        component: () => import('../pages/pf2e/MonsterPage.vue')
+        component: () => import('../pages/pf2e/CreaturePage.vue')
       },
       {
         path: 'city',
@@ -106,7 +106,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'creature',
         name: 'sf2e_creature',
-        component: () => import('../pages/sf2e/MonsterPage.vue')
+        component: () => import('../pages/sf2e/CreaturePage.vue')
       },
       {
         path: 'city',

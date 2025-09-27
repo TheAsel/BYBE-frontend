@@ -16,7 +16,8 @@ export type rarities = 'Common' | 'Uncommon' | 'Rare' | 'Unique';
 
 export type challenges = 'Trivial' | 'Low' | 'Moderate' | 'Severe' | 'Extreme' | 'Impossible';
 
-export type creature_type = 'Monster' | 'NPC';
+// TODO: deprecate Monster when backend aligns
+export type creature_type = 'Creature' | 'NPC' | 'Monster';
 
 export type roles =
   | 'None'
