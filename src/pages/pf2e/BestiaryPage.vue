@@ -20,7 +20,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/pf2e/bestiary'
+      href: 'https://bybe.fly.dev/pf/bestiary'
     }
   ]
 });
@@ -58,7 +58,7 @@ try {
         message: 'Missing creature ID',
         icon: matPriorityHigh
       });
-      await router.push({ name: 'pf2e/encounter' });
+      await router.push({ name: 'pf/encounter' });
     } else if (creatureVariant.value === 'Base') {
       title.value = creatureData?.core_data.essential.name + ' - BYBE';
     } else {
@@ -102,7 +102,7 @@ try {
       message: 'Invalid creature ID',
       icon: matPriorityHigh
     });
-    await router.push({ name: 'pf2e/encounter' });
+    await router.push({ name: 'pf/encounter' });
   }
 } catch (error) {
   console.error(error);

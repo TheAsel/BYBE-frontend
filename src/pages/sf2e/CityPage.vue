@@ -6,7 +6,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/sf2e/city'
+      href: 'https://bybe.fly.dev/sf/city'
     }
   ]
 });

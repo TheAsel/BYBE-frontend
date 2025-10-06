@@ -19,7 +19,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/pf2e/item'
+      href: 'https://bybe.fly.dev/pf/item'
     }
   ]
 });
@@ -43,7 +43,7 @@ try {
         message: 'Missing item ID',
         icon: matPriorityHigh
       });
-      await router.push({ name: 'pf2e/shop' });
+      await router.push({ name: 'pf/shop' });
     } else {
       title.value = itemData?.core_item.name + ' - BYBE';
       items.setSelectedItem(itemData);
@@ -56,7 +56,7 @@ try {
       message: 'Invalid item ID',
       icon: matPriorityHigh
     });
-    await router.push({ name: 'pf2e/shop' });
+    await router.push({ name: 'pf/shop' });
   }
 } catch (error) {
   console.error(error);

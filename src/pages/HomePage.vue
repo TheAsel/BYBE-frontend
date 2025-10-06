@@ -30,7 +30,7 @@ const settings = settingsStore();
       </h2>
     </div>
     <div class="tw:max-w-4xl tw:mx-auto tw:grid tw:sm:grid-cols-1 tw:lg:grid-cols-2 tw:gap-16">
-      <router-link to="/pf2e" @click="settings.setGame('pf')">
+      <router-link to="/pf" @click="settings.setGame('pf')">
         <q-card
           flat
           class="tw:rounded-3xl! tw:backdrop-blur tw:border-2 tw:bg-white/5 tw:dark:bg-gray-800/20 tw:border-gray-200/20 tw:dark:border-neutral-800/20 tw:hover:border-blue-600! tw:dark:hover:border-blue-500! tw:transition-all"
@@ -41,7 +41,7 @@ const settings = settingsStore();
         </q-card>
       </router-link>
 
-      <router-link to="/sf2e" @click="settings.setGame('sf')">
+      <router-link to="/sf" @click="settings.setGame('sf')">
         <q-card
           flat
           class="tw:rounded-3xl! tw:backdrop-blur tw:border-2 tw:bg-white/5 tw:dark:bg-gray-800/20 tw:border-gray-200/20 tw:dark:border-neutral-800/20 tw:hover:border-blue-600! tw:dark:hover:border-blue-500! tw:transition-all"

@@ -18,7 +18,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/pf2e/shop'
+      href: 'https://bybe.fly.dev/pf/shop'
     }
   ]
 });
@@ -261,7 +261,7 @@ onUnmounted(() => {
 
 <template>
   <div class="row items-center justify-between">
-    <v-tour name="/pf2e/shop" :steps="steps" :options="options" :callbacks="callbacks" />
+    <v-tour name="/pf/shop" :steps="steps" :options="options" :callbacks="callbacks" />
     <ShopSheet v-if="screenWidth >= 768" class="q-pa-md tw:w-full tw:md:w-[27%]" />
     <ShopTable id="table" />
     <q-space />

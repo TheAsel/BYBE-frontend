@@ -14,7 +14,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/pf2e'
+      href: 'https://bybe.fly.dev/pf'
     }
   ]
 });
@@ -22,35 +22,35 @@ useHead({
 const cards = [
   {
     name: 'Encounter Builder',
-    to: '/pf2e/encounter',
+    to: '/pf/encounter',
     description: 'Balance or randomly create combat encounters.',
     subtext: 'Try it out',
     icon: biCalculator
   },
   {
     name: 'Shop Generator',
-    to: '/pf2e/shop',
+    to: '/pf/shop',
     description: 'Create various types of shops of a specific level.',
     subtext: 'Try it out',
     icon: biShop
   },
   {
     name: 'NPC Generator',
-    to: '/pf2e/npc',
+    to: '/pf/npc',
     description: "Quickly generate an NPC's name, ancestry, background and quirks.",
     subtext: 'Try it out',
     icon: biPersonVcard
   },
   {
     name: 'Creature Generator',
-    to: '/pf2e/creature',
+    to: '/pf/creature',
     description: 'Create custom creatures with the help of custom generation.',
     subtext: 'Work in progress...',
     icon: biPencil
   },
   {
     name: 'City Planner',
-    to: '/pf2e/city',
+    to: '/pf/city',
     description: 'Combine what you created with the other tools to plan an entire city.',
     subtext: 'Work in progress...',
     icon: biHouses

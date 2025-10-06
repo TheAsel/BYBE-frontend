@@ -46,12 +46,12 @@ const navigation = [
 const gameOptions = [
   {
     label: 'Pathfinder 2e',
-    value: 'pf2e',
+    value: 'pf',
     src: '/pf2e-logo.webp'
   },
   {
     label: 'Starfinder 2e',
-    value: 'sf2e',
+    value: 'sf',
     src: '/sf2e-logo.webp'
   }
 ];
@@ -64,12 +64,12 @@ function changeGame(value: games) {
   const opt = gameOptions.find((o) => o.value === value);
   if (!opt) return;
 
-  // current full path, e.g. "/pf2e/encounter"
+  // current full path, e.g. "/pf/encounter"
   const path = route.fullPath;
 
   // replace the prefix (first segment after "/")
   const firstSegment = route.path.split('/')[1];
-  if (firstSegment === 'sf2e' || firstSegment == 'pf2e') {
+  if (firstSegment === 'sf' || firstSegment == 'pf') {
     const newPath = path.replace(/^\/[^/]+/, `/${opt.value}`);
     void router.push(newPath);
   }
@@ -174,10 +174,10 @@ const unhide = debounce(function () {
           v-model="settings.getGame"
           :options="gameOptions"
           :readonly="
-            currentPath == '/pf2e/bestiary' ||
-            currentPath == '/pf2e/item' ||
-            currentPath == '/sf2e/bestiary' ||
-            currentPath == '/sf2e/item'
+            currentPath == '/pf/bestiary' ||
+            currentPath == '/pf/item' ||
+            currentPath == '/sf/bestiary' ||
+            currentPath == '/sf/item'
           "
           emit-value
           map-options

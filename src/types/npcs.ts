@@ -24,6 +24,11 @@ export type npc = {
   }[];
 };
 
+export type random_npc = {
+  npc: npc;
+  game: 'Pathfinder' | 'Starfinder';
+};
+
 export type npc_list = {
   name: string;
   npc: npc;

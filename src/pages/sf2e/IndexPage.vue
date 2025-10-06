@@ -14,7 +14,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/sf2e'
+      href: 'https://bybe.fly.dev/sf'
     }
   ]
 });
@@ -22,35 +22,35 @@ useHead({
 const cards = [
   {
     name: 'Encounter Builder',
-    to: '/sf2e/encounter',
+    to: '/sf/encounter',
     description: 'Balance or randomly create combat encounters.',
     subtext: 'Try it out',
     icon: biCalculator
   },
   {
     name: 'Shop Generator',
-    to: '/sf2e/shop',
+    to: '/sf/shop',
     description: 'Create various types of shops of a specific level.',
     subtext: 'Try it out',
     icon: biShop
   },
   {
     name: 'NPC Generator',
-    to: '/sf2e/npc',
+    to: '/sf/npc',
     description: "Quickly generate an NPC's name, ancestry, background and quirks.",
     subtext: 'Try it out',
     icon: biPersonVcard
   },
   {
     name: 'Creature Generator',
-    to: '/sf2e/creature',
+    to: '/sf/creature',
     description: 'Create custom creatures with the help of custom generation.',
     subtext: 'Work in progress...',
     icon: biPencil
   },
   {
     name: 'City Planner',
-    to: '/sf2e/city',
+    to: '/sf/city',
     description: 'Combine what you created with the other tools to plan an entire city.',
     subtext: 'Work in progress...',
     icon: biHouses

@@ -17,7 +17,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/pf2e/encounter'
+      href: 'https://bybe.fly.dev/pf/encounter'
     }
   ]
 });
@@ -249,7 +249,7 @@ const scrollPage = (up: boolean) => {
 
 <template>
   <div class="row items-center justify-between">
-    <v-tour name="/pf2e/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
+    <v-tour name="/pf/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
     <CreaturesTable id="table" />
     <q-space />
     <CreatureList id="list" />

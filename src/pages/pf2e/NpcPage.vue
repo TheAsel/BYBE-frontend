@@ -16,7 +16,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/pf2e/npc'
+      href: 'https://bybe.fly.dev/pf/npc'
     }
   ]
 });
@@ -210,7 +210,7 @@ const scrollPage = (up: boolean) => {
 
 <template>
   <div class="row items-center justify-between">
-    <v-tour name="/pf2e/npc" :steps="steps" :options="options" :callbacks="callbacks" />
+    <v-tour name="/pf/npc" :steps="steps" :options="options" :callbacks="callbacks" />
     <NpcGenerator id="generator" />
     <q-space />
     <NpcEditor />

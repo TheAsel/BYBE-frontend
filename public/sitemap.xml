@@ -6,92 +6,92 @@
 		<priority>0.8</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/pf2e/encounter</loc>
+		<loc>https://bybe.fly.dev/pf/encounter</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/pf2e/bestiary</loc>
+		<loc>https://bybe.fly.dev/pf/bestiary</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/pf2e/npc</loc>
+		<loc>https://bybe.fly.dev/pf/npc</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/pf2e/character</loc>
+		<loc>https://bybe.fly.dev/pf/character</loc>
 		<lastmod>2025-07-03</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/pf2e/shop</loc>
+		<loc>https://bybe.fly.dev/pf/shop</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/pf2e/item</loc>
+		<loc>https://bybe.fly.dev/pf/item</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/pf2e/creature</loc>
+		<loc>https://bybe.fly.dev/pf/creature</loc>
 		<lastmod>2025-07-03</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/pf2e/city</loc>
+		<loc>https://bybe.fly.dev/pf/city</loc>
 		<lastmod>2025-07-03</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/pf2e/license</loc>
+		<loc>https://bybe.fly.dev/pf/license</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>0.8</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/sf2e/encounter</loc>
+		<loc>https://bybe.fly.dev/sf/encounter</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/sf2e/bestiary</loc>
+		<loc>https://bybe.fly.dev/sf/bestiary</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/sf2e/npc</loc>
+		<loc>https://bybe.fly.dev/sf/npc</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/sf2e/character</loc>
+		<loc>https://bybe.fly.dev/sf/character</loc>
 		<lastmod>2025-07-03</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/sf2e/shop</loc>
+		<loc>https://bybe.fly.dev/sf/shop</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/sf2e/item</loc>
+		<loc>https://bybe.fly.dev/sf/item</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/sf2e/creature</loc>
+		<loc>https://bybe.fly.dev/sf/creature</loc>
 		<lastmod>2025-07-03</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/sf2e/city</loc>
+		<loc>https://bybe.fly.dev/sf/city</loc>
 		<lastmod>2025-07-03</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.fly.dev/sf2e/license</loc>
+		<loc>https://bybe.fly.dev/sf/license</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>0.8</priority>
 	</url>

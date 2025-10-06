@@ -15,11 +15,11 @@ const routes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/pf2e/',
+    path: '/pf/',
     name: 'pf2e_home',
     component: () => import('../layouts/MainLayout.vue'),
     children: [
-      { path: '/pf2e/', component: () => import('../pages/pf2e/IndexPage.vue') },
+      { path: '/pf/', component: () => import('../pages/pf2e/IndexPage.vue') },
       {
         path: 'encounter',
         name: 'pf2e_encounter',
@@ -68,11 +68,11 @@ const routes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/sf2e/',
+    path: '/sf/',
     name: 'sf2e_home',
     component: () => import('../layouts/MainLayout.vue'),
     children: [
-      { path: '/sf2e/', component: () => import('../pages/sf2e/IndexPage.vue') },
+      { path: '/sf/', component: () => import('../pages/sf2e/IndexPage.vue') },
       {
         path: 'encounter',
         name: 'sf2e_encounter',

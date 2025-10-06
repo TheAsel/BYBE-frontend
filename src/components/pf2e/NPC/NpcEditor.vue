@@ -71,14 +71,14 @@ const generateParameterNpc = debounce(async function (
 
     try {
       if (parameter == 'level') {
-        const newLevel = await npcLevelGenerator();
+        const newLevel = await npcLevelGenerator('pf');
         if (typeof newLevel != 'undefined') {
           npcs.getActiveNpc!.npc.level = newLevel;
         } else {
           throw new Error('Error generating npc level');
         }
       } else {
-        const newParameter = await npcParametersGenerator(parameter);
+        const newParameter = await npcParametersGenerator('pf', parameter);
         if (typeof newParameter != 'undefined') {
           switch (parameter) {
             case 'ancestry':
@@ -169,7 +169,7 @@ const generateNamesNpc = debounce(async function () {
       }
 
       try {
-        const newNames = await npcNamesGenerator(post);
+        const newNames = await npcNamesGenerator('pf', post);
         if (typeof newNames != 'undefined') {
           namesIndex = 0;
           namesList = newNames;

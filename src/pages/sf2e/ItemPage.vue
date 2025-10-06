@@ -19,7 +19,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/sf2e/bestiary'
+      href: 'https://bybe.fly.dev/sf/bestiary'
     }
   ]
 });

@@ -16,7 +16,7 @@ export const settingsStore = defineStore('settings', {
     experimental_features: false,
     is_aon_links_on: false,
     pf_version: 'Any',
-    game: 'pf2e' as games
+    game: 'pf' as games
   }),
   getters: {
     getHiddenNav: (state) => state.hidden_nav,
@@ -533,6 +533,10 @@ export const npcParametersStore = defineStore('npcparameters', {
       this.npcParameters.classes = newClasses.map(splitPascalCase);
     },
     updateJobs(newJobs: string[]) {
+      const ai = newJobs.indexOf('AIOperator');
+      if (ai !== -1) {
+        newJobs[ai] = 'AI Operator';
+      }
       this.npcParameters.jobs = newJobs.map(splitPascalCase);
     }
   }

@@ -22,7 +22,7 @@ const isHome = computed(() => {
 
 onMounted(() => {
   const firstSegment = route.path.split('/')[1];
-  if (firstSegment == 'sf2e') {
+  if (firstSegment == 'sf') {
     settings.setGame('sf');
   } else {
     settings.setGame('pf');
@@ -87,13 +87,13 @@ try {
           <span v-if="!isHome">
             <router-link
               v-if="settings.getGame == 'sf'"
-              to="/sf2e/license"
+              to="/sf/license"
               class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
               >Licenses and Policies</router-link
             >
             <router-link
               v-else
-              to="/pf2e/license"
+              to="/pf/license"
               class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
               >Licenses and Policies</router-link
             >

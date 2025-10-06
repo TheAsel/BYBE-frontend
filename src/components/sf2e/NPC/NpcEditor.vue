@@ -56,11 +56,10 @@ watch(npcs, () => {
 });
 
 const generateParameterNpc = debounce(async function (
-  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level' | 'culture'
+  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level'
 ) {
   if (
     (!npcs.getLocks.ancestry && parameter == 'ancestry') ||
-    (!npcs.getLocks.culture && parameter == 'culture') ||
     (!npcs.getLocks.class && parameter == 'class') ||
     (!npcs.getLocks.gender && parameter == 'gender') ||
     (!npcs.getLocks.job && parameter == 'job') ||
@@ -71,21 +70,18 @@ const generateParameterNpc = debounce(async function (
 
     try {
       if (parameter == 'level') {
-        const newLevel = await npcLevelGenerator();
+        const newLevel = await npcLevelGenerator('sf');
         if (typeof newLevel != 'undefined') {
           npcs.getActiveNpc!.npc.level = newLevel;
         } else {
           throw new Error('Error generating npc level');
         }
       } else {
-        const newParameter = await npcParametersGenerator(parameter);
+        const newParameter = await npcParametersGenerator('sf', parameter);
         if (typeof newParameter != 'undefined') {
           switch (parameter) {
             case 'ancestry':
               npcs.getActiveNpc!.npc.ancestry = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-              break;
-            case 'culture':
-              npcs.getActiveNpc!.npc.culture = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
               break;
             case 'class':
               npcs.getActiveNpc!.npc.class = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -169,7 +165,7 @@ const generateNamesNpc = debounce(async function () {
       }
 
       try {
-        const newNames = await npcNamesGenerator(post);
+        const newNames = await npcNamesGenerator('sf', post);
         if (typeof newNames != 'undefined') {
           namesIndex = 0;
           namesList = newNames;
@@ -631,7 +627,7 @@ const saveChanges = () => {
               @click="generateParameterNpc('gender')"
             />
             <span class="tw:mx-2" />
-            <span v-if="!npcs.getActiveNpc!.culture" class="tw:flex-none tw:my-auto! tw:mr-2!">
+            <span class="tw:flex-none tw:my-auto! tw:mr-2!">
               <q-btn
                 v-if="npcs.getLocks.ancestry"
                 :icon="biLock"
@@ -655,32 +651,7 @@ const saveChanges = () => {
                 @click="npcs.getLocks.ancestry = true"
               />
             </span>
-            <span v-else class="tw:flex-none tw:my-auto! tw:mr-2!">
-              <q-btn
-                v-if="npcs.getLocks.culture"
-                :icon="biLock"
-                size="sm"
-                padding="sm"
-                flat
-                round
-                dense
-                aria-label="Unlock culture"
-                @click="npcs.getLocks.culture = false"
-              />
-              <q-btn
-                v-else
-                :icon="biUnlock"
-                size="sm"
-                padding="sm"
-                flat
-                round
-                dense
-                aria-label="Lock culture"
-                @click="npcs.getLocks.culture = true"
-              />
-            </span>
             <q-input
-              v-if="!npcs.getActiveNpc!.culture"
               label="Ancestry"
               v-model="npcs.getActiveNpc!.npc.ancestry"
               class="tw:grow"
@@ -689,18 +660,7 @@ const saveChanges = () => {
               outlined
               :readonly="npcs.getLocks.ancestry"
             />
-            <q-input
-              v-else
-              label="Culture"
-              v-model="npcs.getActiveNpc!.npc.culture"
-              class="tw:grow"
-              stack-label
-              dense
-              outlined
-              :readonly="npcs.getLocks.culture"
-            />
             <q-btn
-              v-if="!npcs.getActiveNpc!.culture"
               class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
@@ -710,18 +670,6 @@ const saveChanges = () => {
               dense
               aria-label="Generate ancestry"
               @click="generateParameterNpc('ancestry')"
-            />
-            <q-btn
-              v-else
-              class="tw:flex-none tw:my-auto! tw:ml-2!"
-              :icon="biArrowRepeat"
-              size="sm"
-              padding="sm"
-              flat
-              round
-              dense
-              aria-label="Generate culture"
-              @click="generateParameterNpc('culture')"
             />
           </div>
           <div class="tw:flex tw:py-1">

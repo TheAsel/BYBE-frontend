@@ -16,7 +16,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/pf2e/character'
+      href: 'https://bybe.fly.dev/pf/character'
     }
   ]
 });

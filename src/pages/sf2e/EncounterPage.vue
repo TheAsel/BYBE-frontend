@@ -17,7 +17,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/sf2e/encounter'
+      href: 'https://bybe.fly.dev/sf/encounter'
     }
   ]
 });
@@ -251,7 +251,7 @@ const scrollPage = (up: boolean) => {
 
 <template>
   <div class="row items-center justify-between">
-    <v-tour name="/sf2e/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
+    <v-tour name="/sf/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
     <CreaturesTable id="table" />
     <q-space />
     <CreatureList id="list" />

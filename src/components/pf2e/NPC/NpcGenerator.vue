@@ -39,14 +39,14 @@ const jobFilter = ref<string[]>(npcParameters.getNpcParameters.jobs);
 
 onMounted(async () => {
   try {
-    const gendersRequest = await requestParameters('genders');
+    const gendersRequest = await requestParameters('pf', 'genders');
     if (gendersRequest) {
       npcParameters.updateGenders(gendersRequest);
       genderFilter.value = npcParameters.getNpcParameters.genders;
     } else {
       throw new Error('Error fetching genders');
     }
-    const ancestriesRequest = await requestAncestries();
+    const ancestriesRequest = await requestAncestries('pf');
     if (ancestriesRequest) {
       npcParameters.updateValidGenders(ancestriesRequest);
       npcParameters.updateAncestries(
@@ -56,21 +56,21 @@ onMounted(async () => {
     } else {
       throw new Error('Error fetching ancestries');
     }
-    const culturesRequest = await requestParameters('cultures');
+    const culturesRequest = await requestParameters('pf', 'cultures');
     if (culturesRequest) {
       npcParameters.updateCultures(culturesRequest.sort());
       culturesFilter.value = npcParameters.getNpcParameters.cultures;
     } else {
       throw new Error('Error fetching cultures');
     }
-    const classesRequest = await requestParameters('classes');
+    const classesRequest = await requestParameters('pf', 'classes');
     if (classesRequest) {
       npcParameters.updateClasses(classesRequest.sort());
       classFilter.value = npcParameters.getNpcParameters.classes;
     } else {
       throw new Error('Error fetching classes');
     }
-    const jobsRequest = await requestParameters('jobs');
+    const jobsRequest = await requestParameters('pf', 'jobs');
     if (jobsRequest) {
       npcParameters.updateJobs(jobsRequest.sort());
       jobFilter.value = npcParameters.getNpcParameters.jobs;
@@ -155,36 +155,36 @@ const generateNpc = debounce(async function () {
   };
 
   try {
-    const randomNpc = await npcGenerator(post);
+    const randomNpc = await npcGenerator('pf', post);
     if (typeof randomNpc != 'undefined') {
       if (!npcs.getLocks.name) {
-        npcs.getActiveNpc!.npc.name = randomNpc.name;
+        npcs.getActiveNpc!.npc.name = randomNpc.npc.name;
       }
       if (!npcs.getLocks.nickname) {
-        npcs.getActiveNpc!.npc.nickname = randomNpc.nickname;
+        npcs.getActiveNpc!.npc.nickname = randomNpc.npc.nickname;
       }
       if (!npcs.getLocks.gender) {
-        randomNpc.gender = randomNpc.gender!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.gender = randomNpc.gender;
+        randomNpc.npc.gender = randomNpc.npc.gender!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.gender = randomNpc.npc.gender;
       }
       if (!npcs.getLocks.ancestry) {
-        randomNpc.ancestry = randomNpc.ancestry!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.ancestry = randomNpc.ancestry;
+        randomNpc.npc.ancestry = randomNpc.npc.ancestry!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.ancestry = randomNpc.npc.ancestry;
       }
       if (!npcs.getLocks.culture) {
-        randomNpc.culture = randomNpc.culture!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.culture = randomNpc.culture;
+        randomNpc.npc.culture = randomNpc.npc.culture!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.culture = randomNpc.npc.culture;
       }
       if (!npcs.getLocks.class) {
-        randomNpc.class = randomNpc.class!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.class = randomNpc.class;
+        randomNpc.npc.class = randomNpc.npc.class!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.class = randomNpc.npc.class;
       }
       if (!npcs.getLocks.job) {
-        randomNpc.job = randomNpc.job!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.job = randomNpc.job;
+        randomNpc.npc.job = randomNpc.npc.job!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.job = randomNpc.npc.job;
       }
       if (!npcs.getLocks.level) {
-        npcs.getActiveNpc!.npc.level = randomNpc.level;
+        npcs.getActiveNpc!.npc.level = randomNpc.npc.level;
       }
     } else {
       throw new Error('Error generating random npc');
