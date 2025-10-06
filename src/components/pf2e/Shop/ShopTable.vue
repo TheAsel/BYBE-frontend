@@ -173,7 +173,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   }
   try {
     const request = await requestItems(
-      'pf2e',
+      'pf',
       startRow,
       rowsPerPage,
       filters.value.sort_by,
@@ -250,7 +250,7 @@ const openShopSheet = (id: number) => {
 
 const addItem = debounce(function (item: item) {
   const min_item: min_item = {
-    game: 'pf2e',
+    game: 'pf',
     id: item.core_item.id,
     // TODO: use item.core_item.archive_link if it gets added
     archive_link:
@@ -426,21 +426,21 @@ const filterTraitsFn = (val, update) => {
 
 onMounted(async () => {
   try {
-    const sourcesRequest = await requestFilters('pf2e', 'sources');
+    const sourcesRequest = await requestFilters('pf', 'sources');
     if (sourcesRequest) {
       filterStore.updateItemSources(sourcesRequest);
       sourceFilter.value = filterStore.getItemFilters.sources;
     } else {
       throw new Error('Error fetching sources');
     }
-    const traitsRequest = await requestFilters('pf2e', 'traits');
+    const traitsRequest = await requestFilters('pf', 'traits');
     if (traitsRequest) {
       filterStore.updateItemTraits(traitsRequest);
       traitFilter.value = filterStore.getItemFilters.traits;
     } else {
       throw new Error('Error fetching traits');
     }
-    const templatesRequest = await requestTemplates('pf2e');
+    const templatesRequest = await requestTemplates('pf');
     if (templatesRequest) {
       templateStore().addDefaultTemplates(templatesRequest);
     } else {

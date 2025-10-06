@@ -23,9 +23,9 @@ const isHome = computed(() => {
 onMounted(() => {
   const firstSegment = route.path.split('/')[1];
   if (firstSegment == 'sf2e') {
-    settings.setGame('sf2e');
+    settings.setGame('sf');
   } else {
-    settings.setGame('pf2e');
+    settings.setGame('pf');
   }
 });
 
@@ -35,7 +35,7 @@ const backgroundStyle = computed(() => {
   if (isHome.value) {
     imageUrl = '/home-background.webp';
   } else {
-    imageUrl = settings.getGame === 'sf2e' ? '/sf2e-background.webp' : '/pf2e-background.webp';
+    imageUrl = settings.getGame === 'sf' ? '/sf2e-background.webp' : '/pf2e-background.webp';
   }
   return {
     backgroundImage: `url('${imageUrl}')`,
@@ -86,7 +86,7 @@ try {
           |
           <span v-if="!isHome">
             <router-link
-              v-if="settings.getGame == 'sf2e'"
+              v-if="settings.getGame == 'sf'"
               to="/sf2e/license"
               class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
               >Licenses and Policies</router-link

@@ -39,15 +39,15 @@ try {
     switch (queryVariant) {
       case 'weak':
         creatureVariant.value = 'Weak';
-        creatureData = await requestCreatureId('pf2e', creatureId, 'Weak', encounters.getPwl);
+        creatureData = await requestCreatureId('pf', creatureId, 'Weak', encounters.getPwl);
         break;
       case 'elite':
         creatureVariant.value = 'Elite';
-        creatureData = await requestCreatureId('pf2e', creatureId, 'Elite', encounters.getPwl);
+        creatureData = await requestCreatureId('pf', creatureId, 'Elite', encounters.getPwl);
         break;
       default:
         creatureVariant.value = 'Base';
-        creatureData = await requestCreatureId('pf2e', creatureId, 'Base', encounters.getPwl);
+        creatureData = await requestCreatureId('pf', creatureId, 'Base', encounters.getPwl);
         break;
     }
     if (isNull(creatureData) || creatureData === undefined) {

@@ -34,7 +34,7 @@ const itemId = Number(route.query.id);
 let itemData: item | undefined;
 try {
   if (itemId !== undefined && !isNaN(itemId)) {
-    itemData = await requestItemId('pf2e', itemId);
+    itemData = await requestItemId('pf', itemId);
     if (isNull(itemData) || itemData === undefined) {
       console.error('Missing item ID');
       $q.notify({

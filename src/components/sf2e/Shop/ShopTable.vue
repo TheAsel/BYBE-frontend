@@ -173,7 +173,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   }
   try {
     const request = await requestItems(
-      'sf2e',
+      'sf',
       startRow,
       rowsPerPage,
       filters.value.sort_by,
@@ -250,7 +250,7 @@ const openShopSheet = (id: number) => {
 
 const addItem = debounce(function (item: item) {
   const min_item: min_item = {
-    game: 'sf2e',
+    game: 'sf',
     id: item.core_item.id,
     // TODO: use item.core_item.archive_link if it gets added
     archive_link:
@@ -424,21 +424,21 @@ const filterTraitsFn = (val, update) => {
 
 onMounted(async () => {
   try {
-    const sourcesRequest = await requestFilters('sf2e', 'sources');
+    const sourcesRequest = await requestFilters('sf', 'sources');
     if (sourcesRequest) {
       filterStore.updateItemSources(sourcesRequest);
       sourceFilter.value = filterStore.getItemFilters.sources;
     } else {
       throw new Error('Error fetching sources');
     }
-    const traitsRequest = await requestFilters('sf2e', 'traits');
+    const traitsRequest = await requestFilters('sf', 'traits');
     if (traitsRequest) {
       filterStore.updateItemTraits(traitsRequest);
       traitFilter.value = filterStore.getItemFilters.traits;
     } else {
       throw new Error('Error fetching traits');
     }
-    const templatesRequest = await requestTemplates('sf2e');
+    const templatesRequest = await requestTemplates('sf');
     if (templatesRequest) {
       templateStore().addDefaultTemplates(templatesRequest);
     } else {

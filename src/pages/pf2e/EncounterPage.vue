@@ -186,7 +186,7 @@ const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
     const tmpKoboldMage: min_creature = {
-      game: 'pf2e',
+      game: 'pf',
       id: 5009,
       archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3074',
       name: 'Kobold Cavern Mage',
@@ -194,7 +194,7 @@ const startTour = () => {
       variant: 'Base'
     };
     const tmpKoboldWarrior: min_creature = {
-      game: 'pf2e',
+      game: 'pf',
       id: 4977,
       archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3072',
       name: 'Kobold Warrior',

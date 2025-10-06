@@ -267,7 +267,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   }
   try {
     const request = await requestCreatures(
-      'pf2e',
+      'pf',
       startRow,
       rowsPerPage,
       filters.value.sort_by,
@@ -387,7 +387,7 @@ const openCreatureSheet = (id: number) => {
 // ---- Add creature to encounter function
 const addCreature = debounce(function (creature: creature) {
   const min_creature: min_creature = {
-    game: 'pf2e',
+    game: 'pf',
     id: creature.core_data.essential.id,
     archive_link: creature.core_data.derived.archive_link,
     name: creature.core_data.essential.name,
@@ -435,52 +435,52 @@ const filterFamiliesFn = (val, update) => {
 
 onMounted(async () => {
   try {
-    const traitsRequest = await requestFilters('pf2e', 'traits');
+    const traitsRequest = await requestFilters('pf', 'traits');
     if (traitsRequest) {
       filterStore.updateTraits(traitsRequest);
       traitFilter.value = filterStore.getCreatureFilters.traits;
     } else {
       throw new Error('Error fetching traits');
     }
-    const alignmentsRequest = await requestFilters('pf2e', 'alignments');
+    const alignmentsRequest = await requestFilters('pf', 'alignments');
     if (alignmentsRequest) {
       filterStore.updateAlignments(alignmentsRequest);
     } else {
       throw new Error('Error fetching alignments');
     }
-    const sizesRequest = await requestFilters('pf2e', 'sizes');
+    const sizesRequest = await requestFilters('pf', 'sizes');
     if (sizesRequest) {
       filterStore.updateSizes(sizesRequest);
     } else {
       throw new Error('Error fetching sizes');
     }
-    const raritiesRequest = await requestFilters('pf2e', 'rarities');
+    const raritiesRequest = await requestFilters('pf', 'rarities');
     if (raritiesRequest) {
       filterStore.updateRarities(raritiesRequest);
     } else {
       throw new Error('Error fetching rarities');
     }
-    const familiesRequest = await requestFilters('pf2e', 'families');
+    const familiesRequest = await requestFilters('pf', 'families');
     if (familiesRequest) {
       filterStore.updateFamilies(familiesRequest);
       familyFilter.value = filterStore.getCreatureFilters.families;
     } else {
       throw new Error('Error fetching families');
     }
-    const typesRequest = await requestFilters('pf2e', 'creature_types');
+    const typesRequest = await requestFilters('pf', 'creature_types');
     if (typesRequest) {
       filterStore.updateCreatureType(typesRequest);
     } else {
       throw new Error('Error fetching creature_types');
     }
-    const sourcesRequest = await requestFilters('pf2e', 'sources');
+    const sourcesRequest = await requestFilters('pf', 'sources');
     if (sourcesRequest) {
       filterStore.updateSources(sourcesRequest);
       sourceFilter.value = filterStore.getCreatureFilters.sources;
     } else {
       throw new Error('Error fetching sources');
     }
-    const rolesRequest = await requestFilters('pf2e', 'creature_roles');
+    const rolesRequest = await requestFilters('pf', 'creature_roles');
     if (rolesRequest) {
       filterStore.updateRoles(rolesRequest);
     } else {

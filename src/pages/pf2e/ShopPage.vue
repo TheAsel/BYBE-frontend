@@ -180,7 +180,7 @@ const startTour = () => {
       }
     };
     const tmpCloak: min_item = {
-      game: 'pf2e',
+      game: 'pf',
       id: 3511,
       archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=3069',
       name: 'Cloak of Illusions',
@@ -190,7 +190,7 @@ const startTour = () => {
       quantity: 1
     };
     const tmpPotion: min_item = {
-      game: 'pf2e',
+      game: 'pf',
       id: 2967,
       archive_link: 'https://2e.aonprd.com/Equipment.aspx?ID=2943',
       name: 'Healing Potion (Moderate)',

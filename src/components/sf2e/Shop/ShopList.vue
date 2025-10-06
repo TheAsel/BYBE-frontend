@@ -47,7 +47,7 @@ const tmpShop = ref<shop_list>(shop.getActiveShop!);
 const shops = ref<string[]>(shop.getShops.map((shop) => shop.name));
 
 const lastItemId = ref<number>();
-const lastItemGame = ref<games>('sf2e');
+const lastItemGame = ref<games>('sf');
 
 tmpShop.value = {
   name: shop.getActiveShop!.name,

@@ -152,13 +152,13 @@ const generateEncounter = debounce(async function () {
     post.challenge = tmpFilters.value.challenge!;
   }
   try {
-    const randomEncounter = await encounterGenerator('pf2e', post);
+    const randomEncounter = await encounterGenerator('pf', post);
     if (typeof randomEncounter != 'undefined') {
       if (randomEncounter.count > 0 && randomEncounter.results) {
         encounter.clearEncounter();
         for (let i = 0; i < randomEncounter.count; i++) {
           const min_creature: min_creature = {
-            game: 'pf2e',
+            game: 'pf',
             id: randomEncounter.results[i]!.core_data.essential.id,
             archive_link: randomEncounter.results[i]!.core_data.derived.archive_link,
             name: randomEncounter.results[i]!.core_data.essential.name,

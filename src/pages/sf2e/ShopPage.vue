@@ -180,7 +180,7 @@ const startTour = () => {
       }
     };
     const tmpLaserRifle: min_item = {
-      game: 'sf2e',
+      game: 'sf',
       id: 402,
       archive_link: 'https://2e.aonsrd.com/equipment/weapons/41-laser-rifle',
       name: 'Laser Rifle',
@@ -190,7 +190,7 @@ const startTour = () => {
       quantity: 1
     };
     const tmpFlightSuit: min_item = {
-      game: 'sf2e',
+      game: 'sf',
       id: 328,
       archive_link: 'https://2e.aonsrd.com/equipment/armor/2-flight-suit',
       name: 'Flight Suit',

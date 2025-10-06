@@ -203,13 +203,13 @@ const generateShop = debounce(async function () {
     }
   }
   try {
-    const randomShop = await shopGenerator('sf2e', post);
+    const randomShop = await shopGenerator('sf', post);
     if (typeof randomShop != 'undefined') {
       if (randomShop.count > 0 && randomShop.results) {
         shop.clearShop();
         for (let i = 0; i < randomShop.count; i++) {
           const min_item: min_item = {
-            game: 'sf2e',
+            game: 'sf',
             id: randomShop.results[i]!.core_item.id,
             // TODO: use randomShop.results[i].core_item.archive_link if it gets added
             archive_link:

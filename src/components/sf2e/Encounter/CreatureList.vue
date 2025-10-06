@@ -89,7 +89,7 @@ const debouncedCall = debounce(async function () {
   };
   try {
     if (!encounter.getGenerating) {
-      const returnedEncounterInfo = await encounterInfo('sf2e', post);
+      const returnedEncounterInfo = await encounterInfo('sf', post);
       if (typeof returnedEncounterInfo != 'undefined') {
         info.setInfo(returnedEncounterInfo);
       } else {
@@ -182,7 +182,7 @@ const saveChanges = () => {
 };
 
 const openCreatureSheet = (game: games, id: number, variant: variants) => {
-  if (game === 'sf2e') {
+  if (game === 'sf') {
     const routeData = router.resolve({
       name: 'sf2e_bestiary',
       query: { id: id, variant: variant }

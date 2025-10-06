@@ -83,4 +83,4 @@ export type item_filters = {
   pathfinder_version: string;
 };
 
-export type games = 'pf2e' | 'sf2e';
+export type games = 'pf' | 'sf';

@@ -46,7 +46,7 @@ const cleanDescription = (description: string) => {
 };
 
 const openShopSheet = (game: games, id: number) => {
-  if (game === 'sf2e') {
+  if (game === 'sf') {
     const routeData = router.resolve({ name: 'sf2e_item', query: { id: id } });
     if (process.env.IS_APP === 'true') {
       window.open(routeData.href, '_self');
@@ -78,7 +78,7 @@ const openShopSheet = (game: games, id: number) => {
       padding="sm"
       class="tw:mr-1 tw:my-auto only-screen item-page-element"
       aria-label="Open item sheet"
-      @click="openShopSheet('pf2e', items.getSelectedItem!.core_item.id)"
+      @click="openShopSheet('pf', items.getSelectedItem!.core_item.id)"
     >
       <!-- TODO: use items.getSelectedItem!.core_item.game instead of hardcoded -->
       <q-tooltip

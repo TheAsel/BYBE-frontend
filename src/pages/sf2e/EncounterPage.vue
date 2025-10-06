@@ -186,7 +186,7 @@ const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
     const tmpBeyondTerror: min_creature = {
-      game: 'sf2e',
+      game: 'sf',
       id: 20,
       // TODO: update link when added to AoN
       archive_link: '',
@@ -195,7 +195,7 @@ const startTour = () => {
       variant: 'Base'
     };
     const tmpAnaciteWingbot: min_creature = {
-      game: 'sf2e',
+      game: 'sf',
       id: 11,
       // TODO: update link when added to AoN
       archive_link: '',
