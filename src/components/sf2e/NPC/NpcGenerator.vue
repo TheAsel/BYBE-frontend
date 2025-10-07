@@ -78,8 +78,10 @@ const generateNpc = debounce(async function () {
   const post: {
     gender_filter?: string[] | undefined;
     name_origin_filter?: {
-      FromAncestry?: string[];
-      FromCulture?: string[];
+      FromSf: {
+        FromAncestry?: string[];
+        FromCulture?: string[];
+      };
     };
     class_filter?: string[] | undefined;
     job_filter?: string[] | undefined;
@@ -103,9 +105,9 @@ const generateNpc = debounce(async function () {
     const tmpAncestries = parameters.value.ancestries.map((_ancestry) => {
       return _ancestry.replaceAll(' ', '');
     });
-    post.name_origin_filter = { FromAncestry: tmpAncestries };
+    post.name_origin_filter = { FromSf: { FromAncestry: tmpAncestries } };
   } else {
-    post.name_origin_filter = { FromAncestry: [] };
+    post.name_origin_filter = { FromSf: { FromAncestry: [] } };
   }
 
   if (parameters.value.classes && parameters.value.classes.length > 0) {
@@ -131,29 +133,29 @@ const generateNpc = debounce(async function () {
     const randomNpc = await npcGenerator('sf', post);
     if (typeof randomNpc != 'undefined') {
       if (!npcs.getLocks.name) {
-        npcs.getActiveNpc!.npc.name = randomNpc.npc.name;
+        npcs.getActiveNpc!.npc.name = randomNpc.name;
       }
       if (!npcs.getLocks.nickname) {
-        npcs.getActiveNpc!.npc.nickname = randomNpc.npc.nickname;
+        npcs.getActiveNpc!.npc.nickname = randomNpc.nickname;
       }
       if (!npcs.getLocks.gender) {
-        randomNpc.npc.gender = randomNpc.npc.gender!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.gender = randomNpc.npc.gender;
+        randomNpc.gender = randomNpc.gender!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.gender = randomNpc.gender;
       }
       if (!npcs.getLocks.ancestry) {
-        randomNpc.npc.ancestry = randomNpc.npc.ancestry!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.ancestry = randomNpc.npc.ancestry;
+        randomNpc.ancestry = randomNpc.ancestry!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.ancestry = randomNpc.ancestry;
       }
       if (!npcs.getLocks.class) {
-        randomNpc.npc.class = randomNpc.npc.class!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.class = randomNpc.npc.class;
+        randomNpc.class = randomNpc.class!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.class = randomNpc.class;
       }
       if (!npcs.getLocks.job) {
-        randomNpc.npc.job = randomNpc.npc.job!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.job = randomNpc.npc.job;
+        randomNpc.job = randomNpc.job!.replace(/([a-z])([A-Z])/g, '$1 $2');
+        npcs.getActiveNpc!.npc.job = randomNpc.job;
       }
       if (!npcs.getLocks.level) {
-        npcs.getActiveNpc!.npc.level = randomNpc.npc.level;
+        npcs.getActiveNpc!.npc.level = randomNpc.level;
       }
     } else {
       throw new Error('Error generating random npc');

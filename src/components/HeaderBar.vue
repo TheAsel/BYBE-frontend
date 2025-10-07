@@ -22,16 +22,20 @@ TailwindDarkFix();
 const router = useRouter();
 const route = useRoute();
 const currentPath = ref(route.path);
-const isTourPage = ref(false);
+const isTourPage = ref(
+  currentPath.value.startsWith('/' + settings.getGame + '/encounter') ||
+    currentPath.value.startsWith('/' + settings.getGame + '/shop') ||
+    currentPath.value.startsWith('/' + settings.getGame + '/npc')
+);
 
 watch(
   () => route.path,
   () => {
     currentPath.value = route.path;
     isTourPage.value =
-      currentPath.value === '/' + settings.getGame + '/encounter' ||
-      currentPath.value === '/' + settings.getGame + '/shop' ||
-      currentPath.value === '/' + settings.getGame + '/npc';
+      currentPath.value.startsWith('/' + settings.getGame + '/encounter') ||
+      currentPath.value.startsWith('/' + settings.getGame + '/shop') ||
+      currentPath.value.startsWith('/' + settings.getGame + '/npc');
   }
 );
 

@@ -600,7 +600,8 @@ export const npcStore = defineStore('npc', {
         quirk: '',
         relationships: '',
         ideology: '',
-        custom_fields: [{ name: '', body: '' }]
+        custom_fields: [{ name: '', body: '' }],
+        game: 'Pathfinder'
       };
       this.npcs[this.activeNpc]!.npc = tmpNpc;
     },
@@ -629,7 +630,8 @@ export const npcStore = defineStore('npc', {
           quirk: '',
           relationships: '',
           ideology: '',
-          custom_fields: [{ name: '', body: '' }]
+          custom_fields: [{ name: '', body: '' }],
+          game: 'Pathfinder'
         },
         culture: false
       });
@@ -657,7 +659,8 @@ export const npcStore = defineStore('npc', {
               quirk: '',
               relationships: '',
               ideology: '',
-              custom_fields: [{ name: '', body: '' }]
+              custom_fields: [{ name: '', body: '' }],
+              game: 'Pathfinder'
             },
             culture: false
           }

@@ -157,13 +157,21 @@ const steps: Step[] = [
   {
     target: '#v-step-7',
     content:
+      'Clicking this button will generate a link to your current encounter that you can copy and share.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-8',
+    content:
       'This is where the challenge of the encounter will be displayed, adjusted according to your party level and size.',
     params: {
       placement: 'top'
     }
   },
   {
-    target: '#v-step-8',
+    target: '#v-step-9',
     content:
       'You can enable the variant rule for Proficiency without Level by clicking here and going to the "Encounter" tab.',
     params: {

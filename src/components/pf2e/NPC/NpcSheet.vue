@@ -21,7 +21,7 @@ const openNpcSheet = (id: number) => {
 <template>
   <div class="npc-sheet q-pa-md tw:w-full tw:md:w-[33%]">
     <div
-      id="v-step-6"
+      id="v-step-7"
       class="tw:opacity-85 tw:dark:opacity-90 tw:items-center tw:text-left tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700 hide-print"
     >
       <q-scroll-area style="height: calc(100vh - 128px)">

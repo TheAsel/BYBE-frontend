@@ -131,6 +131,14 @@ const steps: Step[] = [
   },
   {
     target: '#v-step-5',
+    content:
+      'Clicking this button will generate a link to your current shop that you can copy and share.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-6',
     content: "This is where the selected item's description will be displayed.",
     params: {
       placement: 'auto'

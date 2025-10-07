@@ -4,24 +4,47 @@ import {
   biInputCursorText,
   biPlus,
   biPlusLg,
-  biTrash
+  biShare,
+  biTrash,
+  biXLg
 } from '@quasar/extras/bootstrap-icons';
 import { fasScroll } from '@quasar/extras/fontawesome-v6';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash-es';
+import { copyToClipboard, useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import { encounterStore, infoStore, partyStore } from '../../../stores/store';
-import { encounterInfo } from '../../../utils/encounter-api-calls';
+import {
+  decodeEncounterLink,
+  encounterInfo,
+  generateEncounterLink,
+  requestCreatureId
+} from '../../../utils/encounter-api-calls';
 
-import type { encounter_list } from '../../../types/encounter';
+import type { min_creature } from '../../../types/creature';
+import type { encounter_list, shareable_encounter } from '../../../types/encounter';
 import type { games, variants } from '../../../types/filters';
 
+const route = useRoute();
 const router = useRouter();
+const $q = useQuasar();
+
+const is_pwl_on = ref(false);
 
 const party = partyStore();
 const encounter = encounterStore();
 const info = infoStore();
+
+const importEncounterDialog = ref(false);
+const importNameInput = ref();
+const importEncounterName = ref('');
+const importEncounterData = ref<shareable_encounter>();
+
+const shareDialog = ref(false);
+const shareUrl = ref('');
+const isGenerating = ref(false);
 
 const newEncounterDialog = ref(false);
 const encounterNameInput = ref();
@@ -68,7 +91,6 @@ const debouncedCall = debounce(async function () {
     }
   }
   const partyLevels = party.getActiveParty!.members;
-  const is_pwl_on = ref(false);
   const localPwl = ref(localStorage.getItem('is_pwl_on'));
   switch (localPwl.value) {
     case 'true':
@@ -119,10 +141,144 @@ watch(party, async () => {
 // get info on page load
 await debouncedCall();
 
+// read the "share" query and decode it
+const encodedData = String(route.query.share);
+if (encodedData !== 'undefined' && encodedData !== 'null' && encodedData !== '') {
+  isGenerating.value = true;
+  importEncounterDialog.value = true;
+  try {
+    const decodedData = await decodeEncounterLink(encodedData);
+    if (typeof decodedData !== 'undefined') {
+      importEncounterData.value = decodedData;
+      importEncounterName.value = decodedData.encounter_name;
+    } else {
+      importEncounterDialog.value = false;
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Error importing encounter',
+        icon: matPriorityHigh
+      });
+    }
+  } catch (error) {
+    importEncounterDialog.value = false;
+    console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error importing encounter',
+      icon: matPriorityHigh
+    });
+  }
+  isGenerating.value = false;
+}
+
+// clean the url from queries
+await router.replace({
+  path: route.path,
+  query: {}
+});
+
+// open the share dialog and generate the shareable link
+const openShare = async () => {
+  isGenerating.value = true;
+  shareDialog.value = true;
+  const encounterList = encounter.getActiveEncounter!.creatures;
+  const post: shareable_encounter = {
+    encounter_name: encounter.getActiveEncounter?.name
+      ? encounter.getActiveEncounter.name
+      : 'Default',
+    creatures_data: []
+  };
+
+  encounterList.forEach((creature) => {
+    const tmp_variant: variants = creature.variant ? creature.variant : 'Base';
+    const tmp_qty: number = creature.quantity ? creature.quantity : 1;
+    const tmp_game: 'Pathfinder' | 'Starfinder' =
+      creature.game === 'sf' ? 'Starfinder' : 'Pathfinder';
+
+    post.creatures_data.push({
+      id: creature.id,
+      variant: tmp_variant,
+      qty: tmp_qty,
+      game: tmp_game
+    });
+  });
+
+  try {
+    const shareableLink = await generateEncounterLink(post);
+    if (typeof shareableLink === 'string') {
+      shareUrl.value = 'https://bybe.fly.dev/pf/encounter?share=' + shareableLink;
+    } else {
+      shareDialog.value = false;
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Error generating shared link',
+        icon: matPriorityHigh
+      });
+    }
+  } catch (error) {
+    shareDialog.value = false;
+    console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error generating shared link',
+      icon: matPriorityHigh
+    });
+  }
+  isGenerating.value = false;
+};
+
+const importEncounter = async () => {
+  importNameInput.value.validate();
+  if (!importNameInput.value.hasError) {
+    const tmp_creatures: min_creature[] = [];
+    for (const creature of importEncounterData.value?.creatures_data ?? []) {
+      try {
+        const fetchedCreatureData = await requestCreatureId(
+          creature.game === 'Starfinder' ? 'sf' : 'pf',
+          creature.id,
+          creature.variant,
+          is_pwl_on.value
+        );
+
+        if (typeof fetchedCreatureData !== 'undefined') {
+          tmp_creatures.push({
+            game: creature.game === 'Starfinder' ? 'sf' : 'pf',
+            id: creature.id,
+            archive_link: fetchedCreatureData.core_data.derived.archive_link,
+            name: fetchedCreatureData.core_data.essential.name,
+            level: fetchedCreatureData.core_data.essential.base_level,
+            quantity: creature.qty,
+            variant: creature.variant
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    encounter.addEncounter(importEncounterName.value);
+    encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
+    encounter.updateEncounter(importEncounterName.value, tmp_creatures);
+    tmpEncounter.value = {
+      name: encounter.getActiveEncounter!.name,
+      creatures: [...encounter.getActiveEncounter!.creatures]
+    };
+    saveChanges();
+    importEncounterName.value = '';
+    importEncounterDialog.value = false;
+  }
+};
+
 const closeDialog = () => {
+  importEncounterDialog.value = false;
+  shareDialog.value = false;
   newEncounterDialog.value = false;
   renameEncounterDialog.value = false;
   removeEncounterDialog.value = false;
+  importEncounterName.value = '';
   newEncounterName.value = '';
   newEncounterRename.value = '';
 };
@@ -220,10 +376,102 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
         <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
-          <div
-            class="text-subtitle1 font-bold tw:whitespace-nowrap tw:py-2.5 tw:pr-4 tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800!"
-          >
-            Cost: {{ info.getInfo.experience }} XP
+          <div class="tw:flex tw:py-1.5">
+            <q-dialog
+              v-model="importEncounterDialog"
+              aria-label="Import shared encounter dialog"
+              @escape-key="closeDialog"
+            >
+              <q-card flat bordered>
+                <q-card-section>
+                  <div class="text-h6">Import encounter</div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                  <q-input
+                    ref="importNameInput"
+                    v-model="importEncounterName"
+                    dense
+                    autofocus
+                    counter
+                    :maxlength="50"
+                    :no-error-icon="true"
+                    :rules="[
+                      (val) => !!val || 'Field is required',
+                      (val) =>
+                        !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                        'This encounter already exists'
+                    ]"
+                    @keyup.enter="importEncounter"
+                  />
+                </q-card-section>
+
+                <q-card-actions align="center" class="text-primary">
+                  <q-btn
+                    flat
+                    label="Cancel"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
+                    aria-label="Close dialog"
+                    @click="closeDialog"
+                  />
+                  <q-btn
+                    flat
+                    label="Import encounter"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
+                    aria-label="Add encounter"
+                    @click="importEncounter"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+            <q-btn id="v-step-7" :icon="biShare" label="Share" unelevated push @click="openShare" />
+            <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
+              <q-card flat bordered style="min-height: 210px; width: 320px">
+                <q-card-section>
+                  <div class="row">
+                    <div class="text-h6 tw:mr-4 tw:my-auto">Share</div>
+                    <q-space />
+                    <q-btn
+                      v-close-popup
+                      :icon="biXLg"
+                      size="md"
+                      padding="sm"
+                      flat
+                      round
+                      dense
+                      aria-label="Close dialog"
+                    />
+                  </div>
+                </q-card-section>
+                <div v-if="!isGenerating">
+                  <q-card-section class="tw:wrap-normal tw:py-1!">
+                    A copy of your encounter can be accessed via the following link:
+                  </q-card-section>
+                  <q-card-section>
+                    <div class="row tw:gap-4">
+                      <q-field
+                        class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!"
+                        outlined
+                        dense
+                      >
+                        <template v-slot:control>
+                          <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
+                            {{ shareUrl }}
+                          </div>
+                        </template>
+                      </q-field>
+                      <q-btn label="Copy" @click="copyToClipboard(shareUrl)" />
+                    </div>
+                  </q-card-section>
+                </div>
+                <q-inner-loading showing v-else style="z-index: 2">
+                  <q-spinner-gears
+                    class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
+                    size="5em"
+                  />
+                </q-inner-loading>
+              </q-card>
+            </q-dialog>
           </div>
           <q-space />
           <div class="tw:flex">
@@ -560,7 +808,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
       >
         <div class="tw:flex tw:mx-4 tw:my-1.5">
           <q-linear-progress
-            id="v-step-7"
+            id="v-step-8"
             rounded
             size="35px"
             :value="1"
@@ -576,6 +824,12 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
               />
             </div>
           </q-linear-progress>
+          <q-separator vertical class="tw:mx-4! tw:bg-gray-200! tw:dark:bg-gray-700!" />
+          <div
+            class="flex flex-center text-subtitle1 font-bold tw:whitespace-nowrap tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800!"
+          >
+            Cost: {{ info.getInfo.experience }} XP
+          </div>
         </div>
       </q-footer>
     </q-layout>

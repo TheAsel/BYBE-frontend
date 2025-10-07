@@ -1,5 +1,10 @@
 import type { creature, creature_response } from '../types/creature';
-import type { adventure_groups, encounter, random_encounter } from '../types/encounter';
+import type {
+  adventure_groups,
+  encounter,
+  random_encounter,
+  shareable_encounter
+} from '../types/encounter';
 import type {
   alignments,
   challenges,
@@ -186,6 +191,48 @@ export async function encounterGenerator(
       throw new Error(error);
     }
     return data as random_encounter;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function generateEncounterLink(body: shareable_encounter) {
+  try {
+    const requestOptions = {
+      method: 'POST',
+      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    };
+    const response = await fetch(
+      process.env.API_URL + '/shareable/encounter/encode',
+      requestOptions
+    );
+    const data = await response.text();
+    if (!response.ok) {
+      throw new Error(data);
+    }
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function decodeEncounterLink(encoded_data: string) {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    };
+    const response = await fetch(
+      process.env.API_URL + '/shareable/encounter/decode/' + encoded_data,
+      requestOptions
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      const error = data?.message ?? response.status;
+      throw new Error(error);
+    }
+    return data as shareable_encounter;
   } catch (error) {
     console.error(error);
   }

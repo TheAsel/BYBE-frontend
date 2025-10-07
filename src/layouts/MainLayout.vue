@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { settingsStore } from 'src/stores/store';
@@ -20,14 +20,12 @@ const isHome = computed(() => {
   return route.path === '/' || route.path === '/download';
 });
 
-onMounted(() => {
-  const firstSegment = route.path.split('/')[1];
-  if (firstSegment == 'sf') {
-    settings.setGame('sf');
-  } else {
-    settings.setGame('pf');
-  }
-});
+const firstSegment = route.path.split('/')[1];
+if (firstSegment == 'sf') {
+  settings.setGame('sf');
+} else {
+  settings.setGame('pf');
+}
 
 const backgroundStyle = computed(() => {
   let imageUrl: string;

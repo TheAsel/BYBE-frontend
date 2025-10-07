@@ -22,10 +22,6 @@ export type npc = {
     name: string | null;
     body: string | null;
   }[];
-};
-
-export type random_npc = {
-  npc: npc;
   game: 'Pathfinder' | 'Starfinder';
 };
 
@@ -33,4 +29,19 @@ export type npc_list = {
   name: string;
   npc: npc;
   culture: boolean;
+};
+
+export type shareable_npc = {
+  list_name: string;
+  npcs_data: {
+    name: string;
+    nickname?: string;
+    gender: string;
+    ancestry: string;
+    job: string;
+    level: number;
+    culture: string;
+    class: string;
+    game: 'Pathfinder' | 'Starfinder';
+  }[];
 };

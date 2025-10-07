@@ -1,5 +1,5 @@
 import type { games } from '../types/filters';
-import type { random_npc, valid_genders } from '../types/npcs';
+import type { npc, shareable_npc, valid_genders } from '../types/npcs';
 
 export async function requestParameters(
   game: games,
@@ -51,8 +51,14 @@ export async function npcGenerator(
   body: {
     gender_filter?: string[] | undefined;
     name_origin_filter?: {
-      FromAncestry?: string[] | undefined;
-      FromCulture?: string[] | undefined;
+      FromPf?: {
+        FromAncestry?: string[] | undefined;
+        FromCulture?: string[] | undefined;
+      };
+      FromSf?: {
+        FromAncestry?: string[] | undefined;
+        FromCulture?: string[] | undefined;
+      };
     };
     class_filter?: string[] | undefined;
     job_filter?: string[] | undefined;
@@ -78,7 +84,7 @@ export async function npcGenerator(
       const error = data?.message ?? response.status;
       throw new Error(error);
     }
-    return data as random_npc;
+    return data as npc;
   } catch (error) {
     console.error(error);
   }
@@ -152,6 +158,45 @@ export async function npcNamesGenerator(
       throw new Error(error);
     }
     return data as string[];
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function generateNpcLink(body: shareable_npc) {
+  try {
+    const requestOptions = {
+      method: 'POST',
+      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    };
+    const response = await fetch(process.env.API_URL + '/shareable/npc/encode', requestOptions);
+    const data = await response.text();
+    if (!response.ok) {
+      throw new Error(data);
+    }
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function decodeNpcLink(encoded_data: string) {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    };
+    const response = await fetch(
+      process.env.API_URL + '/shareable/npc/decode/' + encoded_data,
+      requestOptions
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      const error = data?.message ?? response.status;
+      throw new Error(error);
+    }
+    return data as shareable_npc;
   } catch (error) {
     console.error(error);
   }

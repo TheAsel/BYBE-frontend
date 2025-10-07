@@ -51,7 +51,7 @@ if (localNpcs) {
     }
   } catch (error) {
     console.error(error);
-    const defaultNpc = {
+    const defaultNpc: npc_list = {
       name: 'Default',
       npc: {
         level: 0,
@@ -68,7 +68,8 @@ if (localNpcs) {
         quirk: '',
         relationships: '',
         ideology: '',
-        custom_fields: [{ name: '', body: '' }]
+        custom_fields: [{ name: '', body: '' }],
+        game: 'Starfinder'
       },
       culture: false
     };
@@ -103,27 +104,35 @@ const steps: Step[] = [
   },
   {
     target: '#v-step-3',
-    content: 'Each of these fields can be manually locked, edited or randomly generated.',
+    content:
+      'Clicking this button will generate a link to your current NPC that you can copy and share.',
     params: {
       placement: 'auto'
     }
   },
   {
     target: '#v-step-4',
-    content: 'These fields below can only be manually edited instead.',
+    content: 'Each of these fields can be manually locked, edited or randomly generated.',
     params: {
       placement: 'auto'
     }
   },
   {
     target: '#v-step-5',
-    content: 'Here you can modify custom fields. Add new ones by clicking the "+" button.',
+    content: 'These fields below can only be manually edited instead.',
     params: {
       placement: 'auto'
     }
   },
   {
     target: '#v-step-6',
+    content: 'Here you can modify custom fields. Add new ones by clicking the "+" button.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-7',
     content:
       'This is where the final result of your NPC will be displayed. Click on the icon to the left of the name to open a new page with the fullscreen sheet.',
     params: {
@@ -160,7 +169,8 @@ const startTour = () => {
       quirk: 'Sometimes his weapons disappear or duplicate',
       relationships: 'The frontend developer TheAsel and the backend developer RakuJa',
       ideology: 'The frontend is better than the backend',
-      custom_fields: [{ name: '', body: '' }]
+      custom_fields: [{ name: '', body: '' }],
+      game: 'Starfinder'
     };
 
     npcs.addNpc('Example');

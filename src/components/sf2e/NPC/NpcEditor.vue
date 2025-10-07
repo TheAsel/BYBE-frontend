@@ -4,27 +4,43 @@ import {
   biInputCursorText,
   biLock,
   biPlusLg,
+  biShare,
   biTrash,
-  biUnlock
+  biUnlock,
+  biXLg
 } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash-es';
-import { useQuasar } from 'quasar';
+import { copyToClipboard, useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import { npcParametersStore, npcStore } from '../../../stores/store';
 import {
+  decodeNpcLink,
+  generateNpcLink,
   npcLevelGenerator,
   npcNamesGenerator,
   npcParametersGenerator
 } from '../../../utils/npc-api-calls';
 
-import type { npc_list } from '../../../types/npcs';
+import type { npc, npc_list, shareable_npc } from '../../../types/npcs';
 
+const route = useRoute();
+const router = useRouter();
 const $q = useQuasar();
 
 const npcParameters = npcParametersStore();
 const npcs = npcStore();
+
+const importNpcDialog = ref(false);
+const importNameInput = ref();
+const importNpcName = ref('');
+const importNpcData = ref<shareable_npc>();
+
+const shareDialog = ref(false);
+const shareUrl = ref('');
+const isGenerating = ref(false);
 
 const newNpcDialog = ref(false);
 const npcNameInput = ref();
@@ -206,10 +222,159 @@ const removeCustomField = (index: number) => {
   }
 };
 
+// read the "share" query and decode it
+const encodedData = String(route.query.share);
+if (encodedData !== 'undefined' && encodedData !== 'null' && encodedData !== '') {
+  isGenerating.value = true;
+  importNpcDialog.value = true;
+  try {
+    const decodedData = await decodeNpcLink(encodedData);
+    if (typeof decodedData !== 'undefined') {
+      importNpcData.value = decodedData;
+      importNpcName.value = decodedData.list_name;
+    } else {
+      importNpcDialog.value = false;
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Error importing npc',
+        icon: matPriorityHigh
+      });
+    }
+  } catch (error) {
+    importNpcDialog.value = false;
+    console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error importing npc',
+      icon: matPriorityHigh
+    });
+  }
+  isGenerating.value = false;
+}
+
+// clean the url from queries
+await router.replace({
+  path: route.path,
+  query: {}
+});
+
+// open the share dialog and generate the shareable link
+const openShare = async () => {
+  isGenerating.value = true;
+  shareDialog.value = true;
+  const currentNpc = npcs.getActiveNpc!.npc;
+  const post: shareable_npc = {
+    list_name: npcs.getActiveNpc?.name ? npcs.getActiveNpc.name : 'Default',
+    npcs_data: []
+  };
+
+  post.npcs_data.push({
+    name: typeof currentNpc.name !== 'undefined' ? currentNpc.name : '',
+    nickname: currentNpc.nickname !== null ? currentNpc.nickname : '',
+    gender: typeof currentNpc.gender !== 'undefined' ? currentNpc.gender : '',
+    ancestry: typeof currentNpc.ancestry !== 'undefined' ? currentNpc.ancestry : '',
+    job: typeof currentNpc.job !== 'undefined' ? currentNpc.job : '',
+    level: typeof currentNpc.level !== 'undefined' ? currentNpc.level : -1,
+    culture: typeof currentNpc.culture !== 'undefined' ? currentNpc.culture : '',
+    class: typeof currentNpc.class !== 'undefined' ? currentNpc.class : '',
+    game: 'Starfinder'
+  });
+
+  try {
+    const shareableLink = await generateNpcLink(post);
+    if (typeof shareableLink === 'string') {
+      shareUrl.value = 'https://bybe.fly.dev/sf/npc?share=' + shareableLink;
+    } else {
+      shareDialog.value = false;
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Error generating shared link',
+        icon: matPriorityHigh
+      });
+    }
+  } catch (error) {
+    shareDialog.value = false;
+    console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error generating shared link',
+      icon: matPriorityHigh
+    });
+  }
+  isGenerating.value = false;
+};
+
+const importNpc = () => {
+  importNameInput.value.validate();
+  if (!importNameInput.value.hasError && importNpcData.value?.npcs_data[0]) {
+    const tmp_npc: npc = {
+      name: importNpcData.value?.npcs_data[0].name,
+      nickname:
+        typeof importNpcData.value.npcs_data[0].nickname !== 'undefined'
+          ? importNpcData.value.npcs_data[0].nickname
+          : '',
+      gender:
+        typeof importNpcData.value?.npcs_data[0].gender !== 'undefined'
+          ? importNpcData.value?.npcs_data[0].gender
+          : '',
+      ancestry:
+        typeof importNpcData.value?.npcs_data[0].ancestry !== 'undefined'
+          ? importNpcData.value?.npcs_data[0].ancestry
+          : '',
+      job:
+        typeof importNpcData.value?.npcs_data[0].job !== 'undefined'
+          ? importNpcData.value?.npcs_data[0].job
+          : '',
+      level:
+        typeof importNpcData.value?.npcs_data[0].level !== 'undefined'
+          ? importNpcData.value?.npcs_data[0].level
+          : -1,
+      culture:
+        typeof importNpcData.value?.npcs_data[0].culture !== 'undefined'
+          ? importNpcData.value?.npcs_data[0].culture
+          : '',
+      class:
+        typeof importNpcData.value?.npcs_data[0].class !== 'undefined'
+          ? importNpcData.value?.npcs_data[0].class
+          : '',
+      game:
+        typeof importNpcData.value?.npcs_data[0].game !== 'undefined'
+          ? importNpcData.value?.npcs_data[0].game
+          : 'Starfinder',
+      languages: null,
+      description: null,
+      personality: null,
+      quirk: null,
+      relationships: null,
+      ideology: null,
+      custom_fields: []
+    };
+
+    npcs.addNpc(importNpcName.value);
+    npcList.value = npcs.getNpcs.map((npc) => npc.name);
+    npcs.updateNpc(importNpcName.value, tmp_npc);
+    tmpNpc.value = {
+      name: npcs.getActiveNpc!.name,
+      npc: npcs.getActiveNpc!.npc,
+      culture: npcs.getActiveNpc!.culture
+    };
+    saveChanges();
+    importNpcName.value = '';
+    importNpcDialog.value = false;
+  }
+};
+
 const closeDialog = () => {
+  importNpcDialog.value = false;
+  shareDialog.value = false;
   newNpcDialog.value = false;
   renameNpcDialog.value = false;
   npcNameInput.value = false;
+  importNpcName.value = '';
   newNpcName.value = '';
   newNpcRename.value = '';
 };
@@ -287,10 +452,102 @@ const saveChanges = () => {
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
         <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
-          <div class="tw:flex tw:shrink">
-            <span class="text-h6 tw:my-auto font-bold tw:text-gray-800 tw:dark:text-gray-200">
-              NPC Editor
-            </span>
+          <div class="tw:flex tw:py-1.5">
+            <q-dialog
+              v-model="importNpcDialog"
+              aria-label="Import shared npc dialog"
+              @escape-key="closeDialog"
+            >
+              <q-card flat bordered>
+                <q-card-section>
+                  <div class="text-h6">Import npc</div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                  <q-input
+                    ref="importNameInput"
+                    v-model="importNpcName"
+                    dense
+                    autofocus
+                    counter
+                    :maxlength="50"
+                    :no-error-icon="true"
+                    :rules="[
+                      (val) => !!val || 'Field is required',
+                      (val) =>
+                        !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                        'This NPC already exists'
+                    ]"
+                    @keyup.enter="importNpc"
+                  />
+                </q-card-section>
+
+                <q-card-actions align="center" class="text-primary">
+                  <q-btn
+                    flat
+                    label="Cancel"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
+                    aria-label="Close dialog"
+                    @click="closeDialog"
+                  />
+                  <q-btn
+                    flat
+                    label="Import npc"
+                    class="tw:text-blue-600! tw:dark:text-blue-400!"
+                    aria-label="Add npc"
+                    @click="importNpc"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+            <q-btn id="v-step-3" :icon="biShare" label="Share" unelevated push @click="openShare" />
+            <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
+              <q-card flat bordered style="min-height: 210px; width: 320px">
+                <q-card-section>
+                  <div class="row">
+                    <div class="text-h6 tw:mr-4 tw:my-auto">Share</div>
+                    <q-space />
+                    <q-btn
+                      v-close-popup
+                      :icon="biXLg"
+                      size="md"
+                      padding="sm"
+                      flat
+                      round
+                      dense
+                      aria-label="Close dialog"
+                    />
+                  </div>
+                </q-card-section>
+                <div v-if="!isGenerating">
+                  <q-card-section class="tw:wrap-normal tw:py-1!">
+                    A copy of your npc can be accessed via the following link:
+                  </q-card-section>
+                  <q-card-section>
+                    <div class="row tw:gap-4">
+                      <q-field
+                        class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!"
+                        outlined
+                        dense
+                      >
+                        <template v-slot:control>
+                          <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
+                            {{ shareUrl }}
+                          </div>
+                        </template>
+                      </q-field>
+                      <q-btn label="Copy" @click="copyToClipboard(shareUrl)" />
+                    </div>
+                  </q-card-section>
+                </div>
+                <q-inner-loading showing v-else style="z-index: 2">
+                  <q-spinner-gears
+                    class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
+                    size="5em"
+                  />
+                </q-inner-loading>
+              </q-card>
+            </q-dialog>
           </div>
           <q-space />
           <div class="tw:flex tw:py-1!">
@@ -490,7 +747,7 @@ const saveChanges = () => {
       </q-header>
       <q-page-container>
         <div class="tw:flex tw:flex-col tw:gap-4 tw:my-4 tw:mx-6">
-          <div id="v-step-3" class="tw:flex tw:py-1">
+          <div id="v-step-4" class="tw:flex tw:py-1">
             <q-btn
               v-if="npcs.getLocks.name"
               class="tw:flex-none tw:my-auto! tw:mr-2!"
@@ -819,7 +1076,7 @@ const saveChanges = () => {
         </div>
         <q-separator class="tw:my-2! tw:mx-6!" style="height: 2px" />
         <div class="tw:grid tw:grid-cols-2 tw:gap-3 tw:my-4 tw:mx-6">
-          <div id="v-step-4" class="tw:py-1 tw:mr-2">
+          <div id="v-step-5" class="tw:py-1 tw:mr-2">
             <q-input
               label="Languages"
               v-model="npcs.getActiveNpc!.npc.languages"
@@ -887,7 +1144,7 @@ const saveChanges = () => {
           </div>
         </div>
         <q-separator class="tw:my-2! tw:mx-6!" style="height: 2px" />
-        <div id="v-step-5" class="tw:mx-6">
+        <div id="v-step-6" class="tw:mx-6">
           <div v-for="(item, index) in npcs.getActiveNpc!.npc.custom_fields" :key="index">
             <div class="tw:flex tw:gap-6 tw:my-5">
               <div class="tw:flex-auto">

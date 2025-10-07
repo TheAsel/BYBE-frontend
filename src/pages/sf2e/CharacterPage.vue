@@ -49,7 +49,7 @@ if (localNpcs) {
     }
   } catch (error) {
     console.error(error);
-    const defaultNpc = {
+    const defaultNpc: npc_list = {
       name: 'Default',
       npc: {
         level: 0,
@@ -66,7 +66,8 @@ if (localNpcs) {
         quirk: '',
         relationships: '',
         ideology: '',
-        custom_fields: [{ name: '', body: '' }]
+        custom_fields: [{ name: '', body: '' }],
+        game: 'Starfinder'
       },
       culture: false
     };
