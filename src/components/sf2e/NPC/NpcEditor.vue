@@ -351,7 +351,7 @@ const importNpc = () => {
       quirk: null,
       relationships: null,
       ideology: null,
-      custom_fields: []
+      custom_fields: [{ name: '', body: '' }]
     };
 
     npcs.addNpc(importNpcName.value);
