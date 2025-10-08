@@ -135,14 +135,14 @@ const unhide = debounce(function () {
               v-if="theme === 'light'"
               width="36px"
               height="36px"
-              src="/favicon-64x64-light.png"
+              src="/favicon-64x64-light.webp"
               alt="Light BYBE logo"
             />
             <img
               v-else
               width="36px"
               height="36px"
-              src="/favicon-64x64-dark.png"
+              src="/favicon-64x64-dark.webp"
               alt="Dark BYBE logo"
             />
           </q-avatar>
@@ -159,14 +159,14 @@ const unhide = debounce(function () {
               v-if="theme === 'light'"
               width="36px"
               height="36px"
-              src="/favicon-64x64-light.png"
+              src="/favicon-64x64-light.webp"
               alt="Light BYBE logo"
             />
             <img
               v-else
               width="36px"
               height="36px"
-              src="/favicon-64x64-dark.png"
+              src="/favicon-64x64-dark.webp"
               alt="Dark BYBE logo"
             />
           </q-avatar>
@@ -248,7 +248,7 @@ const unhide = debounce(function () {
               :to="'/' + settings.getGame + item.to"
               :class="
                 currentPath === '/' + settings.getGame + item.to
-                  ? 'tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-500'
+                  ? 'tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-400'
                   : 'tw:sm:py-4 tw:text-gray-800 tw:hover:text-blue-600  tw:dark:text-neutral-200 tw:dark:hover:text-neutral-400'
               "
               :aria-current="currentPath === item.to ? 'page' : undefined"
@@ -266,7 +266,7 @@ const unhide = debounce(function () {
             class="tw:flex tw:items-center tw:mb-4! tw:sm:mb-0! tw:ml-0! tw:sm:ml-6!"
             :class="
               currentPath === '/download'
-                ? 'tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-500'
+                ? 'tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-400'
                 : 'tw:sm:py-4 tw:text-gray-800 tw:hover:text-blue-600  tw:dark:text-neutral-200 tw:dark:hover:text-neutral-400'
             "
             :aria-current="currentPath === '/download' ? 'page' : undefined"

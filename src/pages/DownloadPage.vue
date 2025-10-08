@@ -220,7 +220,7 @@ onMounted(async () => {
       </q-tab-panels>
       <div class="tw:text-center tw:px-4 tw:pb-2 tw:sm:px-6 tw:lg:px-8">
         <a
-          class="tw:text-blue-600 tw:dark:text-blue-500 tw:decoration-2 tw:hover:underline"
+          class="tw:text-blue-600! tw:dark:text-blue-400! tw:decoration-2 tw:hover:underline"
           href="https://github.com/RakuJa/BYBE-Portable/releases"
           target="_blank"
           rel="noopener"

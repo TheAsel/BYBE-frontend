@@ -93,7 +93,7 @@
 /* BEGIN Bold */
 @font-face {
   font-family: 'Orbitron Bold';
-  src: url('./fonts/Bold/Orbitron-Bold.ttf') format('truetype');
+  src: url('./fonts/Bold/Orbitron-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -104,9 +104,8 @@
 
 @font-face {
   font-family: 'Pathfinder2eActions';
-  font-style: normal;
+  src: url('./fonts/Pathfinder2eActions.woff2') format('woff2');
   font-weight: 700;
-  src:
-    local('font'),
-    url('./fonts/Pathfinder2eActions.ttf') format('truetype');
+  font-style: normal;
+  font-display: swap;
 }
