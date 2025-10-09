@@ -502,12 +502,7 @@ onMounted(async () => {
       </template>
       <template #top>
         <div class="tw:flex tw:grow tw:flex-wrap tw:gap-2 tw:justify-center">
-          <div class="tw:flex tw:shrink">
-            <h1 class="text-h6 tw:my-auto font-bold tw:text-gray-800 tw:dark:text-gray-200">
-              Items
-            </h1>
-          </div>
-          <div class="tw:flex tw:grow tw:justify-center">
+          <div class="tw:flex tw:grow tw:justify-center tw:xl:justify-start">
             <q-btn-group push>
               <q-btn v-if="loading" id="v-step-1" push label="Generator Settings" />
               <ShopBuilder v-else ref="shopBuilderRef" />

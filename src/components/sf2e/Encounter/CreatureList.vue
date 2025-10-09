@@ -364,6 +364,222 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
 
 <template>
   <div class="q-pa-md tw:w-full tw:md:w-[27%]">
+    <q-dialog
+      v-model="importEncounterDialog"
+      aria-label="Import shared encounter dialog"
+      @escape-key="closeDialog"
+    >
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">Import encounter</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            ref="importNameInput"
+            v-model="importEncounterName"
+            dense
+            autofocus
+            counter
+            :maxlength="50"
+            :no-error-icon="true"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) =>
+                !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                'This encounter already exists'
+            ]"
+            @keyup.enter="importEncounter"
+          />
+        </q-card-section>
+
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Import encounter"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Add encounter"
+            @click="importEncounter"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
+      <q-card flat bordered style="min-height: 210px; width: 320px">
+        <q-card-section>
+          <div class="row">
+            <div class="text-h6 tw:mr-4 tw:my-auto">Share</div>
+            <q-space />
+            <q-btn
+              v-close-popup
+              :icon="biXLg"
+              size="md"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Close dialog"
+            />
+          </div>
+        </q-card-section>
+        <div v-if="!isGenerating">
+          <q-card-section class="tw:wrap-normal tw:py-1!">
+            A copy of your encounter can be accessed via the following link:
+          </q-card-section>
+          <q-card-section>
+            <div class="row tw:gap-4">
+              <q-field class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!" outlined dense>
+                <template v-slot:control>
+                  <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
+                    {{ shareUrl }}
+                  </div>
+                </template>
+              </q-field>
+              <q-btn label="Copy" @click="copyToClipboard(shareUrl)" />
+            </div>
+          </q-card-section>
+        </div>
+        <q-inner-loading showing v-else style="z-index: 2">
+          <q-spinner-gears
+            class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
+            size="5em"
+          />
+        </q-inner-loading>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog
+      v-model="newEncounterDialog"
+      aria-label="New encounter dialog"
+      @escape-key="closeDialog"
+    >
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">New encounter name</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            ref="encounterNameInput"
+            v-model="newEncounterName"
+            dense
+            autofocus
+            counter
+            :maxlength="50"
+            :no-error-icon="true"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) =>
+                !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                'This encounter already exists'
+            ]"
+            @keyup.enter="addEncounter"
+          />
+        </q-card-section>
+
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Add encounter"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Add encounter"
+            @click="addEncounter"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog
+      v-model="renameEncounterDialog"
+      aria-label="New encounter dialog"
+      @escape-key="closeDialog"
+    >
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">Rename encounter</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            ref="encounterRenameInput"
+            v-model="newEncounterRename"
+            dense
+            autofocus
+            counter
+            :maxlength="50"
+            :no-error-icon="true"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) =>
+                !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                'This encounter already exists'
+            ]"
+            @keyup.enter="renameEncounter"
+          />
+        </q-card-section>
+
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Rename encounter"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Rename encounter"
+            @click="renameEncounter"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog
+      v-model="removeEncounterDialog"
+      aria-label="Remove encounter dialog"
+      @escape-key="closeDialog"
+    >
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">Remove this encounter?</div>
+        </q-card-section>
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Remove"
+            class="tw:text-red-600! tw:dark:text-red-400!"
+            aria-label="Remove encounter"
+            @click="removeEncounter"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-layout
       id="v-step-6"
       view="lHh lpr lFf"
@@ -375,105 +591,16 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
         bordered
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
-          <div class="tw:flex tw:py-1.5">
-            <q-dialog
-              v-model="importEncounterDialog"
-              aria-label="Import shared encounter dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">Import encounter</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    ref="importNameInput"
-                    v-model="importEncounterName"
-                    dense
-                    autofocus
-                    counter
-                    :maxlength="50"
-                    :no-error-icon="true"
-                    :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
-                        !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This encounter already exists'
-                    ]"
-                    @keyup.enter="importEncounter"
-                  />
-                </q-card-section>
-
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Import encounter"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Add encounter"
-                    @click="importEncounter"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-btn id="v-step-7" :icon="biShare" label="Share" unelevated push @click="openShare" />
-            <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
-              <q-card flat bordered style="min-height: 210px; width: 320px">
-                <q-card-section>
-                  <div class="row">
-                    <div class="text-h6 tw:mr-4 tw:my-auto">Share</div>
-                    <q-space />
-                    <q-btn
-                      v-close-popup
-                      :icon="biXLg"
-                      size="md"
-                      padding="sm"
-                      flat
-                      round
-                      dense
-                      aria-label="Close dialog"
-                    />
-                  </div>
-                </q-card-section>
-                <div v-if="!isGenerating">
-                  <q-card-section class="tw:wrap-normal tw:py-1!">
-                    A copy of your encounter can be accessed via the following link:
-                  </q-card-section>
-                  <q-card-section>
-                    <div class="row tw:gap-4">
-                      <q-field
-                        class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!"
-                        outlined
-                        dense
-                      >
-                        <template v-slot:control>
-                          <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
-                            {{ shareUrl }}
-                          </div>
-                        </template>
-                      </q-field>
-                      <q-btn label="Copy" @click="copyToClipboard(shareUrl)" />
-                    </div>
-                  </q-card-section>
-                </div>
-                <q-inner-loading showing v-else style="z-index: 2">
-                  <q-spinner-gears
-                    class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
-                    size="5em"
-                  />
-                </q-inner-loading>
-              </q-card>
-            </q-dialog>
-          </div>
-          <q-space />
+        <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
+          <q-btn
+            id="v-step-7"
+            class="tw:grow"
+            :icon="biShare"
+            label="Share"
+            unelevated
+            push
+            @click="openShare"
+          />
           <div class="tw:flex">
             <q-btn
               class="tw:my-auto! tw:max-h-[33.15px]!"
@@ -494,54 +621,6 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                 Add new encounter
               </q-tooltip>
             </q-btn>
-            <q-dialog
-              v-model="newEncounterDialog"
-              aria-label="New encounter dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">New encounter name</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    ref="encounterNameInput"
-                    v-model="newEncounterName"
-                    dense
-                    autofocus
-                    counter
-                    :maxlength="50"
-                    :no-error-icon="true"
-                    :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
-                        !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This encounter already exists'
-                    ]"
-                    @keyup.enter="addEncounter"
-                  />
-                </q-card-section>
-
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Add encounter"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Add encounter"
-                    @click="addEncounter"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-
             <q-btn
               class="tw:my-auto! tw:ml-2! tw:max-h-[33.15px]!"
               :icon="biInputCursorText"
@@ -561,54 +640,6 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                 Rename encounter
               </q-tooltip>
             </q-btn>
-            <q-dialog
-              v-model="renameEncounterDialog"
-              aria-label="New encounter dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">Rename encounter</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    ref="encounterRenameInput"
-                    v-model="newEncounterRename"
-                    dense
-                    autofocus
-                    counter
-                    :maxlength="50"
-                    :no-error-icon="true"
-                    :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
-                        !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This encounter already exists'
-                    ]"
-                    @keyup.enter="renameEncounter"
-                  />
-                </q-card-section>
-
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Rename encounter"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Rename encounter"
-                    @click="renameEncounter"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-
             <q-btn
               class="tw:my-auto! tw:mx-2! tw:max-h-[33.15px]!"
               :icon="biTrash"
@@ -628,44 +659,17 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                 Delete encounter
               </q-tooltip>
             </q-btn>
-            <q-dialog
-              v-model="removeEncounterDialog"
-              aria-label="Remove encounter dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">Remove this encounter?</div>
-                </q-card-section>
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Remove"
-                    class="tw:text-red-600! tw:dark:text-red-400!"
-                    aria-label="Remove encounter"
-                    @click="removeEncounter"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-select
-              v-model="tmpEncounter.name"
-              dense
-              style="min-width: 120px; max-width: 120px"
-              class="tw:my-auto tw:mr-2"
-              outlined
-              :options="encounters"
-              label="Encounters"
-              @update:model-value="changeActiveEncounter(tmpEncounter.name)"
-            />
           </div>
+          <q-select
+            v-model="tmpEncounter.name"
+            dense
+            style="min-width: 120px; max-width: 120px"
+            class="tw:my-auto"
+            outlined
+            :options="encounters"
+            label="Encounters"
+            @update:model-value="changeActiveEncounter(tmpEncounter.name)"
+          />
           <q-btn flat dense aria-label="Clear encounter" @click="encounter.clearEncounter"
             >CLEAR</q-btn
           >
@@ -818,10 +822,16 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
           >
             <div class="absolute-full flex flex-center">
               <q-badge
-                class="tw:absolute tw:text-base!"
+                class="tw:absolute tw:text-base! tw:hidden! tw:xl:flex!"
                 color="grey-10"
                 text-color="white"
                 :label="'Challenge: ' + info.getInfo.challenge"
+              />
+              <q-badge
+                class="tw:absolute tw:text-base! tw:xl:hidden! tw:flex!"
+                color="grey-10"
+                text-color="white"
+                :label="info.getInfo.challenge"
               />
             </div>
           </q-linear-progress>

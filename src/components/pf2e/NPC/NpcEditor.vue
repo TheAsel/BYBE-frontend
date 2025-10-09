@@ -444,6 +444,210 @@ const saveChanges = () => {
 
 <template>
   <div class="q-pa-md tw:w-full tw:md:w-[34%]">
+    <q-dialog
+      v-model="importNpcDialog"
+      aria-label="Import shared npc dialog"
+      @escape-key="closeDialog"
+    >
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">Import npc</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            ref="importNameInput"
+            v-model="importNpcName"
+            dense
+            autofocus
+            counter
+            :maxlength="50"
+            :no-error-icon="true"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) =>
+                !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                'This NPC already exists'
+            ]"
+            @keyup.enter="importNpc"
+          />
+        </q-card-section>
+
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Import npc"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Add npc"
+            @click="importNpc"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
+      <q-card flat bordered style="min-height: 210px; width: 320px">
+        <q-card-section>
+          <div class="row">
+            <div class="text-h6 tw:mr-4 tw:my-auto">Share</div>
+            <q-space />
+            <q-btn
+              v-close-popup
+              :icon="biXLg"
+              size="md"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Close dialog"
+            />
+          </div>
+        </q-card-section>
+        <div v-if="!isGenerating">
+          <q-card-section class="tw:wrap-normal tw:py-1!">
+            A copy of your npc can be accessed via the following link:
+          </q-card-section>
+          <q-card-section>
+            <div class="row tw:gap-4">
+              <q-field class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!" outlined dense>
+                <template v-slot:control>
+                  <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
+                    {{ shareUrl }}
+                  </div>
+                </template>
+              </q-field>
+              <q-btn label="Copy" @click="copyToClipboard(shareUrl)" />
+            </div>
+          </q-card-section>
+        </div>
+        <q-inner-loading showing v-else style="z-index: 2">
+          <q-spinner-gears
+            class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
+            size="5em"
+          />
+        </q-inner-loading>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="newNpcDialog" aria-label="New npc dialog" @escape-key="closeDialog">
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">New NPC name</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            ref="npcNameInput"
+            v-model="newNpcName"
+            dense
+            autofocus
+            counter
+            :maxlength="50"
+            :no-error-icon="true"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) =>
+                !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                'This NPC already exists'
+            ]"
+            @keyup.enter="addNpc"
+          />
+        </q-card-section>
+
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Add NPC"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Add NPC"
+            @click="addNpc"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="renameNpcDialog" aria-label="New npc dialog" @escape-key="closeDialog">
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">Rename NPC</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            ref="npcRenameInput"
+            v-model="newNpcRename"
+            dense
+            autofocus
+            counter
+            :maxlength="50"
+            :no-error-icon="true"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) =>
+                !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                'This NPC already exists'
+            ]"
+            @keyup.enter="renameNpc"
+          />
+        </q-card-section>
+
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Rename NPC"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Rename NPC"
+            @click="renameNpc"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="removeNpcDialog" aria-label="Remove npc dialog" @escape-key="closeDialog">
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">Remove this NPC?</div>
+        </q-card-section>
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Remove"
+            class="tw:text-red-600 tw:dark:text-red-400"
+            aria-label="Remove NPC"
+            @click="removeNpc"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-layout
       id="v-step-2"
       view="lHh lpr lFf"
@@ -455,106 +659,17 @@ const saveChanges = () => {
         bordered
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
-          <div class="tw:flex tw:py-1.5">
-            <q-dialog
-              v-model="importNpcDialog"
-              aria-label="Import shared npc dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">Import npc</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    ref="importNameInput"
-                    v-model="importNpcName"
-                    dense
-                    autofocus
-                    counter
-                    :maxlength="50"
-                    :no-error-icon="true"
-                    :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
-                        !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This NPC already exists'
-                    ]"
-                    @keyup.enter="importNpc"
-                  />
-                </q-card-section>
-
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Import npc"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Add npc"
-                    @click="importNpc"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-btn id="v-step-3" :icon="biShare" label="Share" unelevated push @click="openShare" />
-            <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
-              <q-card flat bordered style="min-height: 210px; width: 320px">
-                <q-card-section>
-                  <div class="row">
-                    <div class="text-h6 tw:mr-4 tw:my-auto">Share</div>
-                    <q-space />
-                    <q-btn
-                      v-close-popup
-                      :icon="biXLg"
-                      size="md"
-                      padding="sm"
-                      flat
-                      round
-                      dense
-                      aria-label="Close dialog"
-                    />
-                  </div>
-                </q-card-section>
-                <div v-if="!isGenerating">
-                  <q-card-section class="tw:wrap-normal tw:py-1!">
-                    A copy of your npc can be accessed via the following link:
-                  </q-card-section>
-                  <q-card-section>
-                    <div class="row tw:gap-4">
-                      <q-field
-                        class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!"
-                        outlined
-                        dense
-                      >
-                        <template v-slot:control>
-                          <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
-                            {{ shareUrl }}
-                          </div>
-                        </template>
-                      </q-field>
-                      <q-btn label="Copy" @click="copyToClipboard(shareUrl)" />
-                    </div>
-                  </q-card-section>
-                </div>
-                <q-inner-loading showing v-else style="z-index: 2">
-                  <q-spinner-gears
-                    class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
-                    size="5em"
-                  />
-                </q-inner-loading>
-              </q-card>
-            </q-dialog>
-          </div>
-          <q-space />
-          <div class="tw:flex tw:py-1">
+        <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
+          <q-btn
+            id="v-step-3"
+            class="tw:grow"
+            :icon="biShare"
+            label="Share"
+            unelevated
+            push
+            @click="openShare"
+          />
+          <div class="tw:flex">
             <div class="tw:my-auto!">
               <q-btn
                 class="tw:ml-2!"
@@ -576,49 +691,6 @@ const saveChanges = () => {
                 </q-tooltip>
               </q-btn>
             </div>
-            <q-dialog v-model="newNpcDialog" aria-label="New npc dialog" @escape-key="closeDialog">
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">New NPC name</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    ref="npcNameInput"
-                    v-model="newNpcName"
-                    dense
-                    autofocus
-                    counter
-                    :maxlength="50"
-                    :no-error-icon="true"
-                    :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
-                        !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This NPC already exists'
-                    ]"
-                    @keyup.enter="addNpc"
-                  />
-                </q-card-section>
-
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Add NPC"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Add NPC"
-                    @click="addNpc"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
             <div class="tw:my-auto!">
               <q-btn
                 class="tw:ml-2!"
@@ -640,53 +712,6 @@ const saveChanges = () => {
                 </q-tooltip>
               </q-btn>
             </div>
-            <q-dialog
-              v-model="renameNpcDialog"
-              aria-label="New npc dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">Rename NPC</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    ref="npcRenameInput"
-                    v-model="newNpcRename"
-                    dense
-                    autofocus
-                    counter
-                    :maxlength="50"
-                    :no-error-icon="true"
-                    :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
-                        !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This NPC already exists'
-                    ]"
-                    @keyup.enter="renameNpc"
-                  />
-                </q-card-section>
-
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Rename NPC"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Rename NPC"
-                    @click="renameNpc"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
             <div class="tw:my-auto!">
               <q-btn
                 class="tw:mx-2! tw:p-2!"
@@ -708,44 +733,17 @@ const saveChanges = () => {
                 </q-tooltip>
               </q-btn>
             </div>
-            <q-dialog
-              v-model="removeNpcDialog"
-              aria-label="Remove npc dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">Remove this NPC?</div>
-                </q-card-section>
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Remove"
-                    class="tw:text-red-600 tw:dark:text-red-400"
-                    aria-label="Remove NPC"
-                    @click="removeNpc"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-select
-              v-model="tmpNpc.name"
-              dense
-              style="min-width: 120px; max-width: 120px"
-              class="tw:my-auto tw:mr-2"
-              outlined
-              :options="npcList"
-              label="NPCs"
-              @update:model-value="changeActiveNpc(tmpNpc.name)"
-            />
           </div>
+          <q-select
+            v-model="tmpNpc.name"
+            dense
+            style="min-width: 120px; max-width: 120px"
+            class="tw:my-auto"
+            outlined
+            :options="npcList"
+            label="NPCs"
+            @update:model-value="changeActiveNpc(tmpNpc.name)"
+          />
           <q-btn flat dense aria-label="Clear npc" @click="npcs.clearNpc">CLEAR</q-btn>
         </div>
       </q-header>

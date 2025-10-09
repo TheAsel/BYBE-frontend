@@ -298,6 +298,210 @@ const showItem = debounce(async function (item: min_item) {
 
 <template>
   <div class="q-pa-md tw:w-full tw:md:w-[27%] only-screen">
+    <q-dialog
+      v-model="importShopDialog"
+      aria-label="Import shared shop dialog"
+      @escape-key="closeDialog"
+    >
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">Import shop</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            ref="importNameInput"
+            v-model="importShopName"
+            dense
+            autofocus
+            counter
+            :maxlength="50"
+            :no-error-icon="true"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) =>
+                !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                'This shop already exists'
+            ]"
+            @keyup.enter="importShop"
+          />
+        </q-card-section>
+
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Import shop"
+            class="tw:text-blue-600! tw:dark:text-blue-400!"
+            aria-label="Add shop"
+            @click="importShop"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
+      <q-card flat bordered style="min-height: 210px; width: 320px">
+        <q-card-section>
+          <div class="row">
+            <div class="text-h6 tw:mr-4 tw:my-auto">Share</div>
+            <q-space />
+            <q-btn
+              v-close-popup
+              :icon="biXLg"
+              size="md"
+              padding="sm"
+              flat
+              round
+              dense
+              aria-label="Close dialog"
+            />
+          </div>
+        </q-card-section>
+        <div v-if="!isGenerating">
+          <q-card-section class="tw:wrap-normal tw:py-1!">
+            A copy of your shop can be accessed via the following link:
+          </q-card-section>
+          <q-card-section>
+            <div class="row tw:gap-4">
+              <q-field class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!" outlined dense>
+                <template v-slot:control>
+                  <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
+                    {{ shareUrl }}
+                  </div>
+                </template>
+              </q-field>
+              <q-btn label="Copy" @click="copyToClipboard(shareUrl)" />
+            </div>
+          </q-card-section>
+        </div>
+        <q-inner-loading showing v-else style="z-index: 2">
+          <q-spinner-gears
+            class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
+            size="5em"
+          />
+        </q-inner-loading>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="newShopDialog" aria-label="New shop dialog" @escape-key="closeDialog">
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">New shop name</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            ref="shopNameInput"
+            v-model="newShopName"
+            dense
+            autofocus
+            counter
+            :maxlength="50"
+            :no-error-icon="true"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) =>
+                !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                'This shop already exists'
+            ]"
+            @keyup.enter="addShop"
+          />
+        </q-card-section>
+
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Add shop"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Add shop"
+            @click="addShop"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="renameShopDialog" aria-label="New shop dialog" @escape-key="closeDialog">
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">Rename shop</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            ref="shopRenameInput"
+            v-model="newShopRename"
+            dense
+            autofocus
+            counter
+            :maxlength="50"
+            :no-error-icon="true"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) =>
+                !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                'This shop already exists'
+            ]"
+            @keyup.enter="renameShop"
+          />
+        </q-card-section>
+
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Rename shop"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Rename shop"
+            @click="renameShop"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="removeShopDialog" aria-label="Remove shop dialog" @escape-key="closeDialog">
+      <q-card flat bordered>
+        <q-card-section>
+          <div class="text-h6">Remove this shop?</div>
+        </q-card-section>
+        <q-card-actions align="center" class="text-primary">
+          <q-btn
+            flat
+            label="Cancel"
+            class="tw:text-blue-600 tw:dark:text-blue-400"
+            aria-label="Close dialog"
+            @click="closeDialog"
+          />
+          <q-btn
+            flat
+            label="Remove"
+            class="tw:text-red-600 tw:dark:text-red-400"
+            aria-label="Remove shop"
+            @click="removeShop"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-layout
       id="v-step-4"
       view="lHh lpr lFf"
@@ -309,106 +513,17 @@ const showItem = debounce(async function (item: min_item) {
         bordered
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
-          <div class="tw:flex tw:py-1.5">
-            <q-dialog
-              v-model="importShopDialog"
-              aria-label="Import shared shop dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">Import shop</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    ref="importNameInput"
-                    v-model="importShopName"
-                    dense
-                    autofocus
-                    counter
-                    :maxlength="50"
-                    :no-error-icon="true"
-                    :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
-                        !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This shop already exists'
-                    ]"
-                    @keyup.enter="importShop"
-                  />
-                </q-card-section>
-
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Import shop"
-                    class="tw:text-blue-600! tw:dark:text-blue-400!"
-                    aria-label="Add shop"
-                    @click="importShop"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-btn id="v-step-5" :icon="biShare" label="Share" unelevated push @click="openShare" />
-            <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
-              <q-card flat bordered style="min-height: 210px; width: 320px">
-                <q-card-section>
-                  <div class="row">
-                    <div class="text-h6 tw:mr-4 tw:my-auto">Share</div>
-                    <q-space />
-                    <q-btn
-                      v-close-popup
-                      :icon="biXLg"
-                      size="md"
-                      padding="sm"
-                      flat
-                      round
-                      dense
-                      aria-label="Close dialog"
-                    />
-                  </div>
-                </q-card-section>
-                <div v-if="!isGenerating">
-                  <q-card-section class="tw:wrap-normal tw:py-1!">
-                    A copy of your shop can be accessed via the following link:
-                  </q-card-section>
-                  <q-card-section>
-                    <div class="row tw:gap-4">
-                      <q-field
-                        class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!"
-                        outlined
-                        dense
-                      >
-                        <template v-slot:control>
-                          <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
-                            {{ shareUrl }}
-                          </div>
-                        </template>
-                      </q-field>
-                      <q-btn label="Copy" @click="copyToClipboard(shareUrl)" />
-                    </div>
-                  </q-card-section>
-                </div>
-                <q-inner-loading showing v-else style="z-index: 2">
-                  <q-spinner-gears
-                    class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
-                    size="5em"
-                  />
-                </q-inner-loading>
-              </q-card>
-            </q-dialog>
-          </div>
-          <q-space />
-          <div class="tw:flex tw:py-1">
+        <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
+          <q-btn
+            id="v-step-5"
+            class="tw:grow"
+            :icon="biShare"
+            label="Share"
+            unelevated
+            push
+            @click="openShare"
+          />
+          <div class="tw:flex">
             <q-btn
               class="tw:my-auto! tw:max-h-[33.15px]!"
               :icon="biPlusLg"
@@ -428,54 +543,6 @@ const showItem = debounce(async function (item: min_item) {
                 Add new shop
               </q-tooltip>
             </q-btn>
-            <q-dialog
-              v-model="newShopDialog"
-              aria-label="New shop dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">New shop name</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    ref="shopNameInput"
-                    v-model="newShopName"
-                    dense
-                    autofocus
-                    counter
-                    :maxlength="50"
-                    :no-error-icon="true"
-                    :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
-                        !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This shop already exists'
-                    ]"
-                    @keyup.enter="addShop"
-                  />
-                </q-card-section>
-
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Add shop"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Add shop"
-                    @click="addShop"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-
             <q-btn
               class="tw:my-auto! tw:ml-2! tw:max-h-[33.15px]!"
               :icon="biInputCursorText"
@@ -495,54 +562,6 @@ const showItem = debounce(async function (item: min_item) {
                 Rename shop
               </q-tooltip>
             </q-btn>
-            <q-dialog
-              v-model="renameShopDialog"
-              aria-label="New shop dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">Rename shop</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    ref="shopRenameInput"
-                    v-model="newShopRename"
-                    dense
-                    autofocus
-                    counter
-                    :maxlength="50"
-                    :no-error-icon="true"
-                    :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
-                        !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This shop already exists'
-                    ]"
-                    @keyup.enter="renameShop"
-                  />
-                </q-card-section>
-
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Rename shop"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Rename shop"
-                    @click="renameShop"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-
             <q-btn
               class="tw:my-auto! tw:mx-2! tw:max-h-[33.15px]!"
               :icon="biTrash"
@@ -562,48 +581,20 @@ const showItem = debounce(async function (item: min_item) {
                 Delete shop
               </q-tooltip>
             </q-btn>
-            <q-dialog
-              v-model="removeShopDialog"
-              aria-label="Remove shop dialog"
-              @escape-key="closeDialog"
-            >
-              <q-card flat bordered>
-                <q-card-section>
-                  <div class="text-h6">Remove this shop?</div>
-                </q-card-section>
-                <q-card-actions align="center" class="text-primary">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    class="tw:text-blue-600 tw:dark:text-blue-400"
-                    aria-label="Close dialog"
-                    @click="closeDialog"
-                  />
-                  <q-btn
-                    flat
-                    label="Remove"
-                    class="tw:text-red-600 tw:dark:text-red-400"
-                    aria-label="Remove shop"
-                    @click="removeShop"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-select
-              v-model="tmpShop.name"
-              dense
-              style="min-width: 120px; max-width: 120px"
-              class="tw:my-auto tw:mr-2"
-              outlined
-              :options="shops"
-              label="Shops"
-              @update:model-value="changeActiveShop(tmpShop.name)"
-            />
           </div>
+          <q-select
+            v-model="tmpShop.name"
+            dense
+            style="min-width: 120px; max-width: 120px"
+            class="tw:my-auto"
+            outlined
+            :options="shops"
+            label="Shops"
+            @update:model-value="changeActiveShop(tmpShop.name)"
+          />
           <q-btn flat dense aria-label="Clear shop" @click="shop.clearShop">CLEAR</q-btn>
         </div>
       </q-header>
-
       <q-page-container v-if="shop.getGenerating == false">
         <div v-for="(item, index) in shop.getActiveShop!.items" :key="index">
           <div class="tw:flex">

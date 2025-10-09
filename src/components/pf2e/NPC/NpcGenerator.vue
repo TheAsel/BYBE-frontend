@@ -88,10 +88,8 @@ const generateNpc = debounce(async function () {
   const post: {
     gender_filter?: string[] | undefined;
     name_origin_filter?: {
-      FromPf: {
-        FromAncestry?: string[];
-        FromCulture?: string[];
-      };
+      FromAncestry?: string[];
+      FromCulture?: string[];
     };
     class_filter?: string[] | undefined;
     job_filter?: string[] | undefined;
@@ -119,9 +117,9 @@ const generateNpc = debounce(async function () {
     const tmpAncestries = parameters.value.ancestries.map((_ancestry) => {
       return _ancestry.replaceAll(' ', '');
     });
-    post.name_origin_filter = { FromPf: { FromAncestry: tmpAncestries } };
+    post.name_origin_filter = { FromAncestry: tmpAncestries };
   } else if (!npcs.getActiveNpc!.culture) {
-    post.name_origin_filter = { FromPf: { FromAncestry: [] } };
+    post.name_origin_filter = { FromAncestry: [] };
   }
 
   if (
@@ -132,9 +130,9 @@ const generateNpc = debounce(async function () {
     const tmpCultures = parameters.value.cultures.map((_culture) => {
       return _culture.replaceAll(' ', '');
     });
-    post.name_origin_filter = { FromPf: { FromCulture: tmpCultures } };
+    post.name_origin_filter = { FromCulture: tmpCultures };
   } else if (npcs.getActiveNpc!.culture) {
-    post.name_origin_filter = { FromPf: { FromCulture: [] } };
+    post.name_origin_filter = { FromCulture: [] };
   }
 
   if (parameters.value.classes && parameters.value.classes.length > 0) {
@@ -321,7 +319,7 @@ const filterJobsFn = (val, update) => {
               @filter="filterGendersFn"
             />
 
-            <div class="tw:flex tw:flex-wrap">
+            <div class="tw:flex tw:flex-wrap tw:justify-center tw:gap-2">
               <q-select
                 v-if="!npcs.getActiveNpc!.culture"
                 label="Ancestries"
@@ -355,7 +353,7 @@ const filterJobsFn = (val, update) => {
               <q-toggle
                 v-model="npcs.getActiveNpc!.culture"
                 label="Use Culture"
-                class="tw:shrink tw:mx-2"
+                class="tw:shrink"
                 aria-label="Toggle Culture"
               >
               </q-toggle>
@@ -406,17 +404,19 @@ const filterJobsFn = (val, update) => {
           </div>
         </div>
       </q-page-container>
+
       <q-footer
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw:flex tw:grow tw:justify-center">
+        <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
+        <div class="tw:flex tw:grow tw:justify-center tw:my-2 tw:mx-8">
           <q-btn
             id="v-step-1"
             color="primary"
             push
             label="Generate NPC"
             @click="generateNpc"
-            class="tw:mb-2! tw:px-16!"
+            class="tw:basis-xs"
           >
             <q-icon right class="tw:py-2">
               <svg

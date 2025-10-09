@@ -78,26 +78,28 @@ const openShopSheet = (game: games, id: number) => {
     class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
     style="font-family: 'Orbitron Bold', sans-serif; font-variant-caps: small-caps"
   >
-    <q-btn
-      :icon="biBoxArrowUpRight"
-      flat
-      round
-      dense
-      size="sm"
-      padding="sm"
-      class="tw:mr-1 tw:my-auto only-screen item-page-element"
-      aria-label="Open item sheet"
-      @click="openShopSheet('sf', items.getSelectedItem!.core_item.id)"
-    >
-      <!-- TODO: use items.getSelectedItem!.core_item.game instead of hardcoded -->
-      <q-tooltip
-        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-        anchor="top middle"
-        self="bottom middle"
+    <div class="tw:my-auto!">
+      <q-btn
+        :icon="biBoxArrowUpRight"
+        flat
+        round
+        dense
+        size="sm"
+        padding="sm"
+        class="tw:mr-1 tw:my-auto only-screen item-page-element"
+        aria-label="Open item sheet"
+        @click="openShopSheet('sf', items.getSelectedItem!.core_item.id)"
       >
-        Open item sheet
-      </q-tooltip>
-    </q-btn>
+        <!-- TODO: use items.getSelectedItem!.core_item.game instead of hardcoded -->
+        <q-tooltip
+          class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+          anchor="top middle"
+          self="bottom middle"
+        >
+          Open item sheet
+        </q-tooltip>
+      </q-btn>
+    </div>
     <!-- TODO: check for items.getSelectedItem!.core_item.game to query the correct AoN -->
     <a
       v-if="settings.getAonLinks"

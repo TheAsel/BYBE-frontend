@@ -51,14 +51,8 @@ export async function npcGenerator(
   body: {
     gender_filter?: string[] | undefined;
     name_origin_filter?: {
-      FromPf?: {
-        FromAncestry?: string[] | undefined;
-        FromCulture?: string[] | undefined;
-      };
-      FromSf?: {
-        FromAncestry?: string[] | undefined;
-        FromCulture?: string[] | undefined;
-      };
+      FromAncestry?: string[] | undefined;
+      FromCulture?: string[] | undefined;
     };
     class_filter?: string[] | undefined;
     job_filter?: string[] | undefined;

@@ -78,10 +78,8 @@ const generateNpc = debounce(async function () {
   const post: {
     gender_filter?: string[] | undefined;
     name_origin_filter?: {
-      FromSf: {
-        FromAncestry?: string[];
-        FromCulture?: string[];
-      };
+      FromAncestry?: string[];
+      FromCulture?: string[];
     };
     class_filter?: string[] | undefined;
     job_filter?: string[] | undefined;
@@ -105,9 +103,9 @@ const generateNpc = debounce(async function () {
     const tmpAncestries = parameters.value.ancestries.map((_ancestry) => {
       return _ancestry.replaceAll(' ', '');
     });
-    post.name_origin_filter = { FromSf: { FromAncestry: tmpAncestries } };
+    post.name_origin_filter = { FromAncestry: tmpAncestries };
   } else {
-    post.name_origin_filter = { FromSf: { FromAncestry: [] } };
+    post.name_origin_filter = { FromAncestry: [] };
   }
 
   if (parameters.value.classes && parameters.value.classes.length > 0) {
@@ -342,14 +340,15 @@ const filterJobsFn = (val, update) => {
       <q-footer
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw:flex tw:grow tw:justify-center">
+        <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
+        <div class="tw:flex tw:grow tw:justify-center tw:my-2 tw:mx-8">
           <q-btn
             id="v-step-1"
             color="primary"
             push
             label="Generate NPC"
             @click="generateNpc"
-            class="tw:mb-2! tw:px-16!"
+            class="tw:basis-xs"
           >
             <q-icon right class="tw:py-2">
               <svg
