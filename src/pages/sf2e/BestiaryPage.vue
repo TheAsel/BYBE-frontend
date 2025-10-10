@@ -35,7 +35,7 @@ const creatureVariant = ref<variants>('Base');
 
 let creatureData: creature | undefined;
 try {
-  if (creatureId !== undefined && !isNaN(creatureId)) {
+  if (creatureId !== undefined && !Number.isNaN(creatureId)) {
     switch (queryVariant) {
       case 'weak':
         creatureVariant.value = 'Weak';
@@ -114,13 +114,13 @@ const changeVariant = (variant: variants) => {
       name: 'sf2e_bestiary',
       query: { id: creatureId }
     });
-    window.open(routeData.href, '_self');
+    globalThis.open(routeData.href, '_self');
   } else {
     const routeData = router.resolve({
       name: 'sf2e_bestiary',
       query: { id: creatureId, variant: variant.toLowerCase() }
     });
-    window.open(routeData.href, '_self');
+    globalThis.open(routeData.href, '_self');
   }
 };
 
@@ -155,7 +155,7 @@ const pfActionSymbol = (num: number | null, action: string) => {
 const cleanDescription = (description: string) => {
   const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
 
-  return description.replace(cleanRegex, '');
+  return description.replaceAll(cleanRegex, '');
 };
 
 const nameString = computed(() => {
@@ -181,14 +181,14 @@ const perceptionString = computed(() => {
       '<strong>Perception&nbsp;</strong>' + variantStyle(addPlus(perception)) + '; ';
   }
   if (senses != undefined && senses.length > 0) {
-    senses.forEach((sense) => {
+    for (const sense of senses) {
       let found = false;
-      creatureData?.extra_data?.actions.forEach((action) => {
+      for (const action of creatureData?.extra_data?.actions ?? []) {
         if (action.slug === sense.name) {
           finalString += action.name.toLowerCase() + ', ';
           found = true;
         }
-      });
+      }
       if (!found) {
         finalString += sense.name;
         if (sense.acuity) {
@@ -199,7 +199,7 @@ const perceptionString = computed(() => {
         }
         finalString += ', ';
       }
-    });
+    }
     if (
       spells != undefined &&
       spells.length > 0 &&
@@ -207,11 +207,11 @@ const perceptionString = computed(() => {
         return sense.name !== 'truesight';
       })
     ) {
-      spells.forEach((spell) => {
+      for (const spell of spells) {
         if (spell === 'True Seeing (Constant)') {
           finalString += 'truesight' + ', ';
         }
-      });
+      }
     }
     if (!creatureData!.extra_data!.has_vision) {
       finalString += 'no vision' + ', ';
@@ -232,9 +232,9 @@ const languageString = computed(() => {
   let finalString = '';
   if (languages != undefined && languages.length > 0) {
     finalString += '<strong>Languages&nbsp;</strong>';
-    languages.forEach((language) => {
+    for (const language of languages) {
       finalString += upperFirst(language) + ', ';
-    });
+    }
   }
   finalString = finalString.substring(0, finalString.length - 2);
   finalString += '; ';
@@ -251,9 +251,9 @@ const skillString = computed(() => {
   let finalString = '';
   if (skills != undefined && skills.length > 0) {
     finalString += '<strong>Skills&nbsp;</strong>';
-    skills.forEach((skill) => {
+    for (const skill of skills) {
       finalString += skill.name + ' ' + variantStyle(addPlus(skill.modifier)) + ', ';
-    });
+    }
   }
   return finalString.substring(0, finalString.length - 2);
 });
@@ -265,7 +265,7 @@ const itemString = computed(() => {
   let finalString = '';
   finalString += '<strong>Items&nbsp;</strong>';
   if (weapons != undefined && weapons.length > 0) {
-    weapons.forEach((weapon) => {
+    for (const weapon of weapons) {
       if (weapon.weapon_data) {
         if (
           weapon.weapon_data.n_of_potency_runes > 0 ||
@@ -289,9 +289,9 @@ const itemString = computed(() => {
               break;
           }
           if (weapon.weapon_data.property_runes.length > 0) {
-            weapon.weapon_data.property_runes.forEach((rune) => {
+            for (const rune of weapon.weapon_data.property_runes) {
               finalString += rune + ' ';
-            });
+            }
           }
           if (weapon.item_core.material_type) {
             finalString += weapon.item_core.material_type + ' ';
@@ -303,20 +303,20 @@ const itemString = computed(() => {
             weapon.item_core.quantity + ' ' + weapon.item_core.name.toLowerCase() + ', ';
         }
       }
-    });
+    }
   }
   if (items != undefined && items.length > 0) {
-    items.forEach((item) => {
+    for (const item of items) {
       if (item.item_type === 'Consumable' || item.item_type === 'Equipment') {
         if (item.quantity > 1) {
           finalString += item.quantity + ' ';
         }
         finalString += item.name.toLowerCase() + ', ';
       }
-    });
+    }
   }
   if (armors != undefined && armors.length > 0) {
-    armors.forEach((armor) => {
+    for (const armor of armors) {
       if (armor.armor_data)
         if (
           armor.armor_data.n_of_potency_runes > 0 ||
@@ -340,16 +340,16 @@ const itemString = computed(() => {
               break;
           }
           if (armor.armor_data.property_runes.length > 0) {
-            armor.armor_data.property_runes.forEach((rune) => {
+            for (const rune of armor.armor_data.property_runes) {
               finalString += rune + ' ';
-            });
+            }
           }
           if (armor.item_core.material_type) {
             finalString += armor.item_core.material_type + ' ';
           }
         }
       finalString += armor.item_core.name.toLowerCase() + ', ';
-    });
+    }
   }
   if (finalString === '<strong>Items&nbsp;</strong>') {
     return '';
@@ -384,7 +384,7 @@ const defenceString = computed(() => {
   }
   if (actions != undefined && actions.length > 0) {
     finalString += '; ';
-    actions.forEach((action) => {
+    for (const action of actions) {
       if (
         action.action_type === 'passive' &&
         action.category === 'defensive' &&
@@ -392,7 +392,7 @@ const defenceString = computed(() => {
       ) {
         finalString += action.name.toLowerCase() + ', ';
       }
-    });
+    }
     finalString = finalString.substring(0, finalString.length - 2);
   }
   return finalString;
@@ -402,9 +402,9 @@ const immunityString = () => {
   const immunities = creatureData?.combat_data?.immunities;
   let finalString = '';
   if (immunities != undefined && immunities.length > 0) {
-    immunities.forEach((immunity) => {
+    for (const immunity of immunities) {
       finalString += immunity.toLowerCase().replaceAll('-', ' ') + ', ';
-    });
+    }
   }
   return finalString.substring(0, finalString.length - 2);
 };
@@ -414,7 +414,7 @@ const resistanceString = () => {
   let finalString = '';
 
   if (resistances != undefined && resistances.length > 0) {
-    resistances.forEach((resistance) => {
+    for (const resistance of resistances) {
       finalString +=
         `${resistance.core.name.replaceAll('-', ' ')}` + ' ' + `${resistance.core.value}` + ', ';
 
@@ -425,9 +425,9 @@ const resistanceString = () => {
         if (resistance.exception_vs != undefined && resistance.exception_vs.length > 0) {
           finalString = finalString.substring(0, finalString.length - 2);
           finalString += ' (except ';
-          resistance.exception_vs.forEach((exception) => {
+          for (const exception of resistance.exception_vs) {
             finalString += exception.replaceAll('-', ' ') + ', ';
-          });
+          }
           finalString += '';
           finalString = finalString.substring(0, finalString.length - 2);
         }
@@ -437,16 +437,16 @@ const resistanceString = () => {
             finalString += ';';
           }
           finalString += ' double resistance against ';
-          resistance.double_vs.forEach((double) => {
+          for (const double of resistance.double_vs) {
             finalString += double.replaceAll('-', ' ') + ', ';
-          });
+          }
           finalString += '';
           finalString = finalString.substring(0, finalString.length - 2);
         }
 
         finalString += ')  ';
       }
-    });
+    }
   }
   return finalString.substring(0, finalString.length - 2);
 };
@@ -533,7 +533,7 @@ const ordinalSuffix = (n: number) => {
 
 const spellString = computed(() => {
   const finalStrings: string[] = [];
-  creatureData?.spellcaster_data?.spellcaster_entries.forEach((entry) => {
+  for (const entry of creatureData?.spellcaster_data?.spellcaster_entries ?? []) {
     let finalString = '';
     const spellLevels: boolean[] = new Array(11).fill(false);
     finalString += '<strong>' + entry.spellcaster_data.spellcasting_name + '</strong>';
@@ -551,12 +551,12 @@ const spellString = computed(() => {
         ', attack ' + variantStyle(addPlus(entry.spellcaster_data.spellcasting_atk_mod));
     }
     if (
-      creatureData.core_data.essential.focus_points > 0 &&
+      (creatureData?.core_data.essential.focus_points ?? 0) > 0 &&
       entry.spellcaster_data.type_of_spellcaster === 'focus'
     ) {
-      finalString += ',&nbsp;' + creatureData.core_data.essential.focus_points;
+      finalString += ',&nbsp;' + creatureData?.core_data.essential.focus_points;
 
-      if (creatureData.core_data.essential.focus_points > 1) {
+      if ((creatureData?.core_data.essential.focus_points ?? 0) > 1) {
         finalString += ' Focus Points';
       } else {
         finalString += ' Focus Point';
@@ -570,11 +570,11 @@ const spellString = computed(() => {
         ';&nbsp;<strong>' +
         ordinalSuffix(entry.spellcaster_data.heighten_level) +
         '</strong>&nbsp;';
-      entry.spells.forEach((spell) => {
+      for (const spell of entry.spells) {
         finalString += spell.name.toLowerCase() + ', ';
-      });
+      }
     } else {
-      entry.spells.forEach((spell) => {
+      for (const spell of entry.spells) {
         if (spell.slot === 0 && !spellLevels[0]) {
           spellLevels[0] = true;
           finalString = finalString.substring(0, finalString.length - 2);
@@ -588,16 +588,16 @@ const spellString = computed(() => {
           finalString += ';&nbsp;<strong>' + ordinalSuffix(spell.slot) + '</strong>&nbsp;';
         }
         finalString += spell.name.toLowerCase() + ', ';
-      });
+      }
     }
 
     finalStrings.push(finalString.substring(0, finalString.length - 2) + '<br>');
-  });
+  }
   return finalStrings;
 });
 
 const printPage = () => {
-  window.print();
+  globalThis.print();
 };
 </script>
 

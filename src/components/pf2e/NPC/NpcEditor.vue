@@ -26,6 +26,8 @@ import {
 
 import type { npc, npc_list, shareable_npc } from '../../../types/npcs';
 
+const isApp = process.env.IS_APP === 'true';
+
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
@@ -88,39 +90,38 @@ const generateParameterNpc = debounce(async function (
     try {
       if (parameter == 'level') {
         const newLevel = await npcLevelGenerator('pf');
-        if (typeof newLevel != 'undefined') {
-          npcs.getActiveNpc!.npc.level = newLevel;
-        } else {
-          throw new Error('Error generating npc level');
+        if (newLevel === undefined) {
+          throw new TypeError('Error generating npc level');
         }
+        npcs.getActiveNpc!.npc.level = newLevel;
       } else {
         const newParameter = await npcParametersGenerator('pf', parameter);
-        if (typeof newParameter != 'undefined') {
-          switch (parameter) {
-            case 'ancestry':
-              npcs.getActiveNpc!.npc.ancestry = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-              break;
-            case 'culture':
-              npcs.getActiveNpc!.npc.culture = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-              break;
-            case 'class':
-              npcs.getActiveNpc!.npc.class = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-              break;
-            case 'gender':
-              npcs.getActiveNpc!.npc.gender = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-              break;
-            case 'job':
-              npcs.getActiveNpc!.npc.job = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-              break;
-            case 'nickname':
-              npcs.getActiveNpc!.npc.nickname = newParameter.replace(/([a-z])([A-Z])/g, '$1 $2');
-              break;
+        if (newParameter === undefined) {
+          throw new TypeError('Error generating npc ' + parameter);
+        }
+        // regex: adds spaces between words
+        switch (parameter) {
+          case 'ancestry':
+            npcs.getActiveNpc!.npc.ancestry = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            break;
+          case 'culture':
+            npcs.getActiveNpc!.npc.culture = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            break;
+          case 'class':
+            npcs.getActiveNpc!.npc.class = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            break;
+          case 'gender':
+            npcs.getActiveNpc!.npc.gender = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            break;
+          case 'job':
+            npcs.getActiveNpc!.npc.job = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            break;
+          case 'nickname':
+            npcs.getActiveNpc!.npc.nickname = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            break;
 
-            default:
-              break;
-          }
-        } else {
-          throw new Error('Error generating npc ' + parameter);
+          default:
+            break;
         }
       }
     } catch (error) {
@@ -186,13 +187,12 @@ const generateNamesNpc = debounce(async function () {
 
       try {
         const newNames = await npcNamesGenerator('pf', post);
-        if (typeof newNames != 'undefined') {
-          namesIndex = 0;
-          namesList = newNames;
-          npcs.getActiveNpc!.npc.name = namesList[namesIndex];
-        } else {
-          throw new Error('Error generating npc names');
+        if (newNames === undefined) {
+          throw new TypeError('Error generating npc names');
         }
+        namesIndex = 0;
+        namesList = newNames;
+        npcs.getActiveNpc!.npc.name = namesList[namesIndex];
       } catch (error) {
         console.error(error);
         $q.notify({
@@ -212,7 +212,7 @@ const generateNamesNpc = debounce(async function () {
 }, 300);
 
 const addCustomField = () => {
-  if (typeof npcs.getActiveNpc!.npc.custom_fields === 'undefined') {
+  if (npcs.getActiveNpc!.npc.custom_fields === undefined) {
     npcs.getActiveNpc!.npc.custom_fields = [{ name: '', body: '' }];
   } else {
     npcs.getActiveNpc!.npc.custom_fields.push({ name: '', body: '' });
@@ -227,17 +227,27 @@ const removeCustomField = (index: number) => {
 };
 
 // read the "share" query and decode it
-const encodedData = String(route.query.share);
-if (encodedData !== 'undefined' && encodedData !== 'null' && encodedData !== '') {
-  isGenerating.value = true;
-  importNpcDialog.value = true;
-  try {
-    const decodedData = await decodeNpcLink(encodedData);
-    if (typeof decodedData !== 'undefined') {
+const shareQuery =
+  String(route.query.share) === 'undefined' || String(route.query.share) === 'null'
+    ? ''
+    : String(route.query.share);
+const encodedData = ref(shareQuery);
+
+const decodeData = async () => {
+  if (encodedData.value !== '') {
+    isGenerating.value = true;
+    importNpcDialog.value = true;
+    try {
+      const decodedData = await decodeNpcLink(encodedData.value);
+      if (decodedData === undefined) {
+        importNpcDialog.value = false;
+        throw new TypeError('Error importing npc');
+      }
       importNpcData.value = decodedData;
       importNpcName.value = decodedData.list_name;
-    } else {
+    } catch (error) {
       importNpcDialog.value = false;
+      console.error(error);
       $q.notify({
         progress: true,
         type: 'warning',
@@ -245,18 +255,45 @@ if (encodedData !== 'undefined' && encodedData !== 'null' && encodedData !== '')
         icon: matPriorityHigh
       });
     }
-  } catch (error) {
-    importNpcDialog.value = false;
-    console.error(error);
-    $q.notify({
-      progress: true,
-      type: 'warning',
-      message: 'Error importing npc',
-      icon: matPriorityHigh
-    });
+    isGenerating.value = false;
   }
-  isGenerating.value = false;
-}
+};
+await decodeData();
+
+// clean and check the link for manual app import
+const sharedLink = ref('');
+const cleanLink = async () => {
+  try {
+    const parsedUrl = new URL(sharedLink.value);
+    const path = parsedUrl.pathname;
+    if (path !== route.path) {
+      closeDialog();
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Invalid page for this link',
+        icon: matPriorityHigh
+      });
+      throw new Error('Invalid page for this link');
+    }
+    const share = parsedUrl.searchParams.get('share');
+    if (share === null || share === '') {
+      closeDialog();
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Missing share hash',
+        icon: matPriorityHigh
+      });
+      throw new TypeError('Missing share code');
+    }
+    encodedData.value = share;
+    closeDialog();
+    await decodeData();
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // clean the url from queries
 await router.replace({
@@ -275,14 +312,14 @@ const openShare = async () => {
   };
 
   post.npcs_data.push({
-    name: typeof currentNpc.name !== 'undefined' ? currentNpc.name : '',
-    nickname: currentNpc.nickname !== null ? currentNpc.nickname : '',
-    gender: typeof currentNpc.gender !== 'undefined' ? currentNpc.gender : '',
-    ancestry: typeof currentNpc.ancestry !== 'undefined' ? currentNpc.ancestry : '',
-    job: typeof currentNpc.job !== 'undefined' ? currentNpc.job : '',
-    level: typeof currentNpc.level !== 'undefined' ? currentNpc.level : -1,
-    culture: typeof currentNpc.culture !== 'undefined' ? currentNpc.culture : '',
-    class: typeof currentNpc.class !== 'undefined' ? currentNpc.class : '',
+    name: currentNpc.name === undefined ? '' : currentNpc.name,
+    nickname: currentNpc.nickname === null ? '' : currentNpc.nickname,
+    gender: currentNpc.gender === undefined ? '' : currentNpc.gender,
+    ancestry: currentNpc.ancestry === undefined ? '' : currentNpc.ancestry,
+    job: currentNpc.job === undefined ? '' : currentNpc.job,
+    level: currentNpc.level === undefined ? 1 : currentNpc.level,
+    culture: currentNpc.culture === undefined ? '' : currentNpc.culture,
+    class: currentNpc.class === undefined ? '' : currentNpc.class,
     game: 'Pathfinder'
   });
 
@@ -318,37 +355,37 @@ const importNpc = () => {
     const tmp_npc: npc = {
       name: importNpcData.value?.npcs_data[0].name,
       nickname:
-        typeof importNpcData.value.npcs_data[0].nickname !== 'undefined'
-          ? importNpcData.value.npcs_data[0].nickname
-          : '',
+        importNpcData.value.npcs_data[0].nickname === undefined
+          ? ''
+          : importNpcData.value.npcs_data[0].nickname,
       gender:
-        typeof importNpcData.value?.npcs_data[0].gender !== 'undefined'
-          ? importNpcData.value?.npcs_data[0].gender
-          : '',
+        importNpcData.value?.npcs_data[0].gender === undefined
+          ? ''
+          : importNpcData.value?.npcs_data[0].gender,
       ancestry:
-        typeof importNpcData.value?.npcs_data[0].ancestry !== 'undefined'
-          ? importNpcData.value?.npcs_data[0].ancestry
-          : '',
+        importNpcData.value?.npcs_data[0].ancestry === undefined
+          ? ''
+          : importNpcData.value?.npcs_data[0].ancestry,
       job:
-        typeof importNpcData.value?.npcs_data[0].job !== 'undefined'
-          ? importNpcData.value?.npcs_data[0].job
-          : '',
+        importNpcData.value?.npcs_data[0].job === undefined
+          ? ''
+          : importNpcData.value?.npcs_data[0].job,
       level:
-        typeof importNpcData.value?.npcs_data[0].level !== 'undefined'
-          ? importNpcData.value?.npcs_data[0].level
-          : -1,
+        importNpcData.value?.npcs_data[0].level === undefined
+          ? -1
+          : importNpcData.value?.npcs_data[0].level,
       culture:
-        typeof importNpcData.value?.npcs_data[0].culture !== 'undefined'
-          ? importNpcData.value?.npcs_data[0].culture
-          : '',
+        importNpcData.value?.npcs_data[0].culture === undefined
+          ? ''
+          : importNpcData.value?.npcs_data[0].culture,
       class:
-        typeof importNpcData.value?.npcs_data[0].class !== 'undefined'
-          ? importNpcData.value?.npcs_data[0].class
-          : '',
+        importNpcData.value?.npcs_data[0].class === undefined
+          ? ''
+          : importNpcData.value?.npcs_data[0].class,
       game:
-        typeof importNpcData.value?.npcs_data[0].game !== 'undefined'
-          ? importNpcData.value?.npcs_data[0].game
-          : 'Pathfinder',
+        importNpcData.value?.npcs_data[0].game === undefined
+          ? 'Pathfinder'
+          : importNpcData.value?.npcs_data[0].game,
       languages: null,
       description: null,
       personality: null,
@@ -466,7 +503,7 @@ const saveChanges = () => {
             :rules="[
               (val) => !!val || 'Field is required',
               (val) =>
-                !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !npcList.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This NPC already exists'
             ]"
             @keyup.enter="importNpc"
@@ -510,6 +547,23 @@ const saveChanges = () => {
             />
           </div>
         </q-card-section>
+        <div v-if="isApp">
+          <q-card-section class="tw:wrap-normal tw:py-1!">
+            Paste a shared link here to import it:
+          </q-card-section>
+          <q-card-section>
+            <div class="row tw:gap-4">
+              <q-input
+                v-model="sharedLink"
+                class="tw:w-44 tw:text-gray-800! tw:dark:text-gray-200!"
+                outlined
+                dense
+              />
+              <q-btn label="Import" @click="cleanLink" />
+            </div>
+          </q-card-section>
+          <q-separator inset class="tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-700!" />
+        </div>
         <div v-if="!isGenerating">
           <q-card-section class="tw:wrap-normal tw:py-1!">
             A copy of your npc can be accessed via the following link:
@@ -518,7 +572,7 @@ const saveChanges = () => {
             <div class="row tw:gap-4">
               <q-field class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!" outlined dense>
                 <template v-slot:control>
-                  <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
+                  <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!">
                     {{ shareUrl }}
                   </div>
                 </template>
@@ -554,7 +608,7 @@ const saveChanges = () => {
             :rules="[
               (val) => !!val || 'Field is required',
               (val) =>
-                !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !npcList.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This NPC already exists'
             ]"
             @keyup.enter="addNpc"
@@ -598,7 +652,7 @@ const saveChanges = () => {
             :rules="[
               (val) => !!val || 'Field is required',
               (val) =>
-                !npcList.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !npcList.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This NPC already exists'
             ]"
             @keyup.enter="renameNpc"

@@ -276,7 +276,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
     );
     if (request) {
       pagination.value.rowsNumber = request.total;
-      request.results.forEach((creature) => {
+      for (const creature of request.results) {
         // calculate the roles of the creature, by picking the percentages that are at least over 50%
         const rolePercentages: { role: roles; percentage: number }[] = [
           { role: 'Brute', percentage: creature.core_data.derived.role_data.brute },
@@ -294,17 +294,17 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
           { role: 'Spellcaster', percentage: creature.core_data.derived.role_data.spellcaster }
         ];
         const rolesList: roles[] = [];
-        rolePercentages.forEach((role) => {
+        for (const role of rolePercentages) {
           if (role.percentage >= 50) {
             rolesList.push(role.role);
           }
-        });
+        }
         if (rolePercentages.length > 0) {
           creature.core_data.derived.creature_role = rolesList;
         } else {
           creature.core_data.derived.creature_role = ['None'];
         }
-      });
+      }
       rows.value = request.results;
       loading.value = false;
     } else {
@@ -378,9 +378,9 @@ const sort = (col: creature_columns) => {
 const openCreatureSheet = (id: number) => {
   const routeData = router.resolve({ name: 'sf2e_bestiary', query: { id: id } });
   if (process.env.IS_APP === 'true') {
-    window.open(routeData.href, '_self');
+    globalThis.open(routeData.href, '_self');
   } else {
-    window.open(routeData.href, '_blank');
+    globalThis.open(routeData.href, '_blank');
   }
 };
 
@@ -409,8 +409,8 @@ const toggleFullscreen = () => {
 const filterSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getCreatureFilters.sources = sourceFilter.value.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    filterStore.getCreatureFilters.sources = sourceFilter.value.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };
@@ -418,8 +418,8 @@ const filterSourcesFn = (val, update) => {
 const filterTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getCreatureFilters.traits = traitFilter.value.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    filterStore.getCreatureFilters.traits = traitFilter.value.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };
@@ -427,8 +427,8 @@ const filterTraitsFn = (val, update) => {
 const filterFamiliesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getCreatureFilters.families = familyFilter.value.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    filterStore.getCreatureFilters.families = familyFilter.value.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };

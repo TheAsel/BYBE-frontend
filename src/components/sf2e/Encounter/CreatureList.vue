@@ -27,6 +27,8 @@ import type { min_creature } from '../../../types/creature';
 import type { encounter_list, shareable_encounter } from '../../../types/encounter';
 import type { games, variants } from '../../../types/filters';
 
+const isApp = process.env.IS_APP === 'true';
+
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
@@ -112,11 +114,10 @@ const debouncedCall = debounce(async function () {
   try {
     if (!encounter.getGenerating) {
       const returnedEncounterInfo = await encounterInfo('sf', post);
-      if (typeof returnedEncounterInfo != 'undefined') {
-        info.setInfo(returnedEncounterInfo);
-      } else {
-        throw new Error('Error calculating encounter challenge');
+      if (returnedEncounterInfo === undefined) {
+        throw new TypeError('Error calculating encounter challenge');
       }
+      info.setInfo(returnedEncounterInfo);
     }
   } catch (error) {
     console.error(error);
@@ -142,17 +143,27 @@ watch(party, async () => {
 await debouncedCall();
 
 // read the "share" query and decode it
-const encodedData = String(route.query.share);
-if (encodedData !== 'undefined' && encodedData !== 'null' && encodedData !== '') {
-  isGenerating.value = true;
-  importEncounterDialog.value = true;
-  try {
-    const decodedData = await decodeEncounterLink(encodedData);
-    if (typeof decodedData !== 'undefined') {
+const shareQuery =
+  String(route.query.share) === 'undefined' || String(route.query.share) === 'null'
+    ? ''
+    : String(route.query.share);
+const encodedData = ref(shareQuery);
+
+const decodeData = async () => {
+  if (encodedData.value !== '') {
+    isGenerating.value = true;
+    importEncounterDialog.value = true;
+    try {
+      const decodedData = await decodeEncounterLink(encodedData.value);
+      if (decodedData === undefined) {
+        importEncounterDialog.value = false;
+        throw new TypeError('Error importing encounter');
+      }
       importEncounterData.value = decodedData;
       importEncounterName.value = decodedData.encounter_name;
-    } else {
+    } catch (error) {
       importEncounterDialog.value = false;
+      console.error(error);
       $q.notify({
         progress: true,
         type: 'warning',
@@ -160,18 +171,45 @@ if (encodedData !== 'undefined' && encodedData !== 'null' && encodedData !== '')
         icon: matPriorityHigh
       });
     }
-  } catch (error) {
-    importEncounterDialog.value = false;
-    console.error(error);
-    $q.notify({
-      progress: true,
-      type: 'warning',
-      message: 'Error importing encounter',
-      icon: matPriorityHigh
-    });
+    isGenerating.value = false;
   }
-  isGenerating.value = false;
-}
+};
+await decodeData();
+
+// clean and check the link for manual app import
+const sharedLink = ref('');
+const cleanLink = async () => {
+  try {
+    const parsedUrl = new URL(sharedLink.value);
+    const path = parsedUrl.pathname;
+    if (path !== route.path) {
+      closeDialog();
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Invalid page for this link',
+        icon: matPriorityHigh
+      });
+      throw new Error('Invalid page for this link');
+    }
+    const share = parsedUrl.searchParams.get('share');
+    if (share === null || share === '') {
+      closeDialog();
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Missing share hash',
+        icon: matPriorityHigh
+      });
+      throw new TypeError('Missing share code');
+    }
+    encodedData.value = share;
+    closeDialog();
+    await decodeData();
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // clean the url from queries
 await router.replace({
@@ -191,7 +229,7 @@ const openShare = async () => {
     creatures_data: []
   };
 
-  encounterList.forEach((creature) => {
+  for (const creature of encounterList) {
     const tmp_variant: variants = creature.variant ? creature.variant : 'Base';
     const tmp_qty: number = creature.quantity ? creature.quantity : 1;
     const tmp_game: 'Pathfinder' | 'Starfinder' =
@@ -203,7 +241,7 @@ const openShare = async () => {
       qty: tmp_qty,
       game: tmp_game
     });
-  });
+  }
 
   try {
     const shareableLink = await generateEncounterLink(post);
@@ -244,7 +282,7 @@ const importEncounter = async () => {
           is_pwl_on.value
         );
 
-        if (typeof fetchedCreatureData !== 'undefined') {
+        if (fetchedCreatureData !== undefined) {
           tmp_creatures.push({
             game: creature.game === 'Starfinder' ? 'sf' : 'pf',
             id: creature.id,
@@ -344,9 +382,9 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
       query: { id: id, variant: variant }
     });
     if (process.env.IS_APP === 'true') {
-      window.open(routeData.href, '_self');
+      globalThis.open(routeData.href, '_self');
     } else {
-      window.open(routeData.href, '_blank');
+      globalThis.open(routeData.href, '_blank');
     }
   } else {
     const routeData = router.resolve({
@@ -354,9 +392,9 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
       query: { id: id, variant: variant }
     });
     if (process.env.IS_APP === 'true') {
-      window.open(routeData.href, '_self');
+      globalThis.open(routeData.href, '_self');
     } else {
-      window.open(routeData.href, '_blank');
+      globalThis.open(routeData.href, '_blank');
     }
   }
 };
@@ -386,7 +424,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
             :rules="[
               (val) => !!val || 'Field is required',
               (val) =>
-                !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !encounters.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This encounter already exists'
             ]"
             @keyup.enter="importEncounter"
@@ -430,6 +468,23 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
             />
           </div>
         </q-card-section>
+        <div v-if="isApp">
+          <q-card-section class="tw:wrap-normal tw:py-1!">
+            Paste a shared link here to import it:
+          </q-card-section>
+          <q-card-section>
+            <div class="row tw:gap-4">
+              <q-input
+                v-model="sharedLink"
+                class="tw:w-44 tw:text-gray-800! tw:dark:text-gray-200!"
+                outlined
+                dense
+              />
+              <q-btn label="Import" @click="cleanLink" />
+            </div>
+          </q-card-section>
+          <q-separator inset class="tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-700!" />
+        </div>
         <div v-if="!isGenerating">
           <q-card-section class="tw:wrap-normal tw:py-1!">
             A copy of your encounter can be accessed via the following link:
@@ -438,7 +493,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
             <div class="row tw:gap-4">
               <q-field class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!" outlined dense>
                 <template v-slot:control>
-                  <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
+                  <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!">
                     {{ shareUrl }}
                   </div>
                 </template>
@@ -478,7 +533,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
             :rules="[
               (val) => !!val || 'Field is required',
               (val) =>
-                !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !encounters.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This encounter already exists'
             ]"
             @keyup.enter="addEncounter"
@@ -526,7 +581,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
             :rules="[
               (val) => !!val || 'Field is required',
               (val) =>
-                !encounters.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !encounters.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This encounter already exists'
             ]"
             @keyup.enter="renameEncounter"

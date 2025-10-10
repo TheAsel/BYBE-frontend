@@ -45,7 +45,7 @@ if (localNpcs) {
         throw new Error('Invalid saved npc format');
       }
     } else {
-      throw new Error('Invalid saved npc format');
+      throw new TypeError('Invalid saved npc format');
     }
   } catch (error) {
     console.error(error);
@@ -79,7 +79,7 @@ if (localNpcs) {
 npcs.setActiveNpc(npcId);
 
 const printPage = () => {
-  window.print();
+  globalThis.print();
 };
 </script>
 

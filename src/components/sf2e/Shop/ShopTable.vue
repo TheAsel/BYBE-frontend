@@ -242,9 +242,9 @@ const sort = (col: item_columns) => {
 const openShopSheet = (id: number) => {
   const routeData = router.resolve({ name: 'sf2e_item', query: { id: id } });
   if (process.env.IS_APP === 'true') {
-    window.open(routeData.href, '_self');
+    globalThis.open(routeData.href, '_self');
   } else {
-    window.open(routeData.href, '_blank');
+    globalThis.open(routeData.href, '_blank');
   }
 };
 
@@ -275,7 +275,7 @@ const deactivateNavigation = () => {
 async function onKey(evt) {
   if (
     navigationActive.value !== true ||
-    [13, 33, 34, 35, 36, 37, 38, 39, 40].indexOf(evt.keyCode) === -1 ||
+    [13, 33, 34, 35, 36, 37, 38, 39, 40].includes(evt.keyCode) ||
     itemTable.value === null ||
     loading.value === true ||
     keyDown.value === true
@@ -407,8 +407,8 @@ const toggleFullscreen = () => {
 const filterSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getItemFilters.sources = sourceFilter.value.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    filterStore.getItemFilters.sources = sourceFilter.value.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };
@@ -416,8 +416,8 @@ const filterSourcesFn = (val, update) => {
 const filterTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getItemFilters.traits = traitFilter.value.filter(
-      (v) => v.label.toLowerCase().indexOf(filter) > -1
+    filterStore.getItemFilters.traits = traitFilter.value.filter((v) =>
+      v.label.toLowerCase().includes(filter)
     );
   });
 };

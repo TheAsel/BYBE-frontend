@@ -50,7 +50,7 @@ settings.setPfVersion(pfVersion.value);
 
 const togglePfVersion = () => {
   localStorage.setItem('pf_version', pfVersion.value);
-  window.location.reload();
+  globalThis.location.reload();
 };
 
 const hideSupport = ref(false);
@@ -115,7 +115,7 @@ if (!hideSupport.value) {
 
 const toggleSupport = () => {
   localStorage.setItem('hide_support', JSON.stringify(hideSupport.value));
-  window.location.reload();
+  globalThis.location.reload();
 };
 
 const all_experimentals = ref(false);
@@ -197,18 +197,11 @@ const uploadData = () => {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
-  input.onchange = (event) => {
+  input.onchange = async (event) => {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      const reader = new FileReader();
-
-      reader.onload = (event) => {
-        const result = event.target?.result as string;
-        if (result) {
-          validateData(result);
-        }
-      };
-      reader.readAsText(file);
+      const arrayBuffer = await file.text();
+      validateData(arrayBuffer);
     }
   };
   input.click();
@@ -217,7 +210,7 @@ const uploadData = () => {
 const validateData = (result: string) => {
   const parsedData = JSON.parse(result);
   try {
-    Object.keys(parsedData).forEach((key) => {
+    for (const key of Object.keys(parsedData)) {
       switch (key) {
         case 'encounters': {
           const parsedEncounter = JSON.parse(parsedData[key]);
@@ -235,7 +228,7 @@ const validateData = (result: string) => {
               throw new Error('Invalid loaded encounter format');
             }
           } else {
-            throw new Error('Invalid loaded encounter format');
+            throw new TypeError('Invalid loaded encounter format');
           }
           break;
         }
@@ -255,7 +248,7 @@ const validateData = (result: string) => {
               throw new Error('Invalid loaded shop format');
             }
           } else {
-            throw new Error('Invalid loaded shop format');
+            throw new TypeError('Invalid loaded shop format');
           }
           break;
         }
@@ -275,7 +268,7 @@ const validateData = (result: string) => {
               throw new Error('Invalid loaded npc format');
             }
           } else {
-            throw new Error('Invalid loaded npc format');
+            throw new TypeError('Invalid loaded npc format');
           }
           break;
         }
@@ -295,7 +288,7 @@ const validateData = (result: string) => {
               throw new Error('Invalid loaded template format');
             }
           } else {
-            throw new Error('Invalid loaded template format');
+            throw new TypeError('Invalid loaded template format');
           }
           break;
         }
@@ -316,11 +309,11 @@ const validateData = (result: string) => {
             });
             if (isCompatible) {
               const parties: party[] = parsedParties;
-              parties.forEach((p) => {
+              for (const p of parties) {
                 if (!p || !p.members.every((player) => player >= 1 && player <= 20)) {
                   throw new Error('Invalid loaded party levels');
                 }
-              });
+              }
               const partyNames = parties.map((p) => p.name);
               if (new Set(partyNames).size !== partyNames.length) {
                 throw new Error('Duplicate loaded party names');
@@ -329,7 +322,7 @@ const validateData = (result: string) => {
               throw new Error('Invalid loaded party format');
             }
           } else {
-            throw new Error('Invalid loaded party format');
+            throw new TypeError('Invalid loaded party format');
           }
           break;
         }
@@ -362,8 +355,8 @@ const validateData = (result: string) => {
           throw new Error('Unknown loaded key: ' + key);
       }
       localStorage.setItem(key, parsedData[key]);
-    });
-    window.location.reload();
+    }
+    globalThis.location.reload();
   } catch (error) {
     console.error(error);
     $q.notify({

@@ -47,7 +47,7 @@ if (localNpcs) {
         throw new Error('Invalid saved npc format');
       }
     } else {
-      throw new Error('Invalid saved npc format');
+      throw new TypeError('Invalid saved npc format');
     }
   } catch (error) {
     console.error(error);
@@ -191,11 +191,11 @@ const callbacks: VTourCallbacks = {
 };
 
 function scrollDirection() {
-  const footers = document.querySelectorAll('footer');
-  const footer = footers[footers.length - 1];
+  const footers = Array.from(document.querySelectorAll('footer'));
+  const footer = footers.at(-1);
   const top = footer?.getBoundingClientRect().top;
   if (top) {
-    scrollUp.value = top < window.innerHeight;
+    scrollUp.value = top < globalThis.innerHeight;
   }
 }
 
@@ -209,7 +209,7 @@ const scrollPage = (up: boolean) => {
       offset = document.getElementById('sheet')?.offsetTop;
     }
     if (typeof offset === 'number') {
-      window.scrollTo({
+      globalThis.scrollTo({
         top: offset - 60,
         behavior: 'smooth'
       });

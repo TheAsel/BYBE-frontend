@@ -33,7 +33,7 @@ const itemId = Number(route.query.id);
 
 let itemData: item | undefined;
 try {
-  if (itemId !== undefined && !isNaN(itemId)) {
+  if (itemId !== undefined && !Number.isNaN(itemId)) {
     itemData = await requestItemId('sf', itemId);
     if (isNull(itemData) || itemData === undefined) {
       console.error('Missing item ID');
@@ -63,7 +63,7 @@ try {
 }
 
 const printPage = () => {
-  window.print();
+  globalThis.print();
 };
 </script>
 

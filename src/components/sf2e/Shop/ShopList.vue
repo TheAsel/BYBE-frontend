@@ -28,6 +28,8 @@ import type { games } from '../../../types/filters';
 import type { min_item } from '../../../types/item';
 import type { shareable_shop, shop_list } from '../../../types/shop';
 
+const isApp = process.env.IS_APP === 'true';
+
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
@@ -75,17 +77,27 @@ watch(shop, () => {
 });
 
 // read the "share" query and decode it
-const encodedData = String(route.query.share);
-if (encodedData !== 'undefined' && encodedData !== 'null' && encodedData !== '') {
-  isGenerating.value = true;
-  importShopDialog.value = true;
-  try {
-    const decodedData = await decodeShopLink(encodedData);
-    if (typeof decodedData !== 'undefined') {
+const shareQuery =
+  String(route.query.share) === 'undefined' || String(route.query.share) === 'null'
+    ? ''
+    : String(route.query.share);
+const encodedData = ref(shareQuery);
+
+const decodeData = async () => {
+  if (encodedData.value !== '') {
+    isGenerating.value = true;
+    importShopDialog.value = true;
+    try {
+      const decodedData = await decodeShopLink(encodedData.value);
+      if (decodedData === undefined) {
+        importShopDialog.value = false;
+        throw new TypeError('Error importing shop');
+      }
       importShopData.value = decodedData;
       importShopName.value = decodedData.shop_name;
-    } else {
+    } catch (error) {
       importShopDialog.value = false;
+      console.error(error);
       $q.notify({
         progress: true,
         type: 'warning',
@@ -93,18 +105,45 @@ if (encodedData !== 'undefined' && encodedData !== 'null' && encodedData !== '')
         icon: matPriorityHigh
       });
     }
-  } catch (error) {
-    importShopDialog.value = false;
-    console.error(error);
-    $q.notify({
-      progress: true,
-      type: 'warning',
-      message: 'Error importing shop',
-      icon: matPriorityHigh
-    });
+    isGenerating.value = false;
   }
-  isGenerating.value = false;
-}
+};
+await decodeData();
+
+// clean and check the link for manual app import
+const sharedLink = ref('');
+const cleanLink = async () => {
+  try {
+    const parsedUrl = new URL(sharedLink.value);
+    const path = parsedUrl.pathname;
+    if (path !== route.path) {
+      closeDialog();
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Invalid page for this link',
+        icon: matPriorityHigh
+      });
+      throw new Error('Invalid page for this link');
+    }
+    const share = parsedUrl.searchParams.get('share');
+    if (share === null || share === '') {
+      closeDialog();
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Missing share hash',
+        icon: matPriorityHigh
+      });
+      throw new TypeError('Missing share code');
+    }
+    encodedData.value = share;
+    closeDialog();
+    await decodeData();
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // clean the url from queries
 await router.replace({
@@ -122,7 +161,7 @@ const openShare = async () => {
     items_data: []
   };
 
-  shopList.forEach((item) => {
+  for (const item of shopList) {
     const tmp_qty: number = item.quantity ? item.quantity : 1;
     const tmp_game: 'Pathfinder' | 'Starfinder' = item.game === 'sf' ? 'Starfinder' : 'Pathfinder';
 
@@ -131,7 +170,7 @@ const openShare = async () => {
       qty: tmp_qty,
       game: tmp_game
     });
-  });
+  }
 
   try {
     const shareableLink = await generateShopLink(post);
@@ -320,7 +359,7 @@ const showItem = debounce(async function (item: min_item) {
             :rules="[
               (val) => !!val || 'Field is required',
               (val) =>
-                !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !shops.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This shop already exists'
             ]"
             @keyup.enter="importShop"
@@ -364,6 +403,23 @@ const showItem = debounce(async function (item: min_item) {
             />
           </div>
         </q-card-section>
+        <div v-if="isApp">
+          <q-card-section class="tw:wrap-normal tw:py-1!">
+            Paste a shared link here to import it:
+          </q-card-section>
+          <q-card-section>
+            <div class="row tw:gap-4">
+              <q-input
+                v-model="sharedLink"
+                class="tw:w-44 tw:text-gray-800! tw:dark:text-gray-200!"
+                outlined
+                dense
+              />
+              <q-btn label="Import" @click="cleanLink" />
+            </div>
+          </q-card-section>
+          <q-separator inset class="tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-700!" />
+        </div>
         <div v-if="!isGenerating">
           <q-card-section class="tw:wrap-normal tw:py-1!">
             A copy of your shop can be accessed via the following link:
@@ -372,7 +428,7 @@ const showItem = debounce(async function (item: min_item) {
             <div class="row tw:gap-4">
               <q-field class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!" outlined dense>
                 <template v-slot:control>
-                  <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!" tabindex="0">
+                  <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!">
                     {{ shareUrl }}
                   </div>
                 </template>
@@ -408,7 +464,7 @@ const showItem = debounce(async function (item: min_item) {
             :rules="[
               (val) => !!val || 'Field is required',
               (val) =>
-                !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !shops.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This shop already exists'
             ]"
             @keyup.enter="addShop"
@@ -452,7 +508,7 @@ const showItem = debounce(async function (item: min_item) {
             :rules="[
               (val) => !!val || 'Field is required',
               (val) =>
-                !shops.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !shops.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This shop already exists'
             ]"
             @keyup.enter="renameShop"

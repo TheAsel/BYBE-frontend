@@ -50,16 +50,16 @@ const openShopSheet = (game: games, id: number) => {
   if (game === 'sf') {
     const routeData = router.resolve({ name: 'sf2e_item', query: { id: id } });
     if (process.env.IS_APP === 'true') {
-      window.open(routeData.href, '_self');
+      globalThis.open(routeData.href, '_self');
     } else {
-      window.open(routeData.href, '_blank');
+      globalThis.open(routeData.href, '_blank');
     }
   } else {
     const routeData = router.resolve({ name: 'pf2e_item', query: { id: id } });
     if (process.env.IS_APP === 'true') {
-      window.open(routeData.href, '_self');
+      globalThis.open(routeData.href, '_self');
     } else {
-      window.open(routeData.href, '_blank');
+      globalThis.open(routeData.href, '_blank');
     }
   }
 };
@@ -105,12 +105,12 @@ const openShopSheet = (game: games, id: number) => {
       rel="noopener"
     >
       <h1
-        class="tw:text-2xl! tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
+        class="tw:text-2xl! tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
       >
         {{ items.getSelectedItem!.core_item.name }}
       </h1>
     </a>
-    <h1 v-else class="tw:text-2xl! tw:leading-8 tw:my-auto">
+    <h1 v-else class="tw:text-2xl! tw:mr-4 tw:leading-8 tw:my-auto">
       {{ items.getSelectedItem!.core_item.name }}
     </h1>
     <q-space />

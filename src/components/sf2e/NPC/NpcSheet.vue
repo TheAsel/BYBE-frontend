@@ -11,9 +11,9 @@ const router = useRouter();
 const openNpcSheet = (id: number) => {
   const routeData = router.resolve({ name: 'sf2e_character', query: { id: id } });
   if (process.env.IS_APP === 'true') {
-    window.open(routeData.href, '_self');
+    globalThis.open(routeData.href, '_self');
   } else {
-    window.open(routeData.href, '_blank');
+    globalThis.open(routeData.href, '_blank');
   }
 };
 </script>
@@ -60,7 +60,7 @@ const openNpcSheet = (id: number) => {
               </span>
             </span>
             <q-space />
-            <div class="tw:my-1">NPC {{ npcs.getActiveNpc!.npc.level }}</div>
+            <div class="tw:ml-4 tw:my-1">NPC {{ npcs.getActiveNpc!.npc.level }}</div>
           </div>
           <q-separator class="tw:my-2!" style="height: 2px" />
           <hr

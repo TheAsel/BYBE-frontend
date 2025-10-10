@@ -204,36 +204,35 @@ const generateShop = debounce(async function () {
   }
   try {
     const randomShop = await shopGenerator('pf', post);
-    if (typeof randomShop != 'undefined') {
-      if (randomShop.count > 0 && randomShop.results) {
-        shop.clearShop();
-        for (let i = 0; i < randomShop.count; i++) {
-          const min_item: min_item = {
-            game: 'pf',
-            id: randomShop.results[i]!.core_item.id,
-            // TODO: use randomShop.results[i].core_item.archive_link if it gets added
-            archive_link:
-              'https://2e.aonprd.com/Search.aspx?q=' +
-              encodeURIComponent(randomShop.results[i]!.core_item.name) +
-              '&type=eqs',
-            name: randomShop.results[i]!.core_item.name,
-            level: randomShop.results[i]!.core_item.level,
-            type: randomShop.results[i]!.core_item.item_type,
-            price: randomShop.results[i]!.core_item.price,
-            quantity: randomShop.results[i]!.core_item.quantity
-          };
-          shop.addToShop(min_item);
-        }
-      } else {
-        $q.notify({
-          progress: true,
-          type: 'warning',
-          message: 'No shop could be generated from the current filters',
-          icon: matPriorityHigh
-        });
+    if (randomShop === undefined) {
+      throw new TypeError('Error generating random shop');
+    }
+    if (randomShop.count > 0 && randomShop.results) {
+      shop.clearShop();
+      for (let i = 0; i < randomShop.count; i++) {
+        const min_item: min_item = {
+          game: 'pf',
+          id: randomShop.results[i]!.core_item.id,
+          // TODO: use randomShop.results[i].core_item.archive_link if it gets added
+          archive_link:
+            'https://2e.aonprd.com/Search.aspx?q=' +
+            encodeURIComponent(randomShop.results[i]!.core_item.name) +
+            '&type=eqs',
+          name: randomShop.results[i]!.core_item.name,
+          level: randomShop.results[i]!.core_item.level,
+          type: randomShop.results[i]!.core_item.item_type,
+          price: randomShop.results[i]!.core_item.price,
+          quantity: randomShop.results[i]!.core_item.quantity
+        };
+        shop.addToShop(min_item);
       }
     } else {
-      throw new Error('Error generating random shop');
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'No shop could be generated from the current filters',
+        icon: matPriorityHigh
+      });
     }
   } catch (error) {
     console.error(error);
@@ -282,7 +281,9 @@ const resetTemplateDialog = () => {
     shield_percentage: 0,
     weapon_percentage: 0
   };
-  selectedTraits.value.forEach((trait) => (trait.state = null));
+  for (const trait of selectedTraits.value) {
+    trait.state = null;
+  }
   selectedTraits.value = [];
   armorOn.value = true;
   equipmentOn.value = true;
@@ -294,8 +295,13 @@ const resetTemplateDialog = () => {
 const addTemplate = async () => {
   try {
     newNameInput.value.validate();
-    if (!newNameInput.value.hasError) {
-      selectedTraits.value.forEach((trait) => {
+    if (newNameInput.value.hasError) {
+      tab.value = 'General';
+      await nextTick(() => {
+        newNameInput.value.validate();
+      });
+    } else {
+      for (const trait of selectedTraits.value) {
         switch (trait.state) {
           case true:
             newTemplate.value.trait_whitelist_filter?.push(trait.value);
@@ -306,7 +312,7 @@ const addTemplate = async () => {
           default:
             break;
         }
-      });
+      }
       if (armorOn.value) {
         newTemplate.value.type_filter?.push('Armor');
       }
@@ -326,11 +332,6 @@ const addTemplate = async () => {
       saveChanges();
       newTemplateDialog.value = false;
       resetTemplateDialog();
-    } else {
-      tab.value = 'General';
-      await nextTick(() => {
-        newNameInput.value.validate();
-      });
     }
   } catch (error) {
     console.error(error);
@@ -363,9 +364,11 @@ const openEditDialog = async () => {
   equipmentOn.value = newTemplate.value.type_filter!.includes('Equipment');
   shieldOn.value = newTemplate.value.type_filter!.includes('Shield');
   weaponOn.value = newTemplate.value.type_filter!.includes('Weapon');
-  selectedTraits.value.forEach((trait) => (trait.state = null));
+  for (const trait of selectedTraits.value) {
+    trait.state = null;
+  }
   selectedTraits.value = [];
-  newTemplate.value.trait_blacklist_filter?.forEach((trait) => {
+  for (const trait of newTemplate.value.trait_blacklist_filter ?? []) {
     selectedTraits.value.push({
       label: trait
         .split('-')
@@ -375,8 +378,9 @@ const openEditDialog = async () => {
       value: trait,
       state: false
     });
-  });
-  newTemplate.value.trait_whitelist_filter?.forEach((trait) => {
+  }
+
+  for (const trait of newTemplate.value.trait_whitelist_filter ?? []) {
     selectedTraits.value.push({
       label: trait
         .split('-')
@@ -386,26 +390,31 @@ const openEditDialog = async () => {
       value: trait,
       state: true
     });
-  });
+  }
   editTemplateDialog.value = true;
   await nextTick(() => {
-    selectedTraits.value.forEach((trait) => {
-      editTraitSelect.value.options.forEach((opt) => {
+    for (const trait of selectedTraits.value) {
+      for (const opt of editTraitSelect.value.options) {
         if (opt.label === trait.label) {
           opt.state = trait.state;
         }
-      });
-    });
+      }
+    }
   });
 };
 
 const editTemplate = async () => {
   try {
     editNameInput.value.validate();
-    if (!editNameInput.value.hasError) {
+    if (editNameInput.value.hasError) {
+      tab.value = 'General';
+      await nextTick(() => {
+        editNameInput.value.validate();
+      });
+    } else {
       const newWhitelist: string[] = [];
       const newBlacklist: string[] = [];
-      selectedTraits.value.forEach((trait) => {
+      for (const trait of selectedTraits.value) {
         switch (trait.state) {
           case true:
             newWhitelist.push(trait.value);
@@ -416,7 +425,7 @@ const editTemplate = async () => {
           default:
             break;
         }
-      });
+      }
       newTemplate.value.trait_whitelist_filter = newWhitelist;
       newTemplate.value.trait_blacklist_filter = newBlacklist;
       const newTypes: string[] = [];
@@ -440,11 +449,6 @@ const editTemplate = async () => {
       saveChanges();
       editTemplateDialog.value = false;
       resetTemplateDialog();
-    } else {
-      tab.value = 'General';
-      await nextTick(() => {
-        editNameInput.value.validate();
-      });
     }
   } catch (error) {
     console.error(error);
@@ -480,29 +484,27 @@ const saveChanges = () => {
 
 const toggleTraits = (opt) => {
   const index = selectedTraits.value.findIndex((trait) => trait.label === opt.label);
-  if (index !== -1) {
+  if (index === -1) {
+    selectedTraits.value.push(opt);
+  } else {
     if (opt.state === null) {
       selectedTraits.value.splice(index, 1);
     } else {
       selectedTraits.value[index]!.state = opt.state;
     }
-  } else {
-    selectedTraits.value.push(opt);
   }
 };
 
 const filterSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getItemFilters.sources = sourceFilter.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
-    );
+    filters.getItemFilters.sources = sourceFilter.filter((v) => v.toLowerCase().includes(filter));
   });
 };
 
 const filterTraitsFn = (val, update) => {
   const filter = val.toLowerCase();
-  const filtered = traitFilter.filter((v) => v.label.toLowerCase().indexOf(filter) > -1);
+  const filtered = traitFilter.filter((v) => v.label.toLowerCase().includes(filter));
   update(() => {
     traitOptions.value = filtered;
   });
@@ -731,7 +733,7 @@ defineExpose({ generateShop });
                         :rules="[
                           (val) => !!val || 'Field is required',
                           (val) =>
-                            !template_list.find(
+                            !template_list.some(
                               (name) => name.toLowerCase() === val.toLowerCase()
                             ) || 'This template already exists'
                         ]"
@@ -816,7 +818,9 @@ defineExpose({ generateShop });
                             :name="mdiCloseCircle"
                             class="tw:text-[#7d838b] tw:hover:text-[#bcbfc3] cursor-pointer"
                             @click.stop.prevent="
-                              selectedTraits.forEach((trait) => (trait.state = null));
+                              for (const trait of selectedTraits) {
+                                trait.state = null;
+                              }
                               selectedTraits = [];
                             "
                           />
@@ -854,7 +858,7 @@ defineExpose({ generateShop });
                         :rules="[
                           (val) => !!val || 'Field is required',
                           (val) =>
-                            !template_list.find(
+                            !template_list.some(
                               (name) => name.toLowerCase() === val.toLowerCase()
                             ) || 'This template already exists'
                         ]"
@@ -1067,7 +1071,7 @@ defineExpose({ generateShop });
                     :rules="[
                       (val) => !!val || 'Field is required',
                       (val) =>
-                        !template_list.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                        !template_list.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                         'This template already exists'
                     ]"
                     @keyup.enter="duplicateTemplate"
@@ -1160,7 +1164,7 @@ defineExpose({ generateShop });
                         :rules="[
                           (val) => !!val || 'Field is required',
                           (val) =>
-                            !template_list.find(
+                            !template_list.some(
                               (name) =>
                                 name.toLowerCase() === val.toLowerCase() &&
                                 newTemplate.name !== templatesStore.getActiveTemplate!.name
@@ -1248,7 +1252,9 @@ defineExpose({ generateShop });
                             :name="mdiCloseCircle"
                             class="tw:text-[#7d838b] tw:hover:text-[#bcbfc3] cursor-pointer"
                             @click.stop.prevent="
-                              selectedTraits.forEach((trait) => (trait.state = null));
+                              for (const trait of selectedTraits) {
+                                trait.state = null;
+                              }
                               selectedTraits = [];
                             "
                           />
@@ -1286,7 +1292,7 @@ defineExpose({ generateShop });
                         :rules="[
                           (val) => !!val || 'Field is required',
                           (val) =>
-                            !template_list.find(
+                            !template_list.some(
                               (name) =>
                                 name.toLowerCase() === val.toLowerCase() &&
                                 newTemplate.name !== templatesStore.getActiveTemplate!.name

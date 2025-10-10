@@ -50,7 +50,7 @@ if (localShops) {
         throw new Error('Invalid saved shop format');
       }
     } else {
-      throw new Error('Invalid saved shop format');
+      throw new TypeError('Invalid saved shop format');
     }
   } catch (error) {
     console.error(error);
@@ -74,13 +74,15 @@ if (localTemplates) {
         if (new Set(templateNames).size !== templateNames.length) {
           throw new Error('Duplicate saved template names');
         }
-        templates.forEach((template) => (template.default = false));
+        for (const template of templates) {
+          template.default = false;
+        }
         templatesStore.updateTemplates(templates);
       } else {
         throw new Error('Invalid saved template format');
       }
     } else {
-      throw new Error('Invalid saved template format');
+      throw new TypeError('Invalid saved template format');
     }
   } catch (error) {
     console.error(error);
@@ -228,11 +230,11 @@ const callbacks: VTourCallbacks = {
 };
 
 function scrollDirection() {
-  const footers = document.querySelectorAll('footer');
-  const footer = footers[footers.length - 1];
+  const footers = Array.from(document.querySelectorAll('footer'));
+  const footer = footers.at(-1);
   const top = footer?.getBoundingClientRect().top;
   if (top) {
-    scrollUp.value = top < window.innerHeight;
+    scrollUp.value = top < globalThis.innerHeight;
   }
 }
 
@@ -246,7 +248,7 @@ const scrollPage = (up: boolean) => {
       offset = document.getElementById('list')?.offsetTop;
     }
     if (typeof offset === 'number') {
-      window.scrollTo({
+      globalThis.scrollTo({
         top: offset - 60,
         behavior: 'smooth'
       });
@@ -259,11 +261,11 @@ const handleResize = () => {
 };
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize);
+  globalThis.addEventListener('resize', handleResize);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize);
+  globalThis.removeEventListener('resize', handleResize);
 });
 </script>
 

@@ -166,7 +166,7 @@ const saveChanges = () => {
                   :rules="[
                     (val) => !!val || 'Field is required',
                     (val) =>
-                      !parties.find((name) => name.toLowerCase() === val.toLowerCase()) ||
+                      !parties.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                       'This party already exists'
                   ]"
                   @keyup.enter="addParty"

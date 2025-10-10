@@ -129,34 +129,34 @@ const generateNpc = debounce(async function () {
 
   try {
     const randomNpc = await npcGenerator('sf', post);
-    if (typeof randomNpc != 'undefined') {
-      if (!npcs.getLocks.name) {
-        npcs.getActiveNpc!.npc.name = randomNpc.name;
-      }
-      if (!npcs.getLocks.nickname) {
-        npcs.getActiveNpc!.npc.nickname = randomNpc.nickname;
-      }
-      if (!npcs.getLocks.gender) {
-        randomNpc.gender = randomNpc.gender!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.gender = randomNpc.gender;
-      }
-      if (!npcs.getLocks.ancestry) {
-        randomNpc.ancestry = randomNpc.ancestry!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.ancestry = randomNpc.ancestry;
-      }
-      if (!npcs.getLocks.class) {
-        randomNpc.class = randomNpc.class!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.class = randomNpc.class;
-      }
-      if (!npcs.getLocks.job) {
-        randomNpc.job = randomNpc.job!.replace(/([a-z])([A-Z])/g, '$1 $2');
-        npcs.getActiveNpc!.npc.job = randomNpc.job;
-      }
-      if (!npcs.getLocks.level) {
-        npcs.getActiveNpc!.npc.level = randomNpc.level;
-      }
-    } else {
-      throw new Error('Error generating random npc');
+    if (randomNpc === undefined) {
+      throw new TypeError('Error generating random npc');
+    }
+    if (!npcs.getLocks.name) {
+      npcs.getActiveNpc!.npc.name = randomNpc.name;
+    }
+    if (!npcs.getLocks.nickname) {
+      npcs.getActiveNpc!.npc.nickname = randomNpc.nickname;
+    }
+    // regex: adds spaces between words
+    if (!npcs.getLocks.gender) {
+      randomNpc.gender = randomNpc.gender!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+      npcs.getActiveNpc!.npc.gender = randomNpc.gender;
+    }
+    if (!npcs.getLocks.ancestry) {
+      randomNpc.ancestry = randomNpc.ancestry!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+      npcs.getActiveNpc!.npc.ancestry = randomNpc.ancestry;
+    }
+    if (!npcs.getLocks.class) {
+      randomNpc.class = randomNpc.class!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+      npcs.getActiveNpc!.npc.class = randomNpc.class;
+    }
+    if (!npcs.getLocks.job) {
+      randomNpc.job = randomNpc.job!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+      npcs.getActiveNpc!.npc.job = randomNpc.job;
+    }
+    if (!npcs.getLocks.level) {
+      npcs.getActiveNpc!.npc.level = randomNpc.level;
     }
   } catch (error) {
     console.error(error);
@@ -183,8 +183,8 @@ const resetParameters = () => {
 const filterGendersFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    npcParameters.getNpcParameters.genders = genderFilter.value.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    npcParameters.getNpcParameters.genders = genderFilter.value.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };
@@ -192,8 +192,8 @@ const filterGendersFn = (val, update) => {
 const filterAncestriesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    npcParameters.getNpcParameters.ancestries = ancestryFilter.value.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    npcParameters.getNpcParameters.ancestries = ancestryFilter.value.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };
@@ -201,8 +201,8 @@ const filterAncestriesFn = (val, update) => {
 const filterClassesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    npcParameters.getNpcParameters.classes = classFilter.value.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    npcParameters.getNpcParameters.classes = classFilter.value.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };
@@ -210,8 +210,8 @@ const filterClassesFn = (val, update) => {
 const filterJobsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    npcParameters.getNpcParameters.jobs = jobFilter.value.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    npcParameters.getNpcParameters.jobs = jobFilter.value.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };

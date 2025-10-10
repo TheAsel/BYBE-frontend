@@ -304,11 +304,11 @@ export const itemsStore = defineStore('items', {
     getGenerating: (state) => state.generating,
     getTotalCost: (state) => {
       let cost = 0;
-      state.shops[state.activeShop]!.items.forEach((item) => {
+      for (const item of state.shops[state.activeShop]!.items) {
         for (let i = 0; i < item.quantity; i++) {
           cost += item.price;
         }
-      });
+      }
       return cost;
     }
   },
@@ -384,7 +384,7 @@ export const itemsStore = defineStore('items', {
         price = price / 10;
         if (!Number.isInteger(price)) {
           const decimal = (price - Math.floor(price)).toFixed(1);
-          const copper = parseFloat(decimal) * 10;
+          const copper = Number.parseFloat(decimal) * 10;
           return Math.trunc(price) + ' sp, ' + copper + ' cp';
         }
         return price + ' sp';
@@ -392,11 +392,11 @@ export const itemsStore = defineStore('items', {
         price = price / 100;
         if (!Number.isInteger(price)) {
           let decimal = (price - Math.floor(price)).toFixed(2);
-          let silver = parseFloat(decimal) * 100;
+          let silver = Number.parseFloat(decimal) * 100;
           if (!Number.isInteger(silver / 10)) {
             silver = silver / 10;
             decimal = (silver - Math.floor(silver)).toFixed(1);
-            const copper = parseFloat(decimal) * 10;
+            const copper = Number.parseFloat(decimal) * 10;
             if (Math.trunc(silver) === 0) {
               return Math.trunc(price) + ' gp, ' + copper + ' cp';
             } else {
@@ -420,7 +420,7 @@ export const itemsStore = defineStore('items', {
     },
     getFormattedUsage(usage: string) {
       usage = usage.replaceAll('-', ' ');
-      const worn = RegExp(/(worn)([a-z]+)/).exec(usage);
+      const worn = new RegExp(/(worn)([a-z]+)/).exec(usage);
       if (worn) {
         usage = usage.replace(worn[0], worn[1] + ' ' + worn[2]);
       }
@@ -463,7 +463,7 @@ export const templateStore = defineStore('template', {
     },
     addDefaultTemplates(defaultTemplates: template_data[]) {
       const newTemplates: template[] = [];
-      defaultTemplates.forEach((template) => {
+      for (const template of defaultTemplates) {
         newTemplates.push({
           default: true,
           name: template.name,
@@ -478,12 +478,12 @@ export const templateStore = defineStore('template', {
           shield_percentage: template.shield_percentage!,
           weapon_percentage: template.weapon_percentage!
         });
-      });
+      }
       this.defaultTemplates = newTemplates.length;
       newTemplates.sort((a, b) => a.name.localeCompare(b.name));
-      this.templates.forEach((template) => {
+      for (const template of this.templates) {
         newTemplates.push(template);
-      });
+      }
       this.templates = newTemplates;
       this.changeActiveTemplate(this.getTemplateIndex('General'));
     },
@@ -499,7 +499,7 @@ export const templateStore = defineStore('template', {
 });
 
 function splitPascalCase(input: string): string {
-  return input.replace(/([a-z])([A-Z])/g, '$1 $2');
+  return input.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
 }
 
 export const npcParametersStore = defineStore('npcparameters', {

@@ -9,7 +9,7 @@ import HeaderBar from '../components/HeaderBar.vue';
 import { requestRepoInfo } from '../utils/github-api';
 
 const newestVersion = ref(version);
-const isApp = process.env.IS_APP;
+const isApp = process.env.IS_APP === 'true';
 const repoUrl = process.env.REPO_URL;
 const latestRelease = 'https://github.com/' + repoUrl + '/releases/latest';
 
@@ -73,7 +73,7 @@ try {
         <p class="tw:text-sm tw:text-neutral-500 tw:dark:text-neutral-400 tw:mb-0!">
           BYBE - v{{ version }}
           <a
-            v-if="version !== newestVersion && isApp !== 'true'"
+            v-if="version !== newestVersion && !isApp"
             class="tw:text-blue-600 tw:dark:text-blue-400 tw:decoration-2 tw:hover:underline"
             :href="latestRelease"
             target="_blank"

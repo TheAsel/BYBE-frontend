@@ -13,7 +13,7 @@ import SettingsMenu from './SettingsMenu.vue';
 import type { games } from 'src/types/filters';
 
 const settings = settingsStore();
-const isApp = process.env.IS_APP;
+const isApp = process.env.IS_APP === 'true';
 
 const settingsMenuRef = ref();
 
@@ -60,7 +60,7 @@ const gameOptions = [
   }
 ];
 
-function changeGame(value: games) {
+async function changeGame(value: games) {
   settings.setGame(value);
 
   if (!value) return;
@@ -75,7 +75,7 @@ function changeGame(value: games) {
   const firstSegment = route.path.split('/')[1];
   if (firstSegment === 'sf' || firstSegment == 'pf') {
     const newPath = path.replace(/^\/[^/]+/, `/${opt.value}`);
-    void router.push(newPath);
+    await router.push(newPath);
   }
 }
 
@@ -118,10 +118,10 @@ const unhide = debounce(function () {
 
 <template>
   <q-header
-    class="tw:flex tw:flex-wrap tw:sm:justify-start tw:sm:flex-nowrap tw:z-50 tw:w-full tw:bg-white tw:border-b tw:border-gray-200 tw:text-sm tw:py-3 tw:sm:py-0 tw:dark:bg-gray-800 tw:dark:border-gray-700 tw:opacity-100 tw:sm:opacity-85 tw:dark:opacity-100 tw:sm:dark:opacity-90"
+    class="tw:flex tw:flex-wrap tw:lg:justify-start tw:lg:flex-nowrap tw:z-50 tw:w-full tw:bg-white tw:border-b tw:border-gray-200 tw:text-sm tw:py-3 tw:lg:py-0 tw:dark:bg-gray-800 tw:dark:border-gray-700 tw:opacity-100 tw:lg:opacity-85 tw:dark:opacity-100 tw:lg:dark:opacity-90"
   >
     <div
-      class="tw:relative tw:w-full tw:mx-auto tw:px-4 tw:sm:flex tw:sm:items-center tw:sm:justify-between tw:sm:px-6 tw:lg:px-8"
+      class="tw:relative tw:w-full tw:mx-auto tw:px-4 tw:lg:flex tw:lg:items-center tw:lg:justify-between tw:lg:px-6"
       aria-label="Global"
     >
       <div class="tw:flex tw:items-center tw:justify-between">
@@ -212,12 +212,12 @@ const unhide = debounce(function () {
           </template>
         </q-select>
 
-        <div class="tw:sm:hidden">
+        <div class="tw:lg:hidden">
           <q-btn
             flat
             unelevated
             type="button"
-            class="tw:sm:mr-2 tw:text-gray-800! tw:dark:text-gray-200!"
+            class="tw:lg:mr-2 tw:text-gray-800! tw:dark:text-gray-200!"
             aria-controls="navbar-collapse"
             aria-label="Toggle navigation"
             :icon="biList"
@@ -227,19 +227,19 @@ const unhide = debounce(function () {
       </div>
       <div
         id="navbar-collapse"
-        class="tw:grow tw:sm:block"
+        class="tw:grow tw:lg:block"
         :class="{ 'tw:hidden': settings.getHiddenNav, 'overflow-hidden': settings.getHiddenNav }"
       >
-        <div class="tw:flex tw:flex-col tw:sm:flex-row">
+        <div class="tw:flex tw:flex-col tw:lg:flex-row">
           <div
             v-if="currentPath != '/' && currentPath != '/download'"
-            class="tw:flex tw:flex-col tw:sm:flex-row tw:sm:items-center tw:sm:justify-start tw:gap-y-4 tw:sm:gap-y-0 tw:gap-x-0 tw:sm:gap-x-7 tw:mt-5 tw:sm:mt-0"
+            class="tw:flex tw:flex-col tw:lg:flex-row tw:lg:items-center tw:lg:justify-start tw:gap-y-4 tw:lg:gap-y-0 tw:gap-x-0 tw:lg:gap-x-7 tw:mt-5 tw:lg:mt-0"
           >
             <q-separator
               v-if="currentPath != '/' && currentPath != '/download'"
               vertical
               inset
-              class="tw:sm:block tw:hidden tw:ml-4!"
+              class="tw:lg:block tw:hidden tw:ml-4!"
             />
 
             <router-link
@@ -248,34 +248,34 @@ const unhide = debounce(function () {
               :to="'/' + settings.getGame + item.to"
               :class="
                 currentPath === '/' + settings.getGame + item.to
-                  ? 'tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-400'
-                  : 'tw:sm:py-4 tw:text-gray-800 tw:hover:text-blue-600  tw:dark:text-neutral-200 tw:dark:hover:text-neutral-400'
+                  ? 'tw:text-blue-600 tw:lg:py-4 tw:dark:text-blue-400'
+                  : 'tw:lg:py-4 tw:text-gray-800 tw:hover:text-blue-600  tw:dark:text-neutral-200 tw:dark:hover:text-neutral-400'
               "
               :aria-current="currentPath === item.to ? 'page' : undefined"
               >{{ item.name }}
             </router-link>
           </div>
 
-          <q-space class="tw:sm:block tw:hidden" />
+          <q-space class="tw:lg:block tw:hidden" />
 
-          <q-separator class="tw:block tw:sm:hidden tw:my-4!" />
+          <q-separator class="tw:block tw:lg:hidden tw:my-4!" />
 
           <router-link
-            v-if="isApp === 'false'"
+            v-if="!isApp"
             to="/download"
-            class="tw:flex tw:items-center tw:mb-4! tw:sm:mb-0! tw:ml-0! tw:sm:ml-6!"
+            class="tw:flex tw:items-center tw:mb-4! tw:lg:mb-0! tw:ml-0! tw:lg:ml-6!"
             :class="
               currentPath === '/download'
-                ? 'tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-400'
-                : 'tw:sm:py-4 tw:text-gray-800 tw:hover:text-blue-600  tw:dark:text-neutral-200 tw:dark:hover:text-neutral-400'
+                ? 'tw:text-blue-600 tw:lg:py-4 tw:dark:text-blue-400'
+                : 'tw:lg:py-4 tw:text-gray-800 tw:hover:text-blue-600  tw:dark:text-neutral-200 tw:dark:hover:text-neutral-400'
             "
             :aria-current="currentPath === '/download' ? 'page' : undefined"
             >Download
           </router-link>
 
-          <q-separator vertical inset class="tw:sm:block tw:hidden tw:sm:mx-7!" />
+          <q-separator vertical inset class="tw:lg:block tw:hidden tw:lg:mx-7!" />
 
-          <div class="tw:flex tw:items-center tw:gap-x-2! tw:sm:gap-x-2! tw:relative">
+          <div class="tw:flex tw:items-center tw:gap-x-2! tw:lg:gap-x-2! tw:relative">
             <q-btn
               flat
               round
@@ -293,7 +293,7 @@ const unhide = debounce(function () {
               round
               size="sm"
               padding="sm"
-              class="tw:sm:mr-2 tw:text-gray-800! tw:dark:text-gray-200!"
+              class="tw:lg:mr-2 tw:text-gray-800! tw:dark:text-gray-200!"
               :icon="$q.dark.isActive ? biSun : biMoon"
               aria-label="Toggle theme"
               @click="themeSwitch"
@@ -305,7 +305,10 @@ const unhide = debounce(function () {
               flat
               class="tw:text-gray-800! tw:dark:text-gray-200!"
               aria-label="Start help tour"
-              @click="$tours[currentPath]!.start()"
+              @click="
+                settings.setHiddenNav(true);
+                $tours[currentPath]!.start();
+              "
             >
               HELP
             </q-btn>

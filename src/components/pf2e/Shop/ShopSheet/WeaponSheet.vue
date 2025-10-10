@@ -50,16 +50,16 @@ const openShopSheet = (game: games, id: number) => {
   if (game === 'sf') {
     const routeData = router.resolve({ name: 'sf2e_item', query: { id: id } });
     if (process.env.IS_APP === 'true') {
-      window.open(routeData.href, '_self');
+      globalThis.open(routeData.href, '_self');
     } else {
-      window.open(routeData.href, '_blank');
+      globalThis.open(routeData.href, '_blank');
     }
   } else {
     const routeData = router.resolve({ name: 'pf2e_item', query: { id: id } });
     if (process.env.IS_APP === 'true') {
-      window.open(routeData.href, '_self');
+      globalThis.open(routeData.href, '_self');
     } else {
-      window.open(routeData.href, '_blank');
+      globalThis.open(routeData.href, '_blank');
     }
   }
 };

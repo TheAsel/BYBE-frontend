@@ -153,30 +153,29 @@ const generateEncounter = debounce(async function () {
   }
   try {
     const randomEncounter = await encounterGenerator('sf', post);
-    if (typeof randomEncounter != 'undefined') {
-      if (randomEncounter.count > 0 && randomEncounter.results) {
-        encounter.clearEncounter();
-        for (let i = 0; i < randomEncounter.count; i++) {
-          const min_creature: min_creature = {
-            game: 'sf',
-            id: randomEncounter.results[i]!.core_data.essential.id,
-            archive_link: randomEncounter.results[i]!.core_data.derived.archive_link,
-            name: randomEncounter.results[i]!.core_data.essential.name,
-            level: randomEncounter.results[i]!.core_data.essential.base_level,
-            variant: randomEncounter.results[i]!.variant_data?.variant
-          };
-          encounter.addToEncounter(min_creature);
-        }
-      } else {
-        $q.notify({
-          progress: true,
-          type: 'warning',
-          message: 'No encounter could be generated from the current filters',
-          icon: matPriorityHigh
-        });
+    if (randomEncounter === undefined) {
+      throw new TypeError('Error generating random encounter');
+    }
+    if (randomEncounter.count > 0 && randomEncounter.results) {
+      encounter.clearEncounter();
+      for (let i = 0; i < randomEncounter.count; i++) {
+        const min_creature: min_creature = {
+          game: 'sf',
+          id: randomEncounter.results[i]!.core_data.essential.id,
+          archive_link: randomEncounter.results[i]!.core_data.derived.archive_link,
+          name: randomEncounter.results[i]!.core_data.essential.name,
+          level: randomEncounter.results[i]!.core_data.essential.base_level,
+          variant: randomEncounter.results[i]!.variant_data?.variant
+        };
+        encounter.addToEncounter(min_creature);
       }
     } else {
-      throw new Error('Error generating random encounter');
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'No encounter could be generated from the current filters',
+        icon: matPriorityHigh
+      });
     }
   } catch (error) {
     console.error(error);
@@ -203,8 +202,8 @@ const saveChanges = () => {
 const filterTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.traits = traitsOptions.value.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    filters.getCreatureFilters.traits = traitsOptions.value.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };
@@ -212,8 +211,8 @@ const filterTraitsFn = (val, update) => {
 const filterFamiliesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.families = familiesOptions.filter(
-      (v) => v.toLowerCase().indexOf(filter) > -1
+    filters.getCreatureFilters.families = familiesOptions.filter((v) =>
+      v.toLowerCase().includes(filter)
     );
   });
 };
