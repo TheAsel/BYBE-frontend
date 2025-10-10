@@ -209,7 +209,7 @@ const importShop = async () => {
           item.id
         );
 
-        if (typeof fetchedItemData !== 'undefined') {
+        if (fetchedItemData !== undefined) {
           tmp_items.push({
             game: item.game === 'Starfinder' ? 'sf' : 'pf',
             id: item.id,

@@ -483,14 +483,12 @@ const saveChanges = () => {
 
 const toggleTraits = (opt) => {
   const index = selectedTraits.value.findIndex((trait) => trait.label === opt.label);
-  if (index !== -1) {
-    if (opt.state === null) {
-      selectedTraits.value.splice(index, 1);
-    } else {
-      selectedTraits.value[index]!.state = opt.state;
-    }
-  } else {
+  if (index === -1) {
     selectedTraits.value.push(opt);
+  } else if (opt.state === null) {
+    selectedTraits.value.splice(index, 1);
+  } else {
+    selectedTraits.value[index]!.state = opt.state;
   }
 };
 
