@@ -275,7 +275,7 @@ const deactivateNavigation = () => {
 async function onKey(evt) {
   if (
     navigationActive.value !== true ||
-    [13, 33, 34, 35, 36, 37, 38, 39, 40].includes(evt.keyCode) ||
+    ![13, 33, 34, 35, 36, 37, 38, 39, 40].includes(evt.keyCode) ||
     itemTable.value === null ||
     loading.value === true ||
     keyDown.value === true
