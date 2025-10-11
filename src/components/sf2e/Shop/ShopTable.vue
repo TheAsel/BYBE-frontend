@@ -42,7 +42,6 @@ const router = useRouter();
 const itemTable = ref();
 const navigationActive = ref(false);
 const selected = ref<item[]>([]);
-const keyDown = ref(false);
 const rows = ref<item[]>([]);
 const loading = ref(true);
 const pagination = ref({
@@ -150,6 +149,13 @@ const columns: {
   }
 ];
 
+// Waits for the table pagination to load
+let resolveWhenLoaded: (() => void) | null = null;
+const waitForPageLoad = () =>
+  new Promise<void>((resolve) => {
+    resolveWhenLoaded = resolve;
+  });
+
 const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: number) {
   const body: item_filters = {
     min_level_filter: filters.value.level_filter.min,
@@ -184,6 +190,8 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       pagination.value.rowsNumber = request.total;
       rows.value = request.results;
       loading.value = false;
+      resolveWhenLoaded?.();
+      resolveWhenLoaded = null;
     } else {
       throw new Error('Error loading items');
     }
@@ -277,8 +285,7 @@ async function onKey(evt) {
     navigationActive.value !== true ||
     ![13, 33, 34, 35, 36, 37, 38, 39, 40].includes(evt.keyCode) ||
     itemTable.value === null ||
-    loading.value === true ||
-    keyDown.value === true
+    loading.value === true
   ) {
     return;
   }
@@ -303,95 +310,113 @@ async function onKey(evt) {
   let page = currentPage;
 
   switch (evt.keyCode) {
-    case 13: // Enter
+    // Enter
+    case 13: {
       addItem(selected.value[0]!);
       break;
-    case 33: // PageUp
+    }
+    // PageUp
+    case 33: {
       index = 0;
+      const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
       items.setSelectedItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
       break;
-    case 34: // PageDown
+    }
+    // PageDown
+    case 34: {
       index = rowsPerPage - 1;
+      const { computedRows } = itemTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
       items.setSelectedItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
       break;
-    case 36: // Home
+    }
+    // Home
+    case 36: {
       index = 0;
-      await itemTable.value.firstPage();
-      keyDown.value = true;
-      setTimeout(() => {
-        const { computedRows } = itemTable.value;
-        selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]!);
-        keyDown.value = false;
-        itemTable.value.scrollTo(index);
-      }, 1000);
+      const promise = waitForPageLoad();
+      itemTable.value.firstPage();
+      await promise;
+
+      const { computedRows } = itemTable.value;
+      selected.value = [computedRows[index]];
+      items.setSelectedItem(selected.value[0]!);
+      itemTable.value.scrollTo(index);
       break;
-    case 35: // End
+    }
+    // End
+    case 35: {
       index = rowsPerPage - 1;
-      await itemTable.value.lastPage();
-      keyDown.value = true;
-      setTimeout(() => {
-        const { computedRows } = itemTable.value;
-        selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
-        items.setSelectedItem(selected.value[0]!);
-        keyDown.value = false;
-        itemTable.value.scrollTo(index - 1);
-      }, 1000);
+      const promise = waitForPageLoad();
+      itemTable.value.lastPage();
+      await promise;
+
+      const { computedRows } = itemTable.value;
+      selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
+      items.setSelectedItem(selected.value[0]!);
+      itemTable.value.scrollTo(index - 1);
       break;
-    case 37: // ArrowLeft
+    }
+    // ArrowLeft
+    case 37: {
       page = currentPage <= 1 ? lastPage : currentPage - 1;
       index = 0;
+      const promise = waitForPageLoad();
       if (page === lastPage) {
         itemTable.value.lastPage();
       } else {
         itemTable.value.prevPage();
       }
-      keyDown.value = true;
-      setTimeout(() => {
-        const { computedRows } = itemTable.value;
-        selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]!);
-        keyDown.value = false;
-        itemTable.value.scrollTo(index);
-      }, 1000);
+      await promise;
+
+      const { computedRows } = itemTable.value;
+      selected.value = [computedRows[index]];
+      items.setSelectedItem(selected.value[0]!);
+      itemTable.value.scrollTo(index);
       break;
-    case 38: // ArrowUp
+    }
+    // ArrowUp
+    case 38: {
       if (currentIndex > 0) {
         index = currentIndex - 1;
+        const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
         items.setSelectedItem(selected.value[0]!);
       }
       itemTable.value.scrollTo(index - 1);
       break;
-    case 39: // ArrowRight
+    }
+    // ArrowRight
+    case 39: {
       page = currentPage >= lastPage ? 1 : currentPage + 1;
       index = 0;
+      const promise = waitForPageLoad();
       if (page === 1) {
         itemTable.value.firstPage();
       } else {
         itemTable.value.nextPage();
       }
-      keyDown.value = true;
-      setTimeout(() => {
-        const { computedRows } = itemTable.value;
-        selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]!);
-        keyDown.value = false;
-        itemTable.value.scrollTo(index);
-      }, 1000);
+      await promise;
+
+      const { computedRows } = itemTable.value;
+      selected.value = [computedRows[index]];
+      items.setSelectedItem(selected.value[0]!);
+      itemTable.value.scrollTo(index);
       break;
-    case 40: // ArrowDown
+    }
+    // ArrowDown
+    case 40: {
       if (currentIndex < lastIndex) {
         index = currentIndex + 1;
+        const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
         items.setSelectedItem(selected.value[0]!);
       }
       itemTable.value.scrollTo(index);
       break;
+    }
   }
 }
 
