@@ -142,6 +142,7 @@ let namesIndex = 10;
 let namesList: string[] = [];
 let tmpGender: string;
 let tmpAncestry: string;
+let tmpCulture: string;
 const generateNamesNpc = debounce(async function () {
   if (!npcs.getLocks.name) {
     npcs.setGenerating(true);
@@ -149,14 +150,19 @@ const generateNamesNpc = debounce(async function () {
     if (
       namesIndex >= namesList.length - 1 ||
       tmpGender != npcs.getActiveNpc!.npc.gender ||
-      tmpAncestry != npcs.getActiveNpc!.npc.ancestry
+      tmpAncestry != npcs.getActiveNpc!.npc.ancestry ||
+      tmpCulture != npcs.getActiveNpc!.npc.culture
     ) {
       tmpGender = npcs.getActiveNpc!.npc.gender!;
       tmpAncestry = npcs.getActiveNpc!.npc.ancestry!;
+      tmpCulture = npcs.getActiveNpc!.npc.culture!;
 
       const post: {
         gender?: string | undefined;
-        ancestry?: string | undefined;
+        origin?: {
+          FromAncestry?: string | undefined;
+          FromCulture?: string | undefined;
+        };
       } = {};
 
       if (
@@ -167,13 +173,22 @@ const generateNamesNpc = debounce(async function () {
       }
 
       if (
+        !npcs.getActiveNpc!.culture &&
         npcs.getActiveNpc!.npc.ancestry &&
         npcParameters.getNpcParameters.ancestries.includes(npcs.getActiveNpc!.npc.ancestry)
       ) {
-        post.ancestry = npcs.getActiveNpc!.npc.ancestry.replaceAll(' ', '');
+        post.origin = { FromAncestry: npcs.getActiveNpc!.npc.ancestry.replaceAll(' ', '') };
       }
 
-      if (post.ancestry == 'Leshy' && post.gender) {
+      if (
+        npcs.getActiveNpc!.culture &&
+        npcs.getActiveNpc!.npc.culture &&
+        npcParameters.getNpcParameters.cultures.includes(npcs.getActiveNpc!.npc.culture)
+      ) {
+        post.origin = { FromCulture: npcs.getActiveNpc!.npc.culture.replaceAll(' ', '') };
+      }
+
+      if (post.origin?.FromAncestry == 'Leshy' && post.gender) {
         if (post.gender != 'NonBinary') {
           $q.notify({
             progress: true,

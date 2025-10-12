@@ -132,8 +132,11 @@ export async function npcLevelGenerator(game: games) {
 export async function npcNamesGenerator(
   game: games,
   body: {
-    ancestry?: string | undefined;
     gender?: string | undefined;
+    origin?: {
+      FromAncestry?: string | undefined;
+      FromCulture?: string | undefined;
+    };
   }
 ) {
   try {
