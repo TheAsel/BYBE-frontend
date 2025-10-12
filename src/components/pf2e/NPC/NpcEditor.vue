@@ -77,18 +77,18 @@ const generateParameterNpc = debounce(async function (
   parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level' | 'culture'
 ) {
   if (
-    (!npcs.getLocks.ancestry && parameter == 'ancestry') ||
-    (!npcs.getLocks.culture && parameter == 'culture') ||
-    (!npcs.getLocks.class && parameter == 'class') ||
-    (!npcs.getLocks.gender && parameter == 'gender') ||
-    (!npcs.getLocks.job && parameter == 'job') ||
-    (!npcs.getLocks.nickname && parameter == 'nickname') ||
-    (!npcs.getLocks.level && parameter == 'level')
+    (!npcs.getLocks.ancestry && parameter === 'ancestry') ||
+    (!npcs.getLocks.culture && parameter === 'culture') ||
+    (!npcs.getLocks.class && parameter === 'class') ||
+    (!npcs.getLocks.gender && parameter === 'gender') ||
+    (!npcs.getLocks.job && parameter === 'job') ||
+    (!npcs.getLocks.nickname && parameter === 'nickname') ||
+    (!npcs.getLocks.level && parameter === 'level')
   ) {
     npcs.setGenerating(true);
 
     try {
-      if (parameter == 'level') {
+      if (parameter === 'level') {
         const newLevel = await npcLevelGenerator('pf');
         if (newLevel === undefined) {
           throw new TypeError('Error generating npc level');
@@ -149,9 +149,9 @@ const generateNamesNpc = debounce(async function () {
 
     if (
       namesIndex >= namesList.length - 1 ||
-      tmpGender != npcs.getActiveNpc!.npc.gender ||
-      tmpAncestry != npcs.getActiveNpc!.npc.ancestry ||
-      tmpCulture != npcs.getActiveNpc!.npc.culture
+      tmpGender !== npcs.getActiveNpc!.npc.gender ||
+      tmpAncestry !== npcs.getActiveNpc!.npc.ancestry ||
+      tmpCulture !== npcs.getActiveNpc!.npc.culture
     ) {
       tmpGender = npcs.getActiveNpc!.npc.gender!;
       tmpAncestry = npcs.getActiveNpc!.npc.ancestry!;
@@ -188,8 +188,8 @@ const generateNamesNpc = debounce(async function () {
         post.origin = { FromCulture: npcs.getActiveNpc!.npc.culture.replaceAll(' ', '') };
       }
 
-      if (post.origin?.FromAncestry == 'Leshy' && post.gender) {
-        if (post.gender != 'NonBinary') {
+      if (post.origin?.FromAncestry === 'Leshy' && post.gender) {
+        if (post.gender !== 'NonBinary') {
           $q.notify({
             progress: true,
             type: 'warning',

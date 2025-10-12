@@ -73,7 +73,7 @@ async function changeGame(value: games) {
 
   // replace the prefix (first segment after "/")
   const firstSegment = route.path.split('/')[1];
-  if (firstSegment === 'sf' || firstSegment == 'pf') {
+  if (firstSegment === 'sf' || firstSegment === 'pf') {
     const newPath = path.replace(/^\/[^/]+/, `/${opt.value}`);
     await router.push(newPath);
   }
@@ -173,15 +173,15 @@ const unhide = debounce(function () {
           <div class="tw:my-auto tw:ml-4 tw:text-gray-800 tw:dark:text-gray-200">BYBE</div>
         </router-link>
         <q-select
-          v-if="currentPath != '/' && currentPath != '/download'"
+          v-if="currentPath !== '/' && currentPath !== '/download'"
           class="tw:ml-6"
           v-model="settings.getGame"
           :options="gameOptions"
           :readonly="
-            currentPath == '/pf/bestiary' ||
-            currentPath == '/pf/item' ||
-            currentPath == '/sf/bestiary' ||
-            currentPath == '/sf/item'
+            currentPath === '/pf/bestiary' ||
+            currentPath === '/pf/item' ||
+            currentPath === '/sf/bestiary' ||
+            currentPath === '/sf/item'
           "
           emit-value
           map-options
@@ -232,11 +232,11 @@ const unhide = debounce(function () {
       >
         <div class="tw:flex tw:flex-col tw:lg:flex-row">
           <div
-            v-if="currentPath != '/' && currentPath != '/download'"
+            v-if="currentPath !== '/' && currentPath !== '/download'"
             class="tw:flex tw:flex-col tw:lg:flex-row tw:lg:items-center tw:lg:justify-start tw:gap-y-4 tw:lg:gap-y-0 tw:gap-x-0 tw:lg:gap-x-7 tw:mt-5 tw:lg:mt-0"
           >
             <q-separator
-              v-if="currentPath != '/' && currentPath != '/download'"
+              v-if="currentPath !== '/' && currentPath !== '/download'"
               vertical
               inset
               class="tw:lg:block tw:hidden tw:ml-4!"

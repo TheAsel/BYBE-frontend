@@ -731,7 +731,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
           >
         </div>
       </q-header>
-      <q-page-container v-if="encounter.getGenerating == false">
+      <q-page-container v-if="encounter.getGenerating === false">
         <div v-for="(item, index) in encounter.getActiveEncounter!.creatures" :key="index">
           <div class="tw:flex">
             <div class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">

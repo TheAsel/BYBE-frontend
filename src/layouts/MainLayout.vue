@@ -21,7 +21,7 @@ const isHome = computed(() => {
 });
 
 const firstSegment = route.path.split('/')[1];
-if (firstSegment == 'sf') {
+if (firstSegment === 'sf') {
   settings.setGame('sf');
 } else {
   settings.setGame('pf');
@@ -84,7 +84,7 @@ try {
           |
           <span v-if="!isHome">
             <router-link
-              v-if="settings.getGame == 'sf'"
+              v-if="settings.getGame === 'sf'"
               to="/sf/license"
               class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
               >Licenses and Policies</router-link

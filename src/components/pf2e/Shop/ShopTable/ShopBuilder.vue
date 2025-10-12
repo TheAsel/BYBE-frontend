@@ -803,7 +803,7 @@ defineExpose({ generateShop });
                                 v-model="scope.opt.state"
                                 toggle-indeterminate
                                 :color="scope.opt.state === true ? 'positive' : 'red'"
-                                :keep-color="scope.opt.state != null"
+                                :keep-color="scope.opt.state !== null"
                                 :checked-icon="biCheck"
                                 :unchecked-icon="biX"
                                 @update:model-value="toggleTraits(scope.opt)"
@@ -1237,7 +1237,7 @@ defineExpose({ generateShop });
                                 v-model="scope.opt.state"
                                 toggle-indeterminate
                                 :color="scope.opt.state === true ? 'positive' : 'red'"
-                                :keep-color="scope.opt.state != null"
+                                :keep-color="scope.opt.state !== null"
                                 :checked-icon="biCheck"
                                 :unchecked-icon="biX"
                                 @update:model-value="toggleTraits(scope.opt)"

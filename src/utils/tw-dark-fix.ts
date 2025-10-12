@@ -14,7 +14,7 @@ function override_dark_setup_for_tailwind(val: boolean) {
 }
 
 export function TailwindDarkFix() {
-  if (Dark.mode == 'auto' || Dark.isActive) override_dark_setup_for_tailwind(true);
+  if (Dark.mode === 'auto' || Dark.isActive) override_dark_setup_for_tailwind(true);
 
   watch(
     () => Dark.isActive,

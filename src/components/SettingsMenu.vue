@@ -327,27 +327,27 @@ const validateData = (result: string) => {
           break;
         }
         case 'theme':
-          if (parsedData[key] != 'light' && parsedData[key] != 'dark') {
+          if (parsedData[key] !== 'light' && parsedData[key] !== 'dark') {
             throw new Error('Invalid loaded theme value');
           }
           break;
         case 'is_pwl_on':
-          if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+          if (parsedData[key] !== 'true' && parsedData[key] !== 'false') {
             throw new Error('Invalid loaded pwl value');
           }
           break;
         case 'hide_support':
-          if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+          if (parsedData[key] !== 'true' && parsedData[key] !== 'false') {
             throw new Error('Invalid loaded hide support value');
           }
           break;
         case 'is_aon_links_on':
-          if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+          if (parsedData[key] !== 'true' && parsedData[key] !== 'false') {
             throw new Error('Invalid loaded aon links value');
           }
           break;
         case 'all_experimentals':
-          if (parsedData[key] != 'true' && parsedData[key] != 'false') {
+          if (parsedData[key] !== 'true' && parsedData[key] !== 'false') {
             throw new Error('Invalid loaded all experimentals value');
           }
           break;

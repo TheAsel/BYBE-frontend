@@ -13,7 +13,7 @@ const items = itemsStore();
 const router = useRouter();
 
 const addPlus = (value: number | undefined) => {
-  if (value != undefined && value >= 0) {
+  if (value !== undefined && value >= 0) {
     return '+' + value;
   } else {
     return value;
@@ -209,7 +209,7 @@ const openShopSheet = (game: games, id: number) => {
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <span v-if="items.getSelectedItem!.armor_data">
         <strong>Strenght </strong>
-        <span v-if="items.getSelectedItem!.armor_data.strength_required != null"
+        <span v-if="items.getSelectedItem!.armor_data.strength_required !== null"
           >{{ addPlus(items.getSelectedItem!.armor_data.strength_required) }};
         </span>
         <span v-else>—; </span>
@@ -231,7 +231,7 @@ const openShopSheet = (game: games, id: number) => {
           items.getSelectedItem!.core_item.base_item &&
           items.getSelectedItem!.core_item.base_item.toLowerCase().replaceAll('-', ' ') !=
             items.getSelectedItem!.core_item.name.toLowerCase() &&
-          items.getSelectedItem!.core_item.base_item != 'explorers-clothing'
+          items.getSelectedItem!.core_item.base_item !== 'explorers-clothing'
         "
       >
         <strong>Base Armor</strong>

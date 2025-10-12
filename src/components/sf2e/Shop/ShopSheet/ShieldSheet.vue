@@ -13,7 +13,7 @@ const items = itemsStore();
 const router = useRouter();
 
 const addPlus = (value: number | undefined) => {
-  if (value != undefined && value >= 0) {
+  if (value !== undefined && value >= 0) {
     return '+' + value;
   } else {
     return value;
@@ -219,7 +219,7 @@ const openShopSheet = (game: games, id: number) => {
           items.getSelectedItem!.core_item.base_item &&
           items.getSelectedItem!.core_item.base_item.toLowerCase().replaceAll('-', ' ') !=
             items.getSelectedItem!.core_item.name.toLowerCase() &&
-          items.getSelectedItem!.core_item.base_item != 'casters-targe'
+          items.getSelectedItem!.core_item.base_item !== 'casters-targe'
         "
       >
         <strong>Base Shield</strong>

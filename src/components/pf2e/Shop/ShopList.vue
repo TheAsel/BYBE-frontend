@@ -309,7 +309,7 @@ const saveChanges = () => {
 };
 
 const showItem = debounce(async function (item: min_item) {
-  if (lastItemId.value != item.id || lastItemGame.value != item.game) {
+  if (lastItemId.value !== item.id || lastItemGame.value !== item.game) {
     lastItemId.value = item.id;
     lastItemGame.value = item.game;
     try {
@@ -650,7 +650,7 @@ const showItem = debounce(async function (item: min_item) {
         </div>
       </q-header>
 
-      <q-page-container v-if="shop.getGenerating == false">
+      <q-page-container v-if="shop.getGenerating === false">
         <div v-for="(item, index) in shop.getActiveShop!.items" :key="index">
           <div class="tw:flex">
             <div class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">

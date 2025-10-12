@@ -77,17 +77,17 @@ const generateParameterNpc = debounce(async function (
   parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level'
 ) {
   if (
-    (!npcs.getLocks.ancestry && parameter == 'ancestry') ||
-    (!npcs.getLocks.class && parameter == 'class') ||
-    (!npcs.getLocks.gender && parameter == 'gender') ||
-    (!npcs.getLocks.job && parameter == 'job') ||
-    (!npcs.getLocks.nickname && parameter == 'nickname') ||
-    (!npcs.getLocks.level && parameter == 'level')
+    (!npcs.getLocks.ancestry && parameter === 'ancestry') ||
+    (!npcs.getLocks.class && parameter === 'class') ||
+    (!npcs.getLocks.gender && parameter === 'gender') ||
+    (!npcs.getLocks.job && parameter === 'job') ||
+    (!npcs.getLocks.nickname && parameter === 'nickname') ||
+    (!npcs.getLocks.level && parameter === 'level')
   ) {
     npcs.setGenerating(true);
 
     try {
-      if (parameter == 'level') {
+      if (parameter === 'level') {
         const newLevel = await npcLevelGenerator('sf');
         if (newLevel === undefined) {
           throw new TypeError('Error generating npc level');
@@ -138,20 +138,20 @@ let namesIndex = 10;
 let namesList: string[] = [];
 let tmpGender: string;
 let tmpAncestry: string;
-let tmpCulture: string;
+// let tmpCulture: string;
 const generateNamesNpc = debounce(async function () {
   if (!npcs.getLocks.name) {
     npcs.setGenerating(true);
 
     if (
       namesIndex >= namesList.length - 1 ||
-      tmpGender != npcs.getActiveNpc!.npc.gender ||
-      tmpAncestry != npcs.getActiveNpc!.npc.ancestry ||
-      tmpCulture != npcs.getActiveNpc!.npc.culture
+      tmpGender !== npcs.getActiveNpc!.npc.gender ||
+      tmpAncestry !== npcs.getActiveNpc!.npc.ancestry
+      // || tmpCulture !== npcs.getActiveNpc!.npc.culture
     ) {
       tmpGender = npcs.getActiveNpc!.npc.gender!;
       tmpAncestry = npcs.getActiveNpc!.npc.ancestry!;
-      tmpCulture = npcs.getActiveNpc!.npc.culture!;
+      // tmpCulture = npcs.getActiveNpc!.npc.culture!;
 
       const post: {
         gender?: string | undefined;
@@ -169,23 +169,23 @@ const generateNamesNpc = debounce(async function () {
       }
 
       if (
-        !npcs.getActiveNpc!.culture &&
+        // !npcs.getActiveNpc!.culture &&
         npcs.getActiveNpc!.npc.ancestry &&
         npcParameters.getNpcParameters.ancestries.includes(npcs.getActiveNpc!.npc.ancestry)
       ) {
         post.origin = { FromAncestry: npcs.getActiveNpc!.npc.ancestry.replaceAll(' ', '') };
       }
 
-      if (
-        npcs.getActiveNpc!.culture &&
-        npcs.getActiveNpc!.npc.culture &&
-        npcParameters.getNpcParameters.cultures.includes(npcs.getActiveNpc!.npc.culture)
-      ) {
-        post.origin = { FromCulture: npcs.getActiveNpc!.npc.culture.replaceAll(' ', '') };
-      }
+      // if (
+      //   npcs.getActiveNpc!.culture &&
+      //   npcs.getActiveNpc!.npc.culture &&
+      //   npcParameters.getNpcParameters.cultures.includes(npcs.getActiveNpc!.npc.culture)
+      // ) {
+      //   post.origin = { FromCulture: npcs.getActiveNpc!.npc.culture.replaceAll(' ', '') };
+      // }
 
-      if (post.origin?.FromAncestry == 'Leshy' && post.gender) {
-        if (post.gender != 'NonBinary') {
+      if (post.origin?.FromAncestry === 'Leshy' && post.gender) {
+        if (post.gender !== 'NonBinary') {
           $q.notify({
             progress: true,
             type: 'warning',

@@ -125,7 +125,7 @@ const changeVariant = (variant: variants) => {
 };
 
 const addPlus = (value: number | undefined) => {
-  if (value != undefined && value > 0) {
+  if (value !== undefined && value > 0) {
     return '+' + value;
   } else {
     return value;
@@ -133,7 +133,7 @@ const addPlus = (value: number | undefined) => {
 };
 
 const variantStyle = (value: string | number | undefined) => {
-  if (value && creatureVariant.value != 'Base') {
+  if (value && creatureVariant.value !== 'Base') {
     const valueStr = '<span class="tw:text-red-600"><b>' + value.toString() + '</b></span>';
     return valueStr;
   }
@@ -176,11 +176,11 @@ const perceptionString = computed(() => {
     .flatMap((entry) => Object.values(entry.spells))
     .flatMap((spell) => spell.name);
   let finalString = '';
-  if (perception != undefined) {
+  if (perception !== undefined) {
     finalString += finalString +=
       '<strong>Perception&nbsp;</strong>' + variantStyle(addPlus(perception)) + '; ';
   }
-  if (senses != undefined && senses.length > 0) {
+  if (senses !== undefined && senses.length > 0) {
     for (const sense of senses) {
       let found = false;
       for (const action of creatureData?.extra_data?.actions ?? []) {
@@ -201,7 +201,7 @@ const perceptionString = computed(() => {
       }
     }
     if (
-      spells != undefined &&
+      spells !== undefined &&
       spells.length > 0 &&
       senses.every((sense) => {
         return sense.name !== 'truesight';
@@ -230,7 +230,7 @@ const perceptionString = computed(() => {
 const languageString = computed(() => {
   const languages = creatureData?.extra_data?.languages;
   let finalString = '';
-  if (languages != undefined && languages.length > 0) {
+  if (languages !== undefined && languages.length > 0) {
     finalString += '<strong>Languages&nbsp;</strong>';
     for (const language of languages) {
       finalString += upperFirst(language) + ', ';
@@ -249,7 +249,7 @@ const languageString = computed(() => {
 const skillString = computed(() => {
   const skills = creatureData?.extra_data?.skills;
   let finalString = '';
-  if (skills != undefined && skills.length > 0) {
+  if (skills !== undefined && skills.length > 0) {
     finalString += '<strong>Skills&nbsp;</strong>';
     for (const skill of skills) {
       finalString += skill.name + ' ' + variantStyle(addPlus(skill.modifier)) + ', ';
@@ -264,7 +264,7 @@ const itemString = computed(() => {
   const armors = creatureData?.combat_data?.armors;
   let finalString = '';
   finalString += '<strong>Items&nbsp;</strong>';
-  if (weapons != undefined && weapons.length > 0) {
+  if (weapons !== undefined && weapons.length > 0) {
     for (const weapon of weapons) {
       if (weapon.weapon_data) {
         if (
@@ -305,7 +305,7 @@ const itemString = computed(() => {
       }
     }
   }
-  if (items != undefined && items.length > 0) {
+  if (items !== undefined && items.length > 0) {
     for (const item of items) {
       if (item.item_type === 'Consumable' || item.item_type === 'Equipment') {
         if (item.quantity > 1) {
@@ -315,7 +315,7 @@ const itemString = computed(() => {
       }
     }
   }
-  if (armors != undefined && armors.length > 0) {
+  if (armors !== undefined && armors.length > 0) {
     for (const armor of armors) {
       if (armor.armor_data)
         if (
@@ -382,7 +382,7 @@ const defenceString = computed(() => {
       '<strong>Will&nbsp;</strong>' +
       variantStyle(addPlus(creatureData?.combat_data?.saving_throws.will));
   }
-  if (actions != undefined && actions.length > 0) {
+  if (actions !== undefined && actions.length > 0) {
     finalString += '; ';
     for (const action of actions) {
       if (
@@ -401,7 +401,7 @@ const defenceString = computed(() => {
 const immunityString = () => {
   const immunities = creatureData?.combat_data?.immunities;
   let finalString = '';
-  if (immunities != undefined && immunities.length > 0) {
+  if (immunities !== undefined && immunities.length > 0) {
     for (const immunity of immunities) {
       finalString += immunity.toLowerCase().replaceAll('-', ' ') + ', ';
     }
@@ -413,16 +413,16 @@ const resistanceString = () => {
   const resistances = creatureData?.combat_data?.resistances;
   let finalString = '';
 
-  if (resistances != undefined && resistances.length > 0) {
+  if (resistances !== undefined && resistances.length > 0) {
     for (const resistance of resistances) {
       finalString +=
         `${resistance.core.name.replaceAll('-', ' ')}` + ' ' + `${resistance.core.value}` + ', ';
 
       if (
-        (resistance.exception_vs != undefined && resistance.exception_vs.length > 0) ||
-        (resistance.double_vs != undefined && resistance.double_vs.length > 0)
+        (resistance.exception_vs !== undefined && resistance.exception_vs.length > 0) ||
+        (resistance.double_vs !== undefined && resistance.double_vs.length > 0)
       ) {
-        if (resistance.exception_vs != undefined && resistance.exception_vs.length > 0) {
+        if (resistance.exception_vs !== undefined && resistance.exception_vs.length > 0) {
           finalString = finalString.substring(0, finalString.length - 2);
           finalString += ' (except ';
           for (const exception of resistance.exception_vs) {
@@ -432,8 +432,8 @@ const resistanceString = () => {
           finalString = finalString.substring(0, finalString.length - 2);
         }
 
-        if (resistance.double_vs != undefined && resistance.double_vs.length > 0) {
-          if (resistance.exception_vs != undefined && resistance.exception_vs.length > 0) {
+        if (resistance.double_vs !== undefined && resistance.double_vs.length > 0) {
+          if (resistance.exception_vs !== undefined && resistance.exception_vs.length > 0) {
             finalString += ';';
           }
           finalString += ' double resistance against ';
@@ -471,26 +471,26 @@ const healthString = computed(() => {
   const hp = creatureData?.core_data.essential.hp;
   const hpDetail = creatureData?.extra_data?.hp_detail;
   let finalString = '';
-  if (hp != undefined) {
+  if (hp !== undefined) {
     finalString += '<strong>HP&nbsp;</strong>' + variantStyle(creatureData?.core_data.essential.hp);
     if (hpDetail) {
       finalString += ', ' + hpDetail;
     }
   }
   if (
-    creatureData?.combat_data?.immunities != undefined &&
+    creatureData?.combat_data?.immunities !== undefined &&
     creatureData?.combat_data?.immunities.length > 0
   ) {
     finalString += ';<br><strong>Immunities</strong>&nbsp;' + immunityString();
   }
   if (
-    creatureData?.combat_data?.resistances != undefined &&
+    creatureData?.combat_data?.resistances !== undefined &&
     Object.keys(creatureData?.combat_data?.resistances).length > 0
   ) {
     finalString += ';<br><strong>Resistances</strong>&nbsp;' + resistanceString();
   }
   if (
-    creatureData?.combat_data?.weaknesses != undefined &&
+    creatureData?.combat_data?.weaknesses !== undefined &&
     Object.keys(creatureData?.combat_data?.weaknesses).length > 0
   ) {
     finalString += ';<br><strong>Weaknesess</strong>&nbsp;' + weaknessString() + ';';
@@ -505,7 +505,7 @@ const speedString = computed(() => {
   if (speedKeys.length > 0) {
     for (const speed of speedKeys) {
       if (`${speed}` === 'Base') {
-        if (`${creatureData?.extra_data?.speeds[speed]}` != '0') {
+        if (`${creatureData?.extra_data?.speeds[speed]}` !== '0') {
           finalString += `${creatureData?.extra_data?.speeds[speed]}` + ' feet, ';
         }
       } else {
@@ -537,7 +537,7 @@ const spellString = computed(() => {
     let finalString = '';
     const spellLevels: boolean[] = new Array(11).fill(false);
     finalString += '<strong>' + entry.spellcaster_data.spellcasting_name + '</strong>';
-    if (entry.spellcaster_data.spellcasting_dc_mod != 0) {
+    if (entry.spellcaster_data.spellcasting_dc_mod !== 0) {
       finalString += '&nbsp;DC ' + variantStyle(entry.spellcaster_data.spellcasting_dc_mod);
     }
     if (creatureVariant.value === 'Elite') {
@@ -546,7 +546,7 @@ const spellString = computed(() => {
     if (creatureVariant.value === 'Weak') {
       finalString += ' (' + variantStyle('-4 dmg') + ')';
     }
-    if (entry.spellcaster_data.spellcasting_atk_mod != 0) {
+    if (entry.spellcaster_data.spellcasting_atk_mod !== 0) {
       finalString +=
         ', attack ' + variantStyle(addPlus(entry.spellcaster_data.spellcasting_atk_mod));
     }
@@ -646,7 +646,7 @@ const printPage = () => {
             />
             <div class="tw:my-auto">
               {{ creatureData?.core_data.essential.cr_type }}
-              <span :class="{ 'tw:text-red-600': creatureVariant != 'Base' }">{{
+              <span :class="{ 'tw:text-red-600': creatureVariant !== 'Base' }">{{
                 creatureData?.variant_data?.level
               }}</span>
             </div>
@@ -676,7 +676,7 @@ const printPage = () => {
               {{ creatureData?.core_data.essential.rarity.toUpperCase() }}
             </div>
             <div
-              v-if="creatureData?.core_data.essential.alignment != 'No Alignment'"
+              v-if="creatureData?.core_data.essential.alignment !== 'No Alignment'"
               class="tw:bg-[#4287f5] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ creatureData?.core_data.essential.alignment.toUpperCase() }}
@@ -720,7 +720,7 @@ const printPage = () => {
             ></div>
             <div
               v-if="
-                creatureData?.extra_data?.languages != undefined &&
+                creatureData?.extra_data?.languages !== undefined &&
                 creatureData?.extra_data?.languages.length > 0
               "
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
@@ -728,7 +728,7 @@ const printPage = () => {
             ></div>
             <div
               v-if="
-                creatureData?.extra_data?.skills != undefined &&
+                creatureData?.extra_data?.skills !== undefined &&
                 creatureData?.extra_data?.skills.length > 0
               "
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
@@ -762,9 +762,9 @@ const printPage = () => {
             </template>
             <div
               v-if="
-                creatureData?.combat_data?.weapons != undefined &&
+                creatureData?.combat_data?.weapons !== undefined &&
                 creatureData?.combat_data?.weapons.length > 0 &&
-                itemString != ''
+                itemString !== ''
               "
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               v-html="itemString"
@@ -787,10 +787,10 @@ const printPage = () => {
             <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
               <div
                 v-if="
-                  item.slug != 'regeneration' &&
-                  item.slug != 'fast-healing' &&
-                  item.slug != 'negative-healing' &&
-                  item.description != '' &&
+                  item.slug !== 'regeneration' &&
+                  item.slug !== 'fast-healing' &&
+                  item.slug !== 'negative-healing' &&
+                  item.description !== '' &&
                   item.category === 'defensive'
                 "
                 class="tw:text-base tw:text-gray-800 tw:dark:text-white"
@@ -811,7 +811,7 @@ const printPage = () => {
           <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
             <div
               v-if="
-                creatureData?.extra_data?.speeds != undefined &&
+                creatureData?.extra_data?.speeds !== undefined &&
                 Object.keys(creatureData?.extra_data?.speeds).length > 0
               "
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
@@ -822,7 +822,7 @@ const printPage = () => {
 
             <template v-for="item in creatureData?.combat_data?.weapons" :key="item.item_core.id">
               <div
-                v-if="item.weapon_data?.weapon_type != 'Generic'"
+                v-if="item.weapon_data?.weapon_type !== 'Generic'"
                 class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               >
                 <strong v-if="item.weapon_data?.weapon_type === 'Melee'">Melee </strong>
@@ -831,7 +831,7 @@ const printPage = () => {
                   >1</span
                 >
                 <i>{{ ' ' + item.item_core.name.toLowerCase() + ' ' }} </i>
-                <span :class="{ 'tw:text-red-600 tw:font-bold': creatureVariant != 'Base' }"
+                <span :class="{ 'tw:text-red-600 tw:font-bold': creatureVariant !== 'Base' }"
                   >{{ addPlus(item.weapon_data?.to_hit_bonus!) }}
                   <span v-if="item.item_core.traits.includes('agile')"
                     >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 4) }}/{{
@@ -849,15 +849,15 @@ const printPage = () => {
                   <span v-if="weapon.dice">
                     {{ weapon.dice.n_of_dices }}d{{ weapon.dice.dice_size
                     }}<span
-                      v-if="weapon.bonus_dmg != 0"
-                      :class="{ 'tw:text-red-600 tw:font-bold': creatureVariant != 'Base' }"
+                      v-if="weapon.bonus_dmg !== 0"
+                      :class="{ 'tw:text-red-600 tw:font-bold': creatureVariant !== 'Base' }"
                       >{{ addPlus(weapon.bonus_dmg) }}</span
                     >
                     {{ weapon.dmg_type }}
                     <span
                       v-if="
                         item.weapon_data!.damage_data.length > 1 &&
-                        index != item.weapon_data!.damage_data.length - 1
+                        index !== item.weapon_data!.damage_data.length - 1
                       "
                     >
                       plus
