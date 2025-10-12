@@ -230,9 +230,20 @@ const openShare = async () => {
   };
 
   for (const creature of encounterList) {
+    if (creature.game !== 'pf' && creature.game !== 'sf') {
+      shareDialog.value = false;
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'This legacy list cannot be shared',
+        icon: matPriorityHigh
+      });
+      return;
+    }
+
     const tmp_variant: variants = creature.variant ? creature.variant : 'Base';
     const tmp_qty: number = creature.quantity ? creature.quantity : 1;
-    const tmp_game: games = creature.game === 'sf' ? 'sf' : 'pf';
+    const tmp_game: games = creature.game;
 
     body.creatures_data.push({
       id: creature.id,

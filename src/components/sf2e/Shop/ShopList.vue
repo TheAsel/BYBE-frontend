@@ -162,8 +162,19 @@ const openShare = async () => {
   };
 
   for (const item of shopList) {
+    if (item.game !== 'pf' && item.game !== 'sf') {
+      shareDialog.value = false;
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'This legacy list cannot be shared',
+        icon: matPriorityHigh
+      });
+      return;
+    }
+
     const tmp_qty: number = item.quantity ? item.quantity : 1;
-    const tmp_game: games = item.game === 'sf' ? 'sf' : 'pf';
+    const tmp_game: games = item.game;
 
     body.items_data.push({
       id: item.id,
