@@ -67,7 +67,7 @@ if (localNpcs) {
         relationships: '',
         ideology: '',
         custom_fields: [{ name: '', body: '' }],
-        game: 'Pathfinder'
+        game: 'pf'
       },
       culture: false
     };

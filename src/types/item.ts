@@ -1,6 +1,7 @@
 import type { games, rarities, sizes } from './filters';
 
 export type item = {
+  game: games;
   armor_data?: {
     ac_bonus: number;
     check_penalty: number;

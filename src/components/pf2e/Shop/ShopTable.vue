@@ -258,7 +258,7 @@ const openShopSheet = (id: number) => {
 
 const addItem = debounce(function (item: item) {
   const min_item: min_item = {
-    game: 'pf',
+    game: item.game,
     id: item.core_item.id,
     // TODO: use item.core_item.archive_link if it gets added
     archive_link:

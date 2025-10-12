@@ -79,9 +79,10 @@ const openShopSheet = (game: games, id: number) => {
         padding="sm"
         class="tw:mr-1 tw:my-auto only-screen item-page-element"
         aria-label="Open item sheet"
-        @click="openShopSheet('sf', items.getSelectedItem!.core_item.id)"
+        @click="
+          openShopSheet(items.getSelectedItem?.game ?? 'sf', items.getSelectedItem!.core_item.id)
+        "
       >
-        <!-- TODO: use items.getSelectedItem!.core_item.game instead of hardcoded -->
         <q-tooltip
           class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
           anchor="top middle"
@@ -91,14 +92,17 @@ const openShopSheet = (game: games, id: number) => {
         </q-tooltip>
       </q-btn>
     </div>
-    <!-- TODO: check for items.getSelectedItem!.core_item.game to query the correct AoN -->
     <a
       v-if="settings.getAonLinks"
       class="tw:my-auto"
       :href="
-        'https://2e.aonsrd.com/search?q=' +
-        encodeURIComponent(items.getSelectedItem!.core_item.name) +
-        '&type=eqs'
+        items.getSelectedItem!.game === 'pf'
+          ? 'https://2e.aonprd.com/Search.aspx?q=' +
+            encodeURIComponent(items.getSelectedItem!.core_item.name) +
+            '&type=eqs'
+          : 'https://2e.aonsrd.com/search?q=' +
+            encodeURIComponent(items.getSelectedItem!.core_item.name) +
+            '&type=eqs'
       "
       target="_blank"
       rel="noopener"

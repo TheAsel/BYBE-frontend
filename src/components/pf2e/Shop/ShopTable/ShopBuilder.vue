@@ -211,7 +211,7 @@ const generateShop = debounce(async function () {
       shop.clearShop();
       for (let i = 0; i < randomShop.count; i++) {
         const min_item: min_item = {
-          game: 'pf',
+          game: randomShop.results[i]!.game,
           id: randomShop.results[i]!.core_item.id,
           // TODO: use randomShop.results[i].core_item.archive_link if it gets added
           archive_link:

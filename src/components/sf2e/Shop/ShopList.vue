@@ -163,7 +163,7 @@ const openShare = async () => {
 
   for (const item of shopList) {
     const tmp_qty: number = item.quantity ? item.quantity : 1;
-    const tmp_game: 'Pathfinder' | 'Starfinder' = item.game === 'sf' ? 'Starfinder' : 'Pathfinder';
+    const tmp_game: games = item.game;
 
     post.items_data.push({
       id: item.id,
@@ -204,17 +204,14 @@ const importShop = async () => {
     const tmp_items: min_item[] = [];
     for (const item of importShopData.value?.items_data ?? []) {
       try {
-        const fetchedItemData = await requestItemId(
-          item.game === 'Starfinder' ? 'sf' : 'pf',
-          item.id
-        );
+        const fetchedItemData = await requestItemId(item.game, item.id);
 
         if (fetchedItemData !== undefined) {
           tmp_items.push({
-            game: item.game === 'Starfinder' ? 'sf' : 'pf',
+            game: item.game,
             id: item.id,
             archive_link:
-              item.game === 'Starfinder'
+              item.game === 'sf'
                 ? 'https://2e.aonsrd.com/search?q=' +
                   encodeURIComponent(fetchedItemData.core_item.name) +
                   '&type=eqs'

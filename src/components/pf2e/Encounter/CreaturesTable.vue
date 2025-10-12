@@ -387,7 +387,7 @@ const openCreatureSheet = (id: number) => {
 // ---- Add creature to encounter function
 const addCreature = debounce(function (creature: creature) {
   const min_creature: min_creature = {
-    game: 'pf',
+    game: creature.game,
     id: creature.core_data.essential.id,
     archive_link: creature.core_data.derived.archive_link,
     name: creature.core_data.essential.name,

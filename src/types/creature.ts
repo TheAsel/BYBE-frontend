@@ -6,6 +6,7 @@ interface KeyValue {
 }
 
 export type creature = {
+  game: games;
   combat_data?: {
     ac: number;
     armors: [

@@ -162,6 +162,7 @@ const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
     const tmpLaserRifleFull: item = {
+      game: 'sf',
       core_item: {
         id: 402,
         name: 'Laser Rifle',

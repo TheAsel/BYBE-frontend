@@ -232,8 +232,7 @@ const openShare = async () => {
   for (const creature of encounterList) {
     const tmp_variant: variants = creature.variant ? creature.variant : 'Base';
     const tmp_qty: number = creature.quantity ? creature.quantity : 1;
-    const tmp_game: 'Pathfinder' | 'Starfinder' =
-      creature.game === 'sf' ? 'Starfinder' : 'Pathfinder';
+    const tmp_game: games = creature.game;
 
     post.creatures_data.push({
       id: creature.id,
@@ -276,7 +275,7 @@ const importEncounter = async () => {
     for (const creature of importEncounterData.value?.creatures_data ?? []) {
       try {
         const fetchedCreatureData = await requestCreatureId(
-          creature.game === 'Starfinder' ? 'sf' : 'pf',
+          creature.game,
           creature.id,
           creature.variant,
           is_pwl_on.value
@@ -284,7 +283,7 @@ const importEncounter = async () => {
 
         if (fetchedCreatureData !== undefined) {
           tmp_creatures.push({
-            game: creature.game === 'Starfinder' ? 'sf' : 'pf',
+            game: creature.game,
             id: creature.id,
             archive_link: fetchedCreatureData.core_data.derived.archive_link,
             name: fetchedCreatureData.core_data.essential.name,

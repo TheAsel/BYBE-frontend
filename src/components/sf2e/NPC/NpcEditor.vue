@@ -331,7 +331,7 @@ const openShare = async () => {
     level: currentNpc.level === undefined ? 1 : currentNpc.level,
     culture: currentNpc.culture === undefined ? '' : currentNpc.culture,
     class: currentNpc.class === undefined ? '' : currentNpc.class,
-    game: 'Starfinder'
+    game: 'sf'
   });
 
   try {
@@ -395,7 +395,7 @@ const importNpc = () => {
           : importNpcData.value?.npcs_data[0].class,
       game:
         importNpcData.value?.npcs_data[0].game === undefined
-          ? 'Starfinder'
+          ? 'sf'
           : importNpcData.value?.npcs_data[0].game,
       languages: null,
       description: null,

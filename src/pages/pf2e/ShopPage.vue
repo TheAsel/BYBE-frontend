@@ -162,6 +162,7 @@ const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
     const tmpCloakFull: item = {
+      game: 'pf',
       core_item: {
         id: 3511,
         name: 'Cloak of Illusions',

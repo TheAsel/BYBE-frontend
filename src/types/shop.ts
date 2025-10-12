@@ -1,3 +1,4 @@
+import type { games } from './filters';
 import type { min_item } from './item';
 
 export type shop_list = {
@@ -10,6 +11,6 @@ export type shareable_shop = {
   items_data: {
     id: number;
     qty: number;
-    game: 'Pathfinder' | 'Starfinder';
+    game: games;
   }[];
 };

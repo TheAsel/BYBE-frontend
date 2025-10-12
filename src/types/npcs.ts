@@ -1,3 +1,5 @@
+import type { games } from './filters';
+
 export type valid_genders = {
   ancestry: string;
   valid_genders: string[];
@@ -22,7 +24,7 @@ export type npc = {
     name: string | null;
     body: string | null;
   }[];
-  game: 'Pathfinder' | 'Starfinder';
+  game: games;
 };
 
 export type npc_list = {
@@ -42,6 +44,6 @@ export type shareable_npc = {
     level: number;
     culture: string;
     class: string;
-    game: 'Pathfinder' | 'Starfinder';
+    game: games;
   }[];
 };

@@ -601,7 +601,7 @@ export const npcStore = defineStore('npc', {
         relationships: '',
         ideology: '',
         custom_fields: [{ name: '', body: '' }],
-        game: 'Pathfinder'
+        game: 'pf'
       };
       this.npcs[this.activeNpc]!.npc = tmpNpc;
     },
@@ -631,7 +631,7 @@ export const npcStore = defineStore('npc', {
           relationships: '',
           ideology: '',
           custom_fields: [{ name: '', body: '' }],
-          game: 'Pathfinder'
+          game: 'pf'
         },
         culture: false
       });
@@ -660,7 +660,7 @@ export const npcStore = defineStore('npc', {
               relationships: '',
               ideology: '',
               custom_fields: [{ name: '', body: '' }],
-              game: 'Pathfinder'
+              game: 'pf'
             },
             culture: false
           }

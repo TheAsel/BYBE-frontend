@@ -69,7 +69,7 @@ if (localNpcs) {
         relationships: '',
         ideology: '',
         custom_fields: [{ name: '', body: '' }],
-        game: 'Starfinder'
+        game: 'sf'
       },
       culture: false
     };
@@ -170,7 +170,7 @@ const startTour = () => {
       relationships: 'The frontend developer TheAsel and the backend developer RakuJa',
       ideology: 'The frontend is better than the backend',
       custom_fields: [{ name: '', body: '' }],
-      game: 'Starfinder'
+      game: 'sf'
     };
 
     npcs.addNpc('Example');

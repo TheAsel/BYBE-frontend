@@ -1,5 +1,5 @@
 import type { creature, min_creature } from './creature';
-import type { challenges, variants } from './filters';
+import type { challenges, games, variants } from './filters';
 
 export type encounter = {
   experience: number;
@@ -41,6 +41,6 @@ export type shareable_encounter = {
     id: number;
     variant: variants;
     qty: number;
-    game: 'Pathfinder' | 'Starfinder';
+    game: games;
   }[];
 };
