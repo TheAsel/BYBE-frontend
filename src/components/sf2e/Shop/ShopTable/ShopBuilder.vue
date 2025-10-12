@@ -146,7 +146,7 @@ const generateShop = debounce(async function () {
   saveChanges();
   const pf_version = settings.getPfVersion;
 
-  const post = {
+  const body = {
     consumable_dices: [
       {
         dice_size: tmpFilters.value.consumable_dices.dice_size.value,
@@ -164,7 +164,7 @@ const generateShop = debounce(async function () {
     pathfinder_version: pf_version
   };
   if (fixedConsumableDice.value) {
-    post.consumable_dices = [
+    body.consumable_dices = [
       {
         dice_size: 1,
         n_of_dices: tmpFilters.value.consumable_dices.n_of_dices
@@ -172,7 +172,7 @@ const generateShop = debounce(async function () {
     ];
   }
   if (fixedEquipmentDice.value) {
-    post.equippable_dices = [
+    body.equippable_dices = [
       {
         dice_size: 1,
         n_of_dices: tmpFilters.value.equippable_dices.n_of_dices
@@ -181,29 +181,29 @@ const generateShop = debounce(async function () {
   }
   if (tmpFilters.value.shop_template) {
     if (tmpFilters.value.shop_template.default) {
-      post['shop_template'] = tmpFilters.value.shop_template.name;
+      body['shop_template'] = tmpFilters.value.shop_template.name;
     } else {
-      post['source_filter'] = tmpFilters.value.shop_template.source_filter;
-      post['trait_blacklist_filter'] = tmpFilters.value.shop_template.trait_blacklist_filter;
-      post['trait_whitelist_filter'] = tmpFilters.value.shop_template.trait_whitelist_filter;
-      post['rarity_filter'] = tmpFilters.value.shop_template.rarity_filter;
-      post['type_filter'] = tmpFilters.value.shop_template.type_filter;
+      body['source_filter'] = tmpFilters.value.shop_template.source_filter;
+      body['trait_blacklist_filter'] = tmpFilters.value.shop_template.trait_blacklist_filter;
+      body['trait_whitelist_filter'] = tmpFilters.value.shop_template.trait_whitelist_filter;
+      body['rarity_filter'] = tmpFilters.value.shop_template.rarity_filter;
+      body['type_filter'] = tmpFilters.value.shop_template.type_filter;
       if (tmpFilters.value.shop_template.armor_percentage! > 0) {
-        post['armor_percentage'] = tmpFilters.value.shop_template.armor_percentage;
+        body['armor_percentage'] = tmpFilters.value.shop_template.armor_percentage;
       }
       if (tmpFilters.value.shop_template.equipment_percentage! > 0) {
-        post['equipment_percentage'] = tmpFilters.value.shop_template.equipment_percentage;
+        body['equipment_percentage'] = tmpFilters.value.shop_template.equipment_percentage;
       }
       if (tmpFilters.value.shop_template.shield_percentage! > 0) {
-        post['shield_percentage'] = tmpFilters.value.shop_template.shield_percentage;
+        body['shield_percentage'] = tmpFilters.value.shop_template.shield_percentage;
       }
       if (tmpFilters.value.shop_template.weapon_percentage! > 0) {
-        post['weapon_percentage'] = tmpFilters.value.shop_template.weapon_percentage;
+        body['weapon_percentage'] = tmpFilters.value.shop_template.weapon_percentage;
       }
     }
   }
   try {
-    const randomShop = await shopGenerator('sf', post);
+    const randomShop = await shopGenerator('sf', body);
     if (randomShop === undefined) {
       throw new TypeError('Error generating random shop');
     }

@@ -157,7 +157,7 @@ const generateNamesNpc = debounce(async function () {
       tmpAncestry = npcs.getActiveNpc!.npc.ancestry!;
       tmpCulture = npcs.getActiveNpc!.npc.culture!;
 
-      const post: {
+      const body: {
         gender?: string | undefined;
         origin?: {
           FromAncestry?: string | undefined;
@@ -169,7 +169,7 @@ const generateNamesNpc = debounce(async function () {
         npcs.getActiveNpc!.npc.gender &&
         npcParameters.getNpcParameters.genders.includes(npcs.getActiveNpc!.npc.gender)
       ) {
-        post.gender = npcs.getActiveNpc!.npc.gender.replaceAll(' ', '');
+        body.gender = npcs.getActiveNpc!.npc.gender.replaceAll(' ', '');
       }
 
       if (
@@ -177,7 +177,7 @@ const generateNamesNpc = debounce(async function () {
         npcs.getActiveNpc!.npc.ancestry &&
         npcParameters.getNpcParameters.ancestries.includes(npcs.getActiveNpc!.npc.ancestry)
       ) {
-        post.origin = { FromAncestry: npcs.getActiveNpc!.npc.ancestry.replaceAll(' ', '') };
+        body.origin = { FromAncestry: npcs.getActiveNpc!.npc.ancestry.replaceAll(' ', '') };
       }
 
       if (
@@ -185,11 +185,11 @@ const generateNamesNpc = debounce(async function () {
         npcs.getActiveNpc!.npc.culture &&
         npcParameters.getNpcParameters.cultures.includes(npcs.getActiveNpc!.npc.culture)
       ) {
-        post.origin = { FromCulture: npcs.getActiveNpc!.npc.culture.replaceAll(' ', '') };
+        body.origin = { FromCulture: npcs.getActiveNpc!.npc.culture.replaceAll(' ', '') };
       }
 
-      if (post.origin?.FromAncestry === 'Leshy' && post.gender) {
-        if (post.gender !== 'NonBinary') {
+      if (body.origin?.FromAncestry === 'Leshy' && body.gender) {
+        if (body.gender !== 'NonBinary') {
           $q.notify({
             progress: true,
             type: 'warning',
@@ -197,11 +197,11 @@ const generateNamesNpc = debounce(async function () {
             icon: matPriorityHigh
           });
         }
-        post.gender = 'NonBinary';
+        body.gender = 'NonBinary';
       }
 
       try {
-        const newNames = await npcNamesGenerator('pf', post);
+        const newNames = await npcNamesGenerator('pf', body);
         if (newNames === undefined) {
           throw new TypeError('Error generating npc names');
         }
@@ -321,12 +321,12 @@ const openShare = async () => {
   isGenerating.value = true;
   shareDialog.value = true;
   const currentNpc = npcs.getActiveNpc!.npc;
-  const post: shareable_npc = {
+  const body: shareable_npc = {
     list_name: npcs.getActiveNpc?.name ? npcs.getActiveNpc.name : 'Default',
     npcs_data: []
   };
 
-  post.npcs_data.push({
+  body.npcs_data.push({
     name: currentNpc.name === undefined ? '' : currentNpc.name,
     nickname: currentNpc.nickname === null ? '' : currentNpc.nickname,
     gender: currentNpc.gender === undefined ? '' : currentNpc.gender,
@@ -339,7 +339,7 @@ const openShare = async () => {
   });
 
   try {
-    const shareableLink = await generateNpcLink(post);
+    const shareableLink = await generateNpcLink(body);
     if (typeof shareableLink === 'string') {
       shareUrl.value = 'https://bybe.fly.dev/pf/npc?share=' + shareableLink;
     } else {

@@ -165,16 +165,32 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   if (filters.value.name_filter !== '') {
     body.name_filter = filters.value.name_filter;
   }
-  if (filters.value.trait_filter !== undefined && filters.value.trait_filter.length > 0) {
+  if (
+    filters.value.trait_filter !== undefined &&
+    filters.value.trait_filter !== null &&
+    filters.value.trait_filter.length > 0
+  ) {
     body.trait_whitelist_filter = filters.value.trait_filter;
   }
-  if (filters.value.rarity_filter !== undefined && filters.value.rarity_filter.length > 0) {
+  if (
+    filters.value.rarity_filter !== undefined &&
+    filters.value.rarity_filter !== null &&
+    filters.value.rarity_filter.length > 0
+  ) {
     body.rarity_filter = filters.value.rarity_filter;
   }
-  if (filters.value.type_filter !== undefined && filters.value.type_filter.length > 0) {
+  if (
+    filters.value.type_filter !== undefined &&
+    filters.value.type_filter !== null &&
+    filters.value.type_filter.length > 0
+  ) {
     body.type_filter = filters.value.type_filter;
   }
-  if (filters.value.source_filter !== undefined && filters.value.source_filter.length > 0) {
+  if (
+    filters.value.source_filter !== undefined &&
+    filters.value.source_filter !== null &&
+    filters.value.source_filter.length > 0
+  ) {
     body.source_filter = filters.value.source_filter;
   }
   try {

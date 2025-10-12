@@ -241,28 +241,60 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   if (filters.value.name_filter !== '') {
     body.name_filter = filters.value.name_filter;
   }
-  if (filters.value.trait_filter !== undefined && filters.value.trait_filter.length > 0) {
+  if (
+    filters.value.trait_filter !== undefined &&
+    filters.value.trait_filter !== null &&
+    filters.value.trait_filter.length > 0
+  ) {
     body.trait_whitelist_filter = filters.value.trait_filter;
   }
-  if (filters.value.alignment_filter !== undefined && filters.value.alignment_filter.length > 0) {
+  if (
+    filters.value.alignment_filter !== undefined &&
+    filters.value.alignment_filter !== null &&
+    filters.value.alignment_filter.length > 0
+  ) {
     body.alignment_filter = filters.value.alignment_filter;
   }
-  if (filters.value.size_filter !== undefined && filters.value.size_filter.length > 0) {
+  if (
+    filters.value.size_filter !== undefined &&
+    filters.value.size_filter !== null &&
+    filters.value.size_filter.length > 0
+  ) {
     body.size_filter = filters.value.size_filter;
   }
-  if (filters.value.rarity_filter !== undefined && filters.value.rarity_filter.length > 0) {
+  if (
+    filters.value.rarity_filter !== undefined &&
+    filters.value.rarity_filter !== null &&
+    filters.value.rarity_filter.length > 0
+  ) {
     body.rarity_filter = filters.value.rarity_filter;
   }
-  if (filters.value.family_filter !== undefined && filters.value.family_filter.length > 0) {
+  if (
+    filters.value.family_filter !== undefined &&
+    filters.value.family_filter !== null &&
+    filters.value.family_filter.length > 0
+  ) {
     body.family_filter = filters.value.family_filter;
   }
-  if (filters.value.type_filter !== undefined && filters.value.type_filter.length > 0) {
+  if (
+    filters.value.type_filter !== undefined &&
+    filters.value.type_filter !== null &&
+    filters.value.type_filter.length > 0
+  ) {
     body.type_filter = filters.value.type_filter;
   }
-  if (filters.value.role_filter !== undefined && filters.value.role_filter.length > 0) {
+  if (
+    filters.value.role_filter !== undefined &&
+    filters.value.role_filter !== null &&
+    filters.value.role_filter.length > 0
+  ) {
     body.role_filter = filters.value.role_filter;
   }
-  if (filters.value.source_filter !== undefined && filters.value.source_filter.length > 0) {
+  if (
+    filters.value.source_filter !== undefined &&
+    filters.value.source_filter !== null &&
+    filters.value.source_filter.length > 0
+  ) {
     body.source_filter = filters.value.source_filter;
   }
   try {

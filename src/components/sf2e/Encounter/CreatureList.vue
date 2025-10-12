@@ -106,14 +106,14 @@ const debouncedCall = debounce(async function () {
       localStorage.setItem('is_pwl_on', 'false');
       break;
   }
-  const post = {
+  const body = {
     enemy_levels: enemyLevels,
     party_levels: partyLevels,
     is_pwl_on: is_pwl_on.value
   };
   try {
     if (!encounter.getGenerating) {
-      const returnedEncounterInfo = await encounterInfo('sf', post);
+      const returnedEncounterInfo = await encounterInfo('sf', body);
       if (returnedEncounterInfo === undefined) {
         throw new TypeError('Error calculating encounter challenge');
       }
@@ -222,7 +222,7 @@ const openShare = async () => {
   isGenerating.value = true;
   shareDialog.value = true;
   const encounterList = encounter.getActiveEncounter!.creatures;
-  const post: shareable_encounter = {
+  const body: shareable_encounter = {
     encounter_name: encounter.getActiveEncounter?.name
       ? encounter.getActiveEncounter.name
       : 'Default',
@@ -234,7 +234,7 @@ const openShare = async () => {
     const tmp_qty: number = creature.quantity ? creature.quantity : 1;
     const tmp_game: games = creature.game;
 
-    post.creatures_data.push({
+    body.creatures_data.push({
       id: creature.id,
       variant: tmp_variant,
       qty: tmp_qty,
@@ -243,7 +243,7 @@ const openShare = async () => {
   }
 
   try {
-    const shareableLink = await generateEncounterLink(post);
+    const shareableLink = await generateEncounterLink(body);
     if (typeof shareableLink === 'string') {
       shareUrl.value = 'https://bybe.fly.dev/sf/encounter?share=' + shareableLink;
     } else {

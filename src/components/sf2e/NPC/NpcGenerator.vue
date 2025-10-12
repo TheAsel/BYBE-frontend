@@ -75,7 +75,7 @@ onMounted(async () => {
 const generateNpc = debounce(async function () {
   npcs.setGenerating(true);
 
-  const post: {
+  const body: {
     gender_filter?: string[] | undefined;
     name_origin_filter?: {
       FromAncestry?: string[];
@@ -96,39 +96,39 @@ const generateNpc = debounce(async function () {
     const tmpGenders = parameters.value.genders.map((_gender) => {
       return _gender.replaceAll(' ', '');
     });
-    post.gender_filter = tmpGenders;
+    body.gender_filter = tmpGenders;
   }
 
   if (parameters.value.ancestries && parameters.value.ancestries.length > 0) {
     const tmpAncestries = parameters.value.ancestries.map((_ancestry) => {
       return _ancestry.replaceAll(' ', '');
     });
-    post.name_origin_filter = { FromAncestry: tmpAncestries };
+    body.name_origin_filter = { FromAncestry: tmpAncestries };
   } else {
-    post.name_origin_filter = { FromAncestry: [] };
+    body.name_origin_filter = { FromAncestry: [] };
   }
 
   if (parameters.value.classes && parameters.value.classes.length > 0) {
     const tmpClasses = parameters.value.classes.map((_class) => {
       return _class.replaceAll(' ', '');
     });
-    post.class_filter = tmpClasses;
+    body.class_filter = tmpClasses;
   }
 
   if (parameters.value.jobs && parameters.value.jobs.length > 0) {
     const tmpJobs = parameters.value.jobs.map((_job) => {
       return _job.replaceAll(' ', '');
     });
-    post.job_filter = tmpJobs;
+    body.job_filter = tmpJobs;
   }
 
-  post.level_filter = {
+  body.level_filter = {
     min_level: parameters.value.level.min,
     max_level: parameters.value.level.max
   };
 
   try {
-    const randomNpc = await npcGenerator('sf', post);
+    const randomNpc = await npcGenerator('sf', body);
     if (randomNpc === undefined) {
       throw new TypeError('Error generating random npc');
     }

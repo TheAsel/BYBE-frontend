@@ -112,7 +112,7 @@ const generateEncounter = debounce(async function () {
   const is_pwl_on = encounter.getPwl;
   const pf_version = settings.getPfVersion;
 
-  const post: {
+  const body: {
     trait_whitelist_filter: string[] | undefined;
     alignment_filter: alignments[] | undefined;
     size_filter: sizes[] | undefined;
@@ -145,14 +145,14 @@ const generateEncounter = debounce(async function () {
   };
 
   if (tmpFilters.value.adventure_group_toggle) {
-    post.adventure_group = tmpFilters.value.adventure_group.value;
+    body.adventure_group = tmpFilters.value.adventure_group.value;
   } else {
-    post.min_creatures = tmpFilters.value.creatures.min;
-    post.max_creatures = tmpFilters.value.creatures.max;
-    post.challenge = tmpFilters.value.challenge!;
+    body.min_creatures = tmpFilters.value.creatures.min;
+    body.max_creatures = tmpFilters.value.creatures.max;
+    body.challenge = tmpFilters.value.challenge!;
   }
   try {
-    const randomEncounter = await encounterGenerator('pf', post);
+    const randomEncounter = await encounterGenerator('pf', body);
     if (randomEncounter === undefined) {
       throw new TypeError('Error generating random encounter');
     }

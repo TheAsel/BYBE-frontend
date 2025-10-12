@@ -156,7 +156,7 @@ const openShare = async () => {
   isGenerating.value = true;
   shareDialog.value = true;
   const shopList = shop.getActiveShop!.items;
-  const post: shareable_shop = {
+  const body: shareable_shop = {
     shop_name: shop.getActiveShop?.name ? shop.getActiveShop.name : 'Default',
     items_data: []
   };
@@ -165,7 +165,7 @@ const openShare = async () => {
     const tmp_qty: number = item.quantity ? item.quantity : 1;
     const tmp_game: games = item.game;
 
-    post.items_data.push({
+    body.items_data.push({
       id: item.id,
       qty: tmp_qty,
       game: tmp_game
@@ -173,7 +173,7 @@ const openShare = async () => {
   }
 
   try {
-    const shareableLink = await generateShopLink(post);
+    const shareableLink = await generateShopLink(body);
     if (typeof shareableLink === 'string') {
       shareUrl.value = 'https://bybe.fly.dev/sf/shop?share=' + shareableLink;
     } else {
