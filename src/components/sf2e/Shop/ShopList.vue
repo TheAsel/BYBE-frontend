@@ -163,7 +163,7 @@ const openShare = async () => {
 
   for (const item of shopList) {
     const tmp_qty: number = item.quantity ? item.quantity : 1;
-    const tmp_game: games = item.game;
+    const tmp_game: games = item.game === 'sf' ? 'sf' : 'pf';
 
     body.items_data.push({
       id: item.id,

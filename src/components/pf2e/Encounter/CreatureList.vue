@@ -232,7 +232,7 @@ const openShare = async () => {
   for (const creature of encounterList) {
     const tmp_variant: variants = creature.variant ? creature.variant : 'Base';
     const tmp_qty: number = creature.quantity ? creature.quantity : 1;
-    const tmp_game: games = creature.game;
+    const tmp_game: games = creature.game === 'sf' ? 'sf' : 'pf';
 
     body.creatures_data.push({
       id: creature.id,
