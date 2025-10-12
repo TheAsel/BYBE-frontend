@@ -35,7 +35,7 @@ const settings = settingsStore();
           flat
           class="tw:rounded-3xl! tw:backdrop-blur tw:border-2 tw:bg-white/5 tw:dark:bg-gray-800/20 tw:border-gray-200/20 tw:dark:border-neutral-800/20 tw:hover:border-blue-600! tw:dark:hover:border-blue-500! tw:transition-all"
         >
-          <q-img src="/pf2e-banner.webp">
+          <q-img class="tw:aspect-square tw:2xl:aspect-auto" src="/pf2e-banner.webp">
             <div class="absolute-bottom text-h6 text-center">Pathfinder 2e</div>
           </q-img>
         </q-card>
@@ -46,7 +46,7 @@ const settings = settingsStore();
           flat
           class="tw:rounded-3xl! tw:backdrop-blur tw:border-2 tw:bg-white/5 tw:dark:bg-gray-800/20 tw:border-gray-200/20 tw:dark:border-neutral-800/20 tw:hover:border-blue-600! tw:dark:hover:border-blue-500! tw:transition-all"
         >
-          <q-img src="/sf2e-banner.webp">
+          <q-img class="tw:aspect-square tw:2xl:aspect-auto" src="/sf2e-banner.webp">
             <div class="absolute-bottom text-h6 text-center">Starfinder 2e</div>
           </q-img>
         </q-card>
