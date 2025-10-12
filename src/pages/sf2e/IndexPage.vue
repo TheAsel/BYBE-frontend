@@ -61,10 +61,10 @@ const cards = [
 <template>
   <div
     style="min-height: calc(100vh - 94px)"
-    class="tw:max-w-7xl tw:px-4 tw:pb-10 tw:sm:px-6 tw:lg:px-8 tw:lg:py-14 tw:mx-auto"
+    class="tw:max-w-7xl tw:px-4 tw:pb-10 tw:sm:px-6 tw:lg:px-8 tw:py-4 tw:pt-0 tw:2xl:py-14 tw:mx-auto"
   >
     <div
-      class="tw:max-w-3xl tw:mx-auto tw:text-center tw:my-4 tw:lg:mb-14 tw:drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
+      class="tw:max-w-3xl tw:mx-auto tw:text-center tw:my-4 tw:mb-4 tw:2xl:mb-14 tw:drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
     >
       <h1 class="tw:block tw:text-white tw:text-4xl! tw:font-bold!">Welcome to BYBE</h1>
       <h2 class="tw:mt-3 text-h6 tw:text-gray-200">

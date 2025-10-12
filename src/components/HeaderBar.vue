@@ -170,7 +170,11 @@ const unhide = debounce(function () {
               alt="Dark BYBE logo"
             />
           </q-avatar>
-          <div class="tw:my-auto tw:ml-4 tw:text-gray-800 tw:dark:text-gray-200">BYBE</div>
+          <div
+            class="tw:hidden tw:lg:block tw:my-auto tw:ml-4 tw:text-gray-800 tw:dark:text-gray-200"
+          >
+            BYBE
+          </div>
         </router-link>
         <q-select
           v-if="currentPath !== '/' && currentPath !== '/download'"

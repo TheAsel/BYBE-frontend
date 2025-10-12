@@ -224,9 +224,8 @@ defineExpose({ generateEncounter });
   <q-btn id="v-step-2" push label="Generator Settings" @click="restoreSettings" />
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
-      <q-card-section class="row items-center">
-        <div class="text-h6 tw:min-w-[240px]">Generator Settings</div>
-        <q-space />
+      <q-card-section class="row items-center tw:flex">
+        <div class="text-h6 tw:grow">Generator Settings</div>
         <q-btn
           v-close-popup
           :icon="biXLg"
@@ -450,7 +449,7 @@ defineExpose({ generateEncounter });
             </div>
           </q-card-section>
         </q-tab-panel>
-        <q-tab-panel name="Advanced">
+        <q-tab-panel class="tw:max-w-0" name="Advanced">
           <q-card-section class="tw:flex" style="max-height: 46rem">
             <div class="tw:space-y-3!">
               <q-select

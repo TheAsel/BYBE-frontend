@@ -516,7 +516,7 @@ defineExpose({ generateShop });
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center">
-        <div class="text-h6 tw:mr-4">Generator Settings</div>
+        <div class="text-h6">Generator Settings</div>
         <q-space />
         <q-btn
           v-close-popup
@@ -532,14 +532,14 @@ defineExpose({ generateShop });
       <q-separator />
       <q-card-section style="max-height: 46rem">
         <div class="tw:space-y-3">
-          <div>
-            <q-badge outline class="tw:text-sm!"> Equippable items: </q-badge>
+          <div class="tw:flex">
+            <q-badge outline class="tw:grow tw:text-sm!"> Equippable items: </q-badge>
             <q-toggle
               v-model="fixedEquipmentDice"
               label="Fixed number?"
               dense
               size="xs"
-              class="tw:my-auto! tw:pb-1 tw:ml-8 tw:text-xs"
+              class="tw:my-auto! tw:pb-1 tw:text-xs"
             />
           </div>
           <div class="tw:flex tw:flex-row tw:justify-center">
@@ -573,14 +573,14 @@ defineExpose({ generateShop });
               </template>
             </q-select>
           </div>
-          <div>
-            <q-badge outline class="tw:text-sm!"> Consumable items: </q-badge>
+          <div class="tw:flex">
+            <q-badge outline class="tw:grow tw:text-sm!"> Consumable items: </q-badge>
             <q-toggle
               v-model="fixedConsumableDice"
               label="Fixed number?"
               dense
               size="xs"
-              class="tw:my-auto! tw:pb-1 tw:ml-[22px] tw:text-xs"
+              class="tw:my-auto! tw:pb-1 tw:text-xs"
             />
           </div>
           <div class="tw:flex tw:flex-row tw:justify-center">
@@ -640,7 +640,7 @@ defineExpose({ generateShop });
               options-dense
               :options="template_list"
               label="Shop template"
-              class="tw:w-52"
+              class="tw:w-52 tw:mx-4"
               @update:model-value="changeActiveTemplate(tmpFilters.shop_template!.name)"
             >
               <q-tooltip
