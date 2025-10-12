@@ -359,7 +359,7 @@ const resetFilters = () => {
 };
 
 // ---- Table and visible columns
-const visibleColumns = ref(['name', 'level', 'trait', 'size', 'type', 'attack', 'role']);
+const visibleColumns = ref(['name', 'level', 'trait', 'type', 'attack', 'role']);
 
 // ---- Column sort function
 const sort = (col: creature_columns) => {
