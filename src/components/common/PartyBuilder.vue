@@ -9,11 +9,7 @@ import type { party } from '../../types/party';
 const partyStores = partyStore();
 
 // Upgrade legacy parties
-if (
-  !partyStores.getActiveParty!.size ||
-  !partyStores.getActiveParty!.level ||
-  !partyStores.getActiveParty!.advanced
-) {
+if (partyStores.getActiveParty!.advanced === undefined) {
   const legacyParties = partyStores.getParties;
   for (let i = 0; i < legacyParties.length; i++) {
     legacyParties[i] = {
