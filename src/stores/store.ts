@@ -46,7 +46,9 @@ export const settingsStore = defineStore('settings', {
 
 export const partyStore = defineStore('party', {
   state: () => ({
-    parties: [{ name: 'Default', members: [1, 1, 1, 1] }] as party[],
+    parties: [
+      { name: 'Default', size: 4, level: 1, advanced: false, members: [1, 1, 1, 1] }
+    ] as party[],
     activeParty: 0
   }),
   getters: {
@@ -58,10 +60,10 @@ export const partyStore = defineStore('party', {
     getPartyIndex(partyName: string): number {
       return this.parties.map((party) => party.name).indexOf(partyName);
     },
-    updateParty(partyName: string, newMembers: number[]) {
-      const partyIndex = this.getPartyIndex(partyName);
+    updateParty(newParty: party) {
+      const partyIndex = this.getPartyIndex(newParty.name);
       if (this.parties[partyIndex] && partyIndex >= 0) {
-        this.parties[partyIndex].members = newMembers;
+        this.parties[partyIndex] = newParty;
       }
     },
     updateParties(newParties: party[]) {
@@ -75,14 +77,22 @@ export const partyStore = defineStore('party', {
       }
     },
     addParty(partyName: string) {
-      this.parties.push({ name: partyName, members: [1, 1, 1, 1] });
+      this.parties.push({
+        name: partyName,
+        size: 4,
+        level: 1,
+        advanced: false,
+        members: [1, 1, 1, 1]
+      });
       this.activeParty = this.parties.length - 1;
     },
     removeParty() {
       this.parties.splice(this.activeParty, 1);
       this.activeParty = 0;
       if (this.parties.length <= 0) {
-        this.parties = [{ name: 'Default', members: [1, 1, 1, 1] }];
+        this.parties = [
+          { name: 'Default', size: 4, level: 1, advanced: false, members: [1, 1, 1, 1] }
+        ];
       }
     }
   }

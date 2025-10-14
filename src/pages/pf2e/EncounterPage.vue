@@ -63,7 +63,13 @@ if (localParty) {
     }
   } catch (error) {
     console.error(error);
-    const defaultParty = { name: 'Default', members: [1, 1, 1, 1] };
+    const defaultParty = {
+      name: 'Default',
+      size: 4,
+      level: 1,
+      advanced: false,
+      members: [1, 1, 1, 1]
+    };
     localStorage.setItem('parties', JSON.stringify([defaultParty]));
     partyStores.updateParties([defaultParty]);
   }

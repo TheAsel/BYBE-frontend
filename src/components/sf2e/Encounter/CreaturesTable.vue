@@ -25,9 +25,9 @@ import { useRouter } from 'vue-router';
 
 import { encounterStore, filtersStore, settingsStore } from '../../../stores/store';
 import { requestCreatures, requestFilters } from '../../../utils/encounter-api-calls';
+import PartyBuilder from '../../common/PartyBuilder.vue';
 
 import EncounterBuilder from './CreaturesTable/EncounterBuilder.vue';
-import PartyBuilder from './CreaturesTable/PartyBuilder.vue';
 
 import type { creature, min_creature } from '../../../types/creature';
 import type {

@@ -2,13 +2,37 @@
 import { biDashLg, biPlusLg, biTrash, biXLg } from '@quasar/extras/bootstrap-icons';
 import { ref } from 'vue';
 
-import { partyStore } from '../../../../stores/store';
+import { partyStore } from '../../stores/store';
 
-import type { party } from '../../../../types/party';
+import type { party } from '../../types/party';
 
 const partyStores = partyStore();
+
+// Upgrade legacy parties
+if (
+  !partyStores.getActiveParty!.size ||
+  !partyStores.getActiveParty!.level ||
+  !partyStores.getActiveParty!.advanced
+) {
+  const legacyParties = partyStores.getParties;
+  for (let i = 0; i < legacyParties.length; i++) {
+    legacyParties[i] = {
+      name: legacyParties[i]!.name,
+      size: partyStores.getActiveParty!.members.length,
+      level: partyStores.getActiveParty!.members[0],
+      advanced: true,
+      members: [...legacyParties[i]!.members]
+    };
+  }
+  partyStores.updateParties(legacyParties);
+  localStorage.setItem('parties', JSON.stringify(partyStores.getParties));
+}
+
 const tmpParty = ref<party>({
   name: partyStores.getActiveParty!.name,
+  size: partyStores.getActiveParty!.size,
+  level: partyStores.getActiveParty!.level,
+  advanced: partyStores.getActiveParty!.advanced,
   members: [...partyStores.getActiveParty!.members]
 });
 const parties = ref(partyStores.getParties.map((party) => party.name));
@@ -25,19 +49,66 @@ const restoreParty = () => {
   dialog.value = true;
   tmpParty.value = {
     name: partyStores.getActiveParty!.name,
+    size: partyStores.getActiveParty!.size,
+    level: partyStores.getActiveParty!.level,
+    advanced: partyStores.getActiveParty!.advanced,
     members: [...partyStores.getActiveParty!.members]
   };
 };
 
 const validateLevel = (index: number) => {
   const value = tmpParty.value.members[index];
-  if (value && value < 1) {
+  if ((value && value < 1) || value === 0) {
     tmpParty.value.members[index] = 1;
   }
   if (value && value > 20) {
     tmpParty.value.members[index] = 20;
   }
   tmpParty.value.members[index] = Math.round(tmpParty.value.members[index]!);
+};
+
+const validateSimpleParty = () => {
+  if (tmpParty.value.size && tmpParty.value.level) {
+    if (tmpParty.value.size < 1 || tmpParty.value.size === 0) {
+      tmpParty.value.size = 1;
+    }
+    if (tmpParty.value.size > 20) {
+      tmpParty.value.size = 20;
+    }
+    tmpParty.value.size = Math.round(tmpParty.value.size);
+
+    if (tmpParty.value.level < 1 || tmpParty.value.level === 0) {
+      tmpParty.value.level = 1;
+    }
+    if (tmpParty.value.level && tmpParty.value.level > 20) {
+      tmpParty.value.level = 20;
+    }
+    tmpParty.value.level = Math.round(tmpParty.value.level);
+
+    tmpParty.value.members = [];
+    for (let i = 0; i < tmpParty.value.size; i++) {
+      tmpParty.value.members[i] = tmpParty.value.level;
+    }
+  }
+};
+
+const updateAdvanced = () => {
+  if (tmpParty.value.advanced) {
+    if (tmpParty.value.size && tmpParty.value.level) {
+      tmpParty.value.members = [];
+      for (let i = 0; i < tmpParty.value.size; i++) {
+        tmpParty.value.members[i] = tmpParty.value.level;
+      }
+    } else {
+      tmpParty.value.members = [1, 1, 1, 1];
+    }
+  } else if (tmpParty.value.members.every((member, _, arr) => member === arr[0])) {
+    tmpParty.value.size = tmpParty.value.members.length;
+    tmpParty.value.level = tmpParty.value.members[0];
+  } else {
+    tmpParty.value.size = 4;
+    tmpParty.value.level = 1;
+  }
 };
 
 const addPlayer = () => {
@@ -63,6 +134,9 @@ const addParty = () => {
     parties.value = partyStores.getParties.map((party) => party.name);
     tmpParty.value = {
       name: partyStores.getActiveParty!.name,
+      size: partyStores.getActiveParty!.size,
+      level: partyStores.getActiveParty!.level,
+      advanced: partyStores.getActiveParty!.advanced,
       members: [...partyStores.getActiveParty!.members]
     };
     saveChanges();
@@ -76,6 +150,9 @@ const removeParty = () => {
   parties.value = partyStores.getParties.map((party) => party.name);
   tmpParty.value = {
     name: partyStores.getActiveParty!.name,
+    size: partyStores.getActiveParty!.size,
+    level: partyStores.getActiveParty!.level,
+    advanced: partyStores.getActiveParty!.advanced,
     members: [...partyStores.getActiveParty!.members]
   };
   saveChanges();
@@ -86,12 +163,15 @@ const changeActiveParty = (selected: string) => {
   partyStores.changeActiveParty(partyStores.getPartyIndex(selected));
   tmpParty.value = {
     name: partyStores.getActiveParty!.name,
+    size: partyStores.getActiveParty!.size,
+    level: partyStores.getActiveParty!.level,
+    advanced: partyStores.getActiveParty!.advanced,
     members: [...partyStores.getActiveParty!.members]
   };
 };
 
 const saveChanges = () => {
-  partyStores.updateParty(tmpParty.value.name, tmpParty.value.members);
+  partyStores.updateParty(tmpParty.value);
   localStorage.setItem('parties', JSON.stringify(partyStores.getParties));
 };
 </script>
@@ -234,11 +314,20 @@ const saveChanges = () => {
             </q-card>
           </q-dialog>
         </div>
+        <div class="tw:grid">
+          <q-toggle
+            v-model="tmpParty.advanced"
+            label="Use advanced party"
+            class="tw:mt-4 tw:justify-center"
+            aria-label="Use advanced party"
+            @click="updateAdvanced()"
+          />
+        </div>
       </q-card-section>
 
       <q-separator />
 
-      <q-card-section style="max-height: 60vh" class="scroll">
+      <q-card-section v-if="tmpParty.advanced" style="max-height: 60vh" class="scroll">
         <div class="tw:space-y-4">
           <div v-for="(_, index) in tmpParty.members" :key="index" class="row no-wrap items-center">
             <div class="col-grow">
@@ -281,6 +370,35 @@ const saveChanges = () => {
         </q-btn>
       </q-card-section>
 
+      <q-card-section v-else class="tw:space-y-3">
+        <div class="tw:grid tw:grid-cols-2 tw:gap-4">
+          <q-badge outline class="tw:text-sm! tw:justify-end"> Party size: </q-badge>
+          <q-input
+            v-model.number="tmpParty.size"
+            dense
+            outlined
+            class="tw:w-16 tw:justify-start"
+            type="number"
+            min="1"
+            max="20"
+            label="Size"
+            @update:model-value="validateSimpleParty()"
+          />
+          <q-badge outline class="tw:text-sm! tw:justify-end"> Party level: </q-badge>
+          <q-input
+            v-model.number="tmpParty.level"
+            dense
+            outlined
+            class="tw:w-16 tw:justify-start"
+            type="number"
+            min="1"
+            max="20"
+            label="Level"
+            @update:model-value="validateSimpleParty()"
+          />
+        </div>
+      </q-card-section>
+
       <q-separator />
 
       <q-card-actions>
@@ -309,6 +427,16 @@ input[type='number'] {
 </style>
 
 <style scoped>
+.q-badge {
+  border-color: #ffffff;
+  color: #666666;
+}
+
+.q-dark .q-badge {
+  border-color: #1f2937;
+  color: #bcbfc3;
+}
+
 .q-select:deep(.q-field__native) > span {
   white-space: nowrap;
   overflow: hidden;
