@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { biDashLg, biPlusLg, biTrash, biXLg } from '@quasar/extras/bootstrap-icons';
+import { matPriorityHigh } from '@quasar/extras/material-icons';
+import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 
 import { partyStore } from '../../stores/store';
 
 import type { party } from '../../types/party';
+
+const $q = useQuasar();
 
 const partyStores = partyStore();
 
@@ -81,14 +85,14 @@ const validateSimpleParty = () => {
     }
     tmpParty.value.level = Math.round(tmpParty.value.level);
 
-    tmpParty.value.members = Array(tmpParty.value.size).fill(tmpParty.value.level);
+    tmpParty.value.members = new Array(tmpParty.value.size).fill(tmpParty.value.level);
   }
 };
 
 const updateAdvanced = () => {
   if (tmpParty.value.advanced) {
     if (tmpParty.value.size && tmpParty.value.level) {
-      tmpParty.value.members = Array(tmpParty.value.size).fill(tmpParty.value.level);
+      tmpParty.value.members = new Array(tmpParty.value.size).fill(tmpParty.value.level);
     } else {
       tmpParty.value.members = [1, 1, 1, 1];
     }
@@ -102,6 +106,15 @@ const updateAdvanced = () => {
 };
 
 const addPlayer = () => {
+  if (tmpParty.value.members.length >= 20) {
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Maximum player number reached',
+      icon: matPriorityHigh
+    });
+    return;
+  }
   tmpParty.value.members.push(1);
 };
 
@@ -161,11 +174,11 @@ const changeActiveParty = (selected: string) => {
 };
 
 const saveChanges = () => {
-  if (!tmpParty.value.advanced) {
-    tmpParty.value.members = Array(tmpParty.value.size).fill(tmpParty.value.level);
-  } else {
+  if (tmpParty.value.advanced) {
     tmpParty.value.size = tmpParty.value.members.length;
     tmpParty.value.level = tmpParty.value.members[0];
+  } else {
+    tmpParty.value.members = new Array(tmpParty.value.size).fill(tmpParty.value.level);
   }
   partyStores.updateParty(tmpParty.value);
   localStorage.setItem('parties', JSON.stringify(partyStores.getParties));
