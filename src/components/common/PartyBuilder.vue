@@ -85,20 +85,14 @@ const validateSimpleParty = () => {
     }
     tmpParty.value.level = Math.round(tmpParty.value.level);
 
-    tmpParty.value.members = [];
-    for (let i = 0; i < tmpParty.value.size; i++) {
-      tmpParty.value.members[i] = tmpParty.value.level;
-    }
+    tmpParty.value.members = Array(tmpParty.value.size).fill(tmpParty.value.level);
   }
 };
 
 const updateAdvanced = () => {
   if (tmpParty.value.advanced) {
     if (tmpParty.value.size && tmpParty.value.level) {
-      tmpParty.value.members = [];
-      for (let i = 0; i < tmpParty.value.size; i++) {
-        tmpParty.value.members[i] = tmpParty.value.level;
-      }
+      tmpParty.value.members = Array(tmpParty.value.size).fill(tmpParty.value.level);
     } else {
       tmpParty.value.members = [1, 1, 1, 1];
     }
@@ -171,6 +165,12 @@ const changeActiveParty = (selected: string) => {
 };
 
 const saveChanges = () => {
+  if (!tmpParty.value.advanced) {
+    tmpParty.value.members = Array(tmpParty.value.size).fill(tmpParty.value.level);
+  } else {
+    tmpParty.value.size = tmpParty.value.members.length;
+    tmpParty.value.level = tmpParty.value.members[0];
+  }
   partyStores.updateParty(tmpParty.value);
   localStorage.setItem('parties', JSON.stringify(partyStores.getParties));
 };
