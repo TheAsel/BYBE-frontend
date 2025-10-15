@@ -1,6 +1,7 @@
-import type { rarities, sizes } from './filters';
+import type { games, rarities, sizes } from './filters';
 
 export type item = {
+  game: games;
   armor_data?: {
     ac_bonus: number;
     check_penalty: number;
@@ -75,6 +76,7 @@ export type item_response = {
 };
 
 export type min_item = {
+  game: games;
   id: number;
   archive_link: string;
   name: string;

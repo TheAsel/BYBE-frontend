@@ -10,7 +10,7 @@
   </a>
 </p>
 
-> Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
+> Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e and Starfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -89,14 +89,14 @@ BYBE is also available offline! We currently support Windows, MacOS and Linux (A
 
 Built using:
 
-- [Node.js](https://nodejs.org/)
+- [Bun](https://bun.com/)
 - [Vue.js](https://vuejs.org/)
 - [Quasar](https://quasar.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
 ### Local
 
-1. Install [Node.js](https://nodejs.org/) on your machine.
+1. Install [Bun](https://bun.com/) on your machine.
 2. Download the [latest release](https://github.com/TheAsel/BYBE-frontend/releases/latest) or clone this repository:
 
 ```
@@ -107,19 +107,19 @@ git clone https://github.com/TheAsel/BYBE-frontend
 4. Install the dependencies:
 
 ```
-npm install
+bun install
 ```
 
 5. Run the webpage in development mode:
 
 ```
-npm run dev
+bun run dev
 ```
 
 6. To instead deploy the production build, run:
 
 ```
-npm run build && npm run start
+bun run build && bun run start
 ```
 
 ### Docker

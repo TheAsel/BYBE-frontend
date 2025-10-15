@@ -1,3 +1,5 @@
+import type { games } from './filters';
+
 export type valid_genders = {
   ancestry: string;
   valid_genders: string[];
@@ -22,10 +24,26 @@ export type npc = {
     name: string | null;
     body: string | null;
   }[];
+  game: games;
 };
 
 export type npc_list = {
   name: string;
   npc: npc;
   culture: boolean;
+};
+
+export type shareable_npc = {
+  list_name: string;
+  npcs_data: {
+    name: string;
+    nickname?: string;
+    gender: string;
+    ancestry: string;
+    job: string;
+    level: number;
+    culture: string;
+    class: string;
+    game: games;
+  }[];
 };

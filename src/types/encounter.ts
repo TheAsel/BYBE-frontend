@@ -1,5 +1,5 @@
 import type { creature, min_creature } from './creature';
-import type { challenges } from './filters';
+import type { challenges, games, variants } from './filters';
 
 export type encounter = {
   experience: number;
@@ -34,3 +34,13 @@ export type adventure_groups =
   | 'MatedPair'
   | 'Troop'
   | 'MookSquad';
+
+export type shareable_encounter = {
+  encounter_name: string;
+  creatures_data: {
+    id: number;
+    variant: variants;
+    qty: number;
+    game: games;
+  }[];
+};

@@ -16,7 +16,7 @@ export type rarities = 'Common' | 'Uncommon' | 'Rare' | 'Unique';
 
 export type challenges = 'Trivial' | 'Low' | 'Moderate' | 'Severe' | 'Extreme' | 'Impossible';
 
-export type creature_type = 'Monster' | 'NPC';
+export type creature_type = 'Creature' | 'NPC';
 
 export type roles =
   | 'None'
@@ -81,3 +81,5 @@ export type item_filters = {
   source_filter?: string[];
   pathfinder_version: string;
 };
+
+export type games = 'pf' | 'sf';
