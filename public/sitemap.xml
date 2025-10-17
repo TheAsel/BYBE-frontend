@@ -6,6 +6,11 @@
 		<priority>0.8</priority>
 	</url>
 	<url>
+		<loc>https://bybe.fly.dev/pf</loc>
+		<lastmod>2025-10-17</lastmod>
+		<priority>0.8</priority>
+	</url>
+	<url>
 		<loc>https://bybe.fly.dev/pf/encounter</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
@@ -48,6 +53,11 @@
 	<url>
 		<loc>https://bybe.fly.dev/pf/license</loc>
 		<lastmod>2025-09-23</lastmod>
+		<priority>0.8</priority>
+	</url>
+	<url>
+		<loc>https://bybe.fly.dev/sf</loc>
+		<lastmod>2025-10-17</lastmod>
 		<priority>0.8</priority>
 	</url>
 	<url>
