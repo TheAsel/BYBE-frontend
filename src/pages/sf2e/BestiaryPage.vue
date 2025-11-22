@@ -700,9 +700,9 @@ const printPage = () => {
               <strong>Source </strong>
               <a
                 :href="
-                  'https://paizo.com/search?q=' +
+                  'https://store.paizo.com/search.php?search_query=' +
                   encodeURIComponent(creatureData?.core_data.essential.source) +
-                  '&what=products&includeUnrated=true&includeUnavailable=true'
+                  '&section=product'
                 "
                 target="_blank"
                 rel="noopener"

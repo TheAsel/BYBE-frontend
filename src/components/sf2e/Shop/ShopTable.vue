@@ -887,9 +887,9 @@ onMounted(async () => {
             size="sm"
             padding="sm"
             :href="
-              'https://paizo.com/search?q=' +
+              'https://store.paizo.com/search.php?search_query=' +
               encodeURIComponent(source.row.core_item.source) +
-              '&what=products&includeUnrated=true&includeUnavailable=true'
+              '&section=product'
             "
             target="_blank"
             rel="noopener"

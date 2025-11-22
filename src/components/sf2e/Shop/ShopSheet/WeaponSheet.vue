@@ -170,9 +170,9 @@ const openShopSheet = (game: games, id: number) => {
       <strong>Source </strong>
       <a
         :href="
-          'https://paizo.com/search?q=' +
+          'https://store.paizo.com/search.php?search_query=' +
           encodeURIComponent(items.getSelectedItem!.core_item.source) +
-          '&what=products&includeUnrated=true&includeUnavailable=true'
+          '&section=product'
         "
         target="_blank"
         rel="noopener"
