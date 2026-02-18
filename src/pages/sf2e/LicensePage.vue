@@ -6,7 +6,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/sf/license'
+      href: 'https://bybe.app/sf/license'
     }
   ]
 });

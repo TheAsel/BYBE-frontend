@@ -11,7 +11,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/download'
+      href: 'https://bybe.app/download'
     }
   ]
 });

@@ -186,7 +186,7 @@ const openShare = async () => {
   try {
     const shareableLink = await generateShopLink(body);
     if (typeof shareableLink === 'string') {
-      shareUrl.value = 'https://bybe.fly.dev/sf/shop?share=' + shareableLink;
+      shareUrl.value = 'https://bybe.app/sf/shop?share=' + shareableLink;
     } else {
       shareDialog.value = false;
       $q.notify({

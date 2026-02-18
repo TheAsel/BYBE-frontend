@@ -360,7 +360,7 @@ defineExpose({ generateEncounter });
                 />
                 <p
                   v-if="tmpFilters.adventure_group.value === 'BossAndLackeys'"
-                  class="tw:mb-[0px]! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  class="tw:mb-0! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Boss and Lackeys (120 XP)</strong>
                   <br />
@@ -368,7 +368,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'BossAndLieutenant'"
-                  class="tw:mb-[0px]! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  class="tw:mb-0! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Boss and Lieutenant (120 XP)</strong>
                   <br />
@@ -376,7 +376,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'EliteEnemies'"
-                  class="tw:mb-[21px]! text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  class="tw:mb-5.25! text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Elite Enemies (120 XP)</strong>
                   <br />
@@ -384,7 +384,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'LieutenantAndLackeys'"
-                  class="tw:mb-[0px]! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  class="tw:mb-0! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Lieutenant and Lackeys (80 XP)</strong>
                   <br />
@@ -392,7 +392,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'MatedPair'"
-                  class="tw:mb-[21px]! text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  class="tw:mb-5.25! text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Mated Pair (80 XP)</strong>
                   <br />
@@ -400,7 +400,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'Troop'"
-                  class="tw:mb-[0px]! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  class="tw:mb-0! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Troop (80 XP)</strong>
                   <br />
@@ -408,7 +408,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'MookSquad'"
-                  class="tw:mb-[21px]! text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  class="tw:mb-5.25! text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Mook Squad (60 XP)</strong>
                   <br />
@@ -476,7 +476,7 @@ defineExpose({ generateEncounter });
                 style="width: 248px"
               />
 
-              <div class="q-gutter-sm tw:mt-3! tw:pb-[292px]">
+              <div class="q-gutter-sm tw:mt-3! tw:pb-73">
                 <q-checkbox
                   v-model="tmpFilters.allow_weak_variants"
                   label="Allow Weak?"

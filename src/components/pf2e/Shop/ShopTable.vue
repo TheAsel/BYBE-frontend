@@ -325,7 +325,6 @@ async function onKey(evt) {
   const lastPage = Math.ceil(computedRowsNumber / rowsPerPage);
 
   let index = currentIndex;
-  let page = currentPage;
 
   switch (evt.keyCode) {
     // Enter
@@ -379,7 +378,7 @@ async function onKey(evt) {
     }
     // ArrowLeft
     case 37: {
-      page = currentPage <= 1 ? lastPage : currentPage - 1;
+      const page = currentPage <= 1 ? lastPage : currentPage - 1;
       index = 0;
       const promise = waitForPageLoad();
       if (page === lastPage) {
@@ -408,7 +407,7 @@ async function onKey(evt) {
     }
     // ArrowRight
     case 39: {
-      page = currentPage >= lastPage ? 1 : currentPage + 1;
+      const page = currentPage >= lastPage ? 1 : currentPage + 1;
       index = 0;
       const promise = waitForPageLoad();
       if (page === 1) {
@@ -932,7 +931,7 @@ onMounted(async () => {
             class="tw:inline tw:align-middle"
           >
             <span
-              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-[250px] tw:whitespace-normal"
+              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
               >{{ name.row.core_item.name }}</span
             >
           </a>
@@ -959,7 +958,7 @@ onMounted(async () => {
         <q-td :props="trait">
           <span
             v-if="trait.row.core_item.traits"
-            class="tw:block tw:max-w-[250px] tw:whitespace-normal"
+            class="tw:block tw:max-w-62.5 tw:whitespace-normal"
           >
             {{
               trait.row.core_item.traits

@@ -1237,7 +1237,7 @@ onMounted(async () => {
             class="tw:inline tw:align-middle"
           >
             <span
-              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-[250px] tw:whitespace-normal"
+              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
               >{{ name.value }}</span
             >
           </a>
@@ -1248,7 +1248,7 @@ onMounted(async () => {
         <q-td :props="traits">
           <span
             v-if="traits.row.core_data.traits"
-            class="tw:block tw:max-w-[250px] tw:whitespace-normal"
+            class="tw:block tw:max-w-62.5 tw:whitespace-normal"
           >
             {{
               traits.row.core_data.traits

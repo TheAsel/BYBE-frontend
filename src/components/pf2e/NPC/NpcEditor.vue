@@ -341,7 +341,7 @@ const openShare = async () => {
   try {
     const shareableLink = await generateNpcLink(body);
     if (typeof shareableLink === 'string') {
-      shareUrl.value = 'https://bybe.fly.dev/pf/npc?share=' + shareableLink;
+      shareUrl.value = 'https://bybe.app/pf/npc?share=' + shareableLink;
     } else {
       shareDialog.value = false;
       $q.notify({

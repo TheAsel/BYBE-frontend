@@ -8,7 +8,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/'
+      href: 'https://bybe.app/'
     }
   ]
 });

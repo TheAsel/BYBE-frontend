@@ -18,7 +18,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/sf/shop'
+      href: 'https://bybe.app/sf/shop'
     }
   ]
 });
@@ -242,7 +242,7 @@ function scrollDirection() {
 const scrollPage = (up: boolean) => {
   settings.setHiddenNav(true);
   setTimeout(() => {
-    let offset: number | undefined = 0;
+    let offset;
     if (up) {
       offset = document.getElementById('table')?.offsetTop;
     } else {

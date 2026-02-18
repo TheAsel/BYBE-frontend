@@ -20,7 +20,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/sf/bestiary'
+      href: 'https://bybe.app/sf/bestiary'
     }
   ]
 });
@@ -177,8 +177,7 @@ const perceptionString = computed(() => {
     .flatMap((spell) => spell.name);
   let finalString = '';
   if (perception !== undefined) {
-    finalString += finalString +=
-      '<strong>Perception&nbsp;</strong>' + variantStyle(addPlus(perception)) + '; ';
+    finalString += '<strong>Perception&nbsp;</strong>' + variantStyle(addPlus(perception)) + '; ';
   }
   if (senses !== undefined && senses.length > 0) {
     for (const sense of senses) {

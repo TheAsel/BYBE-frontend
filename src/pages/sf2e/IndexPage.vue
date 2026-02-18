@@ -14,7 +14,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/sf'
+      href: 'https://bybe.app/sf'
     }
   ]
 });

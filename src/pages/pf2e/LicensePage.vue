@@ -6,7 +6,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/pf/license'
+      href: 'https://bybe.app/pf/license'
     }
   ]
 });
@@ -92,13 +92,13 @@ useHead({
             Linda Zayas-Palmer
           </p>
           <p>
-            <b> Pathfinder GM Core </b>© 2023, Paizo Inc.; Designers: Logan Bonner and Mark
-            Seifter. Authors: Amirali Attar Olyaee, Logan Bonner, Creighton Broadhurst, Jason
-            Bulmahn, James Case, Jesse Decker, Eleanor Ferron, Fabby Garza Marroquín, Jaym Gates,
-            Matthew Goetz, James Jacobs, Brian R. James, Jenny Jarzabski, Dustin Knight, Jason
-            LeMaitre, Lyz Liddell, Luis Loza, Ron Lundeen, Stephen Radney-MacFarland, David N. Ross,
-            Michael Sayre, Mark Seifter, Owen K.C. Stephens, Amber Stewart, Clark Valentine, Landon
-            Winkler, and Linda Zayas-Palmer
+            <b> Pathfinder GM Core </b>© 2023, Paizo Inc.; Designers: Logan Bonner and Mark Seifter.
+            Authors: Amirali Attar Olyaee, Logan Bonner, Creighton Broadhurst, Jason Bulmahn, James
+            Case, Jesse Decker, Eleanor Ferron, Fabby Garza Marroquín, Jaym Gates, Matthew Goetz,
+            James Jacobs, Brian R. James, Jenny Jarzabski, Dustin Knight, Jason LeMaitre, Lyz
+            Liddell, Luis Loza, Ron Lundeen, Stephen Radney-MacFarland, David N. Ross, Michael
+            Sayre, Mark Seifter, Owen K.C. Stephens, Amber Stewart, Clark Valentine, Landon Winkler,
+            and Linda Zayas-Palmer
           </p>
           <p>
             <b> Pathfinder Player Core 2 </b>© 2024, Paizo Inc.; Authors: Amirali Attar Olyaee,
@@ -184,17 +184,17 @@ useHead({
           </p>
           <p><b> Curtain Call Player's Guide </b>© 2024, Paizo Inc.; Author: James Jacobs.</p>
           <p>
-            <b> Pathfinder Adventure Path #204: Stage Fright </b>© 2024, Paizo Inc.; Author:
-            Richard Pett, with Rue Dickey, Katrina Hennessy, and Isis Wozniakowska.
+            <b> Pathfinder Adventure Path #204: Stage Fright </b>© 2024, Paizo Inc.; Author: Richard
+            Pett, with Rue Dickey, Katrina Hennessy, and Isis Wozniakowska.
           </p>
           <p>
-            <b> Pathfinder Adventure Path #205: Singer, Stalker, Skinsaw Man </b>© 2024, Paizo
-            Inc.; Author: Kendra Leigh Speedling, with Minty Belmont, Chesley Oxendine, and Isabelle
+            <b> Pathfinder Adventure Path #205: Singer, Stalker, Skinsaw Man </b>© 2024, Paizo Inc.;
+            Author: Kendra Leigh Speedling, with Minty Belmont, Chesley Oxendine, and Isabelle
             Thorne.
           </p>
           <p>
-            <b> Pathfinder Adventure Path #206: Bring the House Down </b>© 2024, Paizo Inc.;
-            Author: Sen H. H. S.
+            <b> Pathfinder Adventure Path #206: Bring the House Down </b>© 2024, Paizo Inc.; Author:
+            Sen H. H. S.
           </p>
           <p>
             <b> Triumph of the Tusk Player's Guide </b>© 2024, Paizo Inc.; Author: John Compton and
@@ -214,8 +214,8 @@ useHead({
           </p>
           <p><b> Spore War Player's Guide </b>© 2025, Paizo Inc.; Author: TBD.</p>
           <p>
-            <b> Pathfinder Adventure Path #210: Whispers in the Dirt </b>© 2025, Paizo Inc.;
-            Author: Jason Buhlman.
+            <b> Pathfinder Adventure Path #210: Whispers in the Dirt </b>© 2025, Paizo Inc.; Author:
+            Jason Buhlman.
           </p>
           <p>
             <b> Pathfinder Adventure Path #211: The Secret of Deathstalk Tower </b>© 2025, Paizo
@@ -248,12 +248,12 @@ useHead({
             Scott.
           </p>
           <p>
-            <b> Pathfinder Society Scenario #6-00: Salt of the Ocean </b>© 2024, Paizo Inc.;
-            Author: Rigby Bendele and Jacob W. Michaels
+            <b> Pathfinder Society Scenario #6-00: Salt of the Ocean </b>© 2024, Paizo Inc.; Author:
+            Rigby Bendele and Jacob W. Michaels
           </p>
           <p>
-            <b> Pathfinder Society Intro: Year of Immortal Influence </b>© 2024, Paizo Inc.;
-            Author: Rigby Bendele
+            <b> Pathfinder Society Intro: Year of Immortal Influence </b>© 2024, Paizo Inc.; Author:
+            Rigby Bendele
           </p>
           <p>
             <b> Pathfinder Society Scenario #6-02: Rain Falls on the Mountain of Sea and Sky </b>©
@@ -300,8 +300,8 @@ useHead({
             Inc.; Author: Joseph Blomquist
           </p>
           <p>
-            <b> Pathfinder Society Scenario #6-13: All That Glitters </b>© 2025, Paizo Inc.;
-            Author: Genevieve Olejnik
+            <b> Pathfinder Society Scenario #6-13: All That Glitters </b>© 2025, Paizo Inc.; Author:
+            Genevieve Olejnik
           </p>
           <p>
             <b> Pathfinder Society Guide to Play (Second Edition) </b>© 2024, The Organized Play
@@ -324,13 +324,13 @@ useHead({
             Viditya Voleti, Grady Wang, Emma Yasui, and Jay Zhang
           </p>
           <p>
-            <b> Pathfinder Lost Omens Tian Xia Character Guide </b>© 2024, Paizo Inc.; Authors:
-            Eren Ahn, Jeremy Blum, Logan Bonner, Alyx Bui, James Case, Banana Chan, Rick Chia,
-            Hiromi Cota, Dana Ebert, Eleanor Ferron, Basheer Ghouse, John Godek III, Sen H.H.S.,
-            Joan Hong, Daniel Kwan, Jacky Leung, Jesse J. Leung, Monte Lin, Jessie “Aki” Lo, Adam
-            Ma, Ashley Moni, Collette Quach, Christopher Rondeau, Joaquin Kyle “Makapatag” Saavedra,
-            Michael Sayre, Shahreena Shahrani, Kienna Shaw, Philip Shen, Tan Shao Han, Mari Tokuda,
-            Ruvaid Virk, Viditya Voleti, Grady Wang, and Jay Zhang
+            <b> Pathfinder Lost Omens Tian Xia Character Guide </b>© 2024, Paizo Inc.; Authors: Eren
+            Ahn, Jeremy Blum, Logan Bonner, Alyx Bui, James Case, Banana Chan, Rick Chia, Hiromi
+            Cota, Dana Ebert, Eleanor Ferron, Basheer Ghouse, John Godek III, Sen H.H.S., Joan Hong,
+            Daniel Kwan, Jacky Leung, Jesse J. Leung, Monte Lin, Jessie “Aki” Lo, Adam Ma, Ashley
+            Moni, Collette Quach, Christopher Rondeau, Joaquin Kyle “Makapatag” Saavedra, Michael
+            Sayre, Shahreena Shahrani, Kienna Shaw, Philip Shen, Tan Shao Han, Mari Tokuda, Ruvaid
+            Virk, Viditya Voleti, Grady Wang, and Jay Zhang
           </p>
           <p>
             <b> Pathfinder Lost Omens Divine Mysteries </b>© 2024, Paizo Inc.; Authors: Misha
@@ -550,13 +550,13 @@ useHead({
             Linda Zayas-Palmer
           </p>
           <p>
-            <b> Pathfinder GM Core </b>© 2023, Paizo Inc.; Designers: Logan Bonner and Mark
-            Seifter. Authors: Amirali Attar Olyaee, Logan Bonner, Creighton Broadhurst, Jason
-            Bulmahn, James Case, Jesse Decker, Eleanor Ferron, Fabby Garza Marroquín, Jaym Gates,
-            Matthew Goetz, James Jacobs, Brian R. James, Jenny Jarzabski, Dustin Knight, Jason
-            LeMaitre, Lyz Liddell, Luis Loza, Ron Lundeen, Stephen Radney-MacFarland, David N. Ross,
-            Michael Sayre, Mark Seifter, Owen K.C. Stephens, Amber Stewart, Clark Valentine, Landon
-            Winkler, and Linda Zayas-Palmer
+            <b> Pathfinder GM Core </b>© 2023, Paizo Inc.; Designers: Logan Bonner and Mark Seifter.
+            Authors: Amirali Attar Olyaee, Logan Bonner, Creighton Broadhurst, Jason Bulmahn, James
+            Case, Jesse Decker, Eleanor Ferron, Fabby Garza Marroquín, Jaym Gates, Matthew Goetz,
+            James Jacobs, Brian R. James, Jenny Jarzabski, Dustin Knight, Jason LeMaitre, Lyz
+            Liddell, Luis Loza, Ron Lundeen, Stephen Radney-MacFarland, David N. Ross, Michael
+            Sayre, Mark Seifter, Owen K.C. Stephens, Amber Stewart, Clark Valentine, Landon Winkler,
+            and Linda Zayas-Palmer
           </p>
           <p>
             <b> Pathfinder Player Core 2 </b>© 2024, Paizo Inc.; Authors: Amirali Attar Olyaee,
@@ -621,13 +621,13 @@ useHead({
             Bestiary 2
           </h2>
           <p>
-            <b> Angel, Monadic Deva from the Tome of Horrors Complete </b>© 2011, Necromancer
-            Games, Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
+            <b> Angel, Monadic Deva from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
+            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
             original material by Gary Gygax.
           </p>
           <p>
-            <b> Angel, Movanic Deva from the Tome of Horrors Complete </b>© 2011, Necromancer
-            Games, Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
+            <b> Angel, Movanic Deva from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
+            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
             original material by Gary Gygax.
           </p>
           <p>
@@ -650,8 +650,8 @@ useHead({
             Mona, Chris Pramas, and Robert J. Schwalb.
           </p>
           <p>
-            <b> Armies of the Abyss </b>© 2002, Green Ronin Publishing; Authors: Erik Mona and
-            Chris Pramas.
+            <b> Armies of the Abyss </b>© 2002, Green Ronin Publishing; Authors: Erik Mona and Chris
+            Pramas.
           </p>
           <p>
             <b> The Avatar's Handbook </b>© 2003, Green Ronin Publishing; Authors: Jesse Decker and
@@ -679,8 +679,8 @@ useHead({
             original material by Gary Gygax.
           </p>
           <p>
-            <b> Daemon, Piscodaemon from the Tome of Horrors Complete </b>© 2011, Necromancer
-            Games, Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
+            <b> Daemon, Piscodaemon from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
+            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
             original material by Gary Gygax.
           </p>
           <p>
@@ -694,14 +694,14 @@ useHead({
             material by Simon Muth.
           </p>
           <p>
-            <b> Demon, Nabasu from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
-            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
-            original material by Gary Gygax.
+            <b> Demon, Nabasu from the Tome of Horrors Complete </b>© 2011, Necromancer Games, Inc.,
+            published and distributed by Frog God Games; Author: Scott Greene, based on original
+            material by Gary Gygax.
           </p>
           <p>
-            <b> Demon, Shadow from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
-            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
-            original material by Neville White.
+            <b> Demon, Shadow from the Tome of Horrors Complete </b>© 2011, Necromancer Games, Inc.,
+            published and distributed by Frog God Games; Author: Scott Greene, based on original
+            material by Neville White.
           </p>
           <p>
             <b> Dracolisk from the Tome of Horrors Complete </b>© 2011, Necromancer Games, Inc.,
@@ -768,8 +768,8 @@ useHead({
             original material by Oliver Charles MacDonald.
           </p>
           <p>
-            <b> Yellow Musk Creeper from the Tome of Horrors Complete </b>© 2011, Necromancer
-            Games, Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
+            <b> Yellow Musk Creeper from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
+            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
             original material by Albie Fiore.
           </p>
           <p>
@@ -814,13 +814,13 @@ useHead({
             Secrets of Magic
           </h2>
           <p>
-            <b> Angel, Monadic Deva from the Tome of Horrors Complete </b>© 2011, Necromancer
-            Games, Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
+            <b> Angel, Monadic Deva from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
+            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
             original material by Gary Gygax.
           </p>
           <p>
-            <b> Angel, Movanic Deva from the Tome of Horrors Complete </b>© 2011, Necromancer
-            Games, Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
+            <b> Angel, Movanic Deva from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
+            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
             original material by Gary Gygax.
           </p>
           <p>
@@ -829,19 +829,19 @@ useHead({
             original material by Ian McDowall.
           </p>
           <p>
-            <b> Daemon, Piscodaemon from the Tome of Horrors Complete </b>© 2011, Necromancer
-            Games, Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
-            original material by Gary Gygax.
-          </p>
-          <p>
-            <b> Demon, Nabasu from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
+            <b> Daemon, Piscodaemon from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
             Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
             original material by Gary Gygax.
           </p>
           <p>
-            <b> Demon, Shadow from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
-            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
-            original material by Neville White.
+            <b> Demon, Nabasu from the Tome of Horrors Complete </b>© 2011, Necromancer Games, Inc.,
+            published and distributed by Frog God Games; Author: Scott Greene, based on original
+            material by Gary Gygax.
+          </p>
+          <p>
+            <b> Demon, Shadow from the Tome of Horrors Complete </b>© 2011, Necromancer Games, Inc.,
+            published and distributed by Frog God Games; Author: Scott Greene, based on original
+            material by Neville White.
           </p>
           <p>
             <b> Secrets of Magic </b>© 2021, Paizo Inc.; Authors: Amirali Attar Olyaee, Kate Baker,
@@ -935,9 +935,7 @@ useHead({
             <b> Pathfinder Adventure: Troubles in Otari </b>© 2020, Paizo Inc.; Author: Jason
             Keeley, Liz Liddell, and Ron Lundeen.
           </p>
-          <p>
-            <b> Pathfinder Adventure: Malevolence </b>© 2021, Paizo Inc.; Author: James Jacobs.
-          </p>
+          <p><b> Pathfinder Adventure: Malevolence </b>© 2021, Paizo Inc.; Author: James Jacobs.</p>
           <p>
             <b> Pathfinder Adventure: Night of the Gray Death </b>© 2021, Paizo Inc.; Author: Ron
             Lundeen.
@@ -947,18 +945,17 @@ useHead({
             Winkler.
           </p>
           <p>
-            <b> Pathfinder Adventure: Crown of the Kobold King Anniversary Edition </b>© 2022,
-            Paizo Inc.; Authors: Jason Bulmahn, Tim Hitchcock, Nicholas Logue, and F. Wesley
-            Schneider
+            <b> Pathfinder Adventure: Crown of the Kobold King Anniversary Edition </b>© 2022, Paizo
+            Inc.; Authors: Jason Bulmahn, Tim Hitchcock, Nicholas Logue, and F. Wesley Schneider
           </p>
           <p>
             <b> Pathfinder Kingmaker Player's Guide </b>© 2022, Paizo Inc.; Author: James Jacobs,
             with Jason Nelson and Victoria Jaczko.
           </p>
           <p>
-            <b> Pathfinder Kingmaker Adventure Path </b>© 2022, Paizo Inc.; Authors: Steven T.
-            Helt, Tim Hitchcock, James Jacobs, Ron Lundeen, Rob McCreary, Jason Nelson, Richard
-            Pett, Tom Phillips, Neil Spicer, and Greg A. Vaughan
+            <b> Pathfinder Kingmaker Adventure Path </b>© 2022, Paizo Inc.; Authors: Steven T. Helt,
+            Tim Hitchcock, James Jacobs, Ron Lundeen, Rob McCreary, Jason Nelson, Richard Pett, Tom
+            Phillips, Neil Spicer, and Greg A. Vaughan
           </p>
           <p>
             <b> Pathfinder Kingmaker Companion Guide </b>© 2022, Paizo Inc.; Authors: Alex Augunas,
@@ -1015,9 +1012,8 @@ useHead({
           </p>
           <p><b> Extinction Curse Player's Guide </b>© 2020, Paizo Inc.; Author: Ron Lundeen.</p>
           <p>
-            <b> Pathfinder Adventure Path #151: The Show Must Go On </b>© 2020, Paizo Inc.;
-            Authors: Jason Tondro, with Andrew Mullen, Patrick Renie, David N. Ross, and Michael
-            Sayre.
+            <b> Pathfinder Adventure Path #151: The Show Must Go On </b>© 2020, Paizo Inc.; Authors:
+            Jason Tondro, with Andrew Mullen, Patrick Renie, David N. Ross, and Michael Sayre.
           </p>
           <p>
             <b> Pathfinder Adventure Path #152: Legacy of the Lost God </b>© 2020, Paizo Inc.;
@@ -1025,9 +1021,9 @@ useHead({
             and David N. Ross.
           </p>
           <p>
-            <b> Pathfinder Adventure Path #153: Life's Long Shadows </b>© 2020, Paizo Inc.;
-            Authors: Greg A. Vaughan, with Anthony Bono, Jacob W. Michaels, Andrew Mullen, Patrick
-            Renie, Alex Riggs, Timothy Snow, and Amber Stewart.
+            <b> Pathfinder Adventure Path #153: Life's Long Shadows </b>© 2020, Paizo Inc.; Authors:
+            Greg A. Vaughan, with Anthony Bono, Jacob W. Michaels, Andrew Mullen, Patrick Renie,
+            Alex Riggs, Timothy Snow, and Amber Stewart.
           </p>
           <p>
             <b> Pathfinder Adventure Path #154: Siege of the Dinosaurs </b>© 2020, Paizo Inc.;
@@ -1048,9 +1044,9 @@ useHead({
             <b> Agents of Edgewatch Player's Guide </b>© 2020, Paizo Inc.; Author: Patrick Renie.
           </p>
           <p>
-            <b> Pathfinder Adventure Path #157: Devil at the Dreaming Palace </b>© 2020, Paizo
-            Inc.; Authors: James L. Sutter, with Luis Loza, Andrew Mullen, Samantha Phelan, and
-            Patrick Renie.
+            <b> Pathfinder Adventure Path #157: Devil at the Dreaming Palace </b>© 2020, Paizo Inc.;
+            Authors: James L. Sutter, with Luis Loza, Andrew Mullen, Samantha Phelan, and Patrick
+            Renie.
           </p>
           <p>
             <b> Pathfinder Adventure Path #158: Sixty Feet Under </b>© 2020, Paizo Inc.; Authors:
@@ -1075,16 +1071,16 @@ useHead({
           </p>
           <p><b> Abomination Vaults Player's Guide </b>© 2021, Paizo Inc.; Author: Ron Lundeen.</p>
           <p>
-            <b> Pathfinder Adventure Path #163: Ruins of Gauntlight </b>© 2021, Paizo Inc.;
-            Authors: James Jacobs
+            <b> Pathfinder Adventure Path #163: Ruins of Gauntlight </b>© 2021, Paizo Inc.; Authors:
+            James Jacobs
           </p>
           <p>
             <b> Pathfinder Adventure Path #164: Hands of the Devil </b>© 2021, Paizo Inc.; Authors:
             Vanessa Hoskins
           </p>
           <p>
-            <b> Pathfinder Adventure Path #165: Eyes of Empty Death </b>© 2021, Paizo Inc.;
-            Authors: Stephen Radney-MacFarland
+            <b> Pathfinder Adventure Path #165: Eyes of Empty Death </b>© 2021, Paizo Inc.; Authors:
+            Stephen Radney-MacFarland
           </p>
           <p>
             <b> Abomination Vaults Adventure Path (Hardcover) </b>© 2022, Paizo Inc.; Authors:
@@ -1107,9 +1103,9 @@ useHead({
             Authors: Vanessa Hoskins
           </p>
           <p>
-            <b> Pathfinder Fists of the Ruby Phoenix Adventure Path </b>© 2023, Paizo Inc.;
-            Authors: James Case, Luis Loza, and David N. Ross, with Joan Hong, Sen H.H.S., Tan Shao
-            Han, Danita Rambo, William Thompson, and Ruvaid Virk.
+            <b> Pathfinder Fists of the Ruby Phoenix Adventure Path </b>© 2023, Paizo Inc.; Authors:
+            James Case, Luis Loza, and David N. Ross, with Joan Hong, Sen H.H.S., Tan Shao Han,
+            Danita Rambo, William Thompson, and Ruvaid Virk.
           </p>
           <p>
             <b> Strength of Thousands Player's Guide </b>© 2021, Paizo Inc.; Author: Ron Lundeen.
@@ -1151,23 +1147,23 @@ useHead({
             Jessica Catalan.
           </p>
           <p>
-            <b> Pathfinder Adventure Path #177: Burning Tundra </b>© 2022, Paizo Inc.; Author:
-            Jason Tondro.
+            <b> Pathfinder Adventure Path #177: Burning Tundra </b>© 2022, Paizo Inc.; Author: Jason
+            Tondro.
           </p>
           <p>
             <b> Outlaws of Alkenstar Player's Guide </b>© 2022, Paizo Inc.; Author: Patrick Renie.
           </p>
           <p>
-            <b> Pathfinder Adventure Path #178: Punks in a Powderkeg </b>© 2022, Paizo Inc.;
-            Author: Vanessa Hoskins.
+            <b> Pathfinder Adventure Path #178: Punks in a Powderkeg </b>© 2022, Paizo Inc.; Author:
+            Vanessa Hoskins.
           </p>
           <p>
             <b> Pathfinder Adventure Path #179: Cradle of Quartz </b>© 2022, Paizo Inc.; Author:
             Scott D. Young.
           </p>
           <p>
-            <b> Pathfinder Adventure Path #180: The Smoking Gun </b>© 2022, Paizo Inc.; Author:
-            Cole Kronewitter.
+            <b> Pathfinder Adventure Path #180: The Smoking Gun </b>© 2022, Paizo Inc.; Author: Cole
+            Kronewitter.
           </p>
           <p><b> Blood Lords Player's Guide </b>© 2022, Paizo Inc.; Author: Ron Lundeen</p>
           <p>
@@ -1225,8 +1221,8 @@ useHead({
             Crystal Frasier.
           </p>
           <p>
-            <b> Pathfinder Adventure Path #193: Mantle of Gold </b>© 2023, Paizo Inc.; Authors:
-            John Compton, Crystal Frasier, and Caryn DiMarco.
+            <b> Pathfinder Adventure Path #193: Mantle of Gold </b>© 2023, Paizo Inc.; Authors: John
+            Compton, Crystal Frasier, and Caryn DiMarco.
           </p>
           <p>
             <b> Pathfinder Adventure Path #194: Cult of the Cave Worm </b>© 2023, Paizo Inc.;
@@ -1237,8 +1233,8 @@ useHead({
             Jessica Catalan.
           </p>
           <p>
-            <b> Season of Ghosts Player's Guide </b>© 2023, Paizo Inc.; Author: James Jacobs and
-            Sen H.H.S.
+            <b> Season of Ghosts Player's Guide </b>© 2023, Paizo Inc.; Author: James Jacobs and Sen
+            H.H.S.
           </p>
           <p>
             <b> Pathfinder Adventure Path #196: The Summer that Never Was </b>© 2023, Paizo Inc.;
@@ -1257,8 +1253,8 @@ useHead({
             Author: Liane Merciel.
           </p>
           <p>
-            <b> Pathfinder Adventure Path #200: The Seven Dooms of Sandpoint </b>© 2024, Paizo
-            Inc.; Author: James Jacobs.
+            <b> Pathfinder Adventure Path #200: The Seven Dooms of Sandpoint </b>© 2024, Paizo Inc.;
+            Author: James Jacobs.
           </p>
 
           <h2
@@ -1347,8 +1343,8 @@ useHead({
             Michael Sayre
           </p>
           <p>
-            <b> Pathfinder Society Bounty #2: Blood of the Beautiful </b>© 2020, Paizo Inc.;
-            Author: Thurston Hillman
+            <b> Pathfinder Society Bounty #2: Blood of the Beautiful </b>© 2020, Paizo Inc.; Author:
+            Thurston Hillman
           </p>
           <p>
             <b> Pathfinder Society Bounty #3: Shadow and Scarecrows </b>© 2020, Paizo Inc.; Author:
@@ -1359,20 +1355,20 @@ useHead({
             Moon Murphy
           </p>
           <p>
-            <b> Pathfinder Society Bounty #5: Witch's Winter Holiday </b>© 2020, Paizo Inc.;
-            Author: Patrick Hurley
+            <b> Pathfinder Society Bounty #5: Witch's Winter Holiday </b>© 2020, Paizo Inc.; Author:
+            Patrick Hurley
           </p>
           <p>
             <b> Pathfinder Society Bounty #6: The Road from Otari </b>© 2021, Paizo Inc.; Author:
             Ron Lundeen
           </p>
           <p>
-            <b> Pathfinder Society Bounty #7: Cleanup Duty </b>© 2021, Paizo Inc.; Author:
-            Elizabeth V Nold
+            <b> Pathfinder Society Bounty #7: Cleanup Duty </b>© 2021, Paizo Inc.; Author: Elizabeth
+            V Nold
           </p>
           <p>
-            <b> Pathfinder Society Bounty #8: The Tireless Path </b>© 2021, Paizo Inc.; Author:
-            Ivis K. Flanagan
+            <b> Pathfinder Society Bounty #8: The Tireless Path </b>© 2021, Paizo Inc.; Author: Ivis
+            K. Flanagan
           </p>
           <p>
             <b> Pathfinder Society Bounty #9: Fishing in Anthusis </b>© 2021, Paizo Inc.; Author:
@@ -1427,12 +1423,12 @@ useHead({
             Sen H.H.S.
           </p>
           <p>
-            <b> Pathfinder Society Intro #1: The Second Confirmation </b>© 2021, Paizo Inc.;
-            Author: Thurston Hillman.
+            <b> Pathfinder Society Intro #1: The Second Confirmation </b>© 2021, Paizo Inc.; Author:
+            Thurston Hillman.
           </p>
           <p>
-            <b> Pathfinder Society Intro #2: United In Purpose </b>© 2021, Paizo Inc.; Author:
-            Brian Duckwitz.
+            <b> Pathfinder Society Intro #2: United In Purpose </b>© 2021, Paizo Inc.; Author: Brian
+            Duckwitz.
           </p>
           <p>
             <b> Pathfinder Society Scenario #1-00: Origin of the Open Road </b>© 2019, Paizo Inc.;
@@ -1491,8 +1487,8 @@ useHead({
             Author: Jenny Jarzabski.
           </p>
           <p>
-            <b> Pathfinder Society Scenario #1-14: Lions of Katapesh </b>© 2020, Paizo Inc.;
-            Author: Adam Meyers.
+            <b> Pathfinder Society Scenario #1-14: Lions of Katapesh </b>© 2020, Paizo Inc.; Author:
+            Adam Meyers.
           </p>
           <p>
             <b> Pathfinder Society Scenario #1-15: The Blooming Catastrophe </b>© 2020, Paizo Inc.;
@@ -1540,16 +1536,16 @@ useHead({
             Eleanor Ferron.
           </p>
           <p>
-            <b> Pathfinder Society Scenario #2-00: The King in Thorns (Levels 1-2) </b>© 2020,
-            Paizo Inc.; Authors: Kate Baker and Dennis Muldoon
+            <b> Pathfinder Society Scenario #2-00: The King in Thorns (Levels 1-2) </b>© 2020, Paizo
+            Inc.; Authors: Kate Baker and Dennis Muldoon
           </p>
           <p>
-            <b> Pathfinder Society Scenario #2-00: The King in Thorns (Levels 3-6) </b>© 2020,
-            Paizo Inc.; Authors: Kate Baker and Dennis Muldoon
+            <b> Pathfinder Society Scenario #2-00: The King in Thorns (Levels 3-6) </b>© 2020, Paizo
+            Inc.; Authors: Kate Baker and Dennis Muldoon
           </p>
           <p>
-            <b> Pathfinder Society Scenario #2-00: The King in Thorns (Levels 7-8) </b>© 2020,
-            Paizo Inc.; Authors: Kate Baker and Dennis Muldoon
+            <b> Pathfinder Society Scenario #2-00: The King in Thorns (Levels 7-8) </b>© 2020, Paizo
+            Inc.; Authors: Kate Baker and Dennis Muldoon
           </p>
           <p>
             <b> Pathfinder Society Scenario #2-01: Citadel of Corruption </b>© 2020, Paizo Inc.;
@@ -1584,8 +1580,8 @@ useHead({
             Mikhail Rekun
           </p>
           <p>
-            <b> Pathfinder Society Scenario #2-09: The Seven Secrets of Dacilane Academy </b>©
-            2020, Paizo Inc.; Authors: Rigby Bendele
+            <b> Pathfinder Society Scenario #2-09: The Seven Secrets of Dacilane Academy </b>© 2020,
+            Paizo Inc.; Authors: Rigby Bendele
           </p>
           <p>
             <b> Pathfinder Society Scenario #2-10: In Burning Dawn </b>© 2020, Paizo Inc.; Authors:
@@ -1628,8 +1624,8 @@ useHead({
             Authors: Jacob W. Michaels
           </p>
           <p>
-            <b> Pathfinder Society Scenario #2-20: Breaking the Storm: Bastion in Embers </b>©
-            2021, Paizo Inc.; Authors: Christopher Wasko
+            <b> Pathfinder Society Scenario #2-20: Breaking the Storm: Bastion in Embers </b>© 2021,
+            Paizo Inc.; Authors: Christopher Wasko
           </p>
           <p>
             <b> Pathfinder Society Scenario #2-21: In Pursuit of Water </b>© 2021, Paizo Inc.;
@@ -1660,20 +1656,20 @@ useHead({
             Authors: Nate Wright
           </p>
           <p>
-            <b> Pathfinder Society Scenario #3-04: The Devil-Wrought Disappearance </b>© 2021,
-            Paizo Inc.; Authors: Joseph Blomquist
+            <b> Pathfinder Society Scenario #3-04: The Devil-Wrought Disappearance </b>© 2021, Paizo
+            Inc.; Authors: Joseph Blomquist
           </p>
           <p>
-            <b> Pathfinder Society Scenario #3-05: Inheritor's Rite </b>© 2021, Paizo Inc.;
-            Authors: Elizabeth V Nold
+            <b> Pathfinder Society Scenario #3-05: Inheritor's Rite </b>© 2021, Paizo Inc.; Authors:
+            Elizabeth V Nold
           </p>
           <p>
             <b> Pathfinder Society Scenario #3-06: Struck by Shadows </b>© 2021, Paizo Inc.;
             Authors: Luis Loza
           </p>
           <p>
-            <b> Pathfinder Society Scenario #3-07: The Locked Lodge </b>© 2021, Paizo Inc.;
-            Authors: Kalervo Oikarinen
+            <b> Pathfinder Society Scenario #3-07: The Locked Lodge </b>© 2021, Paizo Inc.; Authors:
+            Kalervo Oikarinen
           </p>
           <p>
             <b> Pathfinder Society Scenario #3-08: Foundation's Price </b>© 2022, Paizo Inc.;
@@ -1712,8 +1708,8 @@ useHead({
             Authors: Brent Bowser
           </p>
           <p>
-            <b> Pathfinder Society Scenario #3-17: Dream of a Dustbound Isle </b>© 2022, Paizo
-            Inc.; Authors: Matt Duval
+            <b> Pathfinder Society Scenario #3-17: Dream of a Dustbound Isle </b>© 2022, Paizo Inc.;
+            Authors: Matt Duval
           </p>
           <p>
             <b> Pathfinder Society Scenario #3-18: Dacilane Academy's Delightful Disaster </b>©
@@ -1732,48 +1728,48 @@ useHead({
             2022, Paizo Inc.; Authors: Rigby Bendele
           </p>
           <p>
-            <b> Pathfinder Society Scenario #3-99: Fate in the Future (Levels 1-4) </b>© 2021,
-            Paizo Inc.; Authors: Jessica Catalan
+            <b> Pathfinder Society Scenario #3-99: Fate in the Future (Levels 1-4) </b>© 2021, Paizo
+            Inc.; Authors: Jessica Catalan
           </p>
           <p>
-            <b> Pathfinder Society Scenario #3-99: Fate in the Future (Levels 5-8) </b>© 2021,
-            Paizo Inc.; Authors: Jessica Catalan
+            <b> Pathfinder Society Scenario #3-99: Fate in the Future (Levels 5-8) </b>© 2021, Paizo
+            Inc.; Authors: Jessica Catalan
           </p>
           <p>
-            <b> Pathfinder Society Scenario #4-01: Intro: Year of Boundless Wonder </b>© 2022,
-            Paizo Inc.; Authors: Mike Kimmel
+            <b> Pathfinder Society Scenario #4-01: Intro: Year of Boundless Wonder </b>© 2022, Paizo
+            Inc.; Authors: Mike Kimmel
           </p>
           <p>
             <b> Pathfinder Society Scenario #4-02: Return to the Grave </b>© 2022, Paizo Inc.;
             Authors: Joseph Blomquist
           </p>
           <p>
-            <b> Pathfinder Society Scenario #4-03: Linnorm's Legacy </b>© 2022, Paizo Inc.;
-            Authors: Jessica Catalan
+            <b> Pathfinder Society Scenario #4-03: Linnorm's Legacy </b>© 2022, Paizo Inc.; Authors:
+            Jessica Catalan
           </p>
           <p>
             <b> Pathfinder Society Scenario #4-04: To Seek the Heart of Calamity </b>© 2022, Paizo
             Inc.; Authors: Tineke Bolleman
           </p>
           <p>
-            <b> Pathfinder Society Scenario #4-05: The Arclord Who Never Was </b>© 2022, Paizo
-            Inc.; Authors: Michael Bramnik
+            <b> Pathfinder Society Scenario #4-05: The Arclord Who Never Was </b>© 2022, Paizo Inc.;
+            Authors: Michael Bramnik
           </p>
           <p>
             <b> Pathfinder Society Scenario #4-06: Signal from the Electric Library </b>© 2022,
             Paizo Inc.; Authors: Letterio Mammoliti
           </p>
           <p>
-            <b> Pathfinder Society Scenario #4-07: A Most Wondrous Exchange! </b>© 2022, Paizo
-            Inc.; Authors: Kendra Leigh Speedling
+            <b> Pathfinder Society Scenario #4-07: A Most Wondrous Exchange! </b>© 2022, Paizo Inc.;
+            Authors: Kendra Leigh Speedling
           </p>
           <p>
             <b> Pathfinder Society Scenario #4-08: Battle for Star's Fate </b>© 2023, Paizo Inc.;
             Authors: Alex Speidel
           </p>
           <p>
-            <b> Pathfinder Society Scenario #4-09: Killer in the Golden Mask </b>© 2023, Paizo
-            Inc.; Authors: Michael Sayre
+            <b> Pathfinder Society Scenario #4-09: Killer in the Golden Mask </b>© 2023, Paizo Inc.;
+            Authors: Michael Sayre
           </p>
           <p>
             <b> Pathfinder Society Scenario #4-10: Arclord's Abode </b>© 2023, Paizo Inc.; Authors:
@@ -1804,8 +1800,8 @@ useHead({
             Authors: Ivis K. Flanagan and Dennis Muldoon.
           </p>
           <p>
-            <b> Pathfinder Society Scenario #5-01: Intro: Year of Unfettered Exploration </b>©
-            2023, Paizo Inc.; Author: Sen H.H.S.
+            <b> Pathfinder Society Scenario #5-01: Intro: Year of Unfettered Exploration </b>© 2023,
+            Paizo Inc.; Author: Sen H.H.S.
           </p>
           <p>
             <b> Pathfinder Society Scenario #5-02: The Blackwood Lost </b>© 2023, Paizo Inc.;
@@ -1856,8 +1852,8 @@ useHead({
             Caryn DiMarco
           </p>
           <p>
-            <b> Pathfinder Society Scenario #5-14: Poisonous Council </b>© 2024, Paizo Inc.;
-            Author: Tineke Bolleman
+            <b> Pathfinder Society Scenario #5-14: Poisonous Council </b>© 2024, Paizo Inc.; Author:
+            Tineke Bolleman
           </p>
           <p>
             <b> Pathfinder Society Scenario #5-15: Cleansing the Flame </b>© 2024, Paizo Inc.;
@@ -1903,8 +1899,8 @@ useHead({
             Mona, Chris Pramas, and Robert J. Schwalb.
           </p>
           <p>
-            <b> Armies of the Abyss </b>© 2002, Green Ronin Publishing; Authors: Erik Mona and
-            Chris Pramas.
+            <b> Armies of the Abyss </b>© 2002, Green Ronin Publishing; Authors: Erik Mona and Chris
+            Pramas.
           </p>
           <p>
             <b> The Avatar's Handbook </b>© 2003, Green Ronin Publishing; Authors: Jesse Decker and
@@ -1932,9 +1928,9 @@ useHead({
             material by Gary Gygax.
           </p>
           <p>
-            <b> Demon, Nabasu from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
-            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
-            original material by Gary Gygax.
+            <b> Demon, Nabasu from the Tome of Horrors Complete </b>© 2011, Necromancer Games, Inc.,
+            published and distributed by Frog God Games; Author: Scott Greene, based on original
+            material by Gary Gygax.
           </p>
           <p>
             <b> Froghemoth from the Tome of Horrors Complete </b>© 2011, Necromancer Games, Inc.,
@@ -1942,8 +1938,8 @@ useHead({
             material by Gary Gygax.
           </p>
           <p>
-            <b> Yellow Musk Creeper from the Tome of Horrors Complete </b>© 2011, Necromancer
-            Games, Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
+            <b> Yellow Musk Creeper from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
+            Inc., published and distributed by Frog God Games; Author: Scott Greene, based on
             original material by Albie Fiore.
           </p>
           <p>
@@ -1953,12 +1949,12 @@ useHead({
             Owen K.C. Stephens, Isabelle Thorne, and Linda Zayas-Palmer.
           </p>
           <p>
-            <b> Pathfinder Lost Omens Gods & Magic (Second Edition) </b>© 2020, Paizo Inc.;
-            Authors: Robert Adducci, Amirali Attar Olyaee, Calder CaDavid, James Case, Adam Daigle,
-            Katina Davis, Leo Glass, Joshua Grinlinton, James Jacobs, Virginia Jordan, Jason Keeley,
-            Jacky Leung, Lyz Liddell, Ron Lundeen, Stephanie Lundeen, Jacob W. Michaels, Matt
-            Morris, Dave Nelson, Samantha Phelan, Jennifer Povey, Jessica Redekop, Nathan Reinecke,
-            Patrick Renie, David N. Ross, Simone D. Sallé, Michael Sayre, David Schwartz, Shahreena
+            <b> Pathfinder Lost Omens Gods & Magic (Second Edition) </b>© 2020, Paizo Inc.; Authors:
+            Robert Adducci, Amirali Attar Olyaee, Calder CaDavid, James Case, Adam Daigle, Katina
+            Davis, Leo Glass, Joshua Grinlinton, James Jacobs, Virginia Jordan, Jason Keeley, Jacky
+            Leung, Lyz Liddell, Ron Lundeen, Stephanie Lundeen, Jacob W. Michaels, Matt Morris, Dave
+            Nelson, Samantha Phelan, Jennifer Povey, Jessica Redekop, Nathan Reinecke, Patrick
+            Renie, David N. Ross, Simone D. Sallé, Michael Sayre, David Schwartz, Shahreena
             Shahrani, Isabelle Thorne, Marc Thuot, Jason Tondro, and Diego Valdez.
           </p>
           <p>
@@ -1988,12 +1984,12 @@ useHead({
             Author: Samantha Phelan.
           </p>
           <p>
-            <b> Pathfinder Lost Omens The Mwangi Expanse </b>© 2021, Paizo Inc.; Authors:
-            Laura-Shay Adams, Mariam Ahmad, Jahmal Brown, Misha Bushyager, Alexandria Bustion, Duan
-            Byrd, John Compton, Sarah Davis, Mara Lynn Butler, Kent Hamilton, Amanda Hamon, Sasha
-            Laranoa Harving, Gabriel Hicks, TK Johnson, Michelle Jones, Jason Keeley, Joshua Kim,
-            Travis Lionel, Ron Lundeen, Stephanie Lundeen, Hilary Moon Murphy, Lu Pellazar, Mikhail
-            Rekun, Nate Wright, and Jabari Weathers
+            <b> Pathfinder Lost Omens The Mwangi Expanse </b>© 2021, Paizo Inc.; Authors: Laura-Shay
+            Adams, Mariam Ahmad, Jahmal Brown, Misha Bushyager, Alexandria Bustion, Duan Byrd, John
+            Compton, Sarah Davis, Mara Lynn Butler, Kent Hamilton, Amanda Hamon, Sasha Laranoa
+            Harving, Gabriel Hicks, TK Johnson, Michelle Jones, Jason Keeley, Joshua Kim, Travis
+            Lionel, Ron Lundeen, Stephanie Lundeen, Hilary Moon Murphy, Lu Pellazar, Mikhail Rekun,
+            Nate Wright, and Jabari Weathers
           </p>
           <p>
             <b> Dragon, Faerie from the Tome of Horrors Complete </b>© 2011, Necromancer Games,
@@ -2001,12 +1997,12 @@ useHead({
             original material by Gary Gygax.
           </p>
           <p>
-            <b> Pathfinder Lost Omens Grand Bazaar </b>© 2021, Paizo Inc.; Authors: Tineke
-            Bolleman, Logan Bonner, Jessica Catalan, Dominique Dickey, Dana Ebert, Steven Hammond,
-            Sen H.H.S., Dustin Knight, Avi Kool, Aaron Lascano, Carlos Luna, Ron Lundeen, Sydney
-            Meeker, Randal Meyer, Jacob Michaels, Matt Morris, Andrew Mullen, Ianara Natividad, Dave
-            Nelson, Jessica Redekop, Nathan Reinecke, Erin Roberts, David N. Ross, Simone Sallé,
-            Mark Seifter, Shay Snow, Ashton Sperry, Amber Stewart, Andrew Stoeckle, Isabelle Thorne,
+            <b> Pathfinder Lost Omens Grand Bazaar </b>© 2021, Paizo Inc.; Authors: Tineke Bolleman,
+            Logan Bonner, Jessica Catalan, Dominique Dickey, Dana Ebert, Steven Hammond, Sen H.H.S.,
+            Dustin Knight, Avi Kool, Aaron Lascano, Carlos Luna, Ron Lundeen, Sydney Meeker, Randal
+            Meyer, Jacob Michaels, Matt Morris, Andrew Mullen, Ianara Natividad, Dave Nelson,
+            Jessica Redekop, Nathan Reinecke, Erin Roberts, David N. Ross, Simone Sallé, Mark
+            Seifter, Shay Snow, Ashton Sperry, Amber Stewart, Andrew Stoeckle, Isabelle Thorne,
             Jason Tondro, and Scott D. Young.
           </p>
           <p>
@@ -2070,8 +2066,8 @@ useHead({
             Inc.; Author: Ron Lundeen, Jabari Weathers
           </p>
           <p>
-            <b> Pathfinder Free RPG Day Adventure 2022: A Fistful of Flowers </b>© 2022, Paizo
-            Inc.; Author: Eleanor Ferron, Linda Zayas-Palmer
+            <b> Pathfinder Free RPG Day Adventure 2022: A Fistful of Flowers </b>© 2022, Paizo Inc.;
+            Author: Eleanor Ferron, Linda Zayas-Palmer
           </p>
           <p>
             <b> Pathfinder Free RPG Day Adventure 2023: A Few Flowers More </b>© 2023, Paizo Inc.;
@@ -2084,8 +2080,7 @@ useHead({
             One Shots
           </h2>
           <p>
-            <b> Pathfinder One-Shot #1: Sundered Waves </b>© 2021, Paizo Inc.; Author: Jason
-            Bulmahn
+            <b> Pathfinder One-Shot #1: Sundered Waves </b>© 2021, Paizo Inc.; Author: Jason Bulmahn
           </p>
           <p>
             <b> Pathfinder One-Shot #1: Sundered Waves Pregenerated Characters </b>© 2021, Paizo
@@ -2112,8 +2107,8 @@ useHead({
             Compton
           </p>
           <p>
-            <b> Pathfinder One-Shot #4: Mark of the Mantis Pregenerated Characters </b>© 2022,
-            Paizo Inc.; Author: John Compton
+            <b> Pathfinder One-Shot #4: Mark of the Mantis Pregenerated Characters </b>© 2022, Paizo
+            Inc.; Author: John Compton
           </p>
 
           <h2
@@ -2154,24 +2149,24 @@ useHead({
             Illustrator: Dominik Derow.
           </p>
           <p>
-            <b> No-Prep Character: Wendlyn </b>© 2021, Paizo Inc.; Author: Ron Lundeen;
-            Illustrator: Valeria Dryzhak.
+            <b> No-Prep Character: Wendlyn </b>© 2021, Paizo Inc.; Author: Ron Lundeen; Illustrator:
+            Valeria Dryzhak.
           </p>
           <p>
             <b> No-Prep Character: Zhang Yong </b>© 2021, Paizo Inc.; Author: Vanessa Hoskins;
             Illustrator: Gislaine Avila.
           </p>
           <p>
-            <b> Pathfinder Bestiary 3 Bonus Monster </b>© 2021, Paizo Inc.; Chris Sims;
-            Illustrator: Leonardo Borazio.
+            <b> Pathfinder Bestiary 3 Bonus Monster </b>© 2021, Paizo Inc.; Chris Sims; Illustrator:
+            Leonardo Borazio.
           </p>
           <p>
             <b> Pathfinder Encounter: Phinelli's Miracle Elixir </b>© 2021, Paizo Inc.; Author
             Unknown; Illustrator: Alberto Dal Lago.
           </p>
           <p>
-            <b> No-Prep Character: Lisavet </b>© 2021, Paizo Inc.; Author: Ron Lundeen;
-            Illustrator: Valeria Dryzhak.
+            <b> No-Prep Character: Lisavet </b>© 2021, Paizo Inc.; Author: Ron Lundeen; Illustrator:
+            Valeria Dryzhak.
           </p>
           <p>
             <b> No-Prep Character: Urok </b>© 2021, Paizo Inc.; Author: Luis Loza; Illustrator: Gin
@@ -2182,9 +2177,7 @@ useHead({
             Illustrator: Rashad Pozdnyakov.
           </p>
           <p><b> No-Prep Character: Eleukas </b>© 2021, Paizo Inc.; Author: Ron Lundeen.</p>
-          <p>
-            <b> GM's Toolkit: Secret Keeper's Mask </b>© 2021, Paizo Inc.; Author: Ron Lundeen.
-          </p>
+          <p><b> GM's Toolkit: Secret Keeper's Mask </b>© 2021, Paizo Inc.; Author: Ron Lundeen.</p>
           <p>
             <b> Pathfinder Encounter: Heaving Kobolds </b>© 2021, Paizo Inc.; Author: Ron Lundeen.
           </p>
@@ -2204,8 +2197,8 @@ useHead({
             Illustrator: Marius Bota.
           </p>
           <p>
-            <b> Foolish Monsters, In April </b>© 2020, Paizo Inc.; Authors: James Case, Lyz
-            Liddell, Joan Hong, Avi Kool, John Compton, Michael Sayre, Patrick Renie.
+            <b> Foolish Monsters, In April </b>© 2020, Paizo Inc.; Authors: James Case, Lyz Liddell,
+            Joan Hong, Avi Kool, John Compton, Michael Sayre, Patrick Renie.
           </p>
           <p><b> Monster Making </b>© 2020, Paizo Inc.; Author: Adam Daigle.</p>
           <p>
@@ -2225,16 +2218,16 @@ useHead({
             Wayne Reynolds.
           </p>
           <p>
-            <b> Meet the Iconics: Fumbus </b>© 2019, Paizo Inc.; Author: Michael Sayre;
-            Illustrator: Wayne Reynolds.
+            <b> Meet the Iconics: Fumbus </b>© 2019, Paizo Inc.; Author: Michael Sayre; Illustrator:
+            Wayne Reynolds.
           </p>
           <p>
             <b> Meet the Iconics: Harsk </b>© 2007, Paizo Inc.; Author: James Sutter; Illustrator:
             Wayne Reynolds.
           </p>
           <p>
-            <b> Meet the Iconics: Jirelle </b>© 2014, Paizo Inc.; Author: James Jacobs;
-            Illustrator: Wayne Reynolds.
+            <b> Meet the Iconics: Jirelle </b>© 2014, Paizo Inc.; Author: James Jacobs; Illustrator:
+            Wayne Reynolds.
           </p>
           <p>
             <b> Meet The Iconics: Korakai </b>© 2020, Paizo Inc.; Author: James Case; Illustrator:
@@ -2287,36 +2280,36 @@ useHead({
             Catalan, Michael Sayre, and Fred Van Lente
           </p>
           <p>
-            <b> Pathfinder: Wake the Dead #1 </b>© 2023, Paizo Inc.; Authors: Mikhail Rekun and
-            Fred Van Lente.
+            <b> Pathfinder: Wake the Dead #1 </b>© 2023, Paizo Inc.; Authors: Mikhail Rekun and Fred
+            Van Lente.
           </p>
           <p>
-            <b> Pathfinder: Wake the Dead #2 </b>© 2023, Paizo Inc.; Authors: Mikhail Rekun and
-            Fred Van Lente.
+            <b> Pathfinder: Wake the Dead #2 </b>© 2023, Paizo Inc.; Authors: Mikhail Rekun and Fred
+            Van Lente.
           </p>
           <p>
-            <b> Pathfinder: Wake the Dead #3 </b>© 2023, Paizo Inc.; Authors: Mikhail Rekun and
-            Fred Van Lente.
+            <b> Pathfinder: Wake the Dead #3 </b>© 2023, Paizo Inc.; Authors: Mikhail Rekun and Fred
+            Van Lente.
           </p>
           <p>
-            <b> Pathfinder: Wake the Dead #4 </b>© 2023, Paizo Inc.; Authors: Kendra Leigh
-            Speedling and Fred Van Lente.
+            <b> Pathfinder: Wake the Dead #4 </b>© 2023, Paizo Inc.; Authors: Kendra Leigh Speedling
+            and Fred Van Lente.
           </p>
           <p>
-            <b> Pathfinder: Wake the Dead #5 </b>© 2023, Paizo Inc.; Authors: Kendra Leigh
-            Speedling and Fred Van Lente.
+            <b> Pathfinder: Wake the Dead #5 </b>© 2023, Paizo Inc.; Authors: Kendra Leigh Speedling
+            and Fred Van Lente.
           </p>
           <p>
-            <b> Pathfinder Society Year 4 Rule Updates </b>© 2022, Paizo Inc.; Authors: Mike
-            Kimmel, Alex Speidel
+            <b> Pathfinder Society Year 4 Rule Updates </b>© 2022, Paizo Inc.; Authors: Mike Kimmel,
+            Alex Speidel
           </p>
           <p>
             <b> There is No Certainty, Only Adventure! </b>© 2015, Paizo Inc.; Author: Chris
             Lambertz; Illustrator: Dion Harris.
           </p>
           <p>
-            <b> Pathfinder Society (second edition) Faction Showcase </b>© 2020, Paizo Inc.;
-            Author: Tonya Woldridge
+            <b> Pathfinder Society (second edition) Faction Showcase </b>© 2020, Paizo Inc.; Author:
+            Tonya Woldridge
           </p>
         </div>
       </q-scroll-area>

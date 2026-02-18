@@ -16,7 +16,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://bybe.fly.dev/sf/npc'
+      href: 'https://bybe.app/sf/npc'
     }
   ]
 });
@@ -202,7 +202,7 @@ function scrollDirection() {
 const scrollPage = (up: boolean) => {
   settings.setHiddenNav(true);
   setTimeout(() => {
-    let offset: number | undefined = 0;
+    let offset;
     if (up) {
       offset = document.getElementById('generator')?.offsetTop;
     } else {

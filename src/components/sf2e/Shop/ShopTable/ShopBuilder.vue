@@ -701,7 +701,7 @@ defineExpose({ generateShop });
             >
               <q-card flat bordered>
                 <q-card-section>
-                  <div class="text-h6 tw:min-w-[260px]!">Template Creator</div>
+                  <div class="text-h6 tw:min-w-65!">Template Creator</div>
                 </q-card-section>
                 <q-separator />
                 <q-tabs
@@ -1132,7 +1132,7 @@ defineExpose({ generateShop });
             >
               <q-card flat bordered>
                 <q-card-section>
-                  <div class="text-h6 tw:min-w-[260px]">Template Editor</div>
+                  <div class="text-h6 tw:min-w-65">Template Editor</div>
                 </q-card-section>
                 <q-separator />
                 <q-tabs

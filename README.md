@@ -1,7 +1,7 @@
 # BYBE - Frontend
 
 <p align="center">
-  <a href="https://bybe.fly.dev/" target="_blank">
+  <a href="https://bybe.app/" target="_blank">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo_dark.png">
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/logo_light.png">
