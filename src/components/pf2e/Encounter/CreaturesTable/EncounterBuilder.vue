@@ -207,32 +207,32 @@ const generateEncounter = debounce(async function () {
     if (randomEncounter.count > 0 && randomEncounter.results) {
       encounter.clearEncounter();
       if (randomEncounter.results.creatures && randomEncounter.results.creatures.length > 0) {
-        for (let i = 0; i < randomEncounter.results.creatures.length; i++) {
+        for (const creature of randomEncounter.results.creatures) {
           const min_creature: min_creature_hazard = {
-            game: randomEncounter.results.creatures[i]!.game,
-            id: randomEncounter.results.creatures[i]!.core_data.essential.id,
-            archive_link: randomEncounter.results.creatures[i]!.core_data.derived.archive_link,
-            name: randomEncounter.results.creatures[i]!.core_data.essential.name,
-            level: randomEncounter.results.creatures[i]!.core_data.essential.base_level,
-            variant: randomEncounter.results.creatures[i]!.variant_data?.variant,
+            game: creature.game,
+            id: creature.core_data.essential.id,
+            archive_link: creature.core_data.derived.archive_link,
+            name: creature.core_data.essential.name,
+            level: creature.core_data.essential.base_level,
+            variant: creature.variant_data?.variant,
             is_hazard: false
           };
           encounter.addToEncounter(min_creature);
         }
       }
       if (randomEncounter.results.hazards && randomEncounter.results.hazards.length > 0) {
-        for (let i = 0; i < randomEncounter.results.hazards.length; i++) {
+        for (const hazard of randomEncounter.results.hazards) {
           const min_hazard: min_creature_hazard = {
-            game: randomEncounter.results.hazards[i]!.game,
-            id: randomEncounter.results.hazards[i]!.core_hazard.essential.id,
+            game: hazard.game,
+            id: hazard.core_hazard.essential.id,
             archive_link:
               'https://2e.aonprd.com/search?q=' +
-              encodeURIComponent(randomEncounter.results.hazards[i]!.core_hazard.essential.name) +
+              encodeURIComponent(hazard.core_hazard.essential.name) +
               ' type%3A(hazard)&type=eqs',
-            name: randomEncounter.results.hazards[i]!.core_hazard.essential.name,
-            level: randomEncounter.results.hazards[i]!.core_hazard.essential.level,
+            name: hazard.core_hazard.essential.name,
+            level: hazard.core_hazard.essential.level,
             is_hazard: true,
-            complexity: randomEncounter.results.hazards[i]!.core_hazard.essential.complexity
+            complexity: hazard.core_hazard.essential.complexity
           };
           encounter.addToEncounter(min_hazard);
         }

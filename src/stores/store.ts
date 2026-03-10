@@ -1,8 +1,7 @@
 import { capitalize } from 'lodash-es';
 import { defineStore } from 'pinia';
 
-import type { min_creature_hazard } from '../types/encounter';
-import type { encounter, encounter_list } from '../types/encounter';
+import type { encounter, encounter_list, min_creature_hazard } from '../types/encounter';
 import type { games, variants } from '../types/filters';
 import type { item, min_item } from '../types/item';
 import type { npc, npc_list, valid_genders } from '../types/npcs';

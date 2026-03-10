@@ -7,8 +7,7 @@ import CreatureList from '../../components/sf2e/Encounter/CreatureList.vue';
 import CreaturesTable from '../../components/sf2e/Encounter/CreaturesTable.vue';
 import { encounterStore, partyStore, settingsStore } from '../../stores/store';
 
-import type { min_creature_hazard } from '../../types/encounter';
-import type { encounter_list } from '../../types/encounter';
+import type { encounter_list, min_creature_hazard } from '../../types/encounter';
 import type { party } from '../../types/party';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
