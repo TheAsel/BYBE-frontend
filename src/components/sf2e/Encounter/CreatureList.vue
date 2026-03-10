@@ -20,12 +20,17 @@ import {
   decodeEncounterLink,
   encounterInfo,
   generateEncounterLink,
-  requestCreatureId
+  requestCreatureId,
+  requestHazardId
 } from '../../../utils/encounter-api-calls';
 
-import type { min_creature } from '../../../types/creature';
-import type { encounter_list, shareable_encounter } from '../../../types/encounter';
-import type { games, variants } from '../../../types/filters';
+import type {
+  encounter_info,
+  encounter_list,
+  min_creature_hazard,
+  shareable_encounter
+} from '../../../types/encounter';
+import type { complexities, games, variants } from '../../../types/filters';
 
 const isApp = process.env.IS_APP === 'true';
 
@@ -68,28 +73,33 @@ tmpEncounter.value = {
 
 const debouncedCall = debounce(async function () {
   const encounterList = encounter.getActiveEncounter!.creatures;
-  const enemyLevels: number[] = [];
-  for (const creature of encounterList) {
-    for (let j = 0; j < creature.quantity!; j++) {
-      switch (creature.variant) {
-        case 'Weak':
-          if (creature.level === 1) {
-            enemyLevels.push(creature.level - 2);
-          } else {
-            enemyLevels.push(creature.level - 1);
-          }
-          break;
-        case 'Elite':
-          if (creature.level === -1 || creature.level === 0) {
-            enemyLevels.push(creature.level + 2);
-          } else {
-            enemyLevels.push(creature.level + 1);
-          }
-          break;
-        default:
-          enemyLevels.push(creature.level);
-          break;
+  const creatureLevels: number[] = [];
+  const hazardLevels: { complexity: complexities; level: number }[] = [];
+  for (const item of encounterList) {
+    if (item.is_hazard === false) {
+      for (let j = 0; j < item.quantity!; j++) {
+        switch (item.variant) {
+          case 'Weak':
+            if (item.level === 1) {
+              creatureLevels.push(item.level - 2);
+            } else {
+              creatureLevels.push(item.level - 1);
+            }
+            break;
+          case 'Elite':
+            if (item.level === -1 || item.level === 0) {
+              creatureLevels.push(item.level + 2);
+            } else {
+              creatureLevels.push(item.level + 1);
+            }
+            break;
+          default:
+            creatureLevels.push(item.level);
+            break;
+        }
       }
+    } else {
+      hazardLevels.push({ complexity: item.complexity!, level: item.level });
     }
   }
   const partyLevels = party.getActiveParty!.members;
@@ -106,10 +116,10 @@ const debouncedCall = debounce(async function () {
       localStorage.setItem('is_pwl_on', 'false');
       break;
   }
-  const body = {
-    enemy_levels: enemyLevels,
-    party_levels: partyLevels,
-    is_pwl_on: is_pwl_on.value
+  const body: encounter_info = {
+    creatures_params: { enemy_levels: creatureLevels, is_pwl_on: is_pwl_on.value },
+    hazards_params: { hazards: hazardLevels },
+    party_levels: partyLevels
   };
   try {
     if (!encounter.getGenerating) {
@@ -226,11 +236,12 @@ const openShare = async () => {
     encounter_name: encounter.getActiveEncounter?.name
       ? encounter.getActiveEncounter.name
       : 'Default',
-    creatures_data: []
+    creatures_data: [],
+    hazards_data: []
   };
 
-  for (const creature of encounterList) {
-    if (creature.game !== 'pf' && creature.game !== 'sf') {
+  for (const item of encounterList) {
+    if (item.game !== 'pf' && item.game !== 'sf') {
       shareDialog.value = false;
       $q.notify({
         progress: true,
@@ -241,16 +252,27 @@ const openShare = async () => {
       return;
     }
 
-    const tmp_variant: variants = creature.variant ? creature.variant : 'Base';
-    const tmp_qty: number = creature.quantity ? creature.quantity : 1;
-    const tmp_game: games = creature.game;
+    if (item.is_hazard === false) {
+      const tmp_variant: variants = item.variant ? item.variant : 'Base';
+      const tmp_qty: number = item.quantity ? item.quantity : 1;
+      const tmp_game: games = item.game;
 
-    body.creatures_data.push({
-      id: creature.id,
-      variant: tmp_variant,
-      qty: tmp_qty,
-      game: tmp_game
-    });
+      body.creatures_data.push({
+        id: item.id,
+        variant: tmp_variant,
+        qty: tmp_qty,
+        game: tmp_game
+      });
+    } else {
+      const tmp_qty: number = item.quantity ? item.quantity : 1;
+      const tmp_game: games = item.game;
+
+      body.hazards_data.push({
+        id: item.id,
+        qty: tmp_qty,
+        game: tmp_game
+      });
+    }
   }
 
   try {
@@ -282,7 +304,7 @@ const openShare = async () => {
 const importEncounter = async () => {
   importNameInput.value.validate();
   if (!importNameInput.value.hasError) {
-    const tmp_creatures: min_creature[] = [];
+    const tmp_creatures: min_creature_hazard[] = [];
     for (const creature of importEncounterData.value?.creatures_data ?? []) {
       try {
         const fetchedCreatureData = await requestCreatureId(
@@ -292,17 +314,43 @@ const importEncounter = async () => {
           is_pwl_on.value
         );
 
-        if (fetchedCreatureData !== undefined) {
-          tmp_creatures.push({
-            game: creature.game,
-            id: creature.id,
-            archive_link: fetchedCreatureData.core_data.derived.archive_link,
-            name: fetchedCreatureData.core_data.essential.name,
-            level: fetchedCreatureData.core_data.essential.base_level,
-            quantity: creature.qty,
-            variant: creature.variant
-          });
+        if (fetchedCreatureData === undefined) {
+          throw new TypeError('Undefined response');
         }
+        tmp_creatures.push({
+          game: creature.game,
+          id: creature.id,
+          archive_link: fetchedCreatureData.core_data.derived.archive_link,
+          name: fetchedCreatureData.core_data.essential.name,
+          level: fetchedCreatureData.core_data.essential.base_level,
+          quantity: creature.qty,
+          variant: creature.variant,
+          is_hazard: false
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    for (const hazard of importEncounterData.value?.hazards_data ?? []) {
+      try {
+        const fetchedHazardsData = await requestHazardId(hazard.game, hazard.id);
+
+        if (fetchedHazardsData === undefined) {
+          throw new TypeError('Undefined response');
+        }
+        tmp_creatures.push({
+          game: hazard.game,
+          id: hazard.id,
+          archive_link:
+            'https://2e.aonsrd.com/search?q=' +
+            encodeURIComponent(fetchedHazardsData.core_hazard.essential.name) +
+            ' type%3A(hazard)&type=eqs',
+          name: fetchedHazardsData.core_hazard.essential.name,
+          level: fetchedHazardsData.core_hazard.essential.level,
+          quantity: hazard.qty,
+          is_hazard: true,
+          complexity: fetchedHazardsData.core_hazard.essential.complexity
+        });
       } catch (error) {
         console.error(error);
       }
@@ -326,6 +374,7 @@ const closeDialog = () => {
   newEncounterDialog.value = false;
   renameEncounterDialog.value = false;
   removeEncounterDialog.value = false;
+  sharedLink.value = '';
   importEncounterName.value = '';
   newEncounterName.value = '';
   newEncounterRename.value = '';
@@ -402,6 +451,30 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
       query: { id: id, variant: variant }
     });
     if (process.env.IS_APP === 'true') {
+      globalThis.open(routeData.href, '_self');
+    } else {
+      globalThis.open(routeData.href, '_blank');
+    }
+  }
+};
+
+const openHazardSheet = (game: games, id: number) => {
+  if (game === 'sf') {
+    const routeData = router.resolve({
+      name: 'sf2e_hazard',
+      query: { id: id }
+    });
+    if (isApp) {
+      globalThis.open(routeData.href, '_self');
+    } else {
+      globalThis.open(routeData.href, '_blank');
+    }
+  } else {
+    const routeData = router.resolve({
+      name: 'pf2e_hazard',
+      query: { id: id }
+    });
+    if (isApp) {
       globalThis.open(routeData.href, '_self');
     } else {
       globalThis.open(routeData.href, '_blank');
@@ -646,7 +719,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
     </q-dialog>
 
     <q-layout
-      id="v-step-6"
+      id="v-step-7"
       view="lHh lpr lFf"
       container
       style="height: calc(100vh - 126px)"
@@ -658,7 +731,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
       >
         <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
           <q-btn
-            id="v-step-7"
+            id="v-step-10"
             class="tw:grow"
             :icon="biShare"
             label="Share"
@@ -743,7 +816,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
       <q-page-container v-if="encounter.getGenerating === false">
         <div v-for="(item, index) in encounter.getActiveEncounter!.creatures" :key="index">
           <div class="tw:flex">
-            <div class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
+            <div id="v-step-8" class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
               <q-btn
                 unelevated
                 :ripple="false"
@@ -766,6 +839,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
             <div class="tw:flex tw:flex-row tw:grow tw:flex-wrap">
               <div class="tw:flex-1 tw:my-auto tw:mx-1" style="min-width: 100px">
                 <q-btn
+                  v-if="item.is_hazard === false"
                   round
                   unelevated
                   :icon="fasScroll"
@@ -783,9 +857,27 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                     Open creature sheet
                   </q-tooltip>
                 </q-btn>
+                <q-btn
+                  v-else
+                  round
+                  unelevated
+                  :icon="fasScroll"
+                  size="sm"
+                  class="tw:mr-2!"
+                  target="_blank"
+                  aria-label="Open hazard sheet"
+                  @click="openHazardSheet(item.game, item.id)"
+                >
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Open hazard sheet
+                  </q-tooltip>
+                </q-btn>
                 <span class="tw:align-middle">
                   {{ item.quantity }}
-                  <!-- TODO: add AoN search query when creatures get added -->
                   <a
                     v-if="item.archive_link"
                     :href="
@@ -807,7 +899,11 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                   — Lv. {{ item.level }}
                 </span>
               </div>
-              <div class="tw:flex-initial tw:my-auto tw:mx-1">
+              <div
+                id="v-step-9"
+                v-if="item.is_hazard === false"
+                class="tw:flex-initial tw:my-auto tw:mx-1"
+              >
                 <q-btn-group unelevated flat spread>
                   <q-btn
                     flat
@@ -850,6 +946,26 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
                   />
                 </q-btn-group>
               </div>
+              <div v-else class="tw:flex-initial tw:my-auto tw:mx-1">
+                <span
+                  v-if="item.complexity === 'Simple'"
+                  flat
+                  size="15px"
+                  padding="xs"
+                  class="tw:text-green-500! text-weight-bold"
+                >
+                  SIMPLE
+                </span>
+                <span
+                  v-else
+                  flat
+                  size="15px"
+                  padding="xs"
+                  class="tw:text-orange-500! text-weight-bold"
+                >
+                  COMPLEX
+                </span>
+              </div>
             </div>
             <div class="tw:flex-initial tw:my-auto tw:ml-1 tw:mr-3">
               <q-btn
@@ -878,7 +994,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
       >
         <div class="tw:flex tw:mx-4 tw:my-1.5">
           <q-linear-progress
-            id="v-step-8"
+            id="v-step-11"
             rounded
             size="35px"
             :value="1"

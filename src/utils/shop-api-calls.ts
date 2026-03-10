@@ -122,7 +122,7 @@ export async function shopGenerator(
     min_level: number;
     max_level: number;
     shop_template?: string;
-    pathfinder_version: string;
+    game_system_version: string;
   }
 ) {
   try {

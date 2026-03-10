@@ -66,7 +66,51 @@ export type creature_filters = {
   };
   role_filter?: roles[];
   role_threshold: number;
-  pathfinder_version: string;
+  game_system_version: string;
+};
+
+export type hazard_columns =
+  | 'id'
+  | 'source'
+  | 'name'
+  | 'level'
+  | 'hp'
+  | 'trait'
+  | 'complexity'
+  | 'size'
+  | 'rarity'
+  | 'stealth'
+  | 'ac'
+  | 'fortitude'
+  | 'reflex'
+  | 'will'
+  | 'hardness';
+
+export type hazard_filters = {
+  source_filter?: string[];
+  name_filter?: string;
+  min_level_filter?: number;
+  max_level_filter?: number;
+  min_hp_filter?: number;
+  max_hp_filter?: number;
+  trait_blacklist_filter?: string[];
+  trait_whitelist_filter?: string[];
+  complexity_filter?: complexities;
+  size_filter?: sizes[];
+  rarity_filter?: rarities[];
+  min_stealth?: number;
+  max_stealth?: number;
+  min_ac_filter?: number;
+  max_ac_filter?: number;
+  min_fortitude_filter?: number;
+  max_fortitude_filter?: number;
+  min_reflex_filter?: number;
+  max_reflex_filter?: number;
+  min_will_filter?: number;
+  max_will_filter?: number;
+  min_hardness_filter?: number;
+  max_hardness_filter?: number;
+  game_system_version: string;
 };
 
 export type item_columns = 'id' | 'name' | 'level' | 'trait' | 'rarity' | 'type' | 'source';
@@ -79,7 +123,9 @@ export type item_filters = {
   rarity_filter?: rarities[];
   type_filter?: string[];
   source_filter?: string[];
-  pathfinder_version: string;
+  game_system_version: string;
 };
 
 export type games = 'pf' | 'sf';
+
+export type complexities = 'Simple' | 'Complex';

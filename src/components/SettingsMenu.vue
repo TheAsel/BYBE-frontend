@@ -27,29 +27,29 @@ const encounter = encounterStore();
 const settingsDialog = ref(false);
 const tab = ref('General');
 
-const pfVersion = ref('Any');
-const localPfVersion = ref(localStorage.getItem('pf_version'));
+const gameVersion = ref('Any');
+const localGameVersion = ref(localStorage.getItem('game_version'));
 
-switch (localPfVersion.value?.toLowerCase()) {
+switch (localGameVersion.value?.toLowerCase()) {
   case 'any':
-    pfVersion.value = 'Any';
+    gameVersion.value = 'Any';
     break;
   case 'legacy':
-    pfVersion.value = 'Legacy';
+    gameVersion.value = 'Legacy';
     break;
   case 'remaster':
-    pfVersion.value = 'Remaster';
+    gameVersion.value = 'Remaster';
     break;
   default:
-    pfVersion.value = 'Any';
-    localStorage.setItem('pf_version', 'Any');
+    gameVersion.value = 'Any';
+    localStorage.setItem('game_version', 'Any');
     break;
 }
 
-settings.setPfVersion(pfVersion.value);
+settings.setGameVersion(gameVersion.value);
 
-const togglePfVersion = () => {
-  localStorage.setItem('pf_version', pfVersion.value);
+const toggleGameVersion = () => {
+  localStorage.setItem('game_version', gameVersion.value);
   globalThis.location.reload();
 };
 
@@ -292,9 +292,9 @@ const validateData = (result: string) => {
           }
           break;
         }
-        case 'pf_version':
+        case 'game_version':
           if (!['any', 'legacy', 'remaster'].includes(parsedData[key].toLowerCase())) {
-            throw new Error('Invalid loaded pathfinder version value');
+            throw new Error('Invalid loaded game version value');
           }
           break;
         case 'parties': {
@@ -383,7 +383,7 @@ const downloadData = () => {
 
 <template>
   <q-btn
-    id="v-step-9"
+    id="v-step-12"
     flat
     round
     size="sm"
@@ -422,7 +422,7 @@ const downloadData = () => {
       >
         <q-tab name="General" label="General" />
         <q-tab name="Encounter" label="Encounter" />
-        <q-tab name="Shop" label="Shop" />
+        <q-tab name="Links" label="Links" />
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="General" class="tw:space-y-3!">
@@ -458,13 +458,13 @@ const downloadData = () => {
           <q-card-actions>
             <div class="q-gutter-y-sm column tw:mx-auto">
               <q-select
-                v-model="pfVersion"
+                v-model="gameVersion"
                 outlined
                 dense
                 options-dense
                 :options="['Any', 'Legacy', 'Remaster']"
-                label="Pathfinder Version"
-                @update:model-value="togglePfVersion"
+                label="Game Version"
+                @update:model-value="toggleGameVersion"
               />
               <q-toggle
                 v-model="hideSupport"
@@ -514,7 +514,7 @@ const downloadData = () => {
             </q-btn>
           </q-card-actions>
         </q-tab-panel>
-        <q-tab-panel name="Shop" class="tw:space-y-3">
+        <q-tab-panel name="Links" class="tw:space-y-3">
           <q-card-actions>
             <div class="tw:mx-auto">
               <q-icon :name="fasFlaskVial" size="sm" class="tw:mr-2" />

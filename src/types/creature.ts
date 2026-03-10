@@ -92,18 +92,21 @@ export type creature = {
     ac_detail: string;
     actions: [
       {
-        action_type: string;
-        category: string;
-        creature_id: number;
-        description: string;
-        id: number;
-        license: string;
-        n_of_actions: number | null;
-        name: string;
-        rarity: rarities;
-        remaster: boolean;
-        slug: string;
-        source: string;
+        core_action: {
+          action_type: string;
+          category: string;
+          creature_id: number;
+          description: string;
+          id: number;
+          license: string;
+          n_of_actions: number | null;
+          name: string;
+          rarity: rarities;
+          remaster: boolean;
+          slug: string;
+          source: string;
+        };
+        traits: string[];
       }
     ];
     has_vision: boolean;
@@ -181,14 +184,4 @@ export type creature_response = {
   total: number;
   next: string;
   results: creature[];
-};
-
-export type min_creature = {
-  game: games;
-  id: number;
-  archive_link: string;
-  name: string;
-  level: number;
-  quantity?: number;
-  variant?: variants | undefined;
 };

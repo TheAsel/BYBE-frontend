@@ -62,7 +62,7 @@ const filters = ref<{
   order_by: 'ascending' | 'descending';
 }>({
   name_filter: '',
-  level_filter: { min: 0, max: 25 },
+  level_filter: { min: 0, max: 20 },
   trait_filter: [],
   rarity_filter: [],
   type_filter: [],
@@ -160,7 +160,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   const body: item_filters = {
     min_level_filter: filters.value.level_filter.min,
     max_level_filter: filters.value.level_filter.max,
-    pathfinder_version: settings.getPfVersion
+    game_system_version: settings.getGameVersion
   };
   if (filters.value.name_filter !== '') {
     body.name_filter = filters.value.name_filter;
@@ -238,7 +238,7 @@ async function onRequest(props) {
 const resetFilters = () => {
   filters.value = {
     name_filter: '',
-    level_filter: { min: 0, max: 25 },
+    level_filter: { min: 0, max: 20 },
     trait_filter: [],
     rarity_filter: [],
     type_filter: [],
@@ -276,7 +276,6 @@ const addItem = debounce(function (item: item) {
   const min_item: min_item = {
     game: item.game,
     id: item.core_item.id,
-    // TODO: use item.core_item.archive_link if it gets added
     archive_link:
       'https://2e.aonsrd.com/search?q=' + encodeURIComponent(item.core_item.name) + '&type=eqs',
     name: item.core_item.name,
@@ -719,7 +718,7 @@ onMounted(async () => {
                         v-model="filters.level_filter"
                         label-always
                         :min="0"
-                        :max="25"
+                        :max="20"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"

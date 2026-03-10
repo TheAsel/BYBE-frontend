@@ -144,7 +144,7 @@ const restoreSettings = () => {
 const generateShop = debounce(async function () {
   shop.setGenerating(true);
   saveChanges();
-  const pf_version = settings.getPfVersion;
+  const game_version = settings.getGameVersion;
 
   const body = {
     consumable_dices: [
@@ -161,7 +161,7 @@ const generateShop = debounce(async function () {
     ],
     min_level: tmpFilters.value.levels.min,
     max_level: tmpFilters.value.levels.max,
-    pathfinder_version: pf_version
+    game_system_version: game_version
   };
   if (fixedConsumableDice.value) {
     body.consumable_dices = [
@@ -213,7 +213,6 @@ const generateShop = debounce(async function () {
         const min_item: min_item = {
           game: randomShop.results[i]!.game,
           id: randomShop.results[i]!.core_item.id,
-          // TODO: use randomShop.results[i].core_item.archive_link if it gets added
           archive_link:
             'https://2e.aonsrd.com/search?q=' +
             encodeURIComponent(randomShop.results[i]!.core_item.name) +

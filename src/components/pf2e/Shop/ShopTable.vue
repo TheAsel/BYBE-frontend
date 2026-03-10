@@ -160,7 +160,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   const body: item_filters = {
     min_level_filter: filters.value.level_filter.min,
     max_level_filter: filters.value.level_filter.max,
-    pathfinder_version: settings.getPfVersion
+    game_system_version: settings.getGameVersion
   };
   if (filters.value.name_filter !== '') {
     body.name_filter = filters.value.name_filter;
@@ -276,7 +276,6 @@ const addItem = debounce(function (item: item) {
   const min_item: min_item = {
     game: item.game,
     id: item.core_item.id,
-    // TODO: use item.core_item.archive_link if it gets added
     archive_link:
       'https://2e.aonprd.com/Search.aspx?q=' +
       encodeURIComponent(item.core_item.name) +
@@ -937,7 +936,7 @@ onMounted(async () => {
           </a>
           <span v-else class="tw:align-middle">{{ name.row.core_item.name }}</span>
           <q-chip
-            v-if="name.row.core_item.remaster && settings.getPfVersion === 'Any'"
+            v-if="name.row.core_item.remaster && settings.getGameVersion === 'Any'"
             dense
             color="blue"
             text-color="white"
@@ -945,7 +944,7 @@ onMounted(async () => {
             label="Remaster"
           />
           <q-chip
-            v-if="!name.row.core_item.remaster && settings.getPfVersion === 'Any'"
+            v-if="!name.row.core_item.remaster && settings.getGameVersion === 'Any'"
             dense
             color="red-10"
             text-color="white"
