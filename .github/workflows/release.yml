@@ -4,17 +4,13 @@ on:
       - published
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/bybe-frontend
-
 jobs:
-  build-and-push:
+  build-and-push-docker:
+    name: Build and push Docker image
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
@@ -25,7 +21,7 @@ jobs:
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 #3.7.0
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -33,13 +29,17 @@ jobs:
         id: meta
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 #5.10.0
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ghcr.io/${{ github.repository_owner }}/bybe-frontend
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=raw,value=latest,enable={{is_default_branch}}
+            # Release tags (semver) — only on release event
+            type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
+            type=semver,pattern={{major}}.{{minor}},enable=${{ github.event_name == 'release' }}
+            type=semver,pattern={{major}},enable=${{ github.event_name == 'release' }}
+            type=raw,value=latest,enable=${{ github.event_name == 'release' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+            # Branch tag — only on manual trigger
+            type=ref,event=branch,enable=${{ github.event_name == 'workflow_dispatch' }}
           labels: |
+            org.opencontainers.image.title=BYBE-Frontend
             org.opencontainers.image.description=Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e and Starfinder 2e Game Masters. Built on top of the BYBE - Backend
             org.opencontainers.image.vendor=${{ github.repository_owner }}
 
