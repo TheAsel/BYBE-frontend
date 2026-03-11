@@ -20,11 +20,16 @@ import {
 } from '@quasar/extras/mdi-v7';
 import { capitalize, debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { onMounted, ref, toRaw } from 'vue';
+import { onMounted, ref, toRaw, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { filtersStore, itemsStore, settingsStore, templateStore } from '../../../stores/store';
-import { requestFilters, requestItems, requestTemplates } from '../../../utils/shop-api-calls';
+import {
+  requestFilters,
+  requestItems,
+  requestShopRanges,
+  requestTemplates
+} from '../../../utils/shop-api-calls';
 
 import ShopBuilder from './ShopTable/ShopBuilder.vue';
 
@@ -38,6 +43,16 @@ const filterStore = filtersStore();
 
 const shopBuilderRef = ref();
 const router = useRouter();
+
+watch(
+  () => filterStore.shopRanges,
+  (ranges) => {
+    filters.value.level_filter = {
+      min: ranges.min_level,
+      max: ranges.max_level
+    };
+  }
+);
 
 const itemTable = ref();
 const navigationActive = ref(false);
@@ -62,7 +77,7 @@ const filters = ref<{
   order_by: 'ascending' | 'descending';
 }>({
   name_filter: '',
-  level_filter: { min: 0, max: 25 },
+  level_filter: { min: filterStore.shopRanges.min_level, max: filterStore.shopRanges.max_level },
   trait_filter: [],
   rarity_filter: [],
   type_filter: [],
@@ -238,7 +253,7 @@ async function onRequest(props) {
 const resetFilters = () => {
   filters.value = {
     name_filter: '',
-    level_filter: { min: 0, max: 25 },
+    level_filter: { min: filterStore.shopRanges.min_level, max: filterStore.shopRanges.max_level },
     trait_filter: [],
     rarity_filter: [],
     type_filter: [],
@@ -485,6 +500,12 @@ onMounted(async () => {
     } else {
       throw new Error('Error fetching templates');
     }
+    const shopRangesRequest = await requestShopRanges('pf');
+    if (shopRangesRequest) {
+      filterStore.shopRanges = shopRangesRequest;
+    } else {
+      throw new Error('Error fetching shop ranges');
+    }
   } catch (error) {
     console.error(error);
   }
@@ -719,8 +740,8 @@ onMounted(async () => {
                       <q-range
                         v-model="filters.level_filter"
                         label-always
-                        :min="0"
-                        :max="25"
+                        :min="filterStore.shopRanges.min_level"
+                        :max="filterStore.shopRanges.min_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"

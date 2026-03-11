@@ -3,7 +3,7 @@ import { biQuestionCircle, biXLg } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { encounterStore, filtersStore, partyStore, settingsStore } from '../../../../stores/store';
 import { encounterGenerator } from '../../../../utils/encounter-api-calls';
@@ -32,9 +32,15 @@ const encounter = encounterStore();
 const dialog = ref(false);
 const tab = ref('General');
 
-const hazardLimits = ref({
-  stealth_filter: { min: 10, max: 33 }
-});
+watch(
+  () => filters.hazardRanges,
+  (ranges) => {
+    hazardStealth.value = {
+      min: ranges.min_stealth,
+      max: ranges.max_stealth
+    };
+  }
+);
 
 const creatureHazardRatio = ref<number>(100);
 
@@ -57,8 +63,8 @@ const complexity = ref<complexities[]>();
 const hazardSize = ref<sizes[]>();
 const hazardRarity = ref<rarities[]>();
 const hazardStealth = ref({
-  min: hazardLimits.value.stealth_filter.min,
-  max: hazardLimits.value.stealth_filter.max
+  min: filters.hazardRanges.min_stealth,
+  max: filters.hazardRanges.max_stealth
 });
 const hazard_number = ref({ min: 1, max: 20 });
 
@@ -701,8 +707,8 @@ defineExpose({ generateEncounter });
                 <q-range
                   v-model="tmpFilters.hazards.stealth"
                   label-always
-                  :min="hazardLimits.stealth_filter.min"
-                  :max="hazardLimits.stealth_filter.max"
+                  :min="filters.hazardRanges.min_stealth"
+                  :max="filters.hazardRanges.max_stealth"
                   markers
                   :left-label-value="'Min: ' + tmpFilters.hazards.stealth.min"
                   :right-label-value="'Max: ' + tmpFilters.hazards.stealth.max"

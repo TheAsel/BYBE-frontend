@@ -1,4 +1,4 @@
-import type { games, item_columns, item_filters } from '../types/filters';
+import type { games, item_columns, item_filters, shop_ranges } from '../types/filters';
 import type { item, item_response } from '../types/item';
 import type { template_data } from '../types/template';
 import type { shareable_shop } from 'src/types/shop';
@@ -82,6 +82,24 @@ export async function requestItems(
       throw new Error(error);
     }
     return data as item_response;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function requestShopRanges(game: games) {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    };
+    const response = await fetch(process.env.API_URL + '/' + game + '/shop/ranges', requestOptions);
+    const data = await response.json();
+    if (!response.ok) {
+      const error = data?.message ?? response.status;
+      throw new Error(error);
+    }
+    return data as shop_ranges;
   } catch (error) {
     console.error(error);
   }

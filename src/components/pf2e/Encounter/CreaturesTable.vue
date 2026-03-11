@@ -20,14 +20,16 @@ import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 import { mdiBowArrow, mdiMagicStaff, mdiSword } from '@quasar/extras/mdi-v7';
 import { capitalize, debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { encounterStore, filtersStore, settingsStore } from '../../../stores/store';
 import {
+  requestCreatureRanges,
   requestCreatures,
   requestFilters,
   requestHazardFilters,
+  requestHazardRanges,
   requestHazards
 } from '../../../utils/encounter-api-calls';
 import PartyBuilder from '../../common/PartyBuilder.vue';
@@ -71,22 +73,6 @@ const pagination = ref({
   rowsNumber: 0
 });
 
-const creatureLimits = ref({
-  level_filter: { min: -1, max: 25 },
-  hp_filter: { min: 0, max: 680 }
-});
-
-const hazardLimits = ref({
-  level_filter: { min: -1, max: 23 },
-  hp_filter: { min: 0, max: 460 },
-  stealth_filter: { min: -10, max: 51 },
-  ac_filter: { min: 0, max: 51 },
-  fortitude_filter: { min: 0, max: 43 },
-  reflex_filter: { min: 0, max: 39 },
-  will_filter: { min: 0, max: 43 },
-  hardness_filter: { min: 0, max: 41 }
-});
-
 const creatureFilters = ref<{
   name_filter: string;
   level_filter: { min: number; max: number };
@@ -109,10 +95,10 @@ const creatureFilters = ref<{
 }>({
   name_filter: '',
   level_filter: {
-    min: creatureLimits.value.level_filter.min,
-    max: creatureLimits.value.level_filter.max
+    min: filterStore.creatureRanges.min_level,
+    max: filterStore.creatureRanges.max_level
   },
-  hp_filter: { min: creatureLimits.value.hp_filter.min, max: creatureLimits.value.hp_filter.max },
+  hp_filter: { min: filterStore.creatureRanges.min_hp, max: filterStore.creatureRanges.max_hp },
   trait_filter: [],
   alignment_filter: [],
   size_filter: [],
@@ -129,6 +115,20 @@ const creatureFilters = ref<{
   sort_by: 'name',
   order_by: 'ascending'
 });
+
+watch(
+  () => filterStore.creatureRanges,
+  (ranges) => {
+    creatureFilters.value.level_filter = {
+      min: ranges.min_level,
+      max: ranges.max_level
+    };
+    creatureFilters.value.hp_filter = {
+      min: ranges.min_hp,
+      max: ranges.max_hp
+    };
+  }
+);
 
 const hazardFilters = ref<{
   name_filter: string;
@@ -150,36 +150,74 @@ const hazardFilters = ref<{
 }>({
   name_filter: '',
   level_filter: {
-    min: hazardLimits.value.level_filter.min,
-    max: hazardLimits.value.level_filter.max
+    min: filterStore.hazardRanges.min_level,
+    max: filterStore.hazardRanges.max_level
   },
-  hp_filter: { min: hazardLimits.value.hp_filter.min, max: hazardLimits.value.hp_filter.max },
+  hp_filter: { min: filterStore.hazardRanges.min_hp, max: filterStore.hazardRanges.max_hp },
   trait_filter: [],
   complexity_filter: null,
   size_filter: [],
   rarity_filter: [],
   stealth_filter: {
-    min: hazardLimits.value.stealth_filter.min,
-    max: hazardLimits.value.stealth_filter.max
+    min: filterStore.hazardRanges.min_stealth,
+    max: filterStore.hazardRanges.max_stealth
   },
-  ac_filter: { min: hazardLimits.value.ac_filter.min, max: hazardLimits.value.ac_filter.max },
+  ac_filter: { min: filterStore.hazardRanges.min_ac, max: filterStore.hazardRanges.max_ac },
   fortitude_filter: {
-    min: hazardLimits.value.fortitude_filter.min,
-    max: hazardLimits.value.fortitude_filter.max
+    min: filterStore.hazardRanges.min_fortitude,
+    max: filterStore.hazardRanges.max_fortitude
   },
   reflex_filter: {
-    min: hazardLimits.value.reflex_filter.min,
-    max: hazardLimits.value.reflex_filter.max
+    min: filterStore.hazardRanges.min_reflex,
+    max: filterStore.hazardRanges.max_reflex
   },
-  will_filter: { min: hazardLimits.value.will_filter.min, max: hazardLimits.value.will_filter.max },
+  will_filter: { min: filterStore.hazardRanges.min_will, max: filterStore.hazardRanges.max_will },
   hardness_filter: {
-    min: hazardLimits.value.hardness_filter.min,
-    max: hazardLimits.value.hardness_filter.max
+    min: filterStore.hazardRanges.min_hardness,
+    max: filterStore.hazardRanges.max_hardness
   },
   source_filter: [],
   sort_by: 'name',
   order_by: 'ascending'
 });
+
+watch(
+  () => filterStore.hazardRanges,
+  (ranges) => {
+    hazardFilters.value.level_filter = {
+      min: ranges.min_level,
+      max: ranges.max_level
+    };
+    hazardFilters.value.hp_filter = {
+      min: ranges.min_hp,
+      max: ranges.max_hp
+    };
+    hazardFilters.value.stealth_filter = {
+      min: ranges.min_stealth,
+      max: ranges.max_stealth
+    };
+    hazardFilters.value.ac_filter = {
+      min: ranges.min_ac,
+      max: ranges.max_ac
+    };
+    hazardFilters.value.fortitude_filter = {
+      min: ranges.min_fortitude,
+      max: ranges.max_fortitude
+    };
+    hazardFilters.value.reflex_filter = {
+      min: ranges.min_reflex,
+      max: ranges.max_reflex
+    };
+    hazardFilters.value.will_filter = {
+      min: ranges.min_will,
+      max: ranges.max_will
+    };
+    hazardFilters.value.hardness_filter = {
+      min: ranges.min_hardness,
+      max: ranges.max_hardness
+    };
+  }
+);
 
 const fullscreen = ref(false);
 const tableHeight = ref('height: calc(100vh - 126px)');
@@ -582,8 +620,8 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       max_level_filter: hazardFilters.value.level_filter.max,
       min_hp_filter: hazardFilters.value.hp_filter.min,
       max_hp_filter: hazardFilters.value.hp_filter.max,
-      min_stealth: hazardFilters.value.stealth_filter.min,
-      max_stealth: hazardFilters.value.stealth_filter.max,
+      min_stealth_filter: hazardFilters.value.stealth_filter.min,
+      max_stealth_filter: hazardFilters.value.stealth_filter.max,
       min_ac_filter: hazardFilters.value.ac_filter.min,
       max_ac_filter: hazardFilters.value.ac_filter.max,
       min_fortitude_filter: hazardFilters.value.fortitude_filter.min,
@@ -681,10 +719,10 @@ const resetCreatureFilters = () => {
     source_filter: [],
     name_filter: '',
     level_filter: {
-      min: creatureLimits.value.level_filter.min,
-      max: creatureLimits.value.level_filter.max
+      min: filterStore.creatureRanges.min_level,
+      max: filterStore.creatureRanges.max_level
     },
-    hp_filter: { min: creatureLimits.value.hp_filter.min, max: creatureLimits.value.hp_filter.max },
+    hp_filter: { min: filterStore.creatureRanges.min_hp, max: filterStore.creatureRanges.max_hp },
     trait_filter: [],
     alignment_filter: [],
     size_filter: [],
@@ -707,34 +745,34 @@ const resetHazardFilters = () => {
     source_filter: [],
     name_filter: '',
     level_filter: {
-      min: hazardLimits.value.level_filter.min,
-      max: hazardLimits.value.level_filter.max
+      min: filterStore.hazardRanges.min_level,
+      max: filterStore.hazardRanges.max_level
     },
-    hp_filter: { min: hazardLimits.value.hp_filter.min, max: hazardLimits.value.hp_filter.max },
+    hp_filter: { min: filterStore.hazardRanges.min_hp, max: filterStore.hazardRanges.max_hp },
     trait_filter: [],
     complexity_filter: null,
     size_filter: [],
     rarity_filter: [],
     stealth_filter: {
-      min: hazardLimits.value.stealth_filter.min,
-      max: hazardLimits.value.stealth_filter.max
+      min: filterStore.hazardRanges.min_stealth,
+      max: filterStore.hazardRanges.max_stealth
     },
-    ac_filter: { min: hazardLimits.value.ac_filter.min, max: hazardLimits.value.ac_filter.max },
+    ac_filter: { min: filterStore.hazardRanges.min_ac, max: filterStore.hazardRanges.max_ac },
     fortitude_filter: {
-      min: hazardLimits.value.fortitude_filter.min,
-      max: hazardLimits.value.fortitude_filter.max
+      min: filterStore.hazardRanges.min_fortitude,
+      max: filterStore.hazardRanges.max_fortitude
     },
     reflex_filter: {
-      min: hazardLimits.value.reflex_filter.min,
-      max: hazardLimits.value.reflex_filter.max
+      min: filterStore.hazardRanges.min_reflex,
+      max: filterStore.hazardRanges.max_reflex
     },
     will_filter: {
-      min: hazardLimits.value.will_filter.min,
-      max: hazardLimits.value.will_filter.max
+      min: filterStore.hazardRanges.min_will,
+      max: filterStore.hazardRanges.max_will
     },
     hardness_filter: {
-      min: hazardLimits.value.hardness_filter.min,
-      max: hazardLimits.value.hardness_filter.max
+      min: filterStore.hazardRanges.min_hardness,
+      max: filterStore.hazardRanges.max_hardness
     },
     sort_by: 'name',
     order_by: 'ascending'
@@ -929,6 +967,12 @@ onMounted(async () => {
     } else {
       throw new Error('Error fetching creature creature_roles');
     }
+    const creatureRangesRequest = await requestCreatureRanges('pf');
+    if (creatureRangesRequest) {
+      filterStore.creatureRanges = creatureRangesRequest;
+    } else {
+      throw new Error('Error fetching creature ranges');
+    }
 
     const hazardTraitsRequest = await requestHazardFilters('pf', 'traits');
     if (hazardTraitsRequest) {
@@ -955,6 +999,12 @@ onMounted(async () => {
       sourceHazardFilter.value = filterStore.getHazardFilters.sources;
     } else {
       throw new Error('Error fetching hazard sources');
+    }
+    const hazardRangesRequest = await requestHazardRanges('pf');
+    if (hazardRangesRequest) {
+      filterStore.hazardRanges = hazardRangesRequest;
+    } else {
+      throw new Error('Error fetching hazard ranges');
     }
   } catch (error) {
     console.error(error);
@@ -1203,8 +1253,8 @@ onMounted(async () => {
                       <q-range
                         v-model="creatureFilters.level_filter"
                         label-always
-                        :min="creatureLimits.level_filter.min"
-                        :max="creatureLimits.level_filter.max"
+                        :min="filterStore.creatureRanges.min_level"
+                        :max="filterStore.creatureRanges.max_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
@@ -1251,8 +1301,8 @@ onMounted(async () => {
                       <q-range
                         v-model="creatureFilters.hp_filter"
                         label-always
-                        :min="creatureLimits.hp_filter.min"
-                        :max="creatureLimits.hp_filter.max"
+                        :min="filterStore.creatureRanges.min_hp"
+                        :max="filterStore.creatureRanges.max_hp"
                         style="min-width: 200px"
                         aria-label="Filter HP"
                         role="menuitem"
@@ -2131,8 +2181,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.level_filter"
                         label-always
-                        :min="hazardLimits.level_filter.min"
-                        :max="hazardLimits.level_filter.max"
+                        :min="filterStore.hazardRanges.min_level"
+                        :max="filterStore.hazardRanges.max_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
@@ -2179,8 +2229,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.hp_filter"
                         label-always
-                        :min="hazardLimits.hp_filter.min"
-                        :max="hazardLimits.hp_filter.max"
+                        :min="filterStore.hazardRanges.min_hp"
+                        :max="filterStore.hazardRanges.max_hp"
                         style="min-width: 200px"
                         aria-label="Filter HP"
                         role="menuitem"
@@ -2364,8 +2414,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.stealth_filter"
                         label-always
-                        :min="hazardLimits.stealth_filter.min"
-                        :max="hazardLimits.stealth_filter.max"
+                        :min="filterStore.hazardRanges.min_stealth"
+                        :max="filterStore.hazardRanges.max_stealth"
                         style="min-width: 200px"
                         aria-label="Filter Stealth"
                         role="menuitem"
@@ -2412,8 +2462,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.ac_filter"
                         label-always
-                        :min="hazardLimits.ac_filter.min"
-                        :max="hazardLimits.ac_filter.max"
+                        :min="filterStore.hazardRanges.min_ac"
+                        :max="filterStore.hazardRanges.max_ac"
                         style="min-width: 200px"
                         aria-label="Filter AC"
                         role="menuitem"
@@ -2461,8 +2511,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.fortitude_filter"
                         label-always
-                        :min="hazardLimits.fortitude_filter.min"
-                        :max="hazardLimits.fortitude_filter.max"
+                        :min="filterStore.hazardRanges.min_fortitude"
+                        :max="filterStore.hazardRanges.max_fortitude"
                         style="min-width: 200px"
                         aria-label="Filter Fortitude"
                         role="menuitem"
@@ -2509,8 +2559,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.reflex_filter"
                         label-always
-                        :min="hazardLimits.reflex_filter.min"
-                        :max="hazardLimits.reflex_filter.max"
+                        :min="filterStore.hazardRanges.min_reflex"
+                        :max="filterStore.hazardRanges.max_reflex"
                         style="min-width: 200px"
                         aria-label="Filter Reflex"
                         role="menuitem"
@@ -2557,8 +2607,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.will_filter"
                         label-always
-                        :min="hazardLimits.will_filter.min"
-                        :max="hazardLimits.will_filter.max"
+                        :min="filterStore.hazardRanges.min_will"
+                        :max="filterStore.hazardRanges.max_will"
                         style="min-width: 200px"
                         aria-label="Filter Will"
                         role="menuitem"
@@ -2605,8 +2655,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.hardness_filter"
                         label-always
-                        :min="hazardLimits.hardness_filter.min"
-                        :max="hazardLimits.hardness_filter.max"
+                        :min="filterStore.hazardRanges.min_hardness"
+                        :max="filterStore.hazardRanges.max_hardness"
                         style="min-width: 200px"
                         aria-label="Filter Hardness"
                         role="menuitem"

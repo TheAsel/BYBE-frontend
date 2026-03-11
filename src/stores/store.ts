@@ -2,7 +2,13 @@ import { capitalize } from 'lodash-es';
 import { defineStore } from 'pinia';
 
 import type { encounter, encounter_list, min_creature_hazard } from '../types/encounter';
-import type { games, variants } from '../types/filters';
+import type {
+  bestiary_ranges,
+  games,
+  hazard_ranges,
+  shop_ranges,
+  variants
+} from '../types/filters';
 import type { item, min_item } from '../types/item';
 import type { npc, npc_list, valid_genders } from '../types/npcs';
 import type { party } from '../types/party';
@@ -109,22 +115,25 @@ export const filtersStore = defineStore('filters', {
       sources: [] as string[],
       creature_roles: [] as string[]
     },
-    itemFilters: {
-      sources: [] as string[],
-      traits: [{}] as { label: string; value: string }[]
-    },
+    creatureRanges: {} as bestiary_ranges,
     hazardFilters: {
       traits: [] as string[],
       complexities: [] as string[],
       sizes: [] as string[],
       rarities: [] as string[],
       sources: [] as string[]
-    }
+    },
+    hazardRanges: {} as hazard_ranges,
+    itemFilters: {
+      sources: [] as string[],
+      traits: [{}] as { label: string; value: string }[]
+    },
+    shopRanges: {} as shop_ranges
   }),
   getters: {
     getCreatureFilters: (state) => state.creatureFilters,
-    getItemFilters: (state) => state.itemFilters,
-    getHazardFilters: (state) => state.hazardFilters
+    getHazardFilters: (state) => state.hazardFilters,
+    getItemFilters: (state) => state.itemFilters
   },
   actions: {
     updateTraits(newTraits: string[]) {
@@ -154,19 +163,6 @@ export const filtersStore = defineStore('filters', {
     updateRoles(newRoles: string[]) {
       this.creatureFilters.creature_roles = newRoles;
     },
-    updateItemSources(newSources: string[]) {
-      this.itemFilters.sources = newSources;
-    },
-    updateItemTraits(newTraits: string[]) {
-      this.itemFilters.traits = newTraits.map((trait) => ({
-        label: trait
-          .split('-')
-          .map((str) => capitalize(str))
-          .join(' ')
-          .replace('Additive', 'Additive '),
-        value: trait
-      }));
-    },
     updateHazardTraits(newTraits: string[]) {
       this.hazardFilters.traits = newTraits.map((trait) => {
         return capitalize(trait);
@@ -181,6 +177,19 @@ export const filtersStore = defineStore('filters', {
     },
     updateHazardSources(newSources: string[]) {
       this.hazardFilters.sources = newSources;
+    },
+    updateItemSources(newSources: string[]) {
+      this.itemFilters.sources = newSources;
+    },
+    updateItemTraits(newTraits: string[]) {
+      this.itemFilters.traits = newTraits.map((trait) => ({
+        label: trait
+          .split('-')
+          .map((str) => capitalize(str))
+          .join(' ')
+          .replace('Additive', 'Additive '),
+        value: trait
+      }));
     }
   }
 });

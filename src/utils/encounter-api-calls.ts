@@ -7,11 +7,13 @@ import type {
   shareable_encounter
 } from '../types/encounter';
 import type {
+  bestiary_ranges,
   creature_columns,
   creature_filters,
   games,
   hazard_columns,
   hazard_filters,
+  hazard_ranges,
   variants
 } from '../types/filters';
 import type { hazard, hazard_response } from '../types/hazard';
@@ -151,6 +153,48 @@ export async function requestHazardFilters(
       throw new Error(error);
     }
     return data as string[];
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function requestCreatureRanges(game: games) {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    };
+    const response = await fetch(
+      process.env.API_URL + '/' + game + '/bestiary/ranges',
+      requestOptions
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      const error = data?.message ?? response.status;
+      throw new Error(error);
+    }
+    return data as bestiary_ranges;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function requestHazardRanges(game: games) {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    };
+    const response = await fetch(
+      process.env.API_URL + '/' + game + '/hazard/ranges',
+      requestOptions
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      const error = data?.message ?? response.status;
+      throw new Error(error);
+    }
+    return data as hazard_ranges;
   } catch (error) {
     console.error(error);
   }
