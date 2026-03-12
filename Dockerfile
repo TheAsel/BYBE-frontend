@@ -2,6 +2,8 @@
 FROM oven/bun:1.2.23-alpine AS build-stage
 WORKDIR /bybe
 COPY . .
+ARG API_URL
+ENV API_URL=$API_URL
 RUN bun install --ignore-scripts && bun run build
 
 ### STAGE 2: Deploy ###
