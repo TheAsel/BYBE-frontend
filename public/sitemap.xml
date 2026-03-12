@@ -21,6 +21,11 @@
 		<priority>1.0</priority>
 	</url>
 	<url>
+		<loc>https://bybe.app/pf/hazard</loc>
+		<lastmod>2026-03-12</lastmod>
+		<priority>1.0</priority>
+	</url>
+	<url>
 		<loc>https://bybe.app/pf/npc</loc>
 		<lastmod>2025-09-23</lastmod>
 		<priority>1.0</priority>
@@ -68,6 +73,11 @@
 	<url>
 		<loc>https://bybe.app/sf/bestiary</loc>
 		<lastmod>2025-09-23</lastmod>
+		<priority>1.0</priority>
+	</url>
+	<url>
+		<loc>https://bybe.app/sf/hazard</loc>
+		<lastmod>2026-03-12</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
