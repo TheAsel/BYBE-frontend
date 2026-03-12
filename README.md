@@ -44,7 +44,7 @@ BYBE is also available offline! We currently support Windows, MacOS and Linux (A
 ## ✨ Features
 
 - Encounter Builder
-  - Browse and filter a list of all creatures
+  - Browse and filter a list of all creatures and hazards
   - Balance encounters based on your party size and level
   - Generate random encounters based on your requirements
 - Shop Generator
@@ -123,6 +123,8 @@ bun run build && bun run start
 ```
 
 ### Docker
+
+Docker images are available [HERE](https://github.com/theasel/BYBE-frontend/pkgs/container/bybe-frontend). If you want to build them yourself:
 
 1. Download the [latest release](https://github.com/TheAsel/BYBE-frontend/releases/latest) or clone this repository:
 
