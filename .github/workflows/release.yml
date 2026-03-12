@@ -11,6 +11,9 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      PROD_API_URL: https://api.bybe.app
+      DEV_API_URL: https://dev-api.bybe.app
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
@@ -51,6 +54,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            API_URL=${{ github.ref == 'refs/heads/develop' && env.PROD_API_URL || env.DEV_API_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
