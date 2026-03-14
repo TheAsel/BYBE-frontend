@@ -20,11 +20,16 @@ import {
 } from '@quasar/extras/mdi-v7';
 import { capitalize, debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { onMounted, ref, toRaw } from 'vue';
+import { onMounted, ref, toRaw, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { filtersStore, itemsStore, settingsStore, templateStore } from '../../../stores/store';
-import { requestFilters, requestItems, requestTemplates } from '../../../utils/shop-api-calls';
+import {
+  requestFilters,
+  requestItems,
+  requestShopRanges,
+  requestTemplates
+} from '../../../utils/shop-api-calls';
 
 import ShopBuilder from './ShopTable/ShopBuilder.vue';
 
@@ -38,6 +43,16 @@ const filterStore = filtersStore();
 
 const shopBuilderRef = ref();
 const router = useRouter();
+
+watch(
+  () => filterStore.shopRanges,
+  (ranges) => {
+    filters.value.level_filter = {
+      min: ranges.min_level,
+      max: ranges.max_level
+    };
+  }
+);
 
 const itemTable = ref();
 const navigationActive = ref(false);
@@ -62,7 +77,7 @@ const filters = ref<{
   order_by: 'ascending' | 'descending';
 }>({
   name_filter: '',
-  level_filter: { min: 0, max: 25 },
+  level_filter: { min: filterStore.shopRanges.min_level, max: filterStore.shopRanges.max_level },
   trait_filter: [],
   rarity_filter: [],
   type_filter: [],
@@ -160,7 +175,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   const body: item_filters = {
     min_level_filter: filters.value.level_filter.min,
     max_level_filter: filters.value.level_filter.max,
-    pathfinder_version: settings.getPfVersion
+    game_system_version: settings.getGameVersion
   };
   if (filters.value.name_filter !== '') {
     body.name_filter = filters.value.name_filter;
@@ -238,7 +253,7 @@ async function onRequest(props) {
 const resetFilters = () => {
   filters.value = {
     name_filter: '',
-    level_filter: { min: 0, max: 25 },
+    level_filter: { min: filterStore.shopRanges.min_level, max: filterStore.shopRanges.max_level },
     trait_filter: [],
     rarity_filter: [],
     type_filter: [],
@@ -276,7 +291,6 @@ const addItem = debounce(function (item: item) {
   const min_item: min_item = {
     game: item.game,
     id: item.core_item.id,
-    // TODO: use item.core_item.archive_link if it gets added
     archive_link:
       'https://2e.aonsrd.com/search?q=' + encodeURIComponent(item.core_item.name) + '&type=eqs',
     name: item.core_item.name,
@@ -483,6 +497,12 @@ onMounted(async () => {
       templateStore().addDefaultTemplates(templatesRequest);
     } else {
       throw new Error('Error fetching templates');
+    }
+    const shopRangesRequest = await requestShopRanges('sf');
+    if (shopRangesRequest) {
+      filterStore.shopRanges = shopRangesRequest;
+    } else {
+      throw new Error('Error fetching shop ranges');
     }
   } catch (error) {
     console.error(error);
@@ -718,8 +738,8 @@ onMounted(async () => {
                       <q-range
                         v-model="filters.level_filter"
                         label-always
-                        :min="0"
-                        :max="25"
+                        :min="filterStore.shopRanges.min_level"
+                        :max="filterStore.shopRanges.min_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"

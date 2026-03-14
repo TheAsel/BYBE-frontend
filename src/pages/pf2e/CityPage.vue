@@ -20,7 +20,7 @@ useHead({
       <h1 class="tw:block tw:text-4xl! tw:font-bold! tw:text-white tw:sm:text-4xl">
         Work in progress...
       </h1>
-      <p class="tw:mt-3! tw:text-lg! tw:text-gray-300">This feature is being worked on.</p>
+      <p class="tw:mt-3! tw:text-lg tw:text-gray-300">This feature is being worked on.</p>
     </div>
   </div>
 </template>

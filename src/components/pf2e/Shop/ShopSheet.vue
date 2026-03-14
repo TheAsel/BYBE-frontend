@@ -38,6 +38,14 @@ const items = itemsStore();
   </div>
 </template>
 
+<style>
+.action-glyph {
+  font-family: 'Pathfinder2eActions', sans-serif;
+  font-size: 24px;
+  line-height: calc(2 / 1.5);
+}
+</style>
+
 <style lang="scss">
 .item-sheet {
   min-height: calc(100vh - 96px) !important;

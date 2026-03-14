@@ -7,8 +7,7 @@ import CreatureList from '../../components/sf2e/Encounter/CreatureList.vue';
 import CreaturesTable from '../../components/sf2e/Encounter/CreaturesTable.vue';
 import { encounterStore, partyStore, settingsStore } from '../../stores/store';
 
-import type { min_creature } from '../../types/creature';
-import type { encounter_list } from '../../types/encounter';
+import type { encounter_list, min_creature_hazard } from '../../types/encounter';
 import type { party } from '../../types/party';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
@@ -109,7 +108,7 @@ const steps: Step[] = [
   {
     target: '#v-step-0',
     content:
-      'This is the creature list. Double click on a row to add it to the encounter list to the right.',
+      'This is the Creature/Hazard List. Double click on a row to add it to the Encounter List to the right.',
     params: {
       placement: 'auto'
     }
@@ -140,22 +139,21 @@ const steps: Step[] = [
   },
   {
     target: '#v-step-4',
+    content: 'Click these buttons to toggle between the Creatures and Hazards Lists.',
+    params: {
+      placement: 'bottom'
+    }
+  },
+  {
+    target: '#v-step-5',
     content: 'From this dropdown you can select which columns of the table to show and hide.',
     params: {
       placement: 'bottom'
     }
   },
   {
-    target: '.v-step-5',
+    target: '.v-step-6',
     content: 'Here you can sort the columns and narrow your search with the various filters.',
-    params: {
-      placement: 'auto'
-    }
-  },
-  {
-    target: '#v-step-6',
-    content:
-      'This is the encounter list, where the creatures you added will be displayed. You can increase or decrease the number of each creature and change them to their Weak/Elite variant.',
     params: {
       placement: 'auto'
     }
@@ -163,13 +161,35 @@ const steps: Step[] = [
   {
     target: '#v-step-7',
     content:
-      'Clicking this button will generate a link to your current encounter that you can copy and share.',
+      'This is the Encounter List, where the creatures and hazards you added will be displayed.',
     params: {
       placement: 'auto'
     }
   },
   {
     target: '#v-step-8',
+    content: 'You can increase or decrease the number creatures and hazards.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-9',
+    content: 'You can also change creatures to their Weak/Elite variant.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-10',
+    content:
+      'Clicking this button will generate a link to your current encounter that you can copy and share.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-11',
     content:
       'This is where the challenge of the encounter will be displayed, adjusted according to your party level and size.',
     params: {
@@ -177,7 +197,7 @@ const steps: Step[] = [
     }
   },
   {
-    target: '#v-step-9',
+    target: '#v-step-12',
     content:
       'You can enable the variant rule for Proficiency without Level by clicking here and going to the "Encounter" tab.',
     params: {
@@ -199,27 +219,37 @@ const options: VTourOptions = {
 const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
-    const tmpBeyondTerror: min_creature = {
+    const tmpFerrofluidOoze: min_creature_hazard = {
       game: 'sf',
-      id: 20,
-      // TODO: update link when added to AoN
-      archive_link: '',
-      name: 'Beyond Terror',
+      id: 157,
+      archive_link: 'https://2e.aonsrd.com/creatures/66-ferrofluid-ooze',
+      name: 'Ferrofluid Ooze',
       level: 2,
-      variant: 'Base'
+      variant: 'Base',
+      is_hazard: false
     };
-    const tmpAnaciteWingbot: min_creature = {
+    const tmpAnaciteWingbot: min_creature_hazard = {
       game: 'sf',
       id: 11,
-      // TODO: update link when added to AoN
-      archive_link: '',
+      archive_link: 'https://2e.aonsrd.com/creatures/2-anacite-wingbot',
       name: 'Anacite Wingbot',
       level: -1,
-      variant: 'Base'
+      variant: 'Base',
+      is_hazard: false
+    };
+    const tmpAntiGravityPulse: min_creature_hazard = {
+      game: 'sf',
+      id: 18,
+      archive_link: 'https://2e.aonsrd.com/hazards/5-anti-gravity-pulse',
+      name: 'Anti-Gravity Pulse',
+      level: 0,
+      is_hazard: true,
+      complexity: 'Simple'
     };
     encounter.addEncounter('Example');
-    encounter.addToEncounter(tmpBeyondTerror);
+    encounter.addToEncounter(tmpFerrofluidOoze);
     encounter.addToEncounter(tmpAnaciteWingbot);
+    encounter.addToEncounter(tmpAntiGravityPulse);
   }
 };
 

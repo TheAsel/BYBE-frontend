@@ -183,8 +183,8 @@ const perceptionString = computed(() => {
     for (const sense of senses) {
       let found = false;
       for (const action of creatureData?.extra_data?.actions ?? []) {
-        if (action.slug === sense.name) {
-          finalString += action.name.toLowerCase() + ', ';
+        if (action.core_action.slug === sense.name) {
+          finalString += action.core_action.name.toLowerCase() + ', ';
           found = true;
         }
       }
@@ -385,11 +385,11 @@ const defenceString = computed(() => {
     finalString += '; ';
     for (const action of actions) {
       if (
-        action.action_type === 'passive' &&
-        action.category === 'defensive' &&
-        action.description === ''
+        action.core_action.action_type === 'passive' &&
+        action.core_action.category === 'defensive' &&
+        action.core_action.description === ''
       ) {
-        finalString += action.name.toLowerCase() + ', ';
+        finalString += action.core_action.name.toLowerCase() + ', ';
       }
     }
     finalString = finalString.substring(0, finalString.length - 2);
@@ -595,6 +595,20 @@ const spellString = computed(() => {
   return finalStrings;
 });
 
+const actionTraitsString = (index: number) => {
+  const traits = creatureData?.extra_data?.actions[index]?.traits;
+  let finalString = '';
+  if (traits !== undefined && traits.length > 0) {
+    finalString += ' (';
+    for (const trait of traits) {
+      finalString += trait.toLowerCase().replaceAll('-', ' ') + ', ';
+    }
+    finalString = finalString.substring(0, finalString.length - 2);
+    finalString += ')';
+  }
+  return finalString;
+};
+
 const printPage = () => {
   globalThis.print();
 };
@@ -747,16 +761,22 @@ const printPage = () => {
               <strong>Cha</strong>
               {{ addPlus(creatureData?.extra_data?.ability_scores.charisma) }}
             </div>
-            <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+            <template
+              v-for="(item, index) in creatureData?.extra_data?.actions"
+              :key="item.core_action.name"
+            >
               <div
-                v-if="item.category === 'interaction' && item.slug === null"
+                v-if="item.core_action.category === 'interaction' && item.core_action.slug === null"
                 class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               >
-                <strong>{{ item.name + ' ' }}</strong>
+                <strong>{{ item.core_action.name + ' ' }}</strong>
                 <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
-                  >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
+                  >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
                 </span>
-                <span v-html="' ' + cleanDescription(item.description)"></span>
+                <span v-if="item.traits !== undefined && item.traits.length > 0">
+                  {{ actionTraitsString(index) }}
+                </span>
+                <span v-html="' ' + cleanDescription(item.core_action.description)"></span>
               </div>
             </template>
             <div
@@ -783,22 +803,28 @@ const printPage = () => {
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               v-html="healthString"
             ></div>
-            <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+            <template
+              v-for="(item, index) in creatureData?.extra_data?.actions"
+              :key="item.core_action.name"
+            >
               <div
                 v-if="
-                  item.slug !== 'regeneration' &&
-                  item.slug !== 'fast-healing' &&
-                  item.slug !== 'negative-healing' &&
-                  item.description !== '' &&
-                  item.category === 'defensive'
+                  item.core_action.slug !== 'regeneration' &&
+                  item.core_action.slug !== 'fast-healing' &&
+                  item.core_action.slug !== 'negative-healing' &&
+                  item.core_action.description !== '' &&
+                  item.core_action.category === 'defensive'
                 "
                 class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               >
-                <strong>{{ item.name + ' ' }}</strong>
+                <strong>{{ item.core_action.name + ' ' }}</strong>
                 <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
-                  >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
+                  >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
                 </span>
-                <span v-html="' ' + cleanDescription(item.description)"></span>
+                <span v-if="item.traits !== undefined && item.traits.length > 0">
+                  {{ actionTraitsString(index) }}
+                </span>
+                <span v-html="' ' + cleanDescription(item.core_action.description)"></span>
               </div>
             </template>
           </div>
@@ -868,16 +894,22 @@ const printPage = () => {
             <template v-for="entity in spellString" :key="entity">
               <div v-html="entity" class="tw:text-base tw:text-gray-800 tw:dark:text-white" />
             </template>
-            <template v-for="item in creatureData?.extra_data?.actions" :key="item.name">
+            <template
+              v-for="(item, index) in creatureData?.extra_data?.actions"
+              :key="item.core_action.name"
+            >
               <div
-                v-if="item.category === 'offensive'"
+                v-if="item.core_action.category === 'offensive'"
                 class="tw:text-base tw:text-gray-800 tw:dark:text-white"
               >
-                <strong>{{ item.name + ' ' }}</strong>
+                <strong>{{ item.core_action.name + ' ' }}</strong>
                 <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
-                  >{{ pfActionSymbol(item.n_of_actions, item.action_type) }}
+                  >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
                 </span>
-                <span v-html="' ' + cleanDescription(item.description)"></span>
+                <span v-if="item.traits !== undefined && item.traits.length > 0">
+                  {{ actionTraitsString(index) }}
+                </span>
+                <span v-html="' ' + cleanDescription(item.core_action.description)"></span>
               </div>
             </template>
           </div>
@@ -899,6 +931,14 @@ const printPage = () => {
     />
   </q-page-sticky>
 </template>
+
+<style>
+.action-glyph {
+  font-family: 'Pathfinder2eActions', sans-serif;
+  font-size: 24px;
+  line-height: calc(2 / 1.5);
+}
+</style>
 
 <style scoped>
 .creature-sheet {

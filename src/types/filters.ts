@@ -30,6 +30,10 @@ export type roles =
 
 export type variants = 'Weak' | 'Base' | 'Elite';
 
+export type complexities = 'Simple' | 'Complex';
+
+export type games = 'pf' | 'sf';
+
 export type creature_columns =
   | 'id'
   | 'source'
@@ -66,7 +70,51 @@ export type creature_filters = {
   };
   role_filter?: roles[];
   role_threshold: number;
-  pathfinder_version: string;
+  game_system_version: string;
+};
+
+export type hazard_columns =
+  | 'id'
+  | 'source'
+  | 'name'
+  | 'level'
+  | 'hp'
+  | 'trait'
+  | 'complexity'
+  | 'size'
+  | 'rarity'
+  | 'stealth'
+  | 'ac'
+  | 'fortitude'
+  | 'reflex'
+  | 'will'
+  | 'hardness';
+
+export type hazard_filters = {
+  source_filter?: string[];
+  name_filter?: string;
+  min_level_filter?: number;
+  max_level_filter?: number;
+  min_hp_filter?: number;
+  max_hp_filter?: number;
+  trait_blacklist_filter?: string[];
+  trait_whitelist_filter?: string[];
+  complexity_filter?: complexities;
+  size_filter?: sizes[];
+  rarity_filter?: rarities[];
+  min_stealth_filter?: number;
+  max_stealth_filter?: number;
+  min_ac_filter?: number;
+  max_ac_filter?: number;
+  min_fortitude_filter?: number;
+  max_fortitude_filter?: number;
+  min_reflex_filter?: number;
+  max_reflex_filter?: number;
+  min_will_filter?: number;
+  max_will_filter?: number;
+  min_hardness_filter?: number;
+  max_hardness_filter?: number;
+  game_system_version: string;
 };
 
 export type item_columns = 'id' | 'name' | 'level' | 'trait' | 'rarity' | 'type' | 'source';
@@ -79,7 +127,48 @@ export type item_filters = {
   rarity_filter?: rarities[];
   type_filter?: string[];
   source_filter?: string[];
-  pathfinder_version: string;
+  game_system_version: string;
 };
 
-export type games = 'pf' | 'sf';
+export type bestiary_ranges = {
+  min_level: number;
+  max_level: number;
+  min_hp: number;
+  max_hp: number;
+  min_focus_points: number;
+  max_focus_points: number;
+};
+
+export type hazard_ranges = {
+  min_level: number;
+  max_level: number;
+  min_hp: number;
+  max_hp: number;
+  min_stealth: number;
+  max_stealth: number;
+  min_ac: number;
+  max_ac: number;
+  min_fortitude: number;
+  max_fortitude: number;
+  min_will: number;
+  max_will: number;
+  min_reflex: number;
+  max_reflex: number;
+  min_hardness: number;
+  max_hardness: number;
+};
+
+export type shop_ranges = {
+  min_level: number;
+  max_level: number;
+  min_hp: number;
+  max_hp: number;
+  min_price: number;
+  max_price: number;
+  min_quantity: number;
+  max_quantity: number;
+  min_bulk: number;
+  max_bulk: number;
+  min_number_of_uses: number;
+  max_number_of_uses: number;
+};

@@ -31,6 +31,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../pages/pf2e/BestiaryPage.vue')
       },
       {
+        path: 'hazard',
+        name: 'pf2e_hazard',
+        component: () => import('../pages/pf2e/HazardPage.vue')
+      },
+      {
         path: 'character',
         name: 'pf2e_character',
         component: () => import('../pages/pf2e/CharacterPage.vue')
@@ -82,6 +87,11 @@ const routes: RouteRecordRaw[] = [
         path: 'bestiary',
         name: 'sf2e_bestiary',
         component: () => import('../pages/sf2e/BestiaryPage.vue')
+      },
+      {
+        path: 'hazard',
+        name: 'sf2e_hazard',
+        component: () => import('../pages/sf2e/HazardPage.vue')
       },
       {
         path: 'character',

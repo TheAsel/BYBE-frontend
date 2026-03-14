@@ -1,9 +1,14 @@
 import { capitalize } from 'lodash-es';
 import { defineStore } from 'pinia';
 
-import type { min_creature } from '../types/creature';
-import type { encounter, encounter_list } from '../types/encounter';
-import type { games, variants } from '../types/filters';
+import type { encounter, encounter_list, min_creature_hazard } from '../types/encounter';
+import type {
+  bestiary_ranges,
+  games,
+  hazard_ranges,
+  shop_ranges,
+  variants
+} from '../types/filters';
 import type { item, min_item } from '../types/item';
 import type { npc, npc_list, valid_genders } from '../types/npcs';
 import type { party } from '../types/party';
@@ -15,14 +20,14 @@ export const settingsStore = defineStore('settings', {
     hidden_nav: true,
     experimental_features: false,
     is_aon_links_on: false,
-    pf_version: 'Any',
+    game_version: 'Any',
     game: 'pf' as games
   }),
   getters: {
     getHiddenNav: (state) => state.hidden_nav,
     getExperimentalFeatures: (state) => state.experimental_features,
     getAonLinks: (state) => state.is_aon_links_on,
-    getPfVersion: (state) => state.pf_version,
+    getGameVersion: (state) => state.game_version,
     getGame: (state) => state.game
   },
   actions: {
@@ -35,8 +40,8 @@ export const settingsStore = defineStore('settings', {
     setAonLinks(newAonLinks: boolean) {
       this.is_aon_links_on = newAonLinks;
     },
-    setPfVersion(newPfVersion: string) {
-      this.pf_version = newPfVersion;
+    setGameVersion(newgameVersion: string) {
+      this.game_version = newgameVersion;
     },
     setGame(newGame: games) {
       this.game = newGame;
@@ -110,13 +115,24 @@ export const filtersStore = defineStore('filters', {
       sources: [] as string[],
       creature_roles: [] as string[]
     },
+    creatureRanges: {} as bestiary_ranges,
+    hazardFilters: {
+      traits: [] as string[],
+      complexities: [] as string[],
+      sizes: [] as string[],
+      rarities: [] as string[],
+      sources: [] as string[]
+    },
+    hazardRanges: {} as hazard_ranges,
     itemFilters: {
       sources: [] as string[],
       traits: [{}] as { label: string; value: string }[]
-    }
+    },
+    shopRanges: {} as shop_ranges
   }),
   getters: {
     getCreatureFilters: (state) => state.creatureFilters,
+    getHazardFilters: (state) => state.hazardFilters,
     getItemFilters: (state) => state.itemFilters
   },
   actions: {
@@ -146,6 +162,21 @@ export const filtersStore = defineStore('filters', {
     },
     updateRoles(newRoles: string[]) {
       this.creatureFilters.creature_roles = newRoles;
+    },
+    updateHazardTraits(newTraits: string[]) {
+      this.hazardFilters.traits = newTraits.map((trait) => {
+        return capitalize(trait);
+      });
+    },
+    updateHazardSizes(newSizes: string[]) {
+      newSizes.reverse();
+      this.hazardFilters.sizes = newSizes;
+    },
+    updateHazardRarities(newRarities: string[]) {
+      this.hazardFilters.rarities = newRarities;
+    },
+    updateHazardSources(newSources: string[]) {
+      this.hazardFilters.sources = newSources;
     },
     updateItemSources(newSources: string[]) {
       this.itemFilters.sources = newSources;
@@ -184,14 +215,14 @@ export const encounterStore = defineStore('encounter', {
         this.encounters[this.activeEncounter]!.creatures.length
       );
     },
-    clearCreature(creature: min_creature) {
+    clearCreature(creature: min_creature_hazard) {
       const index = this.encounters[this.activeEncounter]!.creatures.indexOf(creature);
       this.encounters[this.activeEncounter]!.creatures.splice(index, 1);
     },
     changeVariant(index: number, variant: variants) {
       this.encounters[this.activeEncounter]!.creatures[index]!.variant = variant;
     },
-    addToEncounter(creature: min_creature, index?: number) {
+    addToEncounter(creature: min_creature_hazard, index?: number) {
       if (index! >= 0) {
         if (creature.quantity) {
           creature.quantity++;
@@ -233,7 +264,7 @@ export const encounterStore = defineStore('encounter', {
     getEncounterIndex(encounterName: string): number {
       return this.encounters.map((encounter) => encounter.name).indexOf(encounterName);
     },
-    updateEncounter(encounterName: string, newCreatures: min_creature[]) {
+    updateEncounter(encounterName: string, newCreatures: min_creature_hazard[]) {
       const encounterIndex = this.getEncounterIndex(encounterName);
       if (encounterIndex >= 0) {
         this.encounters[encounterIndex]!.creatures = newCreatures;

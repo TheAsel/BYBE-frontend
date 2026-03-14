@@ -3,14 +3,24 @@ import { biQuestionCircle, biXLg } from '@quasar/extras/bootstrap-icons';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { encounterStore, filtersStore, partyStore, settingsStore } from '../../../../stores/store';
 import { encounterGenerator } from '../../../../utils/encounter-api-calls';
 
-import type { min_creature } from '../../../../types/creature';
-import type { adventure_groups } from '../../../../types/encounter';
-import type { alignments, challenges, rarities, roles, sizes } from '../../../../types/filters';
+import type {
+  adventure_groups,
+  encounter_data,
+  min_creature_hazard
+} from '../../../../types/encounter';
+import type {
+  alignments,
+  challenges,
+  complexities,
+  rarities,
+  roles,
+  sizes
+} from '../../../../types/filters';
 
 const $q = useQuasar();
 
@@ -22,19 +32,43 @@ const encounter = encounterStore();
 const dialog = ref(false);
 const tab = ref('General');
 
-const traits = ref<string[]>();
-const traitsOptions = ref<string[]>(filters.getCreatureFilters.traits);
+watch(
+  () => filters.hazardRanges,
+  (ranges) => {
+    hazardStealth.value = {
+      min: ranges.min_stealth,
+      max: ranges.max_stealth
+    };
+  }
+);
+
+const creatureHazardRatio = ref<number>(100);
+
+const creatureTraits = ref<string[]>();
+const creatureTraitsOptions = ref<string[]>(filters.getCreatureFilters.traits);
 const alignment = ref<alignments[]>();
-const size = ref<sizes[]>();
-const rarity = ref<rarities[]>();
+const creatureSize = ref<sizes[]>();
+const creatureRarity = ref<rarities[]>();
 const family = ref<string[]>();
 const familiesOptions = filters.getCreatureFilters.families;
 const creature_type = ref<string[]>();
+const creature_roles = ref<roles[]>();
 const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
 const creature_number = ref({ min: 1, max: 20 });
+
+const hazardTraits = ref<string[]>();
+const hazardTraitsOptions = ref<string[]>(filters.getHazardFilters.traits);
+const complexity = ref<complexities[]>();
+const hazardSize = ref<sizes[]>();
+const hazardRarity = ref<rarities[]>();
+const hazardStealth = ref({
+  min: filters.hazardRanges.min_stealth,
+  max: filters.hazardRanges.max_stealth
+});
+const hazard_number = ref({ min: 1, max: 20 });
+
 const challenge = ref<challenges>();
-const creature_roles = ref<roles[]>();
 const adventure_group_toggle = ref(false);
 const adventure_group = ref<{ label: string; value: adventure_groups }>({
   label: 'Boss and Lackeys',
@@ -73,36 +107,57 @@ const adventureGroupSelect = [
 ];
 
 const tmpFilters = ref({
-  traits: traits.value,
-  alignment: alignment.value,
-  size: size.value,
-  rarity: rarity.value,
-  family: family.value,
-  creature_type: creature_type.value,
-  allow_weak_variants: allow_weak_variants.value,
-  allow_elite_variants: allow_elite_variants.value,
-  creatures: creature_number.value,
-  challenge: challenge.value,
-  creature_roles: creature_roles.value,
+  creature_hazard_ratio: creatureHazardRatio.value,
   adventure_group_toggle: adventure_group_toggle.value,
-  adventure_group: adventure_group.value
+  adventure_group: adventure_group.value,
+  challenge: challenge.value,
+  creatures: {
+    number: creature_number.value,
+    traits: creatureTraits.value,
+    alignment: alignment.value,
+    size: creatureSize.value,
+    rarity: creatureRarity.value,
+    family: family.value,
+    creature_type: creature_type.value,
+    allow_weak_variants: allow_weak_variants.value,
+    allow_elite_variants: allow_elite_variants.value,
+    creature_roles: creature_roles.value
+  },
+  hazards: {
+    number: hazard_number.value,
+    traits: hazardTraits.value,
+    complexity: complexity.value,
+    size: hazardSize.value,
+    rarity: hazardRarity.value,
+    stealth: hazardStealth.value
+  }
 });
 
 const restoreSettings = () => {
   dialog.value = true;
-  tmpFilters.value.traits = traits.value;
-  tmpFilters.value.alignment = alignment.value;
-  tmpFilters.value.rarity = rarity.value;
-  tmpFilters.value.size = size.value;
-  tmpFilters.value.family = family.value;
-  tmpFilters.value.creature_type = creature_type.value;
-  tmpFilters.value.allow_weak_variants = allow_weak_variants.value;
-  tmpFilters.value.allow_elite_variants = allow_elite_variants.value;
-  tmpFilters.value.creatures = creature_number.value;
-  tmpFilters.value.challenge = challenge.value;
-  tmpFilters.value.creature_roles = creature_roles.value;
+
+  tmpFilters.value.creature_hazard_ratio = creatureHazardRatio.value;
   tmpFilters.value.adventure_group_toggle = adventure_group_toggle.value;
+  tmpFilters.value.challenge = challenge.value;
   tmpFilters.value.adventure_group = adventure_group.value;
+
+  tmpFilters.value.creatures.number = creature_number.value;
+  tmpFilters.value.creatures.traits = creatureTraits.value;
+  tmpFilters.value.creatures.alignment = alignment.value;
+  tmpFilters.value.creatures.rarity = creatureRarity.value;
+  tmpFilters.value.creatures.size = creatureSize.value;
+  tmpFilters.value.creatures.family = family.value;
+  tmpFilters.value.creatures.creature_type = creature_type.value;
+  tmpFilters.value.creatures.creature_roles = creature_roles.value;
+  tmpFilters.value.creatures.allow_weak_variants = allow_weak_variants.value;
+  tmpFilters.value.creatures.allow_elite_variants = allow_elite_variants.value;
+
+  tmpFilters.value.hazards.number = hazard_number.value;
+  tmpFilters.value.hazards.traits = hazardTraits.value;
+  tmpFilters.value.hazards.complexity = complexity.value;
+  tmpFilters.value.hazards.rarity = hazardRarity.value;
+  tmpFilters.value.hazards.size = hazardSize.value;
+  tmpFilters.value.hazards.stealth = hazardStealth.value;
 };
 
 const generateEncounter = debounce(async function () {
@@ -110,45 +165,44 @@ const generateEncounter = debounce(async function () {
   saveChanges();
   const partyLevels = party.getActiveParty!.members;
   const is_pwl_on = encounter.getPwl;
-  const pf_version = settings.getPfVersion;
+  const game_version = settings.getGameVersion;
 
-  const body: {
-    trait_whitelist_filter: string[] | undefined;
-    alignment_filter: alignments[] | undefined;
-    size_filter: sizes[] | undefined;
-    rarity_filter: rarities[] | undefined;
-    family_filter: string[] | undefined;
-    type_filter: string[] | undefined;
-    challenge?: challenges;
-    party_levels: number[];
-    min_creatures?: number;
-    max_creatures?: number;
-    allow_weak_variants: boolean;
-    allow_elite_variants: boolean;
-    role_filter: roles[] | undefined;
-    is_pwl_on: boolean;
-    pathfinder_version: string;
-    adventure_group?: adventure_groups;
-  } = {
-    trait_whitelist_filter: tmpFilters.value.traits,
-    alignment_filter: tmpFilters.value.alignment,
-    size_filter: tmpFilters.value.size,
-    rarity_filter: tmpFilters.value.rarity,
-    family_filter: tmpFilters.value.family,
-    type_filter: tmpFilters.value.creature_type,
-    allow_weak_variants: tmpFilters.value.allow_weak_variants,
-    allow_elite_variants: tmpFilters.value.allow_elite_variants,
-    party_levels: partyLevels,
-    role_filter: creature_roles.value,
-    is_pwl_on: is_pwl_on,
-    pathfinder_version: pf_version
+  const body: encounter_data = {
+    creature_data: {
+      trait_whitelist_filter: tmpFilters.value.creatures.traits,
+      alignment_filter: tmpFilters.value.creatures.alignment,
+      size_filter: tmpFilters.value.creatures.size,
+      rarity_filter: tmpFilters.value.creatures.rarity,
+      family_filter: tmpFilters.value.creatures.family,
+      type_filter: tmpFilters.value.creatures.creature_type,
+      allow_weak_variants: tmpFilters.value.creatures.allow_weak_variants,
+      allow_elite_variants: tmpFilters.value.creatures.allow_elite_variants,
+      party_levels: partyLevels,
+      role_filter: creature_roles.value,
+      is_pwl_on: is_pwl_on,
+      game_system_version: game_version
+    },
+    hazard_data: {
+      trait_whitelist_filter: tmpFilters.value.hazards.traits,
+      complexity_filter: tmpFilters.value.hazards.complexity,
+      rarity_filter: tmpFilters.value.hazards.rarity,
+      size_filter: tmpFilters.value.hazards.size,
+      min_stealth: tmpFilters.value.hazards.stealth.min,
+      max_stealth: tmpFilters.value.hazards.stealth.max,
+      game_system_version: game_version
+    },
+    party_levels: partyLevels
   };
 
   if (tmpFilters.value.adventure_group_toggle) {
     body.adventure_group = tmpFilters.value.adventure_group.value;
   } else {
-    body.min_creatures = tmpFilters.value.creatures.min;
-    body.max_creatures = tmpFilters.value.creatures.max;
+    body.creature_percentage = tmpFilters.value.creature_hazard_ratio;
+    body.hazard_percentage = 100 - tmpFilters.value.creature_hazard_ratio;
+    body.creature_data.min_creatures = tmpFilters.value.creatures.number.min;
+    body.creature_data.max_creatures = tmpFilters.value.creatures.number.max;
+    body.hazard_data.min_hazards = tmpFilters.value.hazards.number.min;
+    body.hazard_data.max_hazards = tmpFilters.value.hazards.number.max;
     body.challenge = tmpFilters.value.challenge!;
   }
   try {
@@ -158,16 +212,36 @@ const generateEncounter = debounce(async function () {
     }
     if (randomEncounter.count > 0 && randomEncounter.results) {
       encounter.clearEncounter();
-      for (let i = 0; i < randomEncounter.count; i++) {
-        const min_creature: min_creature = {
-          game: randomEncounter.results[i]!.game,
-          id: randomEncounter.results[i]!.core_data.essential.id,
-          archive_link: randomEncounter.results[i]!.core_data.derived.archive_link,
-          name: randomEncounter.results[i]!.core_data.essential.name,
-          level: randomEncounter.results[i]!.core_data.essential.base_level,
-          variant: randomEncounter.results[i]!.variant_data?.variant
-        };
-        encounter.addToEncounter(min_creature);
+      if (randomEncounter.results.creatures && randomEncounter.results.creatures.length > 0) {
+        for (const creature of randomEncounter.results.creatures) {
+          const min_creature: min_creature_hazard = {
+            game: creature.game,
+            id: creature.core_data.essential.id,
+            archive_link: creature.core_data.derived.archive_link,
+            name: creature.core_data.essential.name,
+            level: creature.core_data.essential.base_level,
+            variant: creature.variant_data?.variant,
+            is_hazard: false
+          };
+          encounter.addToEncounter(min_creature);
+        }
+      }
+      if (randomEncounter.results.hazards && randomEncounter.results.hazards.length > 0) {
+        for (const hazard of randomEncounter.results.hazards) {
+          const min_hazard: min_creature_hazard = {
+            game: hazard.game,
+            id: hazard.core_hazard.essential.id,
+            archive_link:
+              'https://2e.aonsrd.com/search?q=' +
+              encodeURIComponent(hazard.core_hazard.essential.name) +
+              ' type%3A(hazard)&type=eqs',
+            name: hazard.core_hazard.essential.name,
+            level: hazard.core_hazard.essential.level,
+            is_hazard: true,
+            complexity: hazard.core_hazard.essential.complexity
+          };
+          encounter.addToEncounter(min_hazard);
+        }
       }
     } else {
       $q.notify({
@@ -179,30 +253,45 @@ const generateEncounter = debounce(async function () {
     }
   } catch (error) {
     console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error generating the encounter',
+      icon: matPriorityHigh
+    });
   }
   encounter.setGenerating(false);
 }, 300);
 
 const saveChanges = () => {
-  traits.value = tmpFilters.value.traits;
-  alignment.value = tmpFilters.value.alignment;
-  rarity.value = tmpFilters.value.rarity;
-  size.value = tmpFilters.value.size;
-  family.value = tmpFilters.value.family;
-  creature_type.value = tmpFilters.value.creature_type;
-  allow_weak_variants.value = tmpFilters.value.allow_weak_variants;
-  allow_elite_variants.value = tmpFilters.value.allow_elite_variants;
-  creature_number.value = tmpFilters.value.creatures;
+  creatureHazardRatio.value = tmpFilters.value.creature_hazard_ratio;
   challenge.value = tmpFilters.value.challenge;
-  creature_roles.value = tmpFilters.value.creature_roles;
   adventure_group_toggle.value = tmpFilters.value.adventure_group_toggle;
   adventure_group.value = tmpFilters.value.adventure_group;
+
+  creature_number.value = tmpFilters.value.creatures.number;
+  creatureTraits.value = tmpFilters.value.creatures.traits;
+  alignment.value = tmpFilters.value.creatures.alignment;
+  creatureRarity.value = tmpFilters.value.creatures.rarity;
+  creatureSize.value = tmpFilters.value.creatures.size;
+  family.value = tmpFilters.value.creatures.family;
+  creature_type.value = tmpFilters.value.creatures.creature_type;
+  creature_roles.value = tmpFilters.value.creatures.creature_roles;
+  allow_weak_variants.value = tmpFilters.value.creatures.allow_weak_variants;
+  allow_elite_variants.value = tmpFilters.value.creatures.allow_elite_variants;
+
+  hazard_number.value = tmpFilters.value.hazards.number;
+  hazardTraits.value = tmpFilters.value.hazards.traits;
+  complexity.value = tmpFilters.value.hazards.complexity;
+  hazardRarity.value = tmpFilters.value.hazards.rarity;
+  hazardStealth.value = tmpFilters.value.hazards.stealth;
+  hazardSize.value = tmpFilters.value.hazards.size;
 };
 
-const filterTraitsFn = (val, update) => {
+const filterCreatureTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.traits = traitsOptions.value.filter((v) =>
+    filters.getCreatureFilters.traits = creatureTraitsOptions.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -212,6 +301,15 @@ const filterFamiliesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.getCreatureFilters.families = familiesOptions.filter((v) =>
+      v.toLowerCase().includes(filter)
+    );
+  });
+};
+
+const filterHazardTraitsFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getHazardFilters.traits = hazardTraitsOptions.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -247,80 +345,13 @@ defineExpose({ generateEncounter });
         narrow-indicator
       >
         <q-tab name="General" label="General" />
-        <q-tab name="Advanced" label="Advanced" />
+        <q-tab name="Creatures" label="Creatures" />
+        <q-tab name="Hazards" label="Hazards" />
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="General">
           <q-card-section style="max-height: 46rem">
-            <div class="tw:space-y-3">
-              <q-select
-                v-model="tmpFilters.traits"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="Object.freeze(filters.getCreatureFilters.traits)"
-                use-input
-                input-debounce="0"
-                label="Traits"
-                style="max-width: 248px"
-                virtual-scroll-item-size="32"
-                @filter="filterTraitsFn"
-              />
-
-              <q-select
-                v-model="tmpFilters.size"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="Object.freeze(filters.getCreatureFilters.sizes)"
-                label="Size"
-                style="max-width: 248px"
-              />
-
-              <q-select
-                v-model="tmpFilters.rarity"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="Object.freeze(filters.getCreatureFilters.rarities)"
-                label="Rarity"
-                style="max-width: 248px"
-              />
-
-              <q-select
-                v-model="tmpFilters.family"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="Object.freeze(filters.getCreatureFilters.families)"
-                use-input
-                input-debounce="0"
-                label="Family"
-                style="max-width: 248px"
-                virtual-scroll-item-size="32"
-                @filter="filterFamiliesFn"
-              />
-
-              <q-select
-                v-model="tmpFilters.creature_type"
-                multiple
-                dense
-                outlined
-                clearable
-                options-dense
-                :options="Object.freeze(filters.getCreatureFilters.creature_types)"
-                label="Creature Type"
-                style="max-width: 248px"
-              />
-              <q-separator class="tw:mb-3!" />
+            <div class="tw:space-y-3!">
               <q-toggle
                 v-model="tmpFilters.adventure_group_toggle"
                 label="Use Adventure Groups"
@@ -334,7 +365,7 @@ defineExpose({ generateEncounter });
                 size="sm"
                 class="tw:my-auto!"
                 :icon="biQuestionCircle"
-                href="https://2e.aonprd.com/Rules.aspx?ID=2717"
+                href="https://2e.aonsrd.com/rules/791-encounter-design"
                 target="_blank"
                 rel="noopener"
                 aria-label="Link to explanation for adventure groups"
@@ -348,7 +379,7 @@ defineExpose({ generateEncounter });
                   Click to learn more
                 </q-tooltip>
               </q-btn>
-              <span v-if="tmpFilters.adventure_group_toggle">
+              <div v-if="tmpFilters.adventure_group_toggle" class="tw:pb-65.5!">
                 <q-select
                   v-model="tmpFilters.adventure_group"
                   dense
@@ -392,7 +423,7 @@ defineExpose({ generateEncounter });
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'MatedPair'"
-                  class="tw:mb-5.25! text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  class="tw:mb-5.25! text-center tw:bg-gray-200! tw:text-black tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Mated Pair (80 XP)</strong>
                   <br />
@@ -414,19 +445,19 @@ defineExpose({ generateEncounter });
                   <br />
                   Six creatures of party level -4
                 </p>
-              </span>
+              </div>
               <span v-else>
                 <div class="tw:pb-7">
                   <q-badge outline class="tw:text-sm!"> Number of creatures: </q-badge>
 
                   <q-range
-                    v-model="tmpFilters.creatures"
+                    v-model="tmpFilters.creatures.number"
                     label-always
                     :min="1"
                     :max="20"
                     markers
-                    :left-label-value="'Min: ' + tmpFilters.creatures.min"
-                    :right-label-value="'Max: ' + tmpFilters.creatures.max"
+                    :left-label-value="'Min: ' + tmpFilters.creatures.number.min"
+                    :right-label-value="'Max: ' + tmpFilters.creatures.number.max"
                     class="tw:px-3 tw:pt-1"
                     aria-label="Creature numbers"
                     role="menuitem"
@@ -434,26 +465,151 @@ defineExpose({ generateEncounter });
                   />
                 </div>
 
-                <q-select
-                  v-model="tmpFilters.challenge"
-                  dense
-                  outlined
-                  clearable
-                  options-dense
-                  :options="
-                    Object.freeze(['Trivial', 'Low', 'Moderate', 'Severe', 'Extreme', 'Impossible'])
-                  "
-                  label="Challenge"
-                />
+                <div class="tw:pb-7">
+                  <q-badge outline class="tw:text-sm!"> Number of hazards: </q-badge>
+
+                  <q-range
+                    v-model="tmpFilters.hazards.number"
+                    label-always
+                    :min="1"
+                    :max="20"
+                    markers
+                    :left-label-value="'Min: ' + tmpFilters.hazards.number.min"
+                    :right-label-value="'Max: ' + tmpFilters.hazards.number.max"
+                    class="tw:px-3 tw:pt-1"
+                    aria-label="Hazard numbers"
+                    role="menuitem"
+                    switch-label-side
+                  />
+                </div>
+
+                <div class="tw:pb-7">
+                  <q-badge outline class="tw:text-sm!"> XP ratio: </q-badge>
+
+                  <div class="tw:flex tw:justify-between">
+                    <q-badge color="primary"> Creatures </q-badge>
+
+                    <q-badge color="primary"> Hazards </q-badge>
+                  </div>
+                  <q-slider
+                    v-model="tmpFilters.creature_hazard_ratio"
+                    label
+                    label-always
+                    switch-label-side
+                    :min="0"
+                    :max="100"
+                    :step="5"
+                    :label-value="
+                      tmpFilters.creature_hazard_ratio +
+                      ' / ' +
+                      (100 - tmpFilters.creature_hazard_ratio)
+                    "
+                    class="tw:px-3"
+                    style="min-width: 236px"
+                    aria-label="Creature to hazard percentage"
+                    role="menuitem"
+                  />
+                </div>
+
+                <div class="tw:mb-17">
+                  <q-select
+                    v-model="tmpFilters.challenge"
+                    dense
+                    outlined
+                    clearable
+                    options-dense
+                    :options="
+                      Object.freeze([
+                        'Trivial',
+                        'Low',
+                        'Moderate',
+                        'Severe',
+                        'Extreme',
+                        'Impossible'
+                      ])
+                    "
+                    label="Challenge"
+                  />
+                </div>
               </span>
             </div>
           </q-card-section>
         </q-tab-panel>
-        <q-tab-panel class="tw:max-w-0" name="Advanced">
+        <q-tab-panel class="tw:max-w-0" name="Creatures">
           <q-card-section class="tw:flex" style="max-height: 46rem">
             <div class="tw:space-y-3!">
               <q-select
-                v-model="tmpFilters.alignment"
+                v-model="tmpFilters.creatures.traits"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getCreatureFilters.traits)"
+                use-input
+                input-debounce="0"
+                label="Traits"
+                style="max-width: 248px"
+                virtual-scroll-item-size="32"
+                @filter="filterCreatureTraitsFn"
+              />
+
+              <q-select
+                v-model="tmpFilters.creatures.size"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getCreatureFilters.sizes)"
+                label="Size"
+                style="max-width: 248px"
+              />
+
+              <q-select
+                v-model="tmpFilters.creatures.rarity"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getCreatureFilters.rarities)"
+                label="Rarity"
+                style="max-width: 248px"
+              />
+
+              <q-select
+                v-model="tmpFilters.creatures.family"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getCreatureFilters.families)"
+                use-input
+                input-debounce="0"
+                label="Family"
+                style="max-width: 248px"
+                virtual-scroll-item-size="32"
+                @filter="filterFamiliesFn"
+              />
+
+              <q-select
+                v-model="tmpFilters.creatures.creature_type"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getCreatureFilters.creature_types)"
+                label="Creature Type"
+                style="max-width: 248px"
+              />
+
+              <q-separator class="tw:mb-4! tw:mt-4!" />
+
+              <q-select
+                v-model="tmpFilters.creatures.alignment"
                 multiple
                 dense
                 outlined
@@ -465,7 +621,7 @@ defineExpose({ generateEncounter });
               />
 
               <q-select
-                v-model="tmpFilters.creature_roles"
+                v-model="tmpFilters.creatures.creature_roles"
                 multiple
                 dense
                 outlined
@@ -476,16 +632,90 @@ defineExpose({ generateEncounter });
                 style="width: 248px"
               />
 
-              <div class="q-gutter-sm tw:mt-3! tw:pb-73">
+              <div class="q-gutter-sm tw:mt-3!">
                 <q-checkbox
-                  v-model="tmpFilters.allow_weak_variants"
+                  v-model="tmpFilters.creatures.allow_weak_variants"
                   label="Allow Weak?"
                   class="tw:mx-1!"
                 />
                 <q-checkbox
-                  v-model="tmpFilters.allow_elite_variants"
+                  v-model="tmpFilters.creatures.allow_elite_variants"
                   label="Allow Elite?"
                   class="tw:mx-1!"
+                />
+              </div>
+            </div>
+          </q-card-section>
+        </q-tab-panel>
+        <q-tab-panel class="tw:max-w-0" name="Hazards">
+          <q-card-section class="tw:flex" style="max-height: 46rem">
+            <div class="tw:space-y-3!">
+              <q-select
+                v-model="tmpFilters.hazards.traits"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getHazardFilters.traits)"
+                use-input
+                input-debounce="0"
+                label="Traits"
+                style="width: 248px"
+                virtual-scroll-item-size="32"
+                @filter="filterHazardTraitsFn"
+              />
+
+              <q-select
+                v-model="tmpFilters.hazards.complexity"
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(['Simple', 'Complex'])"
+                label="Complexity"
+                style="max-width: 248px"
+              />
+
+              <q-select
+                v-model="tmpFilters.hazards.size"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getHazardFilters.sizes)"
+                label="Size"
+                style="max-width: 248px"
+              />
+
+              <q-select
+                v-model="tmpFilters.hazards.rarity"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getHazardFilters.rarities)"
+                label="Rarity"
+                style="max-width: 248px"
+              />
+
+              <div class="tw:pb-40.5">
+                <q-badge outline class="tw:text-sm!"> Stealth DC: </q-badge>
+
+                <q-range
+                  v-model="tmpFilters.hazards.stealth"
+                  label-always
+                  :min="filters.hazardRanges.min_stealth"
+                  :max="filters.hazardRanges.max_stealth"
+                  markers
+                  :left-label-value="'Min: ' + tmpFilters.hazards.stealth.min"
+                  :right-label-value="'Max: ' + tmpFilters.hazards.stealth.max"
+                  class="tw:px-3 tw:pt-1"
+                  aria-label="Stealth DC"
+                  role="menuitem"
+                  switch-label-side
                 />
               </div>
             </div>
