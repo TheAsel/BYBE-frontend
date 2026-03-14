@@ -55,7 +55,11 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            API_URL=${{ github.ref == 'refs/heads/develop' && env.PROD_API_URL || env.DEV_API_URL }}
+            API_URL=${{
+              github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/') 
+              && env.PROD_API_URL 
+              || env.DEV_API_URL
+            }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
