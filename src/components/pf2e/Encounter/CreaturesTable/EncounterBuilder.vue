@@ -484,7 +484,7 @@ defineExpose({ generateEncounter });
                 </div>
 
                 <div class="tw:pb-7">
-                  <q-badge outline class="tw:text-sm!"> Creature to hazard ratio: </q-badge>
+                  <q-badge outline class="tw:text-sm!"> XP ratio: </q-badge>
 
                   <div class="tw:flex tw:justify-between">
                     <q-badge color="primary"> Creatures </q-badge>
