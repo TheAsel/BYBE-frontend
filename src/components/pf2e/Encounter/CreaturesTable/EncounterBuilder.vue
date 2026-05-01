@@ -53,6 +53,8 @@ const family = ref<string[]>();
 const familiesOptions = filters.getCreatureFilters.families;
 const creature_type = ref<string[]>();
 const creature_roles = ref<roles[]>();
+const creatureSources = ref<string[]>();
+const creatureSourcesOptions = ref<string[]>(filters.getCreatureFilters.sources);
 const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
 const creature_number = ref({ min: 1, max: 20 });
@@ -62,6 +64,8 @@ const hazardTraitsOptions = ref<string[]>(filters.getHazardFilters.traits);
 const complexity = ref<complexities[]>();
 const hazardSize = ref<sizes[]>();
 const hazardRarity = ref<rarities[]>();
+const hazardSources = ref<string[]>();
+const hazardSourcesOptions = ref<string[]>(filters.getHazardFilters.sources);
 const hazardStealth = ref({
   min: filters.hazardRanges.min_stealth,
   max: filters.hazardRanges.max_stealth
@@ -119,6 +123,7 @@ const tmpFilters = ref({
     rarity: creatureRarity.value,
     family: family.value,
     creature_type: creature_type.value,
+    sources: creatureSources.value,
     allow_weak_variants: allow_weak_variants.value,
     allow_elite_variants: allow_elite_variants.value,
     creature_roles: creature_roles.value
@@ -129,6 +134,7 @@ const tmpFilters = ref({
     complexity: complexity.value,
     size: hazardSize.value,
     rarity: hazardRarity.value,
+    sources: hazardSources.value,
     stealth: hazardStealth.value
   }
 });
@@ -149,6 +155,7 @@ const restoreSettings = () => {
   tmpFilters.value.creatures.family = family.value;
   tmpFilters.value.creatures.creature_type = creature_type.value;
   tmpFilters.value.creatures.creature_roles = creature_roles.value;
+  tmpFilters.value.creatures.sources = creatureSources.value;
   tmpFilters.value.creatures.allow_weak_variants = allow_weak_variants.value;
   tmpFilters.value.creatures.allow_elite_variants = allow_elite_variants.value;
 
@@ -157,6 +164,7 @@ const restoreSettings = () => {
   tmpFilters.value.hazards.complexity = complexity.value;
   tmpFilters.value.hazards.rarity = hazardRarity.value;
   tmpFilters.value.hazards.size = hazardSize.value;
+  tmpFilters.value.hazards.sources = hazardSources.value;
   tmpFilters.value.hazards.stealth = hazardStealth.value;
 };
 
@@ -175,6 +183,7 @@ const generateEncounter = debounce(async function () {
       rarity_filter: tmpFilters.value.creatures.rarity,
       family_filter: tmpFilters.value.creatures.family,
       type_filter: tmpFilters.value.creatures.creature_type,
+      source_filter: tmpFilters.value.creatures.sources,
       allow_weak_variants: tmpFilters.value.creatures.allow_weak_variants,
       allow_elite_variants: tmpFilters.value.creatures.allow_elite_variants,
       party_levels: partyLevels,
@@ -187,6 +196,7 @@ const generateEncounter = debounce(async function () {
       complexity_filter: tmpFilters.value.hazards.complexity,
       rarity_filter: tmpFilters.value.hazards.rarity,
       size_filter: tmpFilters.value.hazards.size,
+      source_filter: tmpFilters.value.hazards.sources,
       min_stealth: tmpFilters.value.hazards.stealth.min,
       max_stealth: tmpFilters.value.hazards.stealth.max,
       game_system_version: game_version
@@ -277,6 +287,7 @@ const saveChanges = () => {
   family.value = tmpFilters.value.creatures.family;
   creature_type.value = tmpFilters.value.creatures.creature_type;
   creature_roles.value = tmpFilters.value.creatures.creature_roles;
+  creatureSources.value = tmpFilters.value.creatures.sources;
   allow_weak_variants.value = tmpFilters.value.creatures.allow_weak_variants;
   allow_elite_variants.value = tmpFilters.value.creatures.allow_elite_variants;
 
@@ -284,8 +295,9 @@ const saveChanges = () => {
   hazardTraits.value = tmpFilters.value.hazards.traits;
   complexity.value = tmpFilters.value.hazards.complexity;
   hazardRarity.value = tmpFilters.value.hazards.rarity;
-  hazardStealth.value = tmpFilters.value.hazards.stealth;
   hazardSize.value = tmpFilters.value.hazards.size;
+  hazardSources.value = tmpFilters.value.hazards.sources;
+  hazardStealth.value = tmpFilters.value.hazards.stealth;
 };
 
 const filterCreatureTraitsFn = (val, update) => {
@@ -306,10 +318,28 @@ const filterFamiliesFn = (val, update) => {
   });
 };
 
+const filterCreatureSourcesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getCreatureFilters.sources = creatureSourcesOptions.value.filter((v) =>
+      v.toLowerCase().includes(filter)
+    );
+  });
+};
+
 const filterHazardTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.getHazardFilters.traits = hazardTraitsOptions.value.filter((v) =>
+      v.toLowerCase().includes(filter)
+    );
+  });
+};
+
+const filterHazardSourcesFn = (val, update) => {
+  update(() => {
+    const filter = val.toLowerCase();
+    filters.getHazardFilters.sources = hazardSourcesOptions.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -350,7 +380,7 @@ defineExpose({ generateEncounter });
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="General">
-          <q-card-section style="max-height: 46rem">
+          <q-card-section style="max-height: 24rem">
             <div class="tw:space-y-3!">
               <q-toggle
                 v-model="tmpFilters.adventure_group_toggle"
@@ -536,7 +566,7 @@ defineExpose({ generateEncounter });
           </q-card-section>
         </q-tab-panel>
         <q-tab-panel class="tw:max-w-0" name="Creatures">
-          <q-card-section class="tw:flex" style="max-height: 46rem">
+          <q-card-section class="tw:flex" style="max-height: 24rem">
             <div class="tw:space-y-3!">
               <q-select
                 v-model="tmpFilters.creatures.traits"
@@ -606,6 +636,22 @@ defineExpose({ generateEncounter });
                 style="max-width: 248px"
               />
 
+              <q-select
+                v-model="tmpFilters.creatures.sources"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getCreatureFilters.sources)"
+                use-input
+                input-debounce="0"
+                label="Sources"
+                style="max-width: 248px"
+                virtual-scroll-item-size="32"
+                @filter="filterCreatureSourcesFn"
+              />
+
               <q-separator class="tw:mb-4! tw:mt-4!" />
 
               <q-select
@@ -648,7 +694,7 @@ defineExpose({ generateEncounter });
           </q-card-section>
         </q-tab-panel>
         <q-tab-panel class="tw:max-w-0" name="Hazards">
-          <q-card-section class="tw:flex" style="max-height: 46rem">
+          <q-card-section class="tw:flex" style="max-height: 24rem">
             <div class="tw:space-y-3!">
               <q-select
                 v-model="tmpFilters.hazards.traits"
@@ -701,7 +747,23 @@ defineExpose({ generateEncounter });
                 style="max-width: 248px"
               />
 
-              <div class="tw:pb-40.5">
+              <q-select
+                v-model="tmpFilters.hazards.sources"
+                multiple
+                dense
+                outlined
+                clearable
+                options-dense
+                :options="Object.freeze(filters.getHazardFilters.sources)"
+                use-input
+                input-debounce="0"
+                label="Sources"
+                style="width: 248px"
+                virtual-scroll-item-size="32"
+                @filter="filterHazardSourcesFn"
+              />
+
+              <div class="tw:pb-8">
                 <q-badge outline class="tw:text-sm!"> Stealth DC: </q-badge>
 
                 <q-range

@@ -36,6 +36,7 @@ export type encounter_data = {
     rarity_filter: rarities[] | undefined;
     family_filter: string[] | undefined;
     type_filter: string[] | undefined;
+    source_filter: string[] | undefined;
     party_levels: number[];
     min_creatures?: number;
     max_creatures?: number;
@@ -51,6 +52,7 @@ export type encounter_data = {
     complexity_filter: complexities[] | undefined;
     size_filter: sizes[] | undefined;
     rarity_filter: rarities[] | undefined;
+    source_filter: string[] | undefined;
     min_stealth?: number;
     max_stealth?: number;
     min_ac?: number;

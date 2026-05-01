@@ -21,7 +21,7 @@ export const settingsStore = defineStore('settings', {
     experimental_features: false,
     is_aon_links_on: false,
     game_version: 'Any',
-    game: 'pf' as games
+    game: 'pf'
   }),
   getters: {
     getHiddenNav: (state) => state.hidden_nav,
@@ -296,37 +296,26 @@ export const infoStore = defineStore('info', {
         Impossible: 0
       },
       color: 'lime'
-    } as encounter
+    }
   }),
   getters: {
     getInfo: (state) => state.info
   },
   actions: {
     setInfo(info: encounter) {
-      this.info = info;
-      switch (info.challenge) {
-        case 'Trivial':
-          this.info.color = 'lime';
-          break;
-        case 'Low':
-          this.info.color = 'green';
-          break;
-        case 'Moderate':
-          this.info.color = 'amber';
-          break;
-        case 'Severe':
-          this.info.color = 'orange';
-          break;
-        case 'Extreme':
-          this.info.color = 'red';
-          break;
-        case 'Impossible':
-          this.info.color = 'purple-10';
-          break;
-        default:
-          this.info.color = 'lime';
-          break;
-      }
+      const colorMap = {
+        Trivial: 'lime',
+        Low: 'green',
+        Moderate: 'amber',
+        Severe: 'orange',
+        Extreme: 'red',
+        Impossible: 'purple-10'
+      } as const;
+
+      this.info = {
+        ...info,
+        color: colorMap[info.challenge] ?? 'lime'
+      };
     }
   }
 });
