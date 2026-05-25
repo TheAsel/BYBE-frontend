@@ -136,7 +136,7 @@ git clone https://github.com/TheAsel/BYBE-frontend
 3. Build the docker image:
 
 ```
-docker build -t bybe-frontend .
+docker build --build-arg API_URL=https://api.bybe.app -t bybe-frontend .
 ```
 
 4. Run the docker image:
