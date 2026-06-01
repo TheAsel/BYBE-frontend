@@ -444,7 +444,7 @@ const saveChanges = () => {
 const openCreatureSheet = (game: games, id: number, variant: variants) => {
   if (game === 'sf') {
     const routeData = router.resolve({
-      name: 'sf2e_bestiary',
+      name: 'bestiary',
       query: { id: id, variant: variant }
     });
     if (isApp) {
@@ -454,7 +454,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
     }
   } else {
     const routeData = router.resolve({
-      name: 'pf2e_bestiary',
+      name: 'bestiary',
       query: { id: id, variant: variant }
     });
     if (isApp) {
@@ -468,7 +468,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
 const openHazardSheet = (game: games, id: number) => {
   if (game === 'sf') {
     const routeData = router.resolve({
-      name: 'sf2e_hazard',
+      name: 'hazard',
       query: { id: id }
     });
     if (isApp) {
@@ -478,7 +478,7 @@ const openHazardSheet = (game: games, id: number) => {
     }
   } else {
     const routeData = router.resolve({
-      name: 'pf2e_hazard',
+      name: 'hazard',
       query: { id: id }
     });
     if (isApp) {
