@@ -442,50 +442,26 @@ const saveChanges = () => {
 };
 
 const openCreatureSheet = (game: games, id: number, variant: variants) => {
-  if (game === 'sf') {
-    const routeData = router.resolve({
-      name: 'bestiary',
-      query: { id: id, variant: variant }
-    });
-    if (isApp) {
-      globalThis.open(routeData.href, '_self');
-    } else {
-      globalThis.open(routeData.href, '_blank');
-    }
+  const routeData = router.resolve({
+    name: 'bestiary',
+    query: { game: currentGame.value, id: id, variant: variant }
+  });
+  if (isApp) {
+    globalThis.open(routeData.href, '_self');
   } else {
-    const routeData = router.resolve({
-      name: 'bestiary',
-      query: { id: id, variant: variant }
-    });
-    if (isApp) {
-      globalThis.open(routeData.href, '_self');
-    } else {
-      globalThis.open(routeData.href, '_blank');
-    }
+    globalThis.open(routeData.href, '_blank');
   }
 };
 
 const openHazardSheet = (game: games, id: number) => {
-  if (game === 'sf') {
-    const routeData = router.resolve({
-      name: 'hazard',
-      query: { id: id }
-    });
-    if (isApp) {
-      globalThis.open(routeData.href, '_self');
-    } else {
-      globalThis.open(routeData.href, '_blank');
-    }
+  const routeData = router.resolve({
+    name: 'hazard',
+    query: { game: currentGame.value, id: id }
+  });
+  if (isApp) {
+    globalThis.open(routeData.href, '_self');
   } else {
-    const routeData = router.resolve({
-      name: 'hazard',
-      query: { id: id }
-    });
-    if (isApp) {
-      globalThis.open(routeData.href, '_self');
-    } else {
-      globalThis.open(routeData.href, '_blank');
-    }
+    globalThis.open(routeData.href, '_blank');
   }
 };
 </script>
