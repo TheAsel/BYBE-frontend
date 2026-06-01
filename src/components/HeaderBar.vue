@@ -10,7 +10,7 @@ import { TailwindDarkFix } from '../utils/tw-dark-fix';
 
 import SettingsMenu from './SettingsMenu.vue';
 
-import type { games } from 'src/types/filters';
+import type { games } from '../types/filters';
 
 const settings = settingsStore();
 const isApp = process.env.IS_APP === 'true';
@@ -19,13 +19,13 @@ const settingsMenuRef = ref();
 
 TailwindDarkFix();
 
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
 const currentPath = ref(route.path);
 const isTourPage = ref(
-  currentPath.value.startsWith('/' + settings.getGame + '/encounter') ||
-    currentPath.value.startsWith('/' + settings.getGame + '/shop') ||
-    currentPath.value.startsWith('/' + settings.getGame + '/npc')
+  currentPath.value.startsWith('/encounter') ||
+    currentPath.value.startsWith('/shop') ||
+    currentPath.value.startsWith('/npc')
 );
 
 watch(
@@ -33,18 +33,18 @@ watch(
   () => {
     currentPath.value = route.path;
     isTourPage.value =
-      currentPath.value.startsWith('/' + settings.getGame + '/encounter') ||
-      currentPath.value.startsWith('/' + settings.getGame + '/shop') ||
-      currentPath.value.startsWith('/' + settings.getGame + '/npc');
+      currentPath.value.startsWith('/encounter') ||
+      currentPath.value.startsWith('/shop') ||
+      currentPath.value.startsWith('/npc');
   }
 );
 
 const navigation = [
-  { name: 'Encounter Builder', to: '/encounter' },
-  { name: 'Shop Generator', to: '/shop' },
-  { name: 'NPC Generator', to: '/npc' },
-  { name: 'Creature Generator', to: '/creature' },
-  { name: 'City Planner', to: '/city' }
+  { name: 'Encounter Builder', to: 'encounter' },
+  { name: 'Shop Generator', to: 'shop' },
+  { name: 'NPC Generator', to: 'npc' },
+  { name: 'Creature Generator', to: 'creature' },
+  { name: 'City Planner', to: 'city' }
 ];
 
 const gameOptions = [
@@ -60,23 +60,29 @@ const gameOptions = [
   }
 ];
 
-async function changeGame(value: games) {
+function changeGame(value: games) {
   settings.setGame(value);
-
-  if (!value) return;
-
-  const opt = gameOptions.find((o) => o.value === value);
-  if (!opt) return;
-
-  // current full path, e.g. "/pf/encounter"
-  const path = route.fullPath;
-
-  // replace the prefix (first segment after "/")
-  const firstSegment = route.path.split('/')[1];
-  if (firstSegment === 'sf' || firstSegment === 'pf') {
-    const newPath = path.replace(/^\/[^/]+/, `/${opt.value}`);
-    await router.push(newPath);
+  if (value === 'sf') {
+    const routeData = router.resolve({
+      path: route.path,
+      query: { game: 'sf' }
+    });
+    globalThis.open(routeData.href, '_self');
+  } else {
+    const routeData = router.resolve({
+      path: route.path,
+      query: { game: 'pf' }
+    });
+    globalThis.open(routeData.href, '_self');
   }
+}
+
+const queryGame: string = String(route.query.game).toLowerCase();
+
+if (queryGame === 'sf') {
+  settings.setGame('sf');
+} else {
+  settings.setGame('pf');
 }
 
 const $q = useQuasar();
@@ -152,7 +158,7 @@ const unhide = debounce(function () {
           v-else
           flat
           class="text-h5 tw:flex tw:flex-nowrap tw:dark:text-white tw:my-auto"
-          :to="'/' + settings.getGame"
+          :to="'/'"
         >
           <q-avatar size="36px">
             <img
@@ -177,15 +183,15 @@ const unhide = debounce(function () {
           </div>
         </router-link>
         <q-select
-          v-if="currentPath !== '/' && currentPath !== '/download'"
+          v-if="currentPath !== '/download'"
           class="tw:ml-6"
           v-model="settings.getGame"
           :options="gameOptions"
           :readonly="
-            currentPath === '/pf/bestiary' ||
-            currentPath === '/pf/item' ||
-            currentPath === '/sf/bestiary' ||
-            currentPath === '/sf/item'
+            currentPath === '/bestiary' ||
+            currentPath === '/item' ||
+            currentPath === '/bestiary' ||
+            currentPath === '/item'
           "
           emit-value
           map-options
@@ -249,9 +255,9 @@ const unhide = debounce(function () {
             <router-link
               v-for="item in navigation"
               :key="item.name"
-              :to="'/' + settings.getGame + item.to"
+              :to="'/' + item.to"
               :class="
-                currentPath === '/' + settings.getGame + item.to
+                currentPath === '/' + item.to
                   ? 'tw:text-blue-600 tw:lg:py-4 tw:dark:text-blue-400'
                   : 'tw:lg:py-4 tw:text-gray-800 tw:hover:text-blue-600  tw:dark:text-neutral-200 tw:dark:hover:text-neutral-400'
               "

@@ -16,8 +16,8 @@ const latestRelease = 'https://github.com/' + repoUrl + '/releases/latest';
 const settings = settingsStore();
 
 const route = useRoute();
-const isHome = computed(() => {
-  return route.path === '/' || route.path === '/download';
+const isDownload = computed(() => {
+  return route.path === '/download';
 });
 
 const firstSegment = route.path.split('/')[1];
@@ -30,7 +30,7 @@ if (firstSegment === 'sf') {
 const backgroundStyle = computed(() => {
   let imageUrl: string;
 
-  if (isHome.value) {
+  if (isDownload.value) {
     imageUrl = '/home-background.webp';
   } else {
     imageUrl = settings.getGame === 'sf' ? '/sf2e-background.webp' : '/pf2e-background.webp';
@@ -82,16 +82,9 @@ try {
             (Update Available!)</a
           >
           |
-          <span v-if="!isHome">
+          <span v-if="!isDownload">
             <router-link
-              v-if="settings.getGame === 'sf'"
-              to="/sf/license"
-              class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
-              >Licenses and Policies</router-link
-            >
-            <router-link
-              v-else
-              to="/pf/license"
+              :to="{ path: '/license', query: { game: settings.getGame } }"
               class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
               >Licenses and Policies</router-link
             >
