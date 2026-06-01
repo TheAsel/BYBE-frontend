@@ -52,20 +52,11 @@ const cleanDescription = (description: string) => {
 };
 
 const openShopSheet = (game: games, id: number) => {
-  if (game === 'sf') {
-    const routeData = router.resolve({ name: 'item', query: { game: currentGame.value, id: id } });
-    if (process.env.IS_APP === 'true') {
-      globalThis.open(routeData.href, '_self');
-    } else {
-      globalThis.open(routeData.href, '_blank');
-    }
+  const routeData = router.resolve({ name: 'item', query: { game: currentGame.value, id: id } });
+  if (process.env.IS_APP === 'true') {
+    globalThis.open(routeData.href, '_self');
   } else {
-    const routeData = router.resolve({ name: 'item', query: { game: currentGame.value, id: id } });
-    if (process.env.IS_APP === 'true') {
-      globalThis.open(routeData.href, '_self');
-    } else {
-      globalThis.open(routeData.href, '_blank');
-    }
+    globalThis.open(routeData.href, '_blank');
   }
 };
 </script>
