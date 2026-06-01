@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { fabApple, fabLinux, fabWindows } from '@quasar/extras/fontawesome-v6';
+import { fabApple, fabLinux, fabWindows } from '@quasar/extras/fontawesome-v7';
 import { matDownload } from '@quasar/extras/material-icons';
 import { useHead } from '@unhead/vue';
 import { onMounted, ref } from 'vue';

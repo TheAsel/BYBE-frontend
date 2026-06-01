@@ -8,7 +8,7 @@ import {
   biTrash,
   biXLg
 } from '@quasar/extras/bootstrap-icons';
-import { fasScroll } from '@quasar/extras/fontawesome-v6';
+import { fasScroll } from '@quasar/extras/fontawesome-v7';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { debounce } from 'lodash-es';
 import { copyToClipboard, useQuasar } from 'quasar';

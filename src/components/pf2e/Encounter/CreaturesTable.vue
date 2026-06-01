@@ -15,7 +15,7 @@ import {
   fasScroll,
   fasUserNinja,
   fasUserShield
-} from '@quasar/extras/fontawesome-v6';
+} from '@quasar/extras/fontawesome-v7';
 import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 import { mdiBowArrow, mdiMagicStaff, mdiSword } from '@quasar/extras/mdi-v7';
 import { capitalize, debounce } from 'lodash-es';

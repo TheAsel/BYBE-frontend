@@ -6,7 +6,7 @@ import {
   biQuestionCircle,
   biXLg
 } from '@quasar/extras/bootstrap-icons';
-import { fasFlaskVial } from '@quasar/extras/fontawesome-v6';
+import { fasFlaskVial } from '@quasar/extras/fontawesome-v7';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { useQuasar } from 'quasar';
 import { ref } from 'vue';
