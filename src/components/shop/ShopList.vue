@@ -335,7 +335,7 @@ const showItem = debounce(async function (item: min_item) {
           message: 'Missing item ID',
           icon: matPriorityHigh
         });
-        await router.push({ name: 'shop', query: { game: currentGame.value } });
+        await router.push({ name: 'shop', query: { game: item.game } });
       } else {
         shop.setSelectedItem(itemData);
       }

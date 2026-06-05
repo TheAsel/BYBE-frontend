@@ -444,7 +444,7 @@ const saveChanges = () => {
 const openCreatureSheet = (game: games, id: number, variant: variants) => {
   const routeData = router.resolve({
     name: 'bestiary',
-    query: { game: currentGame.value, id: id, variant: variant }
+    query: { game: game, id: id, variant: variant }
   });
   if (isApp) {
     globalThis.open(routeData.href, '_self');
@@ -456,7 +456,7 @@ const openCreatureSheet = (game: games, id: number, variant: variants) => {
 const openHazardSheet = (game: games, id: number) => {
   const routeData = router.resolve({
     name: 'hazard',
-    query: { game: currentGame.value, id: id }
+    query: { game: game, id: id }
   });
   if (isApp) {
     globalThis.open(routeData.href, '_self');
