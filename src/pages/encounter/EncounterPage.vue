@@ -3,8 +3,8 @@ import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons'
 import { useHead } from '@unhead/vue';
 import { ref } from 'vue';
 
-import CreatureList from '../../components/encounter/CreatureList.vue';
-import CreaturesTable from '../../components/encounter/CreaturesTable.vue';
+import EncounterList from '../../components/encounter/EncounterList.vue';
+import EncounterTable from '../../components/encounter/EncounterTable.vue';
 import { encounterStore, partyStore, settingsStore } from '../../stores/store';
 
 import type { encounter_list, min_creature_hazard } from '../../types/encounter';
@@ -337,9 +337,9 @@ const scrollPage = (up: boolean) => {
 <template>
   <div class="row items-center justify-between">
     <v-tour name="/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
-    <CreaturesTable id="table" />
+    <EncounterTable id="table" />
     <q-space />
-    <CreatureList id="list" />
+    <EncounterList id="list" />
     <q-page-sticky
       v-if="screenWidth < 768"
       position="bottom-right"

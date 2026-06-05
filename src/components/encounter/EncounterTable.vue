@@ -33,8 +33,8 @@ import {
   requestHazards
 } from '../../utils/encounter-api-calls';
 
-import EncounterBuilder from './CreaturesTable/EncounterBuilder.vue';
-import PartyBuilder from './CreaturesTable/PartyBuilder.vue';
+import EncounterBuilder from './EncounterTable/EncounterBuilder.vue';
+import PartyBuilder from './EncounterTable/PartyBuilder.vue';
 
 import type { creature } from '../../types/creature';
 import type { min_creature_hazard } from '../../types/encounter';
