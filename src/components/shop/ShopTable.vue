@@ -492,36 +492,37 @@ const filterTraitsFn = (val, update) => {
 
 onMounted(async () => {
   try {
-    const sourcesRequest = await requestFilters(currentGame.value, 'sources');
-    if (sourcesRequest) {
-      filterStore.updateItemSources(sourcesRequest);
-      sourceFilter.value = filterStore.getItemFilters.sources;
-    } else {
-      throw new Error('Error fetching sources');
-    }
-    const traitsRequest = await requestFilters(currentGame.value, 'traits');
-    if (traitsRequest) {
-      filterStore.updateItemTraits(traitsRequest);
-      traitFilter.value = filterStore.getItemFilters.traits;
-    } else {
-      throw new Error('Error fetching traits');
-    }
-    const templatesRequest = await requestTemplates(currentGame.value);
-    if (templatesRequest) {
-      templateStore().addDefaultTemplates(templatesRequest);
-    } else {
-      throw new Error('Error fetching templates');
-    }
-    const shopRangesRequest = await requestShopRanges(currentGame.value);
-    if (shopRangesRequest) {
-      filterStore.shopRanges = shopRangesRequest;
-    } else {
-      throw new Error('Error fetching shop ranges');
-    }
+    const [sourcesRequest, traitsRequest, templatesRequest, shopRangesRequest] = await Promise.all([
+      requestFilters(currentGame.value, 'sources'),
+      requestFilters(currentGame.value, 'traits'),
+      requestTemplates(currentGame.value),
+      requestShopRanges(currentGame.value),
+      fetchFromServer(0, 100)
+    ]);
+
+    if (!sourcesRequest) throw new Error('Error fetching sources');
+    if (!traitsRequest) throw new Error('Error fetching traits');
+    if (!templatesRequest) throw new Error('Error fetching templates');
+    if (!shopRangesRequest) throw new Error('Error fetching shop ranges');
+
+    filterStore.updateItemSources(sourcesRequest);
+    sourceFilter.value = filterStore.getItemFilters.sources;
+
+    filterStore.updateItemTraits(traitsRequest);
+    traitFilter.value = filterStore.getItemFilters.traits;
+
+    templateStore().addDefaultTemplates(templatesRequest);
+
+    filterStore.shopRanges = shopRangesRequest;
   } catch (error) {
     console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error fetching filters',
+      icon: matPriorityHigh
+    });
   }
-  await fetchFromServer(0, 100);
 });
 </script>
 

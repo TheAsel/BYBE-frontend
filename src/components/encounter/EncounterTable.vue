@@ -1152,96 +1152,82 @@ const filterHazardTraitsFn = (val, update) => {
 
 onMounted(async () => {
   try {
-    const traitsRequest = await requestFilters(currentGame.value, 'traits');
-    if (traitsRequest) {
-      filterStore.updateTraits(traitsRequest);
-      traitCreatureFilter.value = filterStore.getCreatureFilters.traits;
-    } else {
-      throw new Error('Error fetching creature traits');
-    }
-    const alignmentsRequest = await requestFilters(currentGame.value, 'alignments');
-    if (alignmentsRequest) {
-      filterStore.updateAlignments(alignmentsRequest);
-    } else {
-      throw new Error('Error fetching creature alignments');
-    }
-    const sizesRequest = await requestFilters(currentGame.value, 'sizes');
-    if (sizesRequest) {
-      filterStore.updateSizes(sizesRequest);
-    } else {
-      throw new Error('Error fetching creature sizes');
-    }
-    const raritiesRequest = await requestFilters(currentGame.value, 'rarities');
-    if (raritiesRequest) {
-      filterStore.updateRarities(raritiesRequest);
-    } else {
-      throw new Error('Error fetching creature rarities');
-    }
-    const familiesRequest = await requestFilters(currentGame.value, 'families');
-    if (familiesRequest) {
-      filterStore.updateFamilies(familiesRequest);
-      familyCreatureFilter.value = filterStore.getCreatureFilters.families;
-    } else {
-      throw new Error('Error fetching creature families');
-    }
-    const typesRequest = await requestFilters(currentGame.value, 'creature_types');
-    if (typesRequest) {
-      filterStore.updateCreatureType(typesRequest);
-    } else {
-      throw new Error('Error fetching creature creature_types');
-    }
-    const sourcesRequest = await requestFilters(currentGame.value, 'sources');
-    if (sourcesRequest) {
-      filterStore.updateSources(sourcesRequest);
-      sourceCreatureFilter.value = filterStore.getCreatureFilters.sources;
-    } else {
-      throw new Error('Error fetching creature sources');
-    }
-    const rolesRequest = await requestFilters(currentGame.value, 'creature_roles');
-    if (rolesRequest) {
-      filterStore.updateRoles(rolesRequest);
-    } else {
-      throw new Error('Error fetching creature creature_roles');
-    }
-    const creatureRangesRequest = await requestCreatureRanges(currentGame.value);
-    if (creatureRangesRequest) {
-      filterStore.creatureRanges = creatureRangesRequest;
-    } else {
-      throw new Error('Error fetching creature ranges');
-    }
+    const [
+      traitsRequest,
+      alignmentsRequest,
+      sizesRequest,
+      raritiesRequest,
+      familiesRequest,
+      typesRequest,
+      sourcesRequest,
+      rolesRequest,
+      creatureRangesRequest,
+      hazardTraitsRequest,
+      hazardSizesRequest,
+      hazardRaritiesRequest,
+      hazardSourcesRequest,
+      hazardRangesRequest
+    ] = await Promise.all([
+      requestFilters(currentGame.value, 'traits'),
+      requestFilters(currentGame.value, 'alignments'),
+      requestFilters(currentGame.value, 'sizes'),
+      requestFilters(currentGame.value, 'rarities'),
+      requestFilters(currentGame.value, 'families'),
+      requestFilters(currentGame.value, 'creature_types'),
+      requestFilters(currentGame.value, 'sources'),
+      requestFilters(currentGame.value, 'creature_roles'),
+      requestCreatureRanges(currentGame.value),
+      requestHazardFilters(currentGame.value, 'traits'),
+      requestHazardFilters(currentGame.value, 'sizes'),
+      requestHazardFilters(currentGame.value, 'rarities'),
+      requestHazardFilters(currentGame.value, 'sources'),
+      requestHazardRanges(currentGame.value),
+      fetchFromServer(0, 100)
+    ]);
 
-    const hazardTraitsRequest = await requestHazardFilters(currentGame.value, 'traits');
-    if (hazardTraitsRequest) {
-      filterStore.updateHazardTraits(hazardTraitsRequest);
-      traitHazardFilter.value = filterStore.getHazardFilters.traits;
-    } else {
-      throw new Error('Error fetching hazard traits');
-    }
-    const hazardSizesRequest = await requestHazardFilters(currentGame.value, 'sizes');
-    if (hazardSizesRequest) {
-      filterStore.updateHazardSizes(hazardSizesRequest);
-    } else {
-      throw new Error('Error fetching hazard sizes');
-    }
-    const hazardRaritiesRequest = await requestHazardFilters(currentGame.value, 'rarities');
-    if (hazardRaritiesRequest) {
-      filterStore.updateHazardRarities(hazardRaritiesRequest);
-    } else {
-      throw new Error('Error fetching hazard rarities');
-    }
-    const hazardSourcesRequest = await requestHazardFilters(currentGame.value, 'sources');
-    if (hazardSourcesRequest) {
-      filterStore.updateHazardSources(hazardSourcesRequest);
-      sourceHazardFilter.value = filterStore.getHazardFilters.sources;
-    } else {
-      throw new Error('Error fetching hazard sources');
-    }
-    const hazardRangesRequest = await requestHazardRanges(currentGame.value);
-    if (hazardRangesRequest) {
-      filterStore.hazardRanges = hazardRangesRequest;
-    } else {
-      throw new Error('Error fetching hazard ranges');
-    }
+    if (!traitsRequest) throw new Error('Error fetching creature traits');
+    if (!alignmentsRequest) throw new Error('Error fetching creature alignments');
+    if (!sizesRequest) throw new Error('Error fetching creature sizes');
+    if (!raritiesRequest) throw new Error('Error fetching creature rarities');
+    if (!familiesRequest) throw new Error('Error fetching creature families');
+    if (!typesRequest) throw new Error('Error fetching creature creature_types');
+    if (!sourcesRequest) throw new Error('Error fetching creature sources');
+    if (!rolesRequest) throw new Error('Error fetching creature creature_roles');
+    if (!creatureRangesRequest) throw new Error('Error fetching creature ranges');
+    if (!hazardTraitsRequest) throw new Error('Error fetching hazard traits');
+    if (!hazardSizesRequest) throw new Error('Error fetching hazard sizes');
+    if (!hazardRaritiesRequest) throw new Error('Error fetching hazard rarities');
+    if (!hazardSourcesRequest) throw new Error('Error fetching hazard sources');
+    if (!hazardRangesRequest) throw new Error('Error fetching hazard ranges');
+
+    filterStore.updateTraits(traitsRequest);
+    traitCreatureFilter.value = filterStore.getCreatureFilters.traits;
+
+    filterStore.updateAlignments(alignmentsRequest);
+    filterStore.updateSizes(sizesRequest);
+    filterStore.updateRarities(raritiesRequest);
+
+    filterStore.updateFamilies(familiesRequest);
+    familyCreatureFilter.value = filterStore.getCreatureFilters.families;
+
+    filterStore.updateCreatureType(typesRequest);
+
+    filterStore.updateSources(sourcesRequest);
+    sourceCreatureFilter.value = filterStore.getCreatureFilters.sources;
+
+    filterStore.updateRoles(rolesRequest);
+    filterStore.creatureRanges = creatureRangesRequest;
+
+    filterStore.updateHazardTraits(hazardTraitsRequest);
+    traitHazardFilter.value = filterStore.getHazardFilters.traits;
+
+    filterStore.updateHazardSizes(hazardSizesRequest);
+    filterStore.updateHazardRarities(hazardRaritiesRequest);
+
+    filterStore.updateHazardSources(hazardSourcesRequest);
+    sourceHazardFilter.value = filterStore.getHazardFilters.sources;
+
+    filterStore.hazardRanges = hazardRangesRequest;
   } catch (error) {
     console.error(error);
     $q.notify({
@@ -1251,7 +1237,6 @@ onMounted(async () => {
       icon: matPriorityHigh
     });
   }
-  await fetchFromServer(0, 100);
 });
 </script>
 

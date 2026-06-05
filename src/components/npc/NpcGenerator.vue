@@ -44,48 +44,48 @@ const jobFilter = ref<string[]>(npcParameters.getNpcParameters.jobs);
 
 onMounted(async () => {
   try {
-    const gendersRequest = await requestParameters(currentGame.value, 'genders');
-    if (gendersRequest) {
-      npcParameters.updateGenders(gendersRequest);
-      genderFilter.value = npcParameters.getNpcParameters.genders;
-    } else {
-      throw new Error('Error fetching genders');
-    }
-    const ancestriesRequest = await requestAncestries(currentGame.value);
-    if (ancestriesRequest) {
-      npcParameters.updateValidGenders(ancestriesRequest);
-      npcParameters.updateAncestries(
-        ancestriesRequest.map((valid_genders) => valid_genders.ancestry).sort()
-      );
-      ancestryFilter.value = npcParameters.getNpcParameters.ancestries;
-    } else {
-      throw new Error('Error fetching ancestries');
-    }
-    if (currentGame.value === 'pf') {
-      const culturesRequest = await requestParameters('pf', 'cultures');
-      if (culturesRequest) {
-        npcParameters.updateCultures(culturesRequest.sort());
-        culturesFilter.value = npcParameters.getNpcParameters.cultures;
-      } else {
-        throw new Error('Error fetching cultures');
-      }
-    }
-    const classesRequest = await requestParameters(currentGame.value, 'classes');
-    if (classesRequest) {
-      npcParameters.updateClasses(classesRequest.sort());
-      classFilter.value = npcParameters.getNpcParameters.classes;
-    } else {
-      throw new Error('Error fetching classes');
-    }
-    const jobsRequest = await requestParameters(currentGame.value, 'jobs');
-    if (jobsRequest) {
-      npcParameters.updateJobs(jobsRequest.sort());
-      jobFilter.value = npcParameters.getNpcParameters.jobs;
-    } else {
-      throw new Error('Error fetching jobs');
+    const [gendersRequest, ancestriesRequest, classesRequest, jobsRequest, culturesRequest] =
+      await Promise.all([
+        requestParameters(currentGame.value, 'genders'),
+        requestAncestries(currentGame.value),
+        requestParameters(currentGame.value, 'classes'),
+        requestParameters(currentGame.value, 'jobs'),
+        currentGame.value === 'pf' ? requestParameters('pf', 'cultures') : Promise.resolve(null)
+      ]);
+
+    if (!gendersRequest) throw new Error('Error fetching genders');
+    if (!ancestriesRequest) throw new Error('Error fetching ancestries');
+    if (!classesRequest) throw new Error('Error fetching classes');
+    if (!jobsRequest) throw new Error('Error fetching jobs');
+    if (currentGame.value === 'pf' && !culturesRequest) throw new Error('Error fetching cultures');
+
+    npcParameters.updateGenders(gendersRequest);
+    genderFilter.value = npcParameters.getNpcParameters.genders;
+
+    npcParameters.updateValidGenders(ancestriesRequest);
+    npcParameters.updateAncestries(
+      ancestriesRequest.map((valid_genders) => valid_genders.ancestry).sort()
+    );
+    ancestryFilter.value = npcParameters.getNpcParameters.ancestries;
+
+    npcParameters.updateClasses(classesRequest.sort());
+    classFilter.value = npcParameters.getNpcParameters.classes;
+
+    npcParameters.updateJobs(jobsRequest.sort());
+    jobFilter.value = npcParameters.getNpcParameters.jobs;
+
+    if (culturesRequest) {
+      npcParameters.updateCultures(culturesRequest.sort());
+      culturesFilter.value = npcParameters.getNpcParameters.cultures;
     }
   } catch (error) {
     console.error(error);
+    $q.notify({
+      progress: true,
+      type: 'warning',
+      message: 'Error fetching filters',
+      icon: matPriorityHigh
+    });
   }
 });
 
