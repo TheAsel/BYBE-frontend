@@ -186,7 +186,7 @@ const openShopSheet = (game: games, id: number) => {
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <strong>Price</strong>
-      {{ items.getFormattedPrice(items.getSelectedItem!.core_item.price, currentGame) }}
+      {{ items.getFormattedPrice(items.getSelectedItem!.core_item.price, currentGame) }};
       <span v-if="items.getSelectedItem!.weapon_data?.damage_data[0].dice">
         <strong>Damage</strong>
         {{ items.getSelectedItem!.weapon_data.damage_data[0].dice.n_of_dices }}d{{

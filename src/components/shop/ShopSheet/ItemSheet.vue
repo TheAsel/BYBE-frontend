@@ -188,7 +188,7 @@ const openShopSheet = (game: games, id: number) => {
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     >
       <strong>Price</strong>
-      {{ items.getFormattedPrice(items.getSelectedItem!.core_item.price, currentGame) }}
+      {{ items.getFormattedPrice(items.getSelectedItem!.core_item.price, currentGame) }};
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <span v-if="items.getSelectedItem!.core_item.usage">
