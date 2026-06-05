@@ -65,6 +65,26 @@ const routes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: '/:game(pf|sf)',
+    redirect: (to) => ({
+      path: '/',
+      query: {
+        ...to.query,
+        game: to.params.game
+      }
+    })
+  },
+  {
+    path: '/:game(pf|sf)/:page',
+    redirect: (to) => ({
+      path: `/${to.params.page as string}`,
+      query: {
+        ...to.query,
+        game: to.params.game
+      }
+    })
+  },
+  {
     path: '/:catchAll(.*)*',
     component: () => import('../pages/ErrorNotFound.vue')
   }
