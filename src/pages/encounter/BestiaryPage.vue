@@ -282,43 +282,48 @@ const itemString = computed(() => {
   const armors = creatureData?.combat_data?.armors;
   let finalString = '';
   finalString += '<strong>Items&nbsp;</strong>';
+  const droppedItems: string[] = [];
   if (weapons !== undefined && weapons.length > 0) {
     for (const weapon of weapons) {
-      if (weapon.weapon_data) {
+      if (weapon.weapon_data && weapon.weapon_data.weapon_type === 'Generic') {
+        let weaponString = '';
         if (
           weapon.weapon_data.n_of_potency_runes > 0 ||
           weapon.weapon_data.n_of_striking_runes > 0 ||
           weapon.weapon_data.property_runes.length > 0
         ) {
           if (weapon.weapon_data.n_of_potency_runes > 0) {
-            finalString += addPlus(weapon.weapon_data.n_of_potency_runes) + ' ';
+            weaponString += addPlus(weapon.weapon_data.n_of_potency_runes) + ' ';
           }
           switch (weapon.weapon_data.n_of_striking_runes) {
             case 1:
-              finalString += 'striking ';
+              weaponString += 'striking ';
               break;
             case 2:
-              finalString += 'greater striking ';
+              weaponString += 'greater striking ';
               break;
             case 3:
-              finalString += 'major striking ';
+              weaponString += 'major striking ';
               break;
             default:
               break;
           }
           if (weapon.weapon_data.property_runes.length > 0) {
             for (const rune of weapon.weapon_data.property_runes) {
-              finalString += rune + ' ';
+              weaponString += rune + ' ';
             }
           }
           if (weapon.item_core.material_type) {
-            finalString += weapon.item_core.material_type + ' ';
+            weaponString += weapon.item_core.material_type + ' ';
           }
-          finalString += weapon.item_core.name.toLowerCase() + ', ';
+          weaponString += weapon.item_core.name.toLowerCase();
+        } else if (weapon.item_core.quantity === 1) {
+          weaponString += weapon.item_core.name.toLowerCase();
+        } else if (weapon.item_core.quantity > 1) {
+          weaponString += weapon.item_core.quantity + ' ' + weapon.item_core.name.toLowerCase();
         }
-        if (weapon.item_core.quantity > 1) {
-          finalString +=
-            weapon.item_core.quantity + ' ' + weapon.item_core.name.toLowerCase() + ', ';
+        if (weaponString !== '') {
+          droppedItems.push(weaponString);
         }
       }
     }
@@ -326,50 +331,64 @@ const itemString = computed(() => {
   if (items !== undefined && items.length > 0) {
     for (const item of items) {
       if (item.item_type === 'Consumable' || item.item_type === 'Equipment') {
-        if (item.quantity > 1) {
-          finalString += item.quantity + ' ';
+        let itemString = '';
+        if (item.quantity === 1) {
+          itemString += item.name.toLowerCase();
+        } else if (item.quantity > 1) {
+          itemString += item.quantity + ' ' + item.name.toLowerCase();
         }
-        finalString += item.name.toLowerCase() + ', ';
+        if (itemString !== '') {
+          droppedItems.push(itemString);
+        }
       }
     }
   }
   if (armors !== undefined && armors.length > 0) {
     for (const armor of armors) {
-      if (armor.armor_data)
+      let armorString = '';
+      if (armor.armor_data) {
         if (
           armor.armor_data.n_of_potency_runes > 0 ||
           armor.armor_data.n_of_resilient_runes > 0 ||
           armor.armor_data.property_runes.length > 0
         ) {
           if (armor.armor_data.n_of_potency_runes > 0) {
-            finalString += addPlus(armor.armor_data.n_of_potency_runes) + ' ';
+            armorString += addPlus(armor.armor_data.n_of_potency_runes) + ' ';
           }
           switch (armor.armor_data.n_of_resilient_runes) {
             case 1:
-              finalString += 'resilient ';
+              armorString += 'resilient ';
               break;
             case 2:
-              finalString += 'greater resilient ';
+              armorString += 'greater resilient ';
               break;
             case 3:
-              finalString += 'major resilient ';
+              armorString += 'major resilient ';
               break;
             default:
               break;
           }
           if (armor.armor_data.property_runes.length > 0) {
             for (const rune of armor.armor_data.property_runes) {
-              finalString += rune + ' ';
+              armorString += rune + ' ';
             }
           }
           if (armor.item_core.material_type) {
-            finalString += armor.item_core.material_type + ' ';
+            armorString += armor.item_core.material_type + ' ';
           }
         }
-      finalString += armor.item_core.name.toLowerCase() + ', ';
+      }
+      armorString += armor.item_core.name.toLowerCase();
+
+      if (armorString !== '') {
+        droppedItems.push(armorString);
+      }
     }
   }
-  if (finalString === '<strong>Items&nbsp;</strong>') {
+  for (const dropped of droppedItems) {
+    finalString += dropped + ', ';
+  }
+  if (droppedItems.length === 0) {
     return '';
   } else {
     return finalString.substring(0, finalString.length - 2);
@@ -380,8 +399,11 @@ const defenceString = computed(() => {
   const actions = creatureData?.extra_data?.actions;
   let finalString = '';
   if (creatureData?.combat_data?.ac) {
-    finalString +=
-      '<strong>AC&nbsp;</strong>' + variantStyle(creatureData?.combat_data?.ac) + ';&nbsp;';
+    finalString += '<strong>AC&nbsp;</strong>' + variantStyle(creatureData?.combat_data?.ac);
+    if (creatureData?.extra_data?.ac_detail) {
+      finalString += ' ' + creatureData?.extra_data?.ac_detail;
+    }
+    finalString += ';&nbsp;';
   }
   if (creatureData?.combat_data?.saving_throws.fortitude) {
     finalString +=
@@ -418,6 +440,7 @@ const defenceString = computed(() => {
 
 const immunityString = () => {
   const immunities = creatureData?.combat_data?.immunities;
+  immunities?.sort();
   let finalString = '';
   if (immunities !== undefined && immunities.length > 0) {
     for (const immunity of immunities) {
@@ -429,6 +452,7 @@ const immunityString = () => {
 
 const resistanceString = () => {
   const resistances = creatureData?.combat_data?.resistances;
+  resistances?.sort();
   let finalString = '';
 
   if (resistances !== undefined && resistances.length > 0) {
@@ -472,6 +496,7 @@ const resistanceString = () => {
 const weaknessString = () => {
   const weaknesses = creatureData?.combat_data?.weaknesses;
   const weakKeys = Object.keys(weaknesses!);
+  weakKeys.sort();
   let finalString = '';
   if (weakKeys.length > 0) {
     for (const weakness of weakKeys) {
@@ -616,6 +641,7 @@ const spellString = computed(() => {
 
 const actionTraitsString = (index: number) => {
   const traits = creatureData?.extra_data?.actions[index]?.traits;
+  traits?.sort();
   let finalString = '';
   if (traits !== undefined && traits.length > 0) {
     finalString += ' (';
@@ -734,7 +760,7 @@ const printPage = () => {
               {{ creatureData?.core_data.essential.size.toUpperCase() }}
             </div>
             <div
-              v-for="item in creatureData?.core_data.traits"
+              v-for="item in creatureData?.core_data.traits.sort()"
               :key="item"
               class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
@@ -812,7 +838,7 @@ const printPage = () => {
                 <span v-if="item.traits !== undefined && item.traits.length > 0">
                   {{ actionTraitsString(index) }}
                 </span>
-                <span v-html="' ' + cleanDescription(item.core_action.description)"></span>
+                <span v-html="' ' + cleanDescription(item.core_action.description)" />
               </div>
             </template>
             <div
@@ -860,7 +886,7 @@ const printPage = () => {
                 <span v-if="item.traits !== undefined && item.traits.length > 0">
                   {{ actionTraitsString(index) }}
                 </span>
-                <span v-html="' ' + cleanDescription(item.core_action.description)"></span>
+                <span v-html="' ' + cleanDescription(item.core_action.description)" />
               </div>
             </template>
           </div>
@@ -903,8 +929,11 @@ const printPage = () => {
                     >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 5) }}/{{
                       addPlus(item.weapon_data?.to_hit_bonus! - 10)
                     }}]
-                  </span> </span
-                >({{ item.item_core.traits.join(', ').replaceAll('-', ' ') }}),
+                  </span>
+                </span>
+                <span v-if="item.item_core.traits.length !== 0">
+                  ({{ item.item_core.traits.sort().join(', ').replaceAll('-', ' ') }}),
+                </span>
                 <strong>Damage </strong>
                 <span v-for="(weapon, index) in item.weapon_data?.damage_data" :key="index">
                   <span v-if="weapon.dice">
@@ -945,7 +974,7 @@ const printPage = () => {
                 <span v-if="item.traits !== undefined && item.traits.length > 0">
                   {{ actionTraitsString(index) }}
                 </span>
-                <span v-html="' ' + cleanDescription(item.core_action.description)"></span>
+                <span v-html="' ' + cleanDescription(item.core_action.description)" />
               </div>
             </template>
           </div>

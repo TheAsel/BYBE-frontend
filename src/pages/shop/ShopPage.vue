@@ -331,15 +331,44 @@ onMounted(() => {
 onUnmounted(() => {
   globalThis.removeEventListener('resize', handleResize);
 });
+
+const sheetVisible = ref(true);
+const sheetWidth = ref('tw:md:w-[27%]!');
+const tableWidth = ref('tw:md:w-[46%]!');
+
+const toggleSheetView = () => {
+  sheetVisible.value = !sheetVisible.value;
+  if (sheetVisible.value) {
+    sheetWidth.value = 'tw:md:w-[27%]!';
+    tableWidth.value = 'tw:md:w-[46%]!';
+  } else {
+    sheetWidth.value = 'tw:md:w-[0%]! tw:px-0! tw:collapse';
+    tableWidth.value = 'tw:md:w-[73%]!';
+  }
+};
 </script>
 
 <template>
   <div class="row items-center justify-between">
     <v-tour name="/shop" :steps="steps" :options="options" :callbacks="callbacks" />
-    <ShopSheet v-if="screenWidth >= 768" class="q-pa-md tw:w-full tw:md:w-[27%]" />
-    <ShopTable id="table" />
+    <ShopSheet
+      v-if="screenWidth >= 768"
+      class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
+      :class="sheetWidth"
+    />
+    <ShopTable
+      id="table"
+      class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
+      :class="tableWidth"
+      :on-action="toggleSheetView"
+      :sheet-visible="sheetVisible"
+    />
     <q-space />
-    <ShopSheet v-if="screenWidth < 768" class="q-pa-md tw:w-full tw:md:w-[27%]" />
+    <ShopSheet
+      v-if="screenWidth < 768"
+      class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
+      :class="sheetWidth"
+    />
     <ShopList id="list" />
     <q-page-sticky
       v-if="screenWidth < 768"

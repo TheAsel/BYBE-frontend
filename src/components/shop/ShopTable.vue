@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {
   biArrowDownUp,
+  biArrowsCollapseVertical,
+  biArrowsExpandVertical,
   biBasketFill,
   biBook,
   biBoxArrowUpRight,
@@ -35,6 +37,8 @@ import ShopBuilder from './ShopTable/ShopBuilder.vue';
 
 import type { games, item_columns, item_filters, rarities } from '../../types/filters';
 import type { item, min_item } from '../../types/item';
+
+const props = defineProps({ onAction: Function, sheetVisible: Boolean });
 
 const $q = useQuasar();
 const settings = settingsStore();
@@ -522,7 +526,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="tw:w-full q-pa-md tw:md:w-[46%] only-screen">
+  <div class="only-screen">
     <q-table
       id="v-step-0"
       ref="itemTable"
@@ -571,6 +575,48 @@ onMounted(async () => {
       <template #top>
         <div class="tw:flex tw:grow tw:flex-wrap tw:gap-2 tw:justify-center">
           <div class="tw:flex tw:grow tw:justify-center tw:xl:justify-start">
+            <span v-if="!fullscreen">
+              <q-btn
+                v-if="props.sheetVisible"
+                flat
+                round
+                dense
+                class="tw:mr-4!"
+                :icon="biArrowsCollapseVertical"
+                size="md"
+                padding="sm"
+                aria-label="Hide sheet"
+                @click="props.onAction!()"
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Hide sheet
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                v-else
+                flat
+                round
+                dense
+                class="tw:mr-4!"
+                :icon="biArrowsExpandVertical"
+                size="md"
+                padding="sm"
+                aria-label="Show sheet"
+                @click="props.onAction!()"
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Show sheet
+                </q-tooltip>
+              </q-btn>
+            </span>
             <q-btn-group push>
               <q-btn v-if="loading" id="v-step-1" push label="Generator Settings" />
               <ShopBuilder v-else ref="shopBuilderRef" />
