@@ -1,0 +1,931 @@
+<script setup lang="ts">
+import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
+import { upperFirst } from 'lodash-es';
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+import { encounterStore, settingsStore } from '../../../stores/store';
+
+import type { games, variants } from '../../../types/filters';
+
+const route = useRoute();
+const router = useRouter();
+const encounters = encounterStore();
+const settings = settingsStore();
+
+const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentFont = ref(currentGame.value === 'sf' ? 'Orbitron Bold' : 'Good Pro Condensed');
+
+const changeVariant = (variant: variants) => {
+  if (encounters.getSelectedCreature?.variant_data?.variant === 'Base') {
+    const routeData = router.resolve({
+      name: 'bestiary',
+      query: { game: currentGame.value, id: encounters.getSelectedCreature?.core_data.essential.id }
+    });
+    globalThis.open(routeData.href, '_self');
+  } else {
+    const routeData = router.resolve({
+      name: 'bestiary',
+      query: {
+        game: currentGame.value,
+        id: encounters.getSelectedCreature?.core_data.essential.id,
+        variant: variant.toLowerCase()
+      }
+    });
+    globalThis.open(routeData.href, '_self');
+  }
+};
+
+const variantStyle = (value: string | number | undefined) => {
+  if (value && encounters.getSelectedCreature?.variant_data?.variant !== 'Base') {
+    const valueStr = '<span class="tw:text-red-600"><b>' + value.toString() + '</b></span>';
+    return valueStr;
+  }
+  return value;
+};
+
+const addPlus = (value: number | undefined) => {
+  if (value !== undefined && value > 0) {
+    return '+' + value;
+  } else {
+    return value;
+  }
+};
+
+const pfActionSymbol = (num: number | null, action: string) => {
+  if (num === 1 || num === 2 || num === 3) {
+    return num;
+  }
+  if (action === 'free') {
+    return 4;
+  }
+  if (action === 'reaction') {
+    return 5;
+  }
+};
+
+const cleanDescription = (description: string) => {
+  const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
+
+  return description.replaceAll(cleanRegex, '');
+};
+
+const perceptionString = computed(() => {
+  const perception = encounters.getSelectedCreature?.extra_data?.perception;
+  const senses = encounters.getSelectedCreature?.extra_data?.senses;
+  const spells = encounters.getSelectedCreature?.spellcaster_data?.spellcaster_entries
+    .flatMap((entry) => Object.values(entry.spells))
+    .flatMap((spell) => spell.name);
+  let finalString = '';
+  if (perception !== undefined) {
+    finalString += '<strong>Perception&nbsp;</strong>' + variantStyle(addPlus(perception)) + '; ';
+  }
+  if (senses !== undefined && senses.length > 0) {
+    for (const sense of senses) {
+      let found = false;
+      for (const action of encounters.getSelectedCreature?.extra_data?.actions ?? []) {
+        if (action.core_action.slug === sense.name) {
+          finalString += action.core_action.name.toLowerCase() + ', ';
+          found = true;
+        }
+      }
+      if (!found) {
+        finalString += sense.name;
+        if (sense.acuity) {
+          finalString += ' ' + '(' + sense.acuity + ')';
+        }
+        if (sense.range) {
+          finalString += ' ' + sense.range + ' feet';
+        }
+        finalString += ', ';
+      }
+    }
+    if (
+      spells !== undefined &&
+      spells.length > 0 &&
+      senses.every((sense) => {
+        return sense.name !== 'truesight';
+      })
+    ) {
+      for (const spell of spells) {
+        if (spell === 'True Seeing (Constant)') {
+          finalString += 'truesight' + ', ';
+        }
+      }
+    }
+    if (!encounters.getSelectedCreature!.extra_data!.has_vision) {
+      finalString += 'no vision' + ', ';
+    }
+    if (encounters.getSelectedCreature?.extra_data?.perception_detail) {
+      finalString += encounters.getSelectedCreature?.extra_data?.perception_detail;
+    } else {
+      finalString = finalString.substring(0, finalString.length - 2);
+    }
+  } else if (encounters.getSelectedCreature?.extra_data?.perception_detail) {
+    finalString += encounters.getSelectedCreature?.extra_data?.perception_detail;
+  }
+  return finalString;
+});
+
+const languageString = computed(() => {
+  const languages = encounters.getSelectedCreature?.extra_data?.languages;
+  let finalString = '';
+  if (languages !== undefined && languages.length > 0) {
+    finalString += '<strong>Languages&nbsp;</strong>';
+    for (const language of languages) {
+      finalString += upperFirst(language) + ', ';
+    }
+  }
+  finalString = finalString.substring(0, finalString.length - 2);
+  finalString += '; ';
+  if (encounters.getSelectedCreature?.extra_data?.language_detail) {
+    finalString += encounters.getSelectedCreature?.extra_data?.language_detail;
+  } else {
+    finalString = finalString.substring(0, finalString.length - 2);
+  }
+  return finalString;
+});
+
+const skillString = computed(() => {
+  const skills = encounters.getSelectedCreature?.extra_data?.skills;
+  let finalString = '';
+  if (skills !== undefined && skills.length > 0) {
+    finalString += '<strong>Skills&nbsp;</strong>';
+    for (const skill of skills) {
+      finalString += skill.name + ' ' + variantStyle(addPlus(skill.modifier)) + ', ';
+    }
+  }
+  return finalString.substring(0, finalString.length - 2);
+});
+
+const itemString = computed(() => {
+  const weapons = encounters.getSelectedCreature?.combat_data?.weapons;
+  const items = encounters.getSelectedCreature?.extra_data?.items;
+  const armors = encounters.getSelectedCreature?.combat_data?.armors;
+  let finalString = '';
+  finalString += '<strong>Items&nbsp;</strong>';
+  const droppedItems: string[] = [];
+  if (weapons !== undefined && weapons.length > 0) {
+    for (const weapon of weapons) {
+      if (weapon.weapon_data && weapon.weapon_data.weapon_type === 'Generic') {
+        let weaponString = '';
+        if (
+          weapon.weapon_data.n_of_potency_runes > 0 ||
+          weapon.weapon_data.n_of_striking_runes > 0 ||
+          weapon.weapon_data.property_runes.length > 0
+        ) {
+          if (weapon.weapon_data.n_of_potency_runes > 0) {
+            weaponString += addPlus(weapon.weapon_data.n_of_potency_runes) + ' ';
+          }
+          switch (weapon.weapon_data.n_of_striking_runes) {
+            case 1:
+              weaponString += 'striking ';
+              break;
+            case 2:
+              weaponString += 'greater striking ';
+              break;
+            case 3:
+              weaponString += 'major striking ';
+              break;
+            default:
+              break;
+          }
+          if (weapon.weapon_data.property_runes.length > 0) {
+            for (const rune of weapon.weapon_data.property_runes) {
+              weaponString += rune + ' ';
+            }
+          }
+          if (weapon.item_core.material_type) {
+            weaponString += weapon.item_core.material_type + ' ';
+          }
+          weaponString += weapon.item_core.name.toLowerCase();
+        } else if (weapon.item_core.quantity === 1) {
+          weaponString += weapon.item_core.name.toLowerCase();
+        } else if (weapon.item_core.quantity > 1) {
+          weaponString += weapon.item_core.quantity + ' ' + weapon.item_core.name.toLowerCase();
+        }
+        if (weaponString !== '') {
+          droppedItems.push(weaponString);
+        }
+      }
+    }
+  }
+  if (items !== undefined && items.length > 0) {
+    for (const item of items) {
+      if (item.item_type === 'Consumable' || item.item_type === 'Equipment') {
+        let itemString = '';
+        if (item.quantity === 1) {
+          itemString += item.name.toLowerCase();
+        } else if (item.quantity > 1) {
+          itemString += item.quantity + ' ' + item.name.toLowerCase();
+        }
+        if (itemString !== '') {
+          droppedItems.push(itemString);
+        }
+      }
+    }
+  }
+  if (armors !== undefined && armors.length > 0) {
+    for (const armor of armors) {
+      let armorString = '';
+      if (armor.armor_data) {
+        if (
+          armor.armor_data.n_of_potency_runes > 0 ||
+          armor.armor_data.n_of_resilient_runes > 0 ||
+          armor.armor_data.property_runes.length > 0
+        ) {
+          if (armor.armor_data.n_of_potency_runes > 0) {
+            armorString += addPlus(armor.armor_data.n_of_potency_runes) + ' ';
+          }
+          switch (armor.armor_data.n_of_resilient_runes) {
+            case 1:
+              armorString += 'resilient ';
+              break;
+            case 2:
+              armorString += 'greater resilient ';
+              break;
+            case 3:
+              armorString += 'major resilient ';
+              break;
+            default:
+              break;
+          }
+          if (armor.armor_data.property_runes.length > 0) {
+            for (const rune of armor.armor_data.property_runes) {
+              armorString += rune + ' ';
+            }
+          }
+          if (armor.item_core.material_type) {
+            armorString += armor.item_core.material_type + ' ';
+          }
+        }
+      }
+      armorString += armor.item_core.name.toLowerCase();
+
+      if (armorString !== '') {
+        droppedItems.push(armorString);
+      }
+    }
+  }
+  for (const dropped of droppedItems) {
+    finalString += dropped + ', ';
+  }
+  if (droppedItems.length === 0) {
+    return '';
+  } else {
+    return finalString.substring(0, finalString.length - 2);
+  }
+});
+
+const defenceString = computed(() => {
+  const actions = encounters.getSelectedCreature?.extra_data?.actions;
+  let finalString = '';
+  if (encounters.getSelectedCreature?.combat_data?.ac) {
+    finalString +=
+      '<strong>AC&nbsp;</strong>' + variantStyle(encounters.getSelectedCreature?.combat_data?.ac);
+    if (encounters.getSelectedCreature?.extra_data?.ac_detail) {
+      finalString += ' ' + encounters.getSelectedCreature?.extra_data?.ac_detail;
+    }
+    finalString += ';&nbsp;';
+  }
+  if (encounters.getSelectedCreature?.combat_data?.saving_throws.fortitude) {
+    finalString +=
+      '<strong>Fort&nbsp;</strong>' +
+      variantStyle(addPlus(encounters.getSelectedCreature?.combat_data?.saving_throws.fortitude)) +
+      ';&nbsp;';
+  }
+  if (encounters.getSelectedCreature?.combat_data?.saving_throws.reflex) {
+    finalString +=
+      '<strong>Ref&nbsp;</strong>' +
+      variantStyle(addPlus(encounters.getSelectedCreature?.combat_data?.saving_throws.reflex)) +
+      ';&nbsp;';
+  }
+  if (encounters.getSelectedCreature?.combat_data?.saving_throws.will) {
+    finalString +=
+      '<strong>Will&nbsp;</strong>' +
+      variantStyle(addPlus(encounters.getSelectedCreature?.combat_data?.saving_throws.will));
+  }
+  if (actions !== undefined && actions.length > 0) {
+    finalString += '; ';
+    for (const action of actions) {
+      if (
+        action.core_action.action_type === 'passive' &&
+        action.core_action.category === 'defensive' &&
+        action.core_action.description === ''
+      ) {
+        finalString += action.core_action.name.toLowerCase() + ', ';
+      }
+    }
+    finalString = finalString.substring(0, finalString.length - 2);
+  }
+  return finalString;
+});
+
+const immunityString = () => {
+  const immunities = encounters.getSelectedCreature?.combat_data?.immunities;
+  immunities?.sort();
+  let finalString = '';
+  if (immunities !== undefined && immunities.length > 0) {
+    for (const immunity of immunities) {
+      finalString += immunity.toLowerCase().replaceAll('-', ' ') + ', ';
+    }
+  }
+  return finalString.substring(0, finalString.length - 2);
+};
+
+const resistanceString = () => {
+  const resistances = encounters.getSelectedCreature?.combat_data?.resistances;
+  resistances?.sort();
+  let finalString = '';
+
+  if (resistances !== undefined && resistances.length > 0) {
+    for (const resistance of resistances) {
+      finalString +=
+        `${resistance.core.name.replaceAll('-', ' ')}` + ' ' + `${resistance.core.value}` + ', ';
+
+      if (
+        (resistance.exception_vs !== undefined && resistance.exception_vs.length > 0) ||
+        (resistance.double_vs !== undefined && resistance.double_vs.length > 0)
+      ) {
+        if (resistance.exception_vs !== undefined && resistance.exception_vs.length > 0) {
+          finalString = finalString.substring(0, finalString.length - 2);
+          finalString += ' (except ';
+          for (const exception of resistance.exception_vs) {
+            finalString += exception.replaceAll('-', ' ') + ', ';
+          }
+          finalString += '';
+          finalString = finalString.substring(0, finalString.length - 2);
+        }
+
+        if (resistance.double_vs !== undefined && resistance.double_vs.length > 0) {
+          if (resistance.exception_vs !== undefined && resistance.exception_vs.length > 0) {
+            finalString += ';';
+          }
+          finalString += ' double resistance against ';
+          for (const double of resistance.double_vs) {
+            finalString += double.replaceAll('-', ' ') + ', ';
+          }
+          finalString += '';
+          finalString = finalString.substring(0, finalString.length - 2);
+        }
+
+        finalString += ')  ';
+      }
+    }
+  }
+  return finalString.substring(0, finalString.length - 2);
+};
+
+const weaknessString = () => {
+  const weaknesses = encounters.getSelectedCreature?.combat_data?.weaknesses;
+  const weakKeys = Object.keys(weaknesses!);
+  weakKeys.sort();
+  let finalString = '';
+  if (weakKeys.length > 0) {
+    for (const weakness of weakKeys) {
+      finalString +=
+        `${weakness.replaceAll('-', ' ')}` +
+        ' ' +
+        `${encounters.getSelectedCreature?.combat_data?.weaknesses[weakness]}` +
+        ', ';
+    }
+  }
+  return finalString.substring(0, finalString.length - 2);
+};
+
+const healthString = computed(() => {
+  const hp = encounters.getSelectedCreature?.core_data.essential.hp;
+  const hpDetail = encounters.getSelectedCreature?.extra_data?.hp_detail;
+  let finalString = '';
+  if (hp !== undefined) {
+    finalString +=
+      '<strong>HP&nbsp;</strong>' +
+      variantStyle(encounters.getSelectedCreature?.core_data.essential.hp);
+    if (hpDetail) {
+      finalString += ', ' + hpDetail;
+    }
+  }
+  if (
+    encounters.getSelectedCreature?.combat_data?.immunities !== undefined &&
+    encounters.getSelectedCreature?.combat_data?.immunities.length > 0
+  ) {
+    finalString += ';<br><strong>Immunities</strong>&nbsp;' + immunityString();
+  }
+  if (
+    encounters.getSelectedCreature?.combat_data?.resistances !== undefined &&
+    Object.keys(encounters.getSelectedCreature?.combat_data?.resistances).length > 0
+  ) {
+    finalString += ';<br><strong>Resistances</strong>&nbsp;' + resistanceString();
+  }
+  if (
+    encounters.getSelectedCreature?.combat_data?.weaknesses !== undefined &&
+    Object.keys(encounters.getSelectedCreature?.combat_data?.weaknesses).length > 0
+  ) {
+    finalString += ';<br><strong>Weaknesess</strong>&nbsp;' + weaknessString() + ';';
+  }
+  return finalString;
+});
+
+const speedString = computed(() => {
+  const speeds = encounters.getSelectedCreature?.extra_data?.speeds;
+  const speedKeys = Object.keys(speeds!);
+  let finalString = '';
+  if (speedKeys.length > 0) {
+    for (const speed of speedKeys) {
+      if (`${speed}` === 'Base') {
+        if (`${encounters.getSelectedCreature?.extra_data?.speeds[speed]}` !== '0') {
+          finalString += `${encounters.getSelectedCreature?.extra_data?.speeds[speed]}` + ' feet, ';
+        }
+      } else {
+        finalString +=
+          `${speed}` +
+          ' ' +
+          `${encounters.getSelectedCreature?.extra_data?.speeds[speed]}` +
+          ' feet, ';
+      }
+    }
+  }
+  return finalString.substring(0, finalString.length - 2);
+});
+
+const ordinalSuffix = (n: number) => {
+  const j = n % 10,
+    k = n % 100;
+  if (j === 1 && k !== 11) {
+    return n + 'st';
+  }
+  if (j === 2 && k !== 12) {
+    return n + 'nd';
+  }
+  if (j === 3 && k !== 13) {
+    return n + 'rd';
+  }
+  return n + 'th';
+};
+
+const spellString = computed(() => {
+  const finalStrings: string[] = [];
+  for (const entry of encounters.getSelectedCreature?.spellcaster_data?.spellcaster_entries ?? []) {
+    let finalString = '';
+    const spellLevels: boolean[] = new Array(11).fill(false);
+    finalString += '<strong>' + entry.spellcaster_data.spellcasting_name + '</strong>';
+    if (entry.spellcaster_data.spellcasting_dc_mod !== 0) {
+      finalString += '&nbsp;DC ' + variantStyle(entry.spellcaster_data.spellcasting_dc_mod);
+    }
+    if (encounters.getSelectedCreature?.variant_data?.variant === 'Elite') {
+      finalString += ' (' + variantStyle('+4 dmg') + ')';
+    }
+    if (encounters.getSelectedCreature?.variant_data?.variant === 'Weak') {
+      finalString += ' (' + variantStyle('-4 dmg') + ')';
+    }
+    if (entry.spellcaster_data.spellcasting_atk_mod !== 0) {
+      finalString +=
+        ', attack ' + variantStyle(addPlus(entry.spellcaster_data.spellcasting_atk_mod));
+    }
+    if (
+      (encounters.getSelectedCreature?.core_data.essential.focus_points ?? 0) > 0 &&
+      entry.spellcaster_data.type_of_spellcaster === 'focus'
+    ) {
+      finalString += ',&nbsp;' + encounters.getSelectedCreature?.core_data.essential.focus_points;
+
+      if ((encounters.getSelectedCreature?.core_data.essential.focus_points ?? 0) > 1) {
+        finalString += ' Focus Points';
+      } else {
+        finalString += ' Focus Point';
+      }
+    }
+    finalString += '; ';
+    entry.spells.sort((a, b) => b.slot - a.slot);
+    if (entry.spellcaster_data.type_of_spellcaster === 'focus') {
+      finalString = finalString.substring(0, finalString.length - 2);
+      finalString +=
+        ';&nbsp;<strong>' +
+        ordinalSuffix(entry.spellcaster_data.heighten_level) +
+        '</strong>&nbsp;';
+      for (const spell of entry.spells) {
+        finalString += spell.name.toLowerCase() + ', ';
+      }
+    } else {
+      for (const spell of entry.spells) {
+        if (spell.slot === 0 && !spellLevels[0]) {
+          spellLevels[0] = true;
+          finalString = finalString.substring(0, finalString.length - 2);
+          finalString +=
+            ';&nbsp;<strong>Cantrips (' +
+            ordinalSuffix(entry.spellcaster_data.heighten_level) +
+            ')</strong>&nbsp;';
+        } else if (!spellLevels[spell.slot]) {
+          spellLevels[spell.slot] = true;
+          finalString = finalString.substring(0, finalString.length - 2);
+          finalString += ';&nbsp;<strong>' + ordinalSuffix(spell.slot) + '</strong>&nbsp;';
+        }
+        finalString += spell.name.toLowerCase() + ', ';
+      }
+    }
+
+    finalStrings.push(finalString.substring(0, finalString.length - 2) + '<br>');
+  }
+  return finalStrings;
+});
+
+const actionTraitsString = (index: number) => {
+  const traits = encounters.getSelectedCreature?.extra_data?.actions[index]?.traits;
+  traits?.sort();
+  let finalString = '';
+  if (traits !== undefined && traits.length > 0) {
+    finalString += ' (';
+    for (const trait of traits) {
+      finalString += trait.toLowerCase().replaceAll('-', ' ') + ', ';
+    }
+    finalString = finalString.substring(0, finalString.length - 2);
+    finalString += ')';
+  }
+  return finalString;
+};
+
+const openCreatureSheet = (game: games, id: number) => {
+  const routeData = router.resolve({ name: 'bestiary', query: { game: game, id: id } });
+  if (process.env.IS_APP === 'true') {
+    globalThis.open(routeData.href, '_self');
+  } else {
+    globalThis.open(routeData.href, '_blank');
+  }
+};
+</script>
+
+<template>
+  <div
+    class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
+    :style="'font-family: ' + currentFont + ', sans-serif; font-variant-caps: small-caps'"
+  >
+    <div class="tw:my-auto!">
+      <q-btn
+        :icon="biBoxArrowUpRight"
+        flat
+        round
+        dense
+        size="sm"
+        padding="sm"
+        class="tw:mr-1 tw:my-auto only-screen encounter-page-element"
+        aria-label="Open creature sheet"
+        @click="
+          openCreatureSheet(
+            encounters.getSelectedCreature?.game ?? currentGame,
+            encounters.getSelectedCreature!.core_data.essential.id
+          )
+        "
+      >
+        <q-tooltip
+          class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+          anchor="top middle"
+          self="bottom middle"
+        >
+          Open creature sheet
+        </q-tooltip>
+      </q-btn>
+    </div>
+    <a
+      v-if="currentFont === 'pf' && encounters.getSelectedCreature?.core_data.derived.archive_link"
+      class="tw:my-auto"
+      :href="
+        encounters.getSelectedCreature.core_data.derived.archive_link +
+        '&Weak=' +
+        (encounters.getSelectedCreature?.variant_data?.variant === 'Weak') +
+        '&Elite=' +
+        (encounters.getSelectedCreature?.variant_data?.variant === 'Elite')
+      "
+      target="_blank"
+      rel="noopener"
+    >
+      <h1
+        class="tw:text-3xl! tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
+      >
+        <span v-if="encounters.getSelectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
+        <span v-else-if="encounters.getSelectedCreature?.variant_data?.variant === 'Elite'"
+          >Elite
+        </span>
+        {{ encounters.getSelectedCreature?.core_data.essential.name }}
+      </h1>
+    </a>
+    <a
+      v-else-if="currentFont === 'sf' && settings.getAonLinks && encounters.getSelectedCreature"
+      class="tw:my-auto"
+      :href="
+        'https://2e.aonsrd.com/search?q=' +
+        encodeURIComponent(encounters.getSelectedCreature?.core_data.essential.name) +
+        ' type%3A(creature)&type=eqs'
+      "
+      target="_blank"
+      rel="noopener"
+    >
+      <h1
+        class="tw:text-3xl! tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
+      >
+        <span v-if="encounters.getSelectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
+        <span v-else-if="encounters.getSelectedCreature?.variant_data?.variant === 'Elite'"
+          >Elite
+        </span>
+        {{ encounters.getSelectedCreature!.core_data.essential.name }}
+      </h1>
+    </a>
+    <h1 v-else class="tw:text-3xl! tw:leading-8 tw:my-auto">
+      <span v-if="encounters.getSelectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
+      <span v-else-if="encounters.getSelectedCreature?.variant_data?.variant === 'Elite'"
+        >Elite
+      </span>
+      {{ encounters.getSelectedCreature!.core_data.essential.name }}
+    </h1>
+    <q-space />
+    <q-select
+      v-if="route.path === '/bestiary'"
+      v-model="encounters.getSelectedCreature!.variant_data!.variant"
+      class="tw:mx-4 tw:my-auto tw:text-2xl! only-screen"
+      :options="Object.freeze(['Weak', 'Base', 'Elite'])"
+      borderless
+      dense
+      options-dense
+      @update:model-value="changeVariant(encounters.getSelectedCreature?.variant_data?.variant!)"
+    />
+    <div class="tw:my-1">
+      {{ encounters.getSelectedCreature?.core_data.essential.cr_type }}
+      <span
+        :class="{
+          'tw:text-red-600': encounters.getSelectedCreature?.variant_data?.variant !== 'Base'
+        }"
+        >{{ encounters.getSelectedCreature?.variant_data?.level }}</span
+      >
+    </div>
+    <div class="tw:my-auto!">
+      <q-btn
+        class="tw:ml-2! only-screen encounter-page-element"
+        :icon="biXLg"
+        size="sm"
+        padding="sm"
+        flat
+        round
+        dense
+        aria-label="Remove selected creature"
+        @click="encounters.removeSelectedCreature()"
+      />
+    </div>
+  </div>
+  <q-separator class="tw:my-2!" style="height: 2px" />
+  <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
+  <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white">
+    <div
+      v-if="encounters.getSelectedCreature?.core_data.essential.rarity === 'Uncommon'"
+      class="tw:bg-[#c45500] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+    >
+      {{ encounters.getSelectedCreature?.core_data.essential.rarity.toUpperCase() }}
+    </div>
+    <div
+      v-else-if="encounters.getSelectedCreature?.core_data.essential.rarity === 'Rare'"
+      class="tw:bg-[#0c1466] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+    >
+      {{ encounters.getSelectedCreature?.core_data.essential.rarity.toUpperCase() }}
+    </div>
+    <div
+      v-else-if="encounters.getSelectedCreature?.core_data.essential.rarity === 'Unique'"
+      class="tw:bg-[#800080] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+    >
+      {{ encounters.getSelectedCreature?.core_data.essential.rarity.toUpperCase() }}
+    </div>
+    <div
+      v-if="encounters.getSelectedCreature?.core_data.essential.alignment !== 'No Alignment'"
+      class="tw:bg-[#4287f5] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+    >
+      {{ encounters.getSelectedCreature?.core_data.essential.alignment.toUpperCase() }}
+    </div>
+    <div class="tw:bg-[#478c42] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1">
+      {{ encounters.getSelectedCreature?.core_data.essential.size.toUpperCase() }}
+    </div>
+    <div
+      v-for="item in encounters.getSelectedCreature?.core_data.traits.sort()"
+      :key="item"
+      class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+    >
+      {{ item.toUpperCase() }}
+    </div>
+  </div>
+  <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
+    <div
+      v-if="encounters.getSelectedCreature?.core_data.essential.source"
+      class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+    >
+      <strong>Source </strong>
+      <a
+        :href="
+          'https://store.paizo.com/search.php?search_query=' +
+          encodeURIComponent(encounters.getSelectedCreature?.core_data.essential.source) +
+          '&section=product'
+        "
+        target="_blank"
+        rel="noopener"
+      >
+        <i class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400">
+          {{ encounters.getSelectedCreature?.core_data.essential.source }}
+        </i>
+      </a>
+    </div>
+    <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="perceptionString"></div>
+    <div
+      v-if="
+        encounters.getSelectedCreature?.extra_data?.languages !== undefined &&
+        encounters.getSelectedCreature?.extra_data?.languages.length > 0
+      "
+      class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      v-html="languageString"
+    ></div>
+    <div
+      v-if="
+        encounters.getSelectedCreature?.extra_data?.skills !== undefined &&
+        encounters.getSelectedCreature?.extra_data?.skills.length > 0
+      "
+      class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      v-html="skillString"
+    ></div>
+    <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
+      <strong>Str</strong>
+      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.strength) }},
+      <strong>Dex</strong>
+      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.dexterity) }},
+      <strong>Con</strong>
+      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.constitution) }},
+      <strong>Int</strong>
+      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.intelligence) }},
+      <strong>Wis</strong>
+      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.wisdom) }},
+      <strong>Cha</strong>
+      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.charisma) }}
+    </div>
+    <template
+      v-for="(item, index) in encounters.getSelectedCreature?.extra_data?.actions"
+      :key="item.core_action.name"
+    >
+      <div
+        v-if="item.core_action.category === 'interaction' && item.core_action.slug === null"
+        class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      >
+        <strong>{{ item.core_action.name + ' ' }}</strong>
+        <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
+          >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
+        </span>
+        <span v-if="item.traits !== undefined && item.traits.length > 0">
+          {{ actionTraitsString(index) }}
+        </span>
+        <span v-html="' ' + cleanDescription(item.core_action.description)" />
+      </div>
+    </template>
+    <div
+      v-if="
+        encounters.getSelectedCreature?.combat_data?.weapons !== undefined &&
+        encounters.getSelectedCreature?.combat_data?.weapons.length > 0 &&
+        itemString !== ''
+      "
+      class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      v-html="itemString"
+    ></div>
+  </div>
+  <q-separator class="tw:my-2!" style="height: 2px" />
+  <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
+  <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
+    <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="defenceString"></div>
+    <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="healthString"></div>
+    <template
+      v-for="(item, index) in encounters.getSelectedCreature?.extra_data?.actions"
+      :key="item.core_action.name"
+    >
+      <div
+        v-if="
+          item.core_action.slug !== 'regeneration' &&
+          item.core_action.slug !== 'fast-healing' &&
+          item.core_action.slug !== 'negative-healing' &&
+          item.core_action.description !== '' &&
+          item.core_action.category === 'defensive'
+        "
+        class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      >
+        <strong>{{ item.core_action.name + ' ' }}</strong>
+        <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
+          >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
+        </span>
+        <span v-if="item.traits !== undefined && item.traits.length > 0">
+          {{ actionTraitsString(index) }}
+        </span>
+        <span v-html="' ' + cleanDescription(item.core_action.description)" />
+      </div>
+    </template>
+  </div>
+  <q-separator class="tw:my-2!" style="height: 2px" />
+  <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
+  <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
+    <div
+      v-if="
+        encounters.getSelectedCreature?.extra_data?.speeds !== undefined &&
+        Object.keys(encounters.getSelectedCreature?.extra_data?.speeds).length > 0
+      "
+      class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+    >
+      <strong>Speed</strong>
+      {{ speedString }}
+    </div>
+
+    <template
+      v-for="item in encounters.getSelectedCreature?.combat_data?.weapons"
+      :key="item.item_core.id"
+    >
+      <div
+        v-if="item.weapon_data?.weapon_type !== 'Generic'"
+        class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      >
+        <strong v-if="item.weapon_data?.weapon_type === 'Melee'">Melee </strong>
+        <strong v-if="item.weapon_data?.weapon_type === 'Ranged'">Ranged </strong>
+        <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl">1</span>
+        <i>{{ ' ' + item.item_core.name.toLowerCase() + ' ' }} </i>
+        <span
+          :class="{
+            'tw:text-red-600 tw:font-bold':
+              encounters.getSelectedCreature?.variant_data?.variant !== 'Base'
+          }"
+          >{{ addPlus(item.weapon_data?.to_hit_bonus!) }}
+          <span v-if="item.item_core.traits.includes('agile')"
+            >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 4) }}/{{
+              addPlus(item.weapon_data?.to_hit_bonus! - 8)
+            }}]
+          </span>
+          <span v-else
+            >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 5) }}/{{
+              addPlus(item.weapon_data?.to_hit_bonus! - 10)
+            }}]
+          </span>
+        </span>
+        <span v-if="item.item_core.traits.length !== 0">
+          ({{ item.item_core.traits.sort().join(', ').replaceAll('-', ' ') }}),
+        </span>
+        <strong>Damage </strong>
+        <span v-for="(weapon, index) in item.weapon_data?.damage_data" :key="index">
+          <span v-if="weapon.dice">
+            {{ weapon.dice.n_of_dices }}d{{ weapon.dice.dice_size
+            }}<span
+              v-if="weapon.bonus_dmg !== 0"
+              :class="{
+                'tw:text-red-600 tw:font-bold':
+                  encounters.getSelectedCreature?.variant_data?.variant !== 'Base'
+              }"
+              >{{ addPlus(weapon.bonus_dmg) }}</span
+            >
+            {{ weapon.dmg_type }}
+            <span
+              v-if="
+                item.weapon_data!.damage_data.length > 1 &&
+                index !== item.weapon_data!.damage_data.length - 1
+              "
+            >
+              plus
+            </span>
+          </span>
+        </span>
+      </div>
+    </template>
+    <template v-for="entity in spellString" :key="entity">
+      <div v-html="entity" class="tw:text-base tw:text-gray-800 tw:dark:text-white" />
+    </template>
+    <template
+      v-for="(item, index) in encounters.getSelectedCreature?.extra_data?.actions"
+      :key="item.core_action.name"
+    >
+      <div
+        v-if="item.core_action.category === 'offensive'"
+        class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      >
+        <strong>{{ item.core_action.name + ' ' }}</strong>
+        <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
+          >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
+        </span>
+        <span v-if="item.traits !== undefined && item.traits.length > 0">
+          {{ actionTraitsString(index) }}
+        </span>
+        <span v-html="' ' + cleanDescription(item.core_action.description)" />
+      </div>
+    </template>
+  </div>
+</template>
+
+<style>
+.action-glyph {
+  font-family: 'Pathfinder2eActions', sans-serif;
+  font-size: 24px;
+  line-height: calc(2 / 1.5);
+}
+</style>
+
+<style scoped>
+.creature-sheet {
+  min-height: calc(100vh - 94px) !important;
+  font-family: 'Good Pro', sans-serif;
+}
+
+.q-select:deep(.q-field__native) > span {
+  font-weight: bold;
+}
+</style>

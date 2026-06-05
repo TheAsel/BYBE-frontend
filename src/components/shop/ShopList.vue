@@ -61,9 +61,6 @@ const removeShopDialog = ref(false);
 const tmpShop = ref<shop_list>(shop.getActiveShop!);
 const shops = ref<string[]>(shop.getShops.map((shop) => shop.name));
 
-const lastItemId = ref<number>();
-const lastItemGame = ref<games>(currentGame.value);
-
 tmpShop.value = {
   name: shop.getActiveShop!.name,
   items: shop.getActiveShop!.items
@@ -322,26 +319,22 @@ const saveChanges = () => {
 };
 
 const showItem = debounce(async function (item: min_item) {
-  if (lastItemId.value !== item.id || lastItemGame.value !== item.game) {
-    lastItemId.value = item.id;
-    lastItemGame.value = item.game;
-    try {
-      const itemData = await requestItemId(item.game, item.id);
-      if (isNull(itemData) || itemData === undefined) {
-        console.error('Missing item ID');
-        $q.notify({
-          progress: true,
-          type: 'warning',
-          message: 'Missing item ID',
-          icon: matPriorityHigh
-        });
-        await router.push({ name: 'shop', query: { game: item.game } });
-      } else {
-        shop.setSelectedItem(itemData);
-      }
-    } catch (error) {
-      console.error(error);
+  try {
+    const itemData = await requestItemId(item.game, item.id);
+    if (isNull(itemData) || itemData === undefined) {
+      console.error('Missing item ID');
+      $q.notify({
+        progress: true,
+        type: 'warning',
+        message: 'Missing item ID',
+        icon: matPriorityHigh
+      });
+      await router.push({ name: 'shop', query: { game: item.game } });
+    } else {
+      shop.setSelectedItem(itemData);
     }
+  } catch (error) {
+    console.error(error);
   }
 }, 300);
 </script>

@@ -1,6 +1,7 @@
 import { capitalize } from 'lodash-es';
 import { defineStore } from 'pinia';
 
+import type { creature } from '../types/creature';
 import type { encounter, encounter_list, min_creature_hazard } from '../types/encounter';
 import type {
   bestiary_ranges,
@@ -9,6 +10,7 @@ import type {
   shop_ranges,
   variants
 } from '../types/filters';
+import type { hazard } from '../types/hazard';
 import type { item, min_item } from '../types/item';
 import type { npc, npc_list, valid_genders } from '../types/npcs';
 import type { party } from '../types/party';
@@ -196,12 +198,16 @@ export const filtersStore = defineStore('filters', {
 
 export const encounterStore = defineStore('encounter', {
   state: () => ({
+    selectedCreature: {} as creature | null,
+    selectedHazard: {} as hazard | null,
     encounters: [{ name: 'Default', creatures: [] }] as encounter_list[],
     activeEncounter: 0,
     is_pwl_on: false,
     generating: false
   }),
   getters: {
+    getSelectedCreature: (state) => state.selectedCreature,
+    getSelectedHazard: (state) => state.selectedHazard,
     getEncounters: (state) => state.encounters,
     getActive: (state) => state.activeEncounter,
     getActiveEncounter: (state) => state.encounters[state.activeEncounter],
@@ -209,6 +215,20 @@ export const encounterStore = defineStore('encounter', {
     getGenerating: (state) => state.generating
   },
   actions: {
+    setSelectedCreature(newSelectedCreature: creature) {
+      this.selectedHazard = null;
+      this.selectedCreature = newSelectedCreature;
+    },
+    setSelectedHazard(newSelectedHazard: hazard) {
+      this.selectedCreature = null;
+      this.selectedHazard = newSelectedHazard;
+    },
+    removeSelectedCreature() {
+      this.selectedCreature = null;
+    },
+    removeSelectedHazard() {
+      this.selectedHazard = null;
+    },
     clearEncounter() {
       this.encounters[this.activeEncounter]!.creatures.splice(
         0,

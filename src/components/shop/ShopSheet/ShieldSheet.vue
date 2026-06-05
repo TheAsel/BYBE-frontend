@@ -60,7 +60,7 @@ const cleanDescription = (description: string) => {
 };
 
 const openShopSheet = (game: games, id: number) => {
-  const routeData = router.resolve({ name: 'item', query: { game: currentGame.value, id: id } });
+  const routeData = router.resolve({ name: 'item', query: { game: game, id: id } });
   if (process.env.IS_APP === 'true') {
     globalThis.open(routeData.href, '_self');
   } else {

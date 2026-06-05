@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 import { useHead } from '@unhead/vue';
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 import EncounterList from '../../components/encounter/EncounterList.vue';
+import EncounterSheet from '../../components/encounter/EncounterSheet.vue';
 import EncounterTable from '../../components/encounter/EncounterTable.vue';
 import { encounterStore, partyStore, settingsStore } from '../../stores/store';
 
@@ -202,6 +203,13 @@ const steps: Step[] = [
   },
   {
     target: '#v-step-12',
+    content: 'This is where the selected creature or hazard description will be displayed.',
+    params: {
+      placement: 'auto'
+    }
+  },
+  {
+    target: '#v-step-13',
     content:
       'You can enable the variant rule for Proficiency without Level by clicking here and going to the "Encounter" tab.',
     params: {
@@ -332,13 +340,56 @@ const scrollPage = (up: boolean) => {
     }
   }, 10);
 };
+
+const handleResize = () => {
+  screenWidth.value = screen.width;
+};
+
+onMounted(() => {
+  globalThis.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  globalThis.removeEventListener('resize', handleResize);
+});
+
+const sheetVisible = ref(true);
+const sheetWidth = ref('tw:md:w-[27%]!');
+const tableWidth = ref('tw:md:w-[46%]!');
+
+const toggleSheetView = () => {
+  sheetVisible.value = !sheetVisible.value;
+  if (sheetVisible.value) {
+    sheetWidth.value = 'tw:md:w-[27%]!';
+    tableWidth.value = 'tw:md:w-[46%]!';
+  } else {
+    sheetWidth.value = 'tw:md:w-[0%]! tw:px-0! tw:collapse';
+    tableWidth.value = 'tw:md:w-[73%]!';
+  }
+};
 </script>
 
 <template>
   <div class="row items-center justify-between">
     <v-tour name="/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
-    <EncounterTable id="table" />
+    <EncounterSheet
+      v-if="screenWidth >= 768"
+      class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
+      :class="sheetWidth"
+    />
+    <EncounterTable
+      id="table"
+      class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
+      :class="tableWidth"
+      :toggle-sheet-view="toggleSheetView"
+      :sheet-visible="sheetVisible"
+    />
     <q-space />
+    <EncounterSheet
+      v-if="screenWidth < 768"
+      class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
+      :class="sheetWidth"
+    />
     <EncounterList id="list" />
     <q-page-sticky
       v-if="screenWidth < 768"

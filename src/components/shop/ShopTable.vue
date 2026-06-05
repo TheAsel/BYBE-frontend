@@ -38,7 +38,7 @@ import ShopBuilder from './ShopTable/ShopBuilder.vue';
 import type { games, item_columns, item_filters, rarities } from '../../types/filters';
 import type { item, min_item } from '../../types/item';
 
-const props = defineProps({ onAction: Function, sheetVisible: Boolean });
+const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
 
 const $q = useQuasar();
 const settings = settingsStore();
@@ -355,7 +355,7 @@ async function onKey(evt) {
   switch (evt.keyCode) {
     // Enter
     case 13: {
-      addItem(selected.value[0]!);
+      addItem(items.getSelectedItem!);
       break;
     }
     // PageUp
@@ -581,12 +581,12 @@ onMounted(async () => {
                 flat
                 round
                 dense
-                class="tw:mr-4!"
+                class="tw:mr-4! tw:my-2! tw:md:my-0!"
                 :icon="biArrowsCollapseVertical"
                 size="md"
                 padding="sm"
                 aria-label="Hide sheet"
-                @click="props.onAction!()"
+                @click="props.toggleSheetView!()"
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -601,12 +601,12 @@ onMounted(async () => {
                 flat
                 round
                 dense
-                class="tw:mr-4!"
+                class="tw:mr-4! tw:my-2! tw:md:my-0!"
                 :icon="biArrowsExpandVertical"
                 size="md"
                 padding="sm"
                 aria-label="Show sheet"
-                @click="props.onAction!()"
+                @click="props.toggleSheetView!()"
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -694,12 +694,12 @@ onMounted(async () => {
                 outlined
                 dense
                 options-dense
-                display-value="Display columns"
+                display-value="Columns"
                 emit-value
                 map-options
                 :options="Object.freeze(columns)"
                 option-value="name"
-                style="min-width: 150px"
+                style="min-width: 100px"
               />
             </div>
             <q-btn

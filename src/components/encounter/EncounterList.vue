@@ -10,7 +10,7 @@ import {
 } from '@quasar/extras/bootstrap-icons';
 import { fasScroll } from '@quasar/extras/fontawesome-v7';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { debounce } from 'lodash-es';
+import { debounce, isNull } from 'lodash-es';
 import { copyToClipboard, useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -139,14 +139,18 @@ const debouncedCall = debounce(async function () {
 }, 300);
 
 // get info on creature list change
-watch(encounter, async () => {
-  tmpEncounter.value = {
-    name: encounter.getActiveEncounter!.name,
-    creatures: encounter.getActiveEncounter!.creatures
-  };
-  saveChanges();
-  await debouncedCall();
-});
+watch(
+  [() => encounter.encounters, () => encounter.activeEncounter, () => encounter.is_pwl_on],
+  async () => {
+    tmpEncounter.value = {
+      name: encounter.getActiveEncounter!.name,
+      creatures: encounter.getActiveEncounter!.creatures
+    };
+    saveChanges();
+    await debouncedCall();
+  },
+  { deep: true }
+);
 
 // get info on party change
 watch(party, async () => {
@@ -464,6 +468,48 @@ const openHazardSheet = (game: games, id: number) => {
     globalThis.open(routeData.href, '_blank');
   }
 };
+
+const showItem = debounce(async function (item: min_creature_hazard) {
+  if (item.is_hazard) {
+    try {
+      const itemData = await requestHazardId(item.game, item.id);
+      if (isNull(itemData) || itemData === undefined) {
+        console.error('Missing hazard ID');
+        $q.notify({
+          progress: true,
+          type: 'warning',
+          message: 'Missing hazard ID',
+          icon: matPriorityHigh
+        });
+        await router.push({ name: 'encounter', query: { game: item.game } });
+      } else {
+        encounter.removeSelectedCreature();
+        encounter.setSelectedHazard(itemData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    try {
+      const itemData = await requestCreatureId(item.game, item.id, item.variant!, encounter.getPwl);
+      if (isNull(itemData) || itemData === undefined) {
+        console.error('Missing creature ID');
+        $q.notify({
+          progress: true,
+          type: 'warning',
+          message: 'Missing creature ID',
+          icon: matPriorityHigh
+        });
+        await router.push({ name: 'encounter', query: { game: item.game } });
+      } else {
+        encounter.removeSelectedHazard();
+        encounter.setSelectedCreature(itemData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}, 300);
 </script>
 
 <template>
@@ -819,7 +865,7 @@ const openHazardSheet = (game: games, id: number) => {
                 @click="encounter.removeFromEncounter(index)"
               />
             </div>
-            <div class="tw:flex tw:flex-row tw:grow tw:flex-wrap">
+            <div class="tw:flex tw:flex-row tw:grow cursor-pointer" @click="showItem(item)">
               <div class="tw:flex-1 tw:my-auto tw:mx-1" style="min-width: 100px">
                 <q-btn
                   v-if="item.is_hazard === false"

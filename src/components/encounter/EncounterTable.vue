@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import {
   biArrowDownUp,
+  biArrowsCollapseVertical,
+  biArrowsExpandVertical,
   biBook,
+  biBoxArrowUpRight,
+  biCaretRight,
   biEraser,
   biFullscreen,
   biFullscreenExit
@@ -12,7 +16,6 @@ import {
   fasHandFist,
   fasHatWizard,
   fasMeteor,
-  fasScroll,
   fasUserNinja,
   fasUserShield
 } from '@quasar/extras/fontawesome-v7';
@@ -20,7 +23,7 @@ import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 import { mdiBowArrow, mdiMagicStaff, mdiSword } from '@quasar/extras/mdi-v7';
 import { capitalize, debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, toRaw, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { encounterStore, filtersStore, settingsStore } from '../../stores/store';
@@ -53,6 +56,8 @@ import type {
 } from '../../types/filters';
 import type { hazard } from 'src/types/hazard';
 
+const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
+
 const $q = useQuasar();
 const settings = settingsStore();
 const filterStore = filtersStore();
@@ -65,7 +70,11 @@ const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
 const currentAon = ref(currentGame.value === 'sf' ? 'aonsrd' : 'aonprd');
 
 const hazardToggle = ref<'creatures' | 'hazards'>('creatures');
+encounter.removeSelectedHazard();
 
+const encounterTable = ref();
+const navigationActive = ref(false);
+const selected = ref<creature[] | hazard[]>([]);
 const creatureRows = ref<creature[]>([]);
 const hazardRows = ref<hazard[]>([]);
 const loading = ref(true);
@@ -494,6 +503,13 @@ const columnHazards: {
   }
 ];
 
+// Waits for the table pagination to load
+let resolveWhenLoaded: (() => void) | null = null;
+const waitForPageLoad = () =>
+  new Promise<void>((resolve) => {
+    resolveWhenLoaded = resolve;
+  });
+
 const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: number) {
   if (hazardToggle.value === 'creatures') {
     const body: creature_filters = {
@@ -606,6 +622,8 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
         }
         creatureRows.value = request.results;
         loading.value = false;
+        resolveWhenLoaded?.();
+        resolveWhenLoaded = null;
       } else {
         throw new Error('Error loading creatures');
       }
@@ -689,6 +707,8 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
         pagination.value.rowsNumber = request.total;
         hazardRows.value = request.results;
         loading.value = false;
+        resolveWhenLoaded?.();
+        resolveWhenLoaded = null;
       } else {
         throw new Error('Error loading hazards');
       }
@@ -875,6 +895,207 @@ const addHazard = debounce(function (hazard: hazard) {
   encounter.addToEncounter(min_hazard);
 }, 50);
 
+const activateNavigation = () => {
+  navigationActive.value = true;
+};
+
+const deactivateNavigation = () => {
+  navigationActive.value = false;
+};
+
+async function onKey(evt) {
+  if (
+    navigationActive.value !== true ||
+    ![13, 33, 34, 35, 36, 37, 38, 39, 40].includes(evt.keyCode) ||
+    encounterTable.value === null ||
+    loading.value === true
+  ) {
+    return;
+  }
+
+  evt.preventDefault();
+
+  const { computedRowsNumber, computedRows } = encounterTable.value;
+
+  if (computedRows.length === 0) {
+    return;
+  }
+
+  const currentIndex =
+    selected.value.length > 0 ? computedRows.indexOf(toRaw(selected.value[0])) : -1;
+  const currentPage = pagination.value.page;
+  const rowsPerPage =
+    pagination.value.rowsPerPage === 0 ? computedRowsNumber : pagination.value.rowsPerPage;
+  const lastIndex = computedRows.length - 1;
+  const lastPage = Math.ceil(computedRowsNumber / rowsPerPage);
+
+  let index = currentIndex;
+
+  switch (evt.keyCode) {
+    // Enter
+    case 13: {
+      if (hazardToggle.value === 'hazards') {
+        const tmp_hazard = selected.value[0]! as hazard;
+        addHazard(tmp_hazard);
+      } else {
+        const tmp_creature = selected.value[0]! as creature;
+        addCreature(tmp_creature);
+      }
+      break;
+    }
+    // PageUp
+    case 33: {
+      index = 0;
+      const { computedRows } = encounterTable.value;
+      selected.value = [computedRows[index]];
+      if (hazardToggle.value === 'hazards') {
+        const tmp_hazard = selected.value[0]! as hazard;
+        encounter.setSelectedHazard(tmp_hazard);
+      } else {
+        const tmp_creature = selected.value[0]! as creature;
+        encounter.setSelectedCreature(tmp_creature);
+      }
+      encounterTable.value.scrollTo(index);
+      break;
+    }
+    // PageDown
+    case 34: {
+      index = rowsPerPage - 1;
+      const { computedRows } = encounterTable.value;
+      selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
+      if (hazardToggle.value === 'hazards') {
+        const tmp_hazard = selected.value[0]! as hazard;
+        encounter.setSelectedHazard(tmp_hazard);
+      } else {
+        const tmp_creature = selected.value[0]! as creature;
+        encounter.setSelectedCreature(tmp_creature);
+      }
+      encounterTable.value.scrollTo(index);
+      break;
+    }
+    // Home
+    case 36: {
+      index = 0;
+      const promise = waitForPageLoad();
+      encounterTable.value.firstPage();
+      await promise;
+
+      const { computedRows } = encounterTable.value;
+      selected.value = [computedRows[index]];
+      if (hazardToggle.value === 'hazards') {
+        const tmp_hazard = selected.value[0]! as hazard;
+        encounter.setSelectedHazard(tmp_hazard);
+      } else {
+        const tmp_creature = selected.value[0]! as creature;
+        encounter.setSelectedCreature(tmp_creature);
+      }
+      encounterTable.value.scrollTo(index);
+      break;
+    }
+    // End
+    case 35: {
+      index = rowsPerPage - 1;
+      const promise = waitForPageLoad();
+      encounterTable.value.lastPage();
+      await promise;
+
+      const { computedRows } = encounterTable.value;
+      selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
+      if (hazardToggle.value === 'hazards') {
+        const tmp_hazard = selected.value[0]! as hazard;
+        encounter.setSelectedHazard(tmp_hazard);
+      } else {
+        const tmp_creature = selected.value[0]! as creature;
+        encounter.setSelectedCreature(tmp_creature);
+      }
+      encounterTable.value.scrollTo(index - 1);
+      break;
+    }
+    // ArrowLeft
+    case 37: {
+      const page = currentPage <= 1 ? lastPage : currentPage - 1;
+      index = 0;
+      const promise = waitForPageLoad();
+      if (page === lastPage) {
+        encounterTable.value.lastPage();
+      } else {
+        encounterTable.value.prevPage();
+      }
+      await promise;
+
+      const { computedRows } = encounterTable.value;
+      selected.value = [computedRows[index]];
+      if (hazardToggle.value === 'hazards') {
+        const tmp_hazard = selected.value[0]! as hazard;
+        encounter.setSelectedHazard(tmp_hazard);
+      } else {
+        const tmp_creature = selected.value[0]! as creature;
+        encounter.setSelectedCreature(tmp_creature);
+      }
+      encounterTable.value.scrollTo(index);
+      break;
+    }
+    // ArrowUp
+    case 38: {
+      if (currentIndex > 0) {
+        index = currentIndex - 1;
+        const { computedRows } = encounterTable.value;
+        selected.value = [computedRows[index]];
+        if (hazardToggle.value === 'hazards') {
+          const tmp_hazard = selected.value[0]! as hazard;
+          encounter.setSelectedHazard(tmp_hazard);
+        } else {
+          const tmp_creature = selected.value[0]! as creature;
+          encounter.setSelectedCreature(tmp_creature);
+        }
+      }
+      encounterTable.value.scrollTo(index - 1);
+      break;
+    }
+    // ArrowRight
+    case 39: {
+      const page = currentPage >= lastPage ? 1 : currentPage + 1;
+      index = 0;
+      const promise = waitForPageLoad();
+      if (page === 1) {
+        encounterTable.value.firstPage();
+      } else {
+        encounterTable.value.nextPage();
+      }
+      await promise;
+
+      const { computedRows } = encounterTable.value;
+      selected.value = [computedRows[index]];
+      if (hazardToggle.value === 'hazards') {
+        const tmp_hazard = selected.value[0]! as hazard;
+        encounter.setSelectedHazard(tmp_hazard);
+      } else {
+        const tmp_creature = selected.value[0]! as creature;
+        encounter.setSelectedCreature(tmp_creature);
+      }
+      encounterTable.value.scrollTo(index);
+      break;
+    }
+    // ArrowDown
+    case 40: {
+      if (currentIndex < lastIndex) {
+        index = currentIndex + 1;
+        const { computedRows } = encounterTable.value;
+        selected.value = [computedRows[index]];
+        if (hazardToggle.value === 'hazards') {
+          const tmp_hazard = selected.value[0]! as hazard;
+          encounter.setSelectedHazard(tmp_hazard);
+        } else {
+          const tmp_creature = selected.value[0]! as creature;
+          encounter.setSelectedCreature(tmp_creature);
+        }
+      }
+      encounterTable.value.scrollTo(index);
+      break;
+    }
+  }
+}
+
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
@@ -1039,7 +1260,7 @@ onMounted(async () => {
     <q-table
       v-if="hazardToggle === 'creatures'"
       id="v-step-0"
-      ref="creatureTable"
+      ref="encounterTable"
       v-model:pagination="pagination"
       class="sticky-header-table tw:opacity-85 tw:dark:opacity-90 tw:bg-white tw:border! tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       :style="tableHeight"
@@ -1059,9 +1280,19 @@ onMounted(async () => {
       :rows-per-page-options="[50, 100, 0]"
       table-header-class="v-step-6"
       row-key="name"
+      selection="single"
       :fullscreen="fullscreen"
       @request="onRequest"
+      @row-click="
+        (_, row: creature) => {
+          encounter.setSelectedCreature(row);
+          selected = [row];
+        }
+      "
       @row-dblclick="(_, row) => addCreature(row)"
+      @focusin="activateNavigation"
+      @focusout="deactivateNavigation"
+      @keydown="onKey"
     >
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
@@ -1071,6 +1302,48 @@ onMounted(async () => {
       <template #top>
         <div class="tw:flex tw:grow tw:flex-wrap tw:gap-2 tw:justify-center">
           <div class="tw:flex tw:shrink tw:justify-center tw:lg:justify-start">
+            <span v-if="!fullscreen">
+              <q-btn
+                v-if="props.sheetVisible"
+                flat
+                round
+                dense
+                class="tw:mr-4! tw:my-2! tw:md:my-0!"
+                :icon="biArrowsCollapseVertical"
+                size="md"
+                padding="sm"
+                aria-label="Hide sheet"
+                @click="props.toggleSheetView!()"
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Hide sheet
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                v-else
+                flat
+                round
+                dense
+                class="tw:mr-4! tw:my-2! tw:md:my-0!"
+                :icon="biArrowsExpandVertical"
+                size="md"
+                padding="sm"
+                aria-label="Show sheet"
+                @click="props.toggleSheetView!()"
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Show sheet
+                </q-tooltip>
+              </q-btn>
+            </span>
             <q-btn-group push>
               <PartyBuilder />
               <q-separator vertical />
@@ -1135,6 +1408,8 @@ onMounted(async () => {
                 { label: 'Hazards', value: 'hazards' }
               ]"
               @update:model-value="
+                encounter.removeSelectedCreature();
+                encounter.removeSelectedHazard();
                 loading = true;
                 pagination.page = 0;
                 fetchFromServer(0, 100);
@@ -1146,7 +1421,7 @@ onMounted(async () => {
               flat
               round
               dense
-              class="tw:mx-2!"
+              class="tw:mr-2!"
               :icon="biEraser"
               size="md"
               padding="sm"
@@ -1168,12 +1443,12 @@ onMounted(async () => {
                 outlined
                 dense
                 options-dense
-                display-value="Display columns"
+                display-value="Columns"
                 emit-value
                 map-options
                 :options="Object.freeze(columnCreatures)"
                 option-value="name"
-                style="min-width: 150px"
+                style="min-width: 100px"
               />
             </div>
             <q-btn
@@ -1712,6 +1987,26 @@ onMounted(async () => {
           </div>
         </q-th>
       </template>
+      <template #body-selection="selectedCreature">
+        <q-btn
+          :props="selectedCreature"
+          round
+          unelevated
+          :icon="biBoxArrowUpRight"
+          size="sm"
+          aria-label="Open item sheet"
+          target="_blank"
+          @click="openCreatureSheet(selectedCreature.row.core_data.essential.id)"
+        >
+          <q-tooltip
+            class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+            anchor="top middle"
+            self="bottom middle"
+          >
+            Open creature sheet
+          </q-tooltip>
+        </q-btn>
+      </template>
       <template #body-cell-source="source">
         <q-td :props="source">
           <q-btn
@@ -1744,24 +2039,16 @@ onMounted(async () => {
       </template>
       <template #body-cell-name="name">
         <q-td :props="name">
-          <q-btn
-            round
-            unelevated
-            :icon="fasScroll"
-            size="sm"
-            class="tw:mr-1!"
-            target="_blank"
-            aria-label="Open creature sheet"
-            @click="openCreatureSheet(name.row.core_data.essential.id)"
-          >
-            <q-tooltip
-              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-              anchor="top middle"
-              self="bottom middle"
-            >
-              Open creature sheet
-            </q-tooltip>
-          </q-btn>
+          <q-icon
+            v-if="
+              encounter.getSelectedCreature?.core_data &&
+              name.row.core_data.essential.id ===
+                encounter.getSelectedCreature?.core_data.essential.id
+            "
+            class="tw:mr-1 tw:align-middle"
+            size="xs"
+            :name="biCaretRight"
+          />
           <a
             v-if="name.row.core_data.derived.archive_link"
             :href="name.row.core_data.derived.archive_link"
@@ -1975,7 +2262,7 @@ onMounted(async () => {
     <q-table
       v-else
       id="v-step-0"
-      ref="hazardTable"
+      ref="encounterTable"
       v-model:pagination="pagination"
       class="sticky-header-table tw:opacity-85 tw:dark:opacity-90 tw:bg-white tw:border! tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       :style="tableHeight"
@@ -1995,9 +2282,19 @@ onMounted(async () => {
       :rows-per-page-options="[50, 100, 0]"
       table-header-class="v-step-6"
       row-key="name"
+      selection="single"
       :fullscreen="fullscreen"
       @request="onRequest"
+      @row-click="
+        (_, row: hazard) => {
+          encounter.setSelectedHazard(row);
+          selected = [row];
+        }
+      "
       @row-dblclick="(_, row) => addHazard(row)"
+      @focusin="activateNavigation"
+      @focusout="deactivateNavigation"
+      @keydown="onKey"
     >
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
@@ -2007,6 +2304,48 @@ onMounted(async () => {
       <template #top>
         <div class="tw:flex tw:grow tw:flex-wrap tw:gap-2 tw:justify-center">
           <div class="tw:flex tw:shrink tw:justify-center tw:lg:justify-start">
+            <span v-if="!fullscreen">
+              <q-btn
+                v-if="props.sheetVisible"
+                flat
+                round
+                dense
+                class="tw:mr-4! tw:my-2! tw:md:my-0!"
+                :icon="biArrowsCollapseVertical"
+                size="md"
+                padding="sm"
+                aria-label="Hide sheet"
+                @click="props.toggleSheetView!()"
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Hide sheet
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                v-else
+                flat
+                round
+                dense
+                class="tw:mr-4! tw:my-2! tw:md:my-0!"
+                :icon="biArrowsExpandVertical"
+                size="md"
+                padding="sm"
+                aria-label="Show sheet"
+                @click="props.toggleSheetView!()"
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Show sheet
+                </q-tooltip>
+              </q-btn>
+            </span>
             <q-btn-group push>
               <PartyBuilder />
               <q-separator vertical />
@@ -2071,6 +2410,8 @@ onMounted(async () => {
                 { label: 'Hazards', value: 'hazards' }
               ]"
               @update:model-value="
+                encounter.removeSelectedCreature();
+                encounter.removeSelectedHazard();
                 loading = true;
                 pagination.page = 0;
                 fetchFromServer(0, 100);
@@ -2082,7 +2423,7 @@ onMounted(async () => {
               flat
               round
               dense
-              class="tw:mx-2!"
+              class="tw:mr-2!"
               :icon="biEraser"
               size="md"
               padding="sm"
@@ -2104,12 +2445,12 @@ onMounted(async () => {
                 outlined
                 dense
                 options-dense
-                display-value="Display columns"
+                display-value="Columns"
                 emit-value
                 map-options
                 :options="Object.freeze(columnHazards)"
                 option-value="name"
-                style="min-width: 150px"
+                style="min-width: 100px"
               />
             </div>
             <q-btn
@@ -2704,6 +3045,26 @@ onMounted(async () => {
           </div>
         </q-th>
       </template>
+      <template #body-selection="selectedHazard">
+        <q-btn
+          :props="selectedHazard"
+          round
+          unelevated
+          :icon="biBoxArrowUpRight"
+          size="sm"
+          aria-label="Open item sheet"
+          target="_blank"
+          @click="openHazardSheet(selectedHazard.row.core_hazard.essential.id)"
+        >
+          <q-tooltip
+            class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+            anchor="top middle"
+            self="bottom middle"
+          >
+            Open hazard sheet
+          </q-tooltip>
+        </q-btn>
+      </template>
       <template #body-cell-source="source">
         <q-td :props="source">
           <q-btn
@@ -2736,24 +3097,16 @@ onMounted(async () => {
       </template>
       <template #body-cell-name="name">
         <q-td :props="name">
-          <q-btn
-            round
-            unelevated
-            :icon="fasScroll"
-            size="sm"
-            class="tw:mr-1!"
-            target="_blank"
-            aria-label="Open hazard sheet"
-            @click="openHazardSheet(name.row.core_hazard.essential.id)"
-          >
-            <q-tooltip
-              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-              anchor="top middle"
-              self="bottom middle"
-            >
-              Open hazard sheet
-            </q-tooltip>
-          </q-btn>
+          <q-icon
+            v-if="
+              encounter.getSelectedHazard?.core_hazard &&
+              name.row.core_hazard.essential.id ===
+                encounter.getSelectedHazard?.core_hazard.essential.id
+            "
+            class="tw:mr-1 tw:align-middle"
+            size="xs"
+            :name="biCaretRight"
+          />
           <a
             v-if="settings.getAonLinks"
             :href="

@@ -360,7 +360,7 @@ const toggleSheetView = () => {
       id="table"
       class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
       :class="tableWidth"
-      :on-action="toggleSheetView"
+      :toggle-sheet-view="toggleSheetView"
       :sheet-visible="sheetVisible"
     />
     <q-space />
