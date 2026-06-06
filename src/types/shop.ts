@@ -1,5 +1,5 @@
-import type { games } from './filters';
-import type { min_item } from './item';
+import type { games } from 'src/types/filters';
+import type { min_item } from 'src/types/item';
 
 export type shop_list = {
   name: string;

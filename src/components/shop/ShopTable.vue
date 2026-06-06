@@ -25,18 +25,20 @@ import { useQuasar } from 'quasar';
 import { onMounted, onUnmounted, ref, toRaw, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { filtersStore, itemsStore, settingsStore, templateStore } from '../../stores/store';
 import {
   requestFilters,
   requestItems,
   requestShopRanges,
   requestTemplates
-} from '../../utils/shop-api-calls';
+} from 'src/api/shop-api-calls';
+import ShopBuilder from 'src/components/shop/ShopTable/ShopBuilder.vue';
+import { filtersStore } from 'src/stores/filters';
+import { itemsStore } from 'src/stores/items';
+import { settingsStore } from 'src/stores/settings';
+import { templateStore } from 'src/stores/template';
 
-import ShopBuilder from './ShopTable/ShopBuilder.vue';
-
-import type { games, item_columns, item_filters, rarities } from '../../types/filters';
-import type { item, min_item } from '../../types/item';
+import type { games, item_columns, item_filters, rarities } from 'src/types/filters';
+import type { item, min_item } from 'src/types/item';
 
 const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
 

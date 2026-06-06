@@ -1,11 +1,11 @@
-import type { creature, creature_response } from '../types/creature';
+import type { creature, creature_response } from 'src/types/creature';
 import type {
   encounter,
   encounter_data,
   encounter_info,
   random_encounter,
   shareable_encounter
-} from '../types/encounter';
+} from 'src/types/encounter';
 import type {
   bestiary_ranges,
   creature_columns,
@@ -15,8 +15,8 @@ import type {
   hazard_filters,
   hazard_ranges,
   variants
-} from '../types/filters';
-import type { hazard, hazard_response } from '../types/hazard';
+} from 'src/types/filters';
+import type { hazard, hazard_response } from 'src/types/hazard';
 
 export async function requestCreatures(
   game: games,

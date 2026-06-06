@@ -4,11 +4,12 @@ import { useHead } from '@unhead/vue';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-import NpcSheet from '../../components/npc/NpcSheet.vue';
-import { npcStore, settingsStore } from '../../stores/store';
+import NpcSheet from 'src/components/npc/NpcSheet.vue';
+import { npcStore } from 'src/stores/npc';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games } from '../../types/filters';
-import type { npc_list } from '../../types/npcs';
+import type { games } from 'src/types/filters';
+import type { npc_list } from 'src/types/npcs';
 
 const title = ref('NPC Sheet - BYBE');
 

@@ -1,7 +1,7 @@
 import { defineRouter } from '#q-app/wrappers';
 import { createRouter, createWebHistory } from 'vue-router';
 
-import routes from './routes';
+import routes from 'src/router/routes';
 
 /*
  * If not building with SSR mode, you can

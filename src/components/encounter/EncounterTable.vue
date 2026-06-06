@@ -26,7 +26,6 @@ import { useQuasar } from 'quasar';
 import { onMounted, onUnmounted, ref, toRaw, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { encounterStore, filtersStore, settingsStore } from '../../stores/store';
 import {
   requestCreatureRanges,
   requestCreatures,
@@ -34,13 +33,15 @@ import {
   requestHazardFilters,
   requestHazardRanges,
   requestHazards
-} from '../../utils/encounter-api-calls';
+} from 'src/api/encounter-api-calls';
+import EncounterBuilder from 'src/components/encounter/EncounterTable/EncounterBuilder.vue';
+import PartyBuilder from 'src/components/encounter/EncounterTable/PartyBuilder.vue';
+import { encounterStore } from 'src/stores/encounter';
+import { filtersStore } from 'src/stores/filters';
+import { settingsStore } from 'src/stores/settings';
 
-import EncounterBuilder from './EncounterTable/EncounterBuilder.vue';
-import PartyBuilder from './EncounterTable/PartyBuilder.vue';
-
-import type { creature } from '../../types/creature';
-import type { min_creature_hazard } from '../../types/encounter';
+import type { creature } from 'src/types/creature';
+import type { min_creature_hazard } from 'src/types/encounter';
 import type {
   alignments,
   complexities,
@@ -53,7 +54,7 @@ import type {
   rarities,
   roles,
   sizes
-} from '../../types/filters';
+} from 'src/types/filters';
 import type { hazard } from 'src/types/hazard';
 
 const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });

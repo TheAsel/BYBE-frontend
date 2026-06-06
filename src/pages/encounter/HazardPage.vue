@@ -6,12 +6,13 @@ import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import EncounterSheet from '../../components/encounter/EncounterSheet.vue';
-import { encounterStore, settingsStore } from '../../stores/store';
-import { requestHazardId } from '../../utils/encounter-api-calls';
+import { requestHazardId } from 'src/api/encounter-api-calls';
+import EncounterSheet from 'src/components/encounter/EncounterSheet.vue';
+import { encounterStore } from 'src/stores/encounter';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games } from '../../types/filters';
-import type { hazard } from '../../types/hazard';
+import type { games } from 'src/types/filters';
+import type { hazard } from 'src/types/hazard';
 
 const title = ref('Hazard Sheet - BYBE');
 

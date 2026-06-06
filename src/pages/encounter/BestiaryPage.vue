@@ -6,12 +6,13 @@ import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import EncounterSheet from '../../components/encounter/EncounterSheet.vue';
-import { encounterStore, settingsStore } from '../../stores/store';
-import { requestCreatureId } from '../../utils/encounter-api-calls';
+import { requestCreatureId } from 'src/api/encounter-api-calls';
+import EncounterSheet from 'src/components/encounter/EncounterSheet.vue';
+import { encounterStore } from 'src/stores/encounter';
+import { settingsStore } from 'src/stores/settings';
 
-import type { creature } from '../../types/creature';
-import type { games, variants } from '../../types/filters';
+import type { creature } from 'src/types/creature';
+import type { games, variants } from 'src/types/filters';
 
 const title = ref('Bestiary Sheet - BYBE');
 

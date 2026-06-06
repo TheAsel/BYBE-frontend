@@ -15,12 +15,15 @@ import { capitalize, cloneDeep, debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
 import { nextTick, ref } from 'vue';
 
-import { filtersStore, itemsStore, settingsStore, templateStore } from '../../../stores/store';
-import { shopGenerator } from '../../../utils/shop-api-calls';
+import { shopGenerator } from 'src/api/shop-api-calls';
+import { filtersStore } from 'src/stores/filters';
+import { itemsStore } from 'src/stores/items';
+import { settingsStore } from 'src/stores/settings';
+import { templateStore } from 'src/stores/template';
 
-import type { games } from '../../../types/filters';
-import type { min_item } from '../../../types/item';
-import type { template } from '../../../types/template';
+import type { games } from 'src/types/filters';
+import type { min_item } from 'src/types/item';
+import type { template } from 'src/types/template';
 
 const $q = useQuasar();
 

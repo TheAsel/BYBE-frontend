@@ -4,9 +4,9 @@ import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 
-import { partyStore } from '../../../stores/store';
+import { partyStore } from 'src/stores/party';
 
-import type { party } from '../../../types/party';
+import type { party } from 'src/types/party';
 
 const $q = useQuasar();
 

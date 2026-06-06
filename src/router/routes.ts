@@ -4,63 +4,63 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
-    component: () => import('../layouts/MainLayout.vue'),
+    component: () => import('src/layouts/MainLayout.vue'),
     children: [
-      { path: '/', component: () => import('../pages/IndexPage.vue') },
+      { path: '/', component: () => import('src/pages/IndexPage.vue') },
       {
         path: '/download',
         name: 'download',
-        component: () => import('../pages/DownloadPage.vue')
+        component: () => import('src/pages/DownloadPage.vue')
       },
       {
         path: 'encounter',
         name: 'encounter',
-        component: () => import('../pages/encounter/EncounterPage.vue')
+        component: () => import('src/pages/encounter/EncounterPage.vue')
       },
       {
         path: 'bestiary',
         name: 'bestiary',
-        component: () => import('../pages/encounter/BestiaryPage.vue')
+        component: () => import('src/pages/encounter/BestiaryPage.vue')
       },
       {
         path: 'hazard',
         name: 'hazard',
-        component: () => import('../pages/encounter/HazardPage.vue')
+        component: () => import('src/pages/encounter/HazardPage.vue')
       },
       {
         path: 'shop',
         name: 'shop',
-        component: () => import('../pages/shop/ShopPage.vue')
+        component: () => import('src/pages/shop/ShopPage.vue')
       },
       {
         path: 'item',
         name: 'item',
-        component: () => import('../pages/shop/ItemPage.vue')
+        component: () => import('src/pages/shop/ItemPage.vue')
       },
       {
         path: 'npc',
         name: 'npc',
-        component: () => import('../pages/npc/NpcPage.vue')
+        component: () => import('src/pages/npc/NpcPage.vue')
       },
       {
         path: 'character',
         name: 'character',
-        component: () => import('../pages/npc/CharacterPage.vue')
+        component: () => import('src/pages/npc/CharacterPage.vue')
       },
       {
         path: 'creature',
         name: 'creature',
-        component: () => import('../pages/creature/CreaturePage.vue')
+        component: () => import('src/pages/creature/CreaturePage.vue')
       },
       {
         path: 'city',
         name: 'city',
-        component: () => import('../pages/city/CityPage.vue')
+        component: () => import('src/pages/city/CityPage.vue')
       },
       {
         path: 'license',
         name: 'license',
-        component: () => import('../pages/LicensePage.vue')
+        component: () => import('src/pages/LicensePage.vue')
       }
     ]
   },
@@ -86,7 +86,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/:catchAll(.*)*',
-    component: () => import('../pages/ErrorNotFound.vue')
+    component: () => import('src/pages/ErrorNotFound.vue')
   }
 ];
 

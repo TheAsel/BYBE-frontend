@@ -5,14 +5,13 @@ import { debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
 
-import { encounterStore, filtersStore, partyStore, settingsStore } from '../../../stores/store';
-import { encounterGenerator } from '../../../utils/encounter-api-calls';
+import { encounterGenerator } from 'src/api/encounter-api-calls';
+import { encounterStore } from 'src/stores/encounter';
+import { filtersStore } from 'src/stores/filters';
+import { partyStore } from 'src/stores/party';
+import { settingsStore } from 'src/stores/settings';
 
-import type {
-  adventure_groups,
-  encounter_data,
-  min_creature_hazard
-} from '../../../types/encounter';
+import type { adventure_groups, encounter_data, min_creature_hazard } from 'src/types/encounter';
 import type {
   alignments,
   challenges,
@@ -21,7 +20,7 @@ import type {
   rarities,
   roles,
   sizes
-} from '../../../types/filters';
+} from 'src/types/filters';
 
 const $q = useQuasar();
 

@@ -1,4 +1,4 @@
-import type { games, rarities, sizes } from './filters';
+import type { games, rarities, sizes } from 'src/types/filters';
 
 export type item = {
   game: games;

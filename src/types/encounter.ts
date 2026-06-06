@@ -1,4 +1,4 @@
-import type { creature } from './creature';
+import type { creature } from 'src/types/creature';
 import type {
   alignments,
   challenges,
@@ -8,8 +8,8 @@ import type {
   roles,
   sizes,
   variants
-} from './filters';
-import type { hazard } from './hazard';
+} from 'src/types/filters';
+import type { hazard } from 'src/types/hazard';
 
 export type encounter = {
   experience: number;

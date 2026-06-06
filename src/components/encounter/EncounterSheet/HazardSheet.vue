@@ -3,9 +3,10 @@ import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { encounterStore, settingsStore } from '../../../stores/store';
+import { encounterStore } from 'src/stores/encounter';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games } from '../../../types/filters';
+import type { games } from 'src/types/filters';
 
 const router = useRouter();
 const encounters = encounterStore();

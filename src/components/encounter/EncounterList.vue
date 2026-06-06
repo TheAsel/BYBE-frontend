@@ -15,22 +15,25 @@ import { copyToClipboard, useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { encounterStore, infoStore, partyStore, settingsStore } from '../../stores/store';
 import {
   decodeEncounterLink,
   encounterInfo,
   generateEncounterLink,
   requestCreatureId,
   requestHazardId
-} from '../../utils/encounter-api-calls';
+} from 'src/api/encounter-api-calls';
+import { encounterStore } from 'src/stores/encounter';
+import { infoStore } from 'src/stores/info';
+import { partyStore } from 'src/stores/party';
+import { settingsStore } from 'src/stores/settings';
 
 import type {
   encounter_info,
   encounter_list,
   min_creature_hazard,
   shareable_encounter
-} from '../../types/encounter';
-import type { complexities, games, variants } from '../../types/filters';
+} from 'src/types/encounter';
+import type { complexities, games, variants } from 'src/types/filters';
 
 const isApp = process.env.IS_APP === 'true';
 

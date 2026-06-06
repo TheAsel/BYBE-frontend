@@ -1,5 +1,5 @@
-import type { games } from '../types/filters';
-import type { npc, shareable_npc, valid_genders } from '../types/npcs';
+import type { games } from 'src/types/filters';
+import type { npc, shareable_npc, valid_genders } from 'src/types/npcs';
 
 export async function requestParameters(
   game: games,

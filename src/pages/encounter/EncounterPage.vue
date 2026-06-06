@@ -3,14 +3,16 @@ import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons'
 import { useHead } from '@unhead/vue';
 import { onMounted, onUnmounted, ref } from 'vue';
 
-import EncounterList from '../../components/encounter/EncounterList.vue';
-import EncounterSheet from '../../components/encounter/EncounterSheet.vue';
-import EncounterTable from '../../components/encounter/EncounterTable.vue';
-import { encounterStore, partyStore, settingsStore } from '../../stores/store';
+import EncounterList from 'src/components/encounter/EncounterList.vue';
+import EncounterSheet from 'src/components/encounter/EncounterSheet.vue';
+import EncounterTable from 'src/components/encounter/EncounterTable.vue';
+import { encounterStore } from 'src/stores/encounter';
+import { partyStore } from 'src/stores/party';
+import { settingsStore } from 'src/stores/settings';
 
-import type { encounter_list, min_creature_hazard } from '../../types/encounter';
-import type { games } from '../../types/filters';
-import type { party } from '../../types/party';
+import type { encounter_list, min_creature_hazard } from 'src/types/encounter';
+import type { games } from 'src/types/filters';
+import type { party } from 'src/types/party';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
 useHead({

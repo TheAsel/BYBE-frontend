@@ -1,4 +1,4 @@
-import type { repo_info } from '../types/github';
+import type { repo_info } from 'src/types/github';
 
 export async function requestRepoInfo(repo: string) {
   try {

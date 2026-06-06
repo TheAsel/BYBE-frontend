@@ -2,9 +2,9 @@
 import { useHead } from '@unhead/vue';
 import { ref } from 'vue';
 
-import { settingsStore } from '../stores/store';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games } from '../types/filters';
+import type { games } from 'src/types/filters';
 
 useHead({
   title: 'Licenses - BYBE',

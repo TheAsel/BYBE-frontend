@@ -4,9 +4,10 @@ import { upperFirst } from 'lodash-es';
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { encounterStore, settingsStore } from '../../../stores/store';
+import { encounterStore } from 'src/stores/encounter';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games, variants } from '../../../types/filters';
+import type { games, variants } from 'src/types/filters';
 
 const route = useRoute();
 const router = useRouter();

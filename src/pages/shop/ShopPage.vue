@@ -3,15 +3,17 @@ import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons'
 import { useHead } from '@unhead/vue';
 import { onMounted, onUnmounted, ref } from 'vue';
 
-import ShopList from '../../components/shop/ShopList.vue';
-import ShopSheet from '../../components/shop/ShopSheet.vue';
-import ShopTable from '../../components/shop/ShopTable.vue';
-import { itemsStore, settingsStore, templateStore } from '../../stores/store';
+import ShopList from 'src/components/shop/ShopList.vue';
+import ShopSheet from 'src/components/shop/ShopSheet.vue';
+import ShopTable from 'src/components/shop/ShopTable.vue';
+import { itemsStore } from 'src/stores/items';
+import { settingsStore } from 'src/stores/settings';
+import { templateStore } from 'src/stores/template';
 
-import type { games } from '../../types/filters';
-import type { item, min_item } from '../../types/item';
-import type { shop_list } from '../../types/shop';
-import type { template } from '../../types/template';
+import type { games } from 'src/types/filters';
+import type { item, min_item } from 'src/types/item';
+import type { shop_list } from 'src/types/shop';
+import type { template } from 'src/types/template';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
 useHead({

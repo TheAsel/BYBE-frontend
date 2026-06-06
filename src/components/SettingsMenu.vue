@@ -11,13 +11,14 @@ import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 
-import { encounterStore, settingsStore } from 'src/stores/store';
+import { encounterStore } from 'src/stores/encounter';
+import { settingsStore } from 'src/stores/settings';
 
-import type { encounter_list } from '../types/encounter';
-import type { npc_list } from '../types/npcs';
-import type { party } from '../types/party';
-import type { shop_list } from '../types/shop';
-import type { template } from '../types/template';
+import type { encounter_list } from 'src/types/encounter';
+import type { npc_list } from 'src/types/npcs';
+import type { party } from 'src/types/party';
+import type { shop_list } from 'src/types/shop';
+import type { template } from 'src/types/template';
 
 const $q = useQuasar();
 

@@ -21,12 +21,13 @@ import { copyToClipboard, useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { itemsStore, settingsStore } from '../../stores/store';
-import { decodeShopLink, generateShopLink, requestItemId } from '../../utils/shop-api-calls';
+import { decodeShopLink, generateShopLink, requestItemId } from 'src/api/shop-api-calls';
+import { itemsStore } from 'src/stores/items';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games } from '../../types/filters';
-import type { min_item } from '../../types/item';
-import type { shareable_shop, shop_list } from '../../types/shop';
+import type { games } from 'src/types/filters';
+import type { min_item } from 'src/types/item';
+import type { shareable_shop, shop_list } from 'src/types/shop';
 
 const isApp = process.env.IS_APP === 'true';
 

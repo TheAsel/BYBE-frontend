@@ -5,10 +5,12 @@ import { debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
 import { onMounted, ref } from 'vue';
 
-import { npcParametersStore, npcStore, settingsStore } from '../../stores/store';
-import { npcGenerator, requestAncestries, requestParameters } from '../../utils/npc-api-calls';
+import { npcGenerator, requestAncestries, requestParameters } from 'src/api/npc-api-calls';
+import { npcStore } from 'src/stores/npc';
+import { npcParametersStore } from 'src/stores/npcParameters';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games } from '../../types/filters';
+import type { games } from 'src/types/filters';
 
 const $q = useQuasar();
 

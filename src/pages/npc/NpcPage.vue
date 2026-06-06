@@ -3,13 +3,14 @@ import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons'
 import { useHead } from '@unhead/vue';
 import { ref } from 'vue';
 
-import NpcEditor from '../../components/npc/NpcEditor.vue';
-import NpcGenerator from '../../components/npc/NpcGenerator.vue';
-import NpcSheet from '../../components/npc/NpcSheet.vue';
-import { npcStore, settingsStore } from '../../stores/store';
+import NpcEditor from 'src/components/npc/NpcEditor.vue';
+import NpcGenerator from 'src/components/npc/NpcGenerator.vue';
+import NpcSheet from 'src/components/npc/NpcSheet.vue';
+import { npcStore } from 'src/stores/npc';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games } from '../../types/filters';
-import type { npc, npc_list } from '../../types/npcs';
+import type { games } from 'src/types/filters';
+import type { npc, npc_list } from 'src/types/npcs';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
 useHead({

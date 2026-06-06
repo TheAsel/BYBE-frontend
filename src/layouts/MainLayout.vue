@@ -2,11 +2,11 @@
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-import { settingsStore } from 'src/stores/store';
+import { requestRepoInfo } from 'src/api/github-api';
+import HeaderBar from 'src/components/HeaderBar.vue';
+import { settingsStore } from 'src/stores/settings';
 
 import { version } from '../../package.json';
-import HeaderBar from '../components/HeaderBar.vue';
-import { requestRepoInfo } from '../utils/github-api';
 
 const newestVersion = ref(version);
 const isApp = process.env.IS_APP === 'true';
@@ -20,8 +20,8 @@ const isDownload = computed(() => {
   return route.path === '/download';
 });
 
-const firstSegment = route.path.split('/')[1];
-if (firstSegment === 'sf') {
+const queryGame: string = String(route.query.game).toLowerCase();
+if (queryGame === 'sf') {
   settings.setGame('sf');
 } else {
   settings.setGame('pf');

@@ -3,7 +3,8 @@ import { biBoxArrowUpRight } from '@quasar/extras/bootstrap-icons';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { npcStore, settingsStore } from '../../stores/store';
+import { npcStore } from 'src/stores/npc';
+import { settingsStore } from 'src/stores/settings';
 
 import type { games } from 'src/types/filters';
 

@@ -1,5 +1,5 @@
-import type { alignments, games, rarities, roles, sizes, variants } from './filters';
-import type { item } from './item';
+import type { alignments, games, rarities, roles, sizes, variants } from 'src/types/filters';
+import type { item } from 'src/types/item';
 
 interface KeyValue {
   [key: string]: number;

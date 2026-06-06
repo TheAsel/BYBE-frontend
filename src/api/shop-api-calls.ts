@@ -1,7 +1,7 @@
-import type { games, item_columns, item_filters, shop_ranges } from '../types/filters';
-import type { item, item_response } from '../types/item';
-import type { template_data } from '../types/template';
+import type { games, item_columns, item_filters, shop_ranges } from 'src/types/filters';
+import type { item, item_response } from 'src/types/item';
 import type { shareable_shop } from 'src/types/shop';
+import type { template_data } from 'src/types/template';
 
 export async function requestFilters(game: games, filter: 'sources' | 'traits') {
   try {

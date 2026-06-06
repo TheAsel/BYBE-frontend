@@ -6,12 +6,13 @@ import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import ShopSheet from '../../components/shop/ShopSheet.vue';
-import { itemsStore, settingsStore } from '../../stores/store';
-import { requestItemId } from '../../utils/shop-api-calls';
+import { requestItemId } from 'src/api/shop-api-calls';
+import ShopSheet from 'src/components/shop/ShopSheet.vue';
+import { itemsStore } from 'src/stores/items';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games } from '../../types/filters';
-import type { item } from '../../types/item';
+import type { games } from 'src/types/filters';
+import type { item } from 'src/types/item';
 
 const title = ref('Item Sheet - BYBE');
 

@@ -4,7 +4,7 @@ import { matDownload } from '@quasar/extras/material-icons';
 import { useHead } from '@unhead/vue';
 import { onMounted, ref } from 'vue';
 
-import { requestRepoInfo } from '../utils/github-api';
+import { requestRepoInfo } from 'src/api/github-api';
 
 useHead({
   title: 'Download - BYBE',

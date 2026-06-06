@@ -15,17 +15,19 @@ import { copyToClipboard, useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { npcParametersStore, npcStore, settingsStore } from '../../stores/store';
 import {
   decodeNpcLink,
   generateNpcLink,
   npcLevelGenerator,
   npcNamesGenerator,
   npcParametersGenerator
-} from '../../utils/npc-api-calls';
+} from 'src/api/npc-api-calls';
+import { npcStore } from 'src/stores/npc';
+import { npcParametersStore } from 'src/stores/npcParameters';
+import { settingsStore } from 'src/stores/settings';
 
-import type { games } from '../../types/filters';
-import type { npc, npc_list, shareable_npc } from '../../types/npcs';
+import type { games } from 'src/types/filters';
+import type { npc, npc_list, shareable_npc } from 'src/types/npcs';
 
 const isApp = process.env.IS_APP === 'true';
 

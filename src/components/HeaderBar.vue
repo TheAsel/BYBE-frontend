@@ -5,17 +5,14 @@ import { useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { settingsStore } from '../stores/store';
-import { TailwindDarkFix } from '../utils/tw-dark-fix';
+import SettingsMenu from 'src/components/SettingsMenu.vue';
+import { settingsStore } from 'src/stores/settings';
+import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 
-import SettingsMenu from './SettingsMenu.vue';
-
-import type { games } from '../types/filters';
+import type { games } from 'src/types/filters';
 
 const settings = settingsStore();
 const isApp = process.env.IS_APP === 'true';
-
-const settingsMenuRef = ref();
 
 TailwindDarkFix();
 
@@ -75,14 +72,6 @@ function changeGame(value: games) {
     });
     globalThis.open(routeData.href, '_self');
   }
-}
-
-const queryGame: string = String(route.query.game).toLowerCase();
-
-if (queryGame === 'sf') {
-  settings.setGame('sf');
-} else {
-  settings.setGame('pf');
 }
 
 const $q = useQuasar();
@@ -308,7 +297,7 @@ const unhide = debounce(function () {
               aria-label="Toggle theme"
               @click="themeSwitch"
             />
-            <SettingsMenu ref="settingsMenuRef" />
+            <SettingsMenu />
 
             <q-btn
               v-if="isTourPage"

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { encounterStore } from '../../stores/store';
-
-import BestiarySheet from './EncounterSheet/BestiarySheet.vue';
-import HazardSheet from './EncounterSheet/HazardSheet.vue';
+import BestiarySheet from 'src/components/encounter/EncounterSheet/BestiarySheet.vue';
+import HazardSheet from 'src/components/encounter/EncounterSheet/HazardSheet.vue';
+import { encounterStore } from 'src/stores/encounter';
 
 const encounters = encounterStore();
 </script>

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { itemsStore } from '../../stores/store';
-
-import ArmorSheet from './ShopSheet/ArmorSheet.vue';
-import ItemSheet from './ShopSheet/ItemSheet.vue';
-import ShieldSheet from './ShopSheet/ShieldSheet.vue';
-import WeaponSheet from './ShopSheet/WeaponSheet.vue';
+import ArmorSheet from 'src/components/shop/ShopSheet/ArmorSheet.vue';
+import ItemSheet from 'src/components/shop/ShopSheet/ItemSheet.vue';
+import ShieldSheet from 'src/components/shop/ShopSheet/ShieldSheet.vue';
+import WeaponSheet from 'src/components/shop/ShopSheet/WeaponSheet.vue';
+import { itemsStore } from 'src/stores/items';
 
 const items = itemsStore();
 </script>
