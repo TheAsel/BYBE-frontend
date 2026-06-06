@@ -585,7 +585,10 @@ const openCreatureSheet = (game: games, id: number) => {
       </q-btn>
     </div>
     <a
-      v-if="currentFont === 'pf' && encounters.getSelectedCreature?.core_data.derived.archive_link"
+      v-if="
+        encounters.getSelectedCreature &&
+        encounters.getSelectedCreature?.core_data.derived.archive_link
+      "
       class="tw:my-auto"
       :href="
         encounters.getSelectedCreature.core_data.derived.archive_link +
@@ -608,7 +611,11 @@ const openCreatureSheet = (game: games, id: number) => {
       </h1>
     </a>
     <a
-      v-else-if="currentFont === 'sf' && settings.getAonLinks && encounters.getSelectedCreature"
+      v-else-if="
+        settings.getAonLinks &&
+        encounters.getSelectedCreature &&
+        encounters.getSelectedCreature.game === 'sf'
+      "
       class="tw:my-auto"
       :href="
         'https://2e.aonsrd.com/search?q=' +

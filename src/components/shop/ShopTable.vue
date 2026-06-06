@@ -480,22 +480,20 @@ function onGlobalKey(evt: KeyboardEvent) {
   if (isTextInput(evt.target)) {
     return;
   }
-  switch (evt.key.toLowerCase()) {
-    case 'b':
-      if (evt.ctrlKey || evt.metaKey) {
-        evt.preventDefault();
-        props.toggleSheetView!();
-      }
-      break;
+  if (evt.key.toLowerCase() === 'b') {
+    if (evt.ctrlKey || evt.metaKey) {
+      evt.preventDefault();
+      props.toggleSheetView!();
+    }
   }
 }
 
 onMounted(() => {
-  window.addEventListener('keydown', onGlobalKey);
+  globalThis.addEventListener('keydown', onGlobalKey);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', onGlobalKey);
+  globalThis.removeEventListener('keydown', onGlobalKey);
 });
 
 const toggleFullscreen = () => {

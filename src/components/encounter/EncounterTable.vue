@@ -1113,22 +1113,20 @@ function onGlobalKey(evt: KeyboardEvent) {
   if (isTextInput(evt.target)) {
     return;
   }
-  switch (evt.key.toLowerCase()) {
-    case 'b':
-      if (evt.ctrlKey || evt.metaKey) {
-        evt.preventDefault();
-        props.toggleSheetView!();
-      }
-      break;
+  if (evt.key.toLowerCase() === 'b') {
+    if (evt.ctrlKey || evt.metaKey) {
+      evt.preventDefault();
+      props.toggleSheetView!();
+    }
   }
 }
 
 onMounted(() => {
-  window.addEventListener('keydown', onGlobalKey);
+  globalThis.addEventListener('keydown', onGlobalKey);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', onGlobalKey);
+  globalThis.removeEventListener('keydown', onGlobalKey);
 });
 
 const toggleFullscreen = () => {
@@ -2080,6 +2078,24 @@ onMounted(async () => {
           <a
             v-if="name.row.core_data.derived.archive_link"
             :href="name.row.core_data.derived.archive_link"
+            target="_blank"
+            rel="noopener"
+            class="tw:inline tw:align-middle"
+          >
+            <span
+              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
+              >{{ name.value }}</span
+            >
+          </a>
+          <a
+            v-else-if="currentGame === 'sf' && settings.getAonLinks"
+            :href="
+              'https://2e.' +
+              currentAon +
+              '.com/search?q=' +
+              encodeURIComponent(name.value) +
+              ' type%3A(creature)&type=eqs'
+            "
             target="_blank"
             rel="noopener"
             class="tw:inline tw:align-middle"
