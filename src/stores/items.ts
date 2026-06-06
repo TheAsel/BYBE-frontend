@@ -92,38 +92,40 @@ export const itemsStore = defineStore('items', {
       this.generating = newGenerating;
     },
     getFormattedPrice(price: number, game: games) {
+      // Starfinder
       if (game === 'sf') {
         return price / 10 + ' credits';
-      } else {
-        if (price < 10) {
-          return price + ' cp';
-        } else if (price < 100) {
-          price = price / 10;
-          if (!Number.isInteger(price)) {
-            const decimal = (price - Math.floor(price)).toFixed(1);
-            const copper = Number.parseFloat(decimal) * 10;
-            return Math.trunc(price) + ' sp, ' + copper + ' cp';
-          }
-          return price + ' sp';
-        } else if (price >= 100) {
-          price = price / 100;
-          if (!Number.isInteger(price)) {
-            let decimal = (price - Math.floor(price)).toFixed(2);
-            let silver = Number.parseFloat(decimal) * 100;
-            if (!Number.isInteger(silver / 10)) {
-              silver = silver / 10;
-              decimal = (silver - Math.floor(silver)).toFixed(1);
-              const copper = Number.parseFloat(decimal) * 10;
-              if (Math.trunc(silver) === 0) {
-                return Math.trunc(price) + ' gp, ' + copper + ' cp';
-              } else {
-                return Math.trunc(price) + ' gp, ' + Math.trunc(silver) + ' sp, ' + copper + ' cp';
-              }
-            }
-            return Math.trunc(price) + ' gp, ' + silver / 10 + ' sp';
-          }
-          return price + ' gp';
+      }
+
+      // Pathfinder
+      if (price < 10) {
+        return price + ' cp';
+      } else if (price < 100) {
+        price = price / 10;
+        if (!Number.isInteger(price)) {
+          const decimal = (price - Math.floor(price)).toFixed(1);
+          const copper = Number.parseFloat(decimal) * 10;
+          return Math.trunc(price) + ' sp, ' + copper + ' cp';
         }
+        return price + ' sp';
+      } else if (price >= 100) {
+        price = price / 100;
+        if (!Number.isInteger(price)) {
+          let decimal = (price - Math.floor(price)).toFixed(2);
+          let silver = Number.parseFloat(decimal) * 100;
+          if (!Number.isInteger(silver / 10)) {
+            silver = silver / 10;
+            decimal = (silver - Math.floor(silver)).toFixed(1);
+            const copper = Number.parseFloat(decimal) * 10;
+            if (Math.trunc(silver) === 0) {
+              return Math.trunc(price) + ' gp, ' + copper + ' cp';
+            } else {
+              return Math.trunc(price) + ' gp, ' + Math.trunc(silver) + ' sp, ' + copper + ' cp';
+            }
+          }
+          return Math.trunc(price) + ' gp, ' + silver / 10 + ' sp';
+        }
+        return price + ' gp';
       }
     },
     getFormattedBulk(bulk: number) {
