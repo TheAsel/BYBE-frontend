@@ -22,7 +22,7 @@ import {
 } from '@quasar/extras/mdi-v7';
 import { capitalize, debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { onMounted, ref, toRaw, watch } from 'vue';
+import { onMounted, onUnmounted, ref, toRaw, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { filtersStore, itemsStore, settingsStore, templateStore } from '../../stores/store';
@@ -324,10 +324,31 @@ const deactivateNavigation = () => {
   navigationActive.value = false;
 };
 
-async function onKey(evt) {
+// Checks if typing to prevent stealing shortcuts
+function isTextInput(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  return !!el?.closest('input, textarea, [contenteditable="true"], .q-editor');
+}
+
+// Table sortcuts
+async function onTableKey(evt) {
+  if (isTextInput(evt.target)) {
+    return;
+  }
+
   if (
     navigationActive.value !== true ||
-    ![13, 33, 34, 35, 36, 37, 38, 39, 40].includes(evt.keyCode) ||
+    ![
+      'Enter',
+      'PageUp',
+      'PageDown',
+      'Home',
+      'End',
+      'ArrowLeft',
+      'ArrowUp',
+      'ArrowRight',
+      'ArrowDown'
+    ].includes(evt.key) ||
     itemTable.value === null ||
     loading.value === true
   ) {
@@ -352,14 +373,12 @@ async function onKey(evt) {
 
   let index = currentIndex;
 
-  switch (evt.keyCode) {
-    // Enter
-    case 13: {
+  switch (evt.key) {
+    case 'Enter': {
       addItem(items.getSelectedItem!);
       break;
     }
-    // PageUp
-    case 33: {
+    case 'PageUp': {
       index = 0;
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
@@ -367,8 +386,7 @@ async function onKey(evt) {
       itemTable.value.scrollTo(index);
       break;
     }
-    // PageDown
-    case 34: {
+    case 'PageDown': {
       index = rowsPerPage - 1;
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
@@ -376,8 +394,7 @@ async function onKey(evt) {
       itemTable.value.scrollTo(index);
       break;
     }
-    // Home
-    case 36: {
+    case 'Home': {
       index = 0;
       const promise = waitForPageLoad();
       itemTable.value.firstPage();
@@ -389,8 +406,7 @@ async function onKey(evt) {
       itemTable.value.scrollTo(index);
       break;
     }
-    // End
-    case 35: {
+    case 'End': {
       index = rowsPerPage - 1;
       const promise = waitForPageLoad();
       itemTable.value.lastPage();
@@ -402,8 +418,7 @@ async function onKey(evt) {
       itemTable.value.scrollTo(index - 1);
       break;
     }
-    // ArrowLeft
-    case 37: {
+    case 'ArrowLeft': {
       const page = currentPage <= 1 ? lastPage : currentPage - 1;
       index = 0;
       const promise = waitForPageLoad();
@@ -420,8 +435,7 @@ async function onKey(evt) {
       itemTable.value.scrollTo(index);
       break;
     }
-    // ArrowUp
-    case 38: {
+    case 'ArrowUp': {
       if (currentIndex > 0) {
         index = currentIndex - 1;
         const { computedRows } = itemTable.value;
@@ -431,8 +445,7 @@ async function onKey(evt) {
       itemTable.value.scrollTo(index - 1);
       break;
     }
-    // ArrowRight
-    case 39: {
+    case 'ArrowRight': {
       const page = currentPage >= lastPage ? 1 : currentPage + 1;
       index = 0;
       const promise = waitForPageLoad();
@@ -449,8 +462,7 @@ async function onKey(evt) {
       itemTable.value.scrollTo(index);
       break;
     }
-    // ArrowDown
-    case 40: {
+    case 'ArrowDown': {
       if (currentIndex < lastIndex) {
         index = currentIndex + 1;
         const { computedRows } = itemTable.value;
@@ -462,6 +474,29 @@ async function onKey(evt) {
     }
   }
 }
+
+// Global shortcuts
+function onGlobalKey(evt: KeyboardEvent) {
+  if (isTextInput(evt.target)) {
+    return;
+  }
+  switch (evt.key.toLowerCase()) {
+    case 'b':
+      if (evt.ctrlKey || evt.metaKey) {
+        evt.preventDefault();
+        props.toggleSheetView!();
+      }
+      break;
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onGlobalKey);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onGlobalKey);
+});
 
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
@@ -566,7 +601,7 @@ onMounted(async () => {
       "
       @focusin="activateNavigation"
       @focusout="deactivateNavigation"
-      @keydown="onKey"
+      @keydown="onTableKey"
     >
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
@@ -594,7 +629,7 @@ onMounted(async () => {
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  Hide sheet
+                  Hide sheet (Ctrl + B)
                 </q-tooltip>
               </q-btn>
               <q-btn
@@ -614,7 +649,7 @@ onMounted(async () => {
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  Show sheet
+                  Show sheet (Ctrl + B)
                 </q-tooltip>
               </q-btn>
             </span>
@@ -712,7 +747,15 @@ onMounted(async () => {
               size="sm"
               aria-label="Toggle fullscreen"
               @click="toggleFullscreen"
-            />
+            >
+              <q-tooltip
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Fullscreen
+              </q-tooltip>
+            </q-btn>
           </div>
         </div>
       </template>

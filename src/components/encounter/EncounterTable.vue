@@ -23,7 +23,7 @@ import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
 import { mdiBowArrow, mdiMagicStaff, mdiSword } from '@quasar/extras/mdi-v7';
 import { capitalize, debounce } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { onMounted, ref, toRaw, watch } from 'vue';
+import { onMounted, onUnmounted, ref, toRaw, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { encounterStore, filtersStore, settingsStore } from '../../stores/store';
@@ -903,10 +903,31 @@ const deactivateNavigation = () => {
   navigationActive.value = false;
 };
 
-async function onKey(evt) {
+// Checks if typing to prevent stealing shortcuts
+function isTextInput(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  return !!el?.closest('input, textarea, [contenteditable="true"], .q-editor');
+}
+
+// Table sortcuts
+async function onTableKey(evt: KeyboardEvent) {
+  if (isTextInput(evt.target)) {
+    return;
+  }
+
   if (
     navigationActive.value !== true ||
-    ![13, 33, 34, 35, 36, 37, 38, 39, 40].includes(evt.keyCode) ||
+    ![
+      'Enter',
+      'PageUp',
+      'PageDown',
+      'Home',
+      'End',
+      'ArrowLeft',
+      'ArrowUp',
+      'ArrowRight',
+      'ArrowDown'
+    ].includes(evt.key) ||
     encounterTable.value === null ||
     loading.value === true
   ) {
@@ -931,9 +952,8 @@ async function onKey(evt) {
 
   let index = currentIndex;
 
-  switch (evt.keyCode) {
-    // Enter
-    case 13: {
+  switch (evt.key) {
+    case 'Enter': {
       if (hazardToggle.value === 'hazards') {
         const tmp_hazard = selected.value[0]! as hazard;
         addHazard(tmp_hazard);
@@ -943,8 +963,7 @@ async function onKey(evt) {
       }
       break;
     }
-    // PageUp
-    case 33: {
+    case 'PageUp': {
       index = 0;
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
@@ -958,8 +977,7 @@ async function onKey(evt) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    // PageDown
-    case 34: {
+    case 'PageDown': {
       index = rowsPerPage - 1;
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
@@ -973,8 +991,7 @@ async function onKey(evt) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    // Home
-    case 36: {
+    case 'Home': {
       index = 0;
       const promise = waitForPageLoad();
       encounterTable.value.firstPage();
@@ -992,8 +1009,7 @@ async function onKey(evt) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    // End
-    case 35: {
+    case 'End': {
       index = rowsPerPage - 1;
       const promise = waitForPageLoad();
       encounterTable.value.lastPage();
@@ -1011,8 +1027,7 @@ async function onKey(evt) {
       encounterTable.value.scrollTo(index - 1);
       break;
     }
-    // ArrowLeft
-    case 37: {
+    case 'ArrowLeft': {
       const page = currentPage <= 1 ? lastPage : currentPage - 1;
       index = 0;
       const promise = waitForPageLoad();
@@ -1035,8 +1050,7 @@ async function onKey(evt) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    // ArrowUp
-    case 38: {
+    case 'ArrowUp': {
       if (currentIndex > 0) {
         index = currentIndex - 1;
         const { computedRows } = encounterTable.value;
@@ -1052,8 +1066,7 @@ async function onKey(evt) {
       encounterTable.value.scrollTo(index - 1);
       break;
     }
-    // ArrowRight
-    case 39: {
+    case 'ArrowRight': {
       const page = currentPage >= lastPage ? 1 : currentPage + 1;
       index = 0;
       const promise = waitForPageLoad();
@@ -1076,8 +1089,7 @@ async function onKey(evt) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    // ArrowDown
-    case 40: {
+    case 'ArrowDown': {
       if (currentIndex < lastIndex) {
         index = currentIndex + 1;
         const { computedRows } = encounterTable.value;
@@ -1095,6 +1107,29 @@ async function onKey(evt) {
     }
   }
 }
+
+// Global shortcuts
+function onGlobalKey(evt: KeyboardEvent) {
+  if (isTextInput(evt.target)) {
+    return;
+  }
+  switch (evt.key.toLowerCase()) {
+    case 'b':
+      if (evt.ctrlKey || evt.metaKey) {
+        evt.preventDefault();
+        props.toggleSheetView!();
+      }
+      break;
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onGlobalKey);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onGlobalKey);
+});
 
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
@@ -1277,7 +1312,7 @@ onMounted(async () => {
       @row-dblclick="(_, row) => addCreature(row)"
       @focusin="activateNavigation"
       @focusout="deactivateNavigation"
-      @keydown="onKey"
+      @keydown="onTableKey"
     >
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
@@ -1305,7 +1340,7 @@ onMounted(async () => {
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  Hide sheet
+                  Hide sheet (Ctrl + B)
                 </q-tooltip>
               </q-btn>
               <q-btn
@@ -1325,7 +1360,7 @@ onMounted(async () => {
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  Show sheet
+                  Show sheet (Ctrl + B)
                 </q-tooltip>
               </q-btn>
             </span>
@@ -1445,7 +1480,15 @@ onMounted(async () => {
               size="sm"
               aria-label="Toggle fullscreen"
               @click="toggleFullscreen"
-            />
+            >
+              <q-tooltip
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Fullscreen
+              </q-tooltip>
+            </q-btn>
           </div>
         </div>
       </template>
@@ -2279,7 +2322,7 @@ onMounted(async () => {
       @row-dblclick="(_, row) => addHazard(row)"
       @focusin="activateNavigation"
       @focusout="deactivateNavigation"
-      @keydown="onKey"
+      @keydown="onTableKey"
     >
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
@@ -2447,7 +2490,15 @@ onMounted(async () => {
               size="sm"
               aria-label="Toggle fullscreen"
               @click="toggleFullscreen"
-            />
+            >
+              <q-tooltip
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Fullscreen
+              </q-tooltip>
+            </q-btn>
           </div>
         </div>
       </template>
