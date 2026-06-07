@@ -205,7 +205,7 @@ const steps: Step[] = [
   },
   {
     target: '#v-step-12',
-    content: 'This is where the selected creature or hazard description will be displayed.',
+    content: "Click here to show or hide the selected item's description.",
     params: {
       placement: 'auto'
     }

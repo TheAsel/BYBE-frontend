@@ -11,7 +11,6 @@ const items = itemsStore();
 <template>
   <div class="item-sheet">
     <div
-      id="v-step-6"
       class="tw:opacity-85 tw:dark:opacity-90 tw:items-center tw:text-left tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700 hide-print"
     >
       <q-scroll-area style="height: calc(100vh - 128px)">

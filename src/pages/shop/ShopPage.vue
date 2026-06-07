@@ -147,7 +147,7 @@ const steps: Step[] = [
   },
   {
     target: '#v-step-6',
-    content: "This is where the selected item's description will be displayed.",
+    content: "Click here to show or hide the selected item's description.",
     params: {
       placement: 'auto'
     }
