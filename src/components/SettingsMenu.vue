@@ -71,7 +71,13 @@ switch (localSupport.value) {
 }
 
 interface Widget {
-  draw: (username, type) => void;
+  draw: (
+    username: string,
+    type: {
+      type: string;
+      [key: string]: string;
+    }
+  ) => void;
 }
 declare let kofiWidgetOverlay: Widget;
 
@@ -305,7 +311,7 @@ const validateData = (result: string) => {
               return (
                 typeof p.name === 'string' &&
                 Array.isArray(p.members) &&
-                p.members.every((member) => typeof member === 'number')
+                p.members.every((member: undefined) => typeof member === 'number')
               );
             });
             if (isCompatible) {

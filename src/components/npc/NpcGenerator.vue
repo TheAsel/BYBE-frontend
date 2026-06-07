@@ -232,7 +232,7 @@ const resetParameters = () => {
   nickname.value = false;
 };
 
-const filterGendersFn = (val, update) => {
+const filterGendersFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     npcParameters.npcParameters.genders = genderFilter.value.filter((v) =>
@@ -241,7 +241,7 @@ const filterGendersFn = (val, update) => {
   });
 };
 
-const filterAncestriesFn = (val, update) => {
+const filterAncestriesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     npcParameters.npcParameters.ancestries = ancestryFilter.value.filter((v) =>
@@ -250,7 +250,7 @@ const filterAncestriesFn = (val, update) => {
   });
 };
 
-const filterCulturesFn = (val, update) => {
+const filterCulturesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     npcParameters.npcParameters.cultures = culturesFilter.value.filter((v) =>
@@ -259,7 +259,7 @@ const filterCulturesFn = (val, update) => {
   });
 };
 
-const filterClassesFn = (val, update) => {
+const filterClassesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     npcParameters.npcParameters.classes = classFilter.value.filter((v) =>
@@ -268,7 +268,7 @@ const filterClassesFn = (val, update) => {
   });
 };
 
-const filterJobsFn = (val, update) => {
+const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     npcParameters.npcParameters.jobs = jobFilter.value.filter((v) =>

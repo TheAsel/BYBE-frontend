@@ -310,7 +310,7 @@ const saveChanges = () => {
   hazardStealth.value = tmpFilters.value.hazards.stealth;
 };
 
-const filterCreatureTraitsFn = (val, update) => {
+const filterCreatureTraitsFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.creatureFilters.traits = creatureTraitsOptions.value.filter((v) =>
@@ -319,7 +319,7 @@ const filterCreatureTraitsFn = (val, update) => {
   });
 };
 
-const filterFamiliesFn = (val, update) => {
+const filterFamiliesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.creatureFilters.families = familiesOptions.filter((v) =>
@@ -328,7 +328,7 @@ const filterFamiliesFn = (val, update) => {
   });
 };
 
-const filterCreatureSourcesFn = (val, update) => {
+const filterCreatureSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.creatureFilters.sources = creatureSourcesOptions.value.filter((v) =>
@@ -337,7 +337,7 @@ const filterCreatureSourcesFn = (val, update) => {
   });
 };
 
-const filterHazardTraitsFn = (val, update) => {
+const filterHazardTraitsFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.hazardFilters.traits = hazardTraitsOptions.value.filter((v) =>
@@ -346,7 +346,7 @@ const filterHazardTraitsFn = (val, update) => {
   });
 };
 
-const filterHazardSourcesFn = (val, update) => {
+const filterHazardSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.hazardFilters.sources = hazardSourcesOptions.value.filter((v) =>

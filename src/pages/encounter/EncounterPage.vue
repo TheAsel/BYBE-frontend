@@ -46,7 +46,7 @@ if (localParty) {
         return (
           typeof p.name === 'string' &&
           Array.isArray(p.members) &&
-          p.members.every((member) => typeof member === 'number')
+          p.members.every((member: undefined) => typeof member === 'number')
         );
       });
       if (isCompatible) {

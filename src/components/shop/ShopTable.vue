@@ -37,6 +37,7 @@ import { itemsStore } from 'src/stores/items';
 import { settingsStore } from 'src/stores/settings';
 import { templateStore } from 'src/stores/template';
 
+import type { QTableProps } from 'quasar';
 import type { games, item_columns, item_filters, rarities } from 'src/types/filters';
 import type { item, min_item } from 'src/types/item';
 
@@ -248,7 +249,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   }
 }, 300);
 
-async function onRequest(props) {
+async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
   const { page, rowsPerPage } = props.pagination;
 
   loading.value = true;
@@ -333,7 +334,7 @@ function isTextInput(target: EventTarget | null): boolean {
 }
 
 // Table sortcuts
-async function onTableKey(evt) {
+async function onTableKey(evt: KeyboardEvent) {
   if (isTextInput(evt.target)) {
     return;
   }
@@ -507,7 +508,7 @@ const toggleFullscreen = () => {
   }
 };
 
-const filterSourcesFn = (val, update) => {
+const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.itemFilters.sources = sourceFilter.value.filter((v) =>
@@ -516,7 +517,7 @@ const filterSourcesFn = (val, update) => {
   });
 };
 
-const filterTraitsFn = (val, update) => {
+const filterTraitsFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.itemFilters.traits = traitFilter.value.filter((v) =>
@@ -589,13 +590,13 @@ onMounted(async () => {
       :fullscreen="fullscreen"
       @request="onRequest"
       @row-click="
-        (_, row: item) => {
+        (_: any, row: item) => {
           items.setSelectedItem(row);
           selected = [row];
         }
       "
       @row-dblclick="
-        (_, row: item) => {
+        (_: any, row: item) => {
           addItem(row);
         }
       "

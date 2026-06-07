@@ -253,8 +253,8 @@ const saveChanges = () => {
                   :maxlength="50"
                   :no-error-icon="true"
                   :rules="[
-                    (val) => !!val || 'Field is required',
-                    (val) =>
+                    (val: string) => !!val || 'Field is required',
+                    (val: string) =>
                       !parties.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                       'This party already exists'
                   ]"

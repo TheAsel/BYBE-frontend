@@ -542,8 +542,8 @@ const showItem = debounce(async function (item: min_creature_hazard) {
             :maxlength="50"
             :no-error-icon="true"
             :rules="[
-              (val) => !!val || 'Field is required',
-              (val) =>
+              (val: string) => !!val || 'Field is required',
+              (val: string) =>
                 !encounters.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This encounter already exists'
             ]"
@@ -651,8 +651,8 @@ const showItem = debounce(async function (item: min_creature_hazard) {
             :maxlength="50"
             :no-error-icon="true"
             :rules="[
-              (val) => !!val || 'Field is required',
-              (val) =>
+              (val: string) => !!val || 'Field is required',
+              (val: string) =>
                 !encounters.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This encounter already exists'
             ]"
@@ -699,8 +699,8 @@ const showItem = debounce(async function (item: min_creature_hazard) {
             :maxlength="50"
             :no-error-icon="true"
             :rules="[
-              (val) => !!val || 'Field is required',
-              (val) =>
+              (val: string) => !!val || 'Field is required',
+              (val: string) =>
                 !encounters.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This encounter already exists'
             ]"

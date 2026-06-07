@@ -155,7 +155,29 @@ const generateShop = debounce(async function () {
   saveChanges();
   const game_version = settings.game_version;
 
-  const body = {
+  const body: {
+    source_filter?: string[] | undefined;
+    trait_blacklist_filter?: string[] | undefined;
+    trait_whitelist_filter?: string[] | undefined;
+    rarity_filter?: string[] | undefined;
+    type_filter?: string[] | undefined;
+    armor_percentage?: number | undefined;
+    equipment_percentage?: number | undefined;
+    shield_percentage?: number | undefined;
+    weapon_percentage?: number | undefined;
+    consumable_dices: {
+      dice_size: number | null;
+      n_of_dices: number | null;
+    }[];
+    equippable_dices: {
+      dice_size: number | null;
+      n_of_dices: number | null;
+    }[];
+    min_level: number;
+    max_level: number;
+    shop_template?: string;
+    game_system_version: string;
+  } = {
     consumable_dices: [
       {
         dice_size: tmpFilters.value.consumable_dices.dice_size.value,
@@ -190,24 +212,24 @@ const generateShop = debounce(async function () {
   }
   if (tmpFilters.value.shop_template) {
     if (tmpFilters.value.shop_template.default) {
-      body['shop_template'] = tmpFilters.value.shop_template.name;
+      body.shop_template = tmpFilters.value.shop_template.name;
     } else {
-      body['source_filter'] = tmpFilters.value.shop_template.source_filter;
-      body['trait_blacklist_filter'] = tmpFilters.value.shop_template.trait_blacklist_filter;
-      body['trait_whitelist_filter'] = tmpFilters.value.shop_template.trait_whitelist_filter;
-      body['rarity_filter'] = tmpFilters.value.shop_template.rarity_filter;
-      body['type_filter'] = tmpFilters.value.shop_template.type_filter;
+      body.source_filter = tmpFilters.value.shop_template.source_filter;
+      body.trait_blacklist_filter = tmpFilters.value.shop_template.trait_blacklist_filter;
+      body.trait_whitelist_filter = tmpFilters.value.shop_template.trait_whitelist_filter;
+      body.rarity_filter = tmpFilters.value.shop_template.rarity_filter;
+      body.type_filter = tmpFilters.value.shop_template.type_filter;
       if (tmpFilters.value.shop_template.armor_percentage! > 0) {
-        body['armor_percentage'] = tmpFilters.value.shop_template.armor_percentage;
+        body.armor_percentage = tmpFilters.value.shop_template.armor_percentage;
       }
       if (tmpFilters.value.shop_template.equipment_percentage! > 0) {
-        body['equipment_percentage'] = tmpFilters.value.shop_template.equipment_percentage;
+        body.equipment_percentage = tmpFilters.value.shop_template.equipment_percentage;
       }
       if (tmpFilters.value.shop_template.shield_percentage! > 0) {
-        body['shield_percentage'] = tmpFilters.value.shop_template.shield_percentage;
+        body.shield_percentage = tmpFilters.value.shop_template.shield_percentage;
       }
       if (tmpFilters.value.shop_template.weapon_percentage! > 0) {
-        body['weapon_percentage'] = tmpFilters.value.shop_template.weapon_percentage;
+        body.weapon_percentage = tmpFilters.value.shop_template.weapon_percentage;
       }
     }
   }
@@ -486,7 +508,7 @@ const saveChanges = () => {
   localStorage.setItem('templates', JSON.stringify(customTemplates));
 };
 
-const toggleTraits = (opt) => {
+const toggleTraits = (opt: { label: string; value: string; state: boolean | null }) => {
   const index = selectedTraits.value.findIndex((trait) => trait.label === opt.label);
   if (index === -1) {
     selectedTraits.value.push(opt);
@@ -497,14 +519,14 @@ const toggleTraits = (opt) => {
   }
 };
 
-const filterSourcesFn = (val, update) => {
+const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.itemFilters.sources = sourceFilter.filter((v) => v.toLowerCase().includes(filter));
   });
 };
 
-const filterTraitsFn = (val, update) => {
+const filterTraitsFn = (val: string, update: (fn: () => void) => void) => {
   const filter = val.toLowerCase();
   const filtered = traitFilter.filter((v) => v.label.toLowerCase().includes(filter));
   update(() => {
@@ -733,8 +755,8 @@ defineExpose({ generateShop });
                         :maxlength="50"
                         :no-error-icon="true"
                         :rules="[
-                          (val) => !!val || 'Field is required',
-                          (val) =>
+                          (val: string) => !!val || 'Field is required',
+                          (val: string) =>
                             !template_list.some(
                               (name) => name.toLowerCase() === val.toLowerCase()
                             ) || 'This template already exists'
@@ -858,8 +880,8 @@ defineExpose({ generateShop });
                         :maxlength="50"
                         :no-error-icon="true"
                         :rules="[
-                          (val) => !!val || 'Field is required',
-                          (val) =>
+                          (val: string) => !!val || 'Field is required',
+                          (val: string) =>
                             !template_list.some(
                               (name) => name.toLowerCase() === val.toLowerCase()
                             ) || 'This template already exists'
@@ -1071,8 +1093,8 @@ defineExpose({ generateShop });
                     :maxlength="50"
                     :no-error-icon="true"
                     :rules="[
-                      (val) => !!val || 'Field is required',
-                      (val) =>
+                      (val: string) => !!val || 'Field is required',
+                      (val: string) =>
                         !template_list.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                         'This template already exists'
                     ]"
@@ -1164,8 +1186,8 @@ defineExpose({ generateShop });
                         :maxlength="50"
                         :no-error-icon="true"
                         :rules="[
-                          (val) => !!val || 'Field is required',
-                          (val) =>
+                          (val: string) => !!val || 'Field is required',
+                          (val: string) =>
                             !template_list.some(
                               (name) =>
                                 name.toLowerCase() === val.toLowerCase() &&
@@ -1293,8 +1315,8 @@ defineExpose({ generateShop });
                         :maxlength="50"
                         :no-error-icon="true"
                         :rules="[
-                          (val) => !!val || 'Field is required',
-                          (val) =>
+                          (val: string) => !!val || 'Field is required',
+                          (val: string) =>
                             !template_list.some(
                               (name) =>
                                 name.toLowerCase() === val.toLowerCase() &&

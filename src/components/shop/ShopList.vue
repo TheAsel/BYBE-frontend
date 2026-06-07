@@ -364,8 +364,8 @@ const showItem = debounce(async function (item: min_item) {
             :maxlength="50"
             :no-error-icon="true"
             :rules="[
-              (val) => !!val || 'Field is required',
-              (val) =>
+              (val: string) => !!val || 'Field is required',
+              (val: string) =>
                 !shops.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This shop already exists'
             ]"
@@ -469,8 +469,8 @@ const showItem = debounce(async function (item: min_item) {
             :maxlength="50"
             :no-error-icon="true"
             :rules="[
-              (val) => !!val || 'Field is required',
-              (val) =>
+              (val: string) => !!val || 'Field is required',
+              (val: string) =>
                 !shops.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This shop already exists'
             ]"
@@ -513,8 +513,8 @@ const showItem = debounce(async function (item: min_item) {
             :maxlength="50"
             :no-error-icon="true"
             :rules="[
-              (val) => !!val || 'Field is required',
-              (val) =>
+              (val: string) => !!val || 'Field is required',
+              (val: string) =>
                 !shops.some((name) => name.toLowerCase() === val.toLowerCase()) ||
                 'This shop already exists'
             ]"

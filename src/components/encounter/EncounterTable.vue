@@ -40,6 +40,7 @@ import { encounterStore } from 'src/stores/encounter';
 import { filtersStore } from 'src/stores/filters';
 import { settingsStore } from 'src/stores/settings';
 
+import type { QTableProps } from 'quasar';
 import type { creature } from 'src/types/creature';
 import type { min_creature_hazard } from 'src/types/encounter';
 import type {
@@ -725,7 +726,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   }
 }, 300);
 
-async function onRequest(props) {
+async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
   const { page, rowsPerPage } = props.pagination;
 
   loading.value = true;
@@ -1139,7 +1140,7 @@ const toggleFullscreen = () => {
   }
 };
 
-const filterCreatureSourcesFn = (val, update) => {
+const filterCreatureSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.creatureFilters.sources = sourceCreatureFilter.value.filter((v) =>
@@ -1148,7 +1149,7 @@ const filterCreatureSourcesFn = (val, update) => {
   });
 };
 
-const filterCreatureTraitsFn = (val, update) => {
+const filterCreatureTraitsFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.creatureFilters.traits = traitCreatureFilter.value.filter((v) =>
@@ -1157,7 +1158,7 @@ const filterCreatureTraitsFn = (val, update) => {
   });
 };
 
-const filterCreatureFamiliesFn = (val, update) => {
+const filterCreatureFamiliesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.creatureFilters.families = familyCreatureFilter.value.filter((v) =>
@@ -1166,7 +1167,7 @@ const filterCreatureFamiliesFn = (val, update) => {
   });
 };
 
-const filterHazardSourcesFn = (val, update) => {
+const filterHazardSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.hazardFilters.sources = sourceHazardFilter.value.filter((v) =>
@@ -1175,7 +1176,7 @@ const filterHazardSourcesFn = (val, update) => {
   });
 };
 
-const filterHazardTraitsFn = (val, update) => {
+const filterHazardTraitsFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
     filters.hazardFilters.traits = traitHazardFilter.value.filter((v) =>
@@ -1303,12 +1304,12 @@ onMounted(async () => {
       :fullscreen="fullscreen"
       @request="onRequest"
       @row-click="
-        (_, row: creature) => {
+        (_: any, row: creature) => {
           encounter.setSelectedCreature(row);
           selected = [row];
         }
       "
-      @row-dblclick="(_, row) => addCreature(row)"
+      @row-dblclick="(_: any, row: creature) => addCreature(row)"
       @focusin="activateNavigation"
       @focusout="deactivateNavigation"
       @keydown="onTableKey"
@@ -2332,12 +2333,12 @@ onMounted(async () => {
       :fullscreen="fullscreen"
       @request="onRequest"
       @row-click="
-        (_, row: hazard) => {
+        (_: any, row: hazard) => {
           encounter.setSelectedHazard(row);
           selected = [row];
         }
       "
-      @row-dblclick="(_, row) => addHazard(row)"
+      @row-dblclick="(_: any, row: hazard) => addHazard(row)"
       @focusin="activateNavigation"
       @focusout="deactivateNavigation"
       @keydown="onTableKey"
