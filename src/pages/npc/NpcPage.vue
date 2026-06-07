@@ -9,9 +9,11 @@ import NpcSheet from 'src/components/npc/NpcSheet.vue';
 import { npcStore } from 'src/stores/npc';
 import { settingsStore } from 'src/stores/settings';
 import { updateLocalStorageNpcs } from 'src/utils/local-storage';
+import { scrollPage } from 'src/utils/navigation';
+import { getTourCallbacks, getTourOptions } from 'src/utils/vue-tour';
 
 import type { npc } from 'src/types/npcs';
-import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
+import type { Step } from 'vue3-tour';
 
 useHead({
   title: 'NPC Generator - BYBE',
@@ -96,16 +98,6 @@ const steps: Step[] = [
   }
 ];
 
-const options: VTourOptions = {
-  highlight: true,
-  labels: {
-    buttonSkip: 'Close Help',
-    buttonPrevious: 'Previous',
-    buttonNext: 'Next',
-    buttonStop: 'Finish'
-  }
-};
-
 const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
@@ -140,11 +132,6 @@ const stopTour = () => {
   }
 };
 
-const callbacks: VTourCallbacks = {
-  onStart: startTour,
-  onStop: stopTour
-};
-
 function scrollDirection() {
   const footers = Array.from(document.querySelectorAll('footer'));
   const footer = footers.at(-1);
@@ -153,29 +140,16 @@ function scrollDirection() {
     scrollUp.value = top < globalThis.innerHeight;
   }
 }
-
-const scrollPage = (up: boolean) => {
-  settings.setHiddenNav(true);
-  setTimeout(() => {
-    let offset;
-    if (up) {
-      offset = document.getElementById('generator')?.offsetTop;
-    } else {
-      offset = document.getElementById('sheet')?.offsetTop;
-    }
-    if (typeof offset === 'number') {
-      globalThis.scrollTo({
-        top: offset - 60,
-        behavior: 'smooth'
-      });
-    }
-  }, 10);
-};
 </script>
 
 <template>
   <div class="row items-center justify-between">
-    <v-tour name="/npc" :steps="steps" :options="options" :callbacks="callbacks" />
+    <v-tour
+      name="/npc"
+      :steps="steps"
+      :options="getTourOptions()"
+      :callbacks="getTourCallbacks(startTour, stopTour)"
+    />
     <NpcGenerator id="generator" />
     <q-space />
     <NpcEditor />
@@ -193,7 +167,7 @@ const scrollPage = (up: boolean) => {
         :icon="matArrowUpward"
         padding="sm"
         color="primary"
-        @click="scrollPage(true)"
+        @click="scrollPage(true, 'generator', 'sheet')"
       />
       <q-btn
         v-else
@@ -201,7 +175,7 @@ const scrollPage = (up: boolean) => {
         :icon="matArrowDownward"
         padding="sm"
         color="primary"
-        @click="scrollPage(false)"
+        @click="scrollPage(false, 'generator', 'sheet')"
       />
     </q-page-sticky>
     <q-scroll-observer @scroll="scrollDirection" />

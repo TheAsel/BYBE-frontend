@@ -9,9 +9,11 @@ import EncounterTable from 'src/components/encounter/EncounterTable.vue';
 import { encounterStore } from 'src/stores/encounter';
 import { settingsStore } from 'src/stores/settings';
 import { updateLocalStorageEncounters, updateLocalStorageParties } from 'src/utils/local-storage';
+import { scrollPage } from 'src/utils/navigation';
+import { getTourCallbacks, getTourOptions } from 'src/utils/vue-tour';
 
 import type { min_creature_hazard } from 'src/types/encounter';
-import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
+import type { Step } from 'vue3-tour';
 
 useHead({
   title: 'Encounter Builder - BYBE',
@@ -143,16 +145,6 @@ const steps: Step[] = [
   }
 ];
 
-const options: VTourOptions = {
-  highlight: true,
-  labels: {
-    buttonSkip: 'Close Help',
-    buttonPrevious: 'Previous',
-    buttonNext: 'Next',
-    buttonStop: 'Finish'
-  }
-};
-
 // PF2E encounter
 const tmpKoboldMage: min_creature_hazard = {
   game: 'pf',
@@ -234,11 +226,6 @@ const stopTour = () => {
   }
 };
 
-const callbacks: VTourCallbacks = {
-  onStart: startTour,
-  onStop: stopTour
-};
-
 function scrollDirection() {
   const footers = Array.from(document.querySelectorAll('footer'));
   const footer = footers.at(-1);
@@ -247,24 +234,6 @@ function scrollDirection() {
     scrollUp.value = top < globalThis.innerHeight;
   }
 }
-
-const scrollPage = (up: boolean) => {
-  settings.setHiddenNav(true);
-  setTimeout(() => {
-    let offset;
-    if (up) {
-      offset = document.getElementById('table')?.offsetTop;
-    } else {
-      offset = document.getElementById('list')?.offsetTop;
-    }
-    if (typeof offset === 'number') {
-      globalThis.scrollTo({
-        top: offset - 60,
-        behavior: 'smooth'
-      });
-    }
-  }, 10);
-};
 
 const handleResize = () => {
   screenWidth.value = screen.width;
@@ -296,7 +265,12 @@ const toggleSheetView = () => {
 
 <template>
   <div class="row items-center justify-between">
-    <v-tour name="/encounter" :steps="steps" :options="options" :callbacks="callbacks" />
+    <v-tour
+      name="/encounter"
+      :steps="steps"
+      :options="getTourOptions()"
+      :callbacks="getTourCallbacks(startTour, stopTour)"
+    />
     <EncounterSheet
       v-if="screenWidth >= 768"
       class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
@@ -328,7 +302,7 @@ const toggleSheetView = () => {
         :icon="matArrowUpward"
         padding="sm"
         color="primary"
-        @click="scrollPage(true)"
+        @click="scrollPage(true, 'table', 'list')"
       />
       <q-btn
         v-else
@@ -336,7 +310,7 @@ const toggleSheetView = () => {
         :icon="matArrowDownward"
         padding="sm"
         color="primary"
-        @click="scrollPage(false)"
+        @click="scrollPage(false, 'table', 'list')"
       />
     </q-page-sticky>
     <q-scroll-observer @scroll="scrollDirection" />

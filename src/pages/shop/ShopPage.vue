@@ -9,9 +9,11 @@ import ShopTable from 'src/components/shop/ShopTable.vue';
 import { itemsStore } from 'src/stores/items';
 import { settingsStore } from 'src/stores/settings';
 import { updateLocalStorageShops, updateLocalStorageTemplates } from 'src/utils/local-storage';
+import { scrollPage } from 'src/utils/navigation';
+import { getTourCallbacks, getTourOptions } from 'src/utils/vue-tour';
 
 import type { item, min_item } from 'src/types/item';
-import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
+import type { Step } from 'vue3-tour';
 
 useHead({
   title: 'Shop Generator - BYBE',
@@ -90,16 +92,6 @@ const steps: Step[] = [
     }
   }
 ];
-
-const options: VTourOptions = {
-  highlight: true,
-  labels: {
-    buttonSkip: 'Close Help',
-    buttonPrevious: 'Previous',
-    buttonNext: 'Next',
-    buttonStop: 'Finish'
-  }
-};
 
 // PF2E shop
 const tmpCloakFull: item = {
@@ -227,11 +219,6 @@ const stopTour = () => {
   }
 };
 
-const callbacks: VTourCallbacks = {
-  onStart: startTour,
-  onStop: stopTour
-};
-
 function scrollDirection() {
   const footers = Array.from(document.querySelectorAll('footer'));
   const footer = footers.at(-1);
@@ -240,24 +227,6 @@ function scrollDirection() {
     scrollUp.value = top < globalThis.innerHeight;
   }
 }
-
-const scrollPage = (up: boolean) => {
-  settings.setHiddenNav(true);
-  setTimeout(() => {
-    let offset;
-    if (up) {
-      offset = document.getElementById('table')?.offsetTop;
-    } else {
-      offset = document.getElementById('list')?.offsetTop;
-    }
-    if (typeof offset === 'number') {
-      globalThis.scrollTo({
-        top: offset - 60,
-        behavior: 'smooth'
-      });
-    }
-  }, 10);
-};
 
 const handleResize = () => {
   screenWidth.value = screen.width;
@@ -289,7 +258,12 @@ const toggleSheetView = () => {
 
 <template>
   <div class="row items-center justify-between">
-    <v-tour name="/shop" :steps="steps" :options="options" :callbacks="callbacks" />
+    <v-tour
+      name="/shop"
+      :steps="steps"
+      :options="getTourOptions()"
+      :callbacks="getTourCallbacks(startTour, stopTour)"
+    />
     <ShopSheet
       v-if="screenWidth >= 768"
       class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
@@ -321,7 +295,7 @@ const toggleSheetView = () => {
         :icon="matArrowUpward"
         padding="sm"
         color="primary"
-        @click="scrollPage(true)"
+        @click="scrollPage(true, 'table', 'list')"
       />
       <q-btn
         v-else
@@ -329,7 +303,7 @@ const toggleSheetView = () => {
         :icon="matArrowDownward"
         padding="sm"
         color="primary"
-        @click="scrollPage(false)"
+        @click="scrollPage(false, 'table', 'list')"
       />
     </q-page-sticky>
     <q-scroll-observer @scroll="scrollDirection" />
