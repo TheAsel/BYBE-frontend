@@ -39,7 +39,7 @@ const npcParameters = npcParametersStore();
 const npcs = npcStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const importNpcDialog = ref(false);
 const importNameInput = ref();
@@ -60,21 +60,21 @@ const newNpcRename = ref('');
 
 const removeNpcDialog = ref(false);
 
-const tmpNpc = ref<npc_list>(npcs.getActiveNpc!);
-const npcList = ref<string[]>(npcs.getNpcs.map((npc) => npc.name));
+const tmpNpc = ref<npc_list>(npcs.npcs[npcs.activeNpc]!);
+const npcList = ref<string[]>(npcs.npcs.map((npc) => npc.name));
 
 tmpNpc.value = {
-  name: npcs.getActiveNpc!.name,
-  npc: npcs.getActiveNpc!.npc,
-  culture: npcs.getActiveNpc!.culture
+  name: npcs.npcs[npcs.activeNpc]!.name,
+  npc: npcs.npcs[npcs.activeNpc]!.npc,
+  culture: npcs.npcs[npcs.activeNpc]!.culture
 };
 
 // save on npc change
 watch(npcs, () => {
   tmpNpc.value = {
-    name: npcs.getActiveNpc!.name,
-    npc: npcs.getActiveNpc!.npc,
-    culture: npcs.getActiveNpc!.culture
+    name: npcs.npcs[npcs.activeNpc]!.name,
+    npc: npcs.npcs[npcs.activeNpc]!.npc,
+    culture: npcs.npcs[npcs.activeNpc]!.culture
   };
   saveChanges();
 });
@@ -83,13 +83,13 @@ const generateParameterNpc = debounce(async function (
   parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level' | 'culture'
 ) {
   if (
-    (!npcs.getLocks.ancestry && parameter === 'ancestry') ||
-    (!npcs.getLocks.culture && parameter === 'culture') ||
-    (!npcs.getLocks.class && parameter === 'class') ||
-    (!npcs.getLocks.gender && parameter === 'gender') ||
-    (!npcs.getLocks.job && parameter === 'job') ||
-    (!npcs.getLocks.nickname && parameter === 'nickname') ||
-    (!npcs.getLocks.level && parameter === 'level')
+    (!npcs.locks.ancestry && parameter === 'ancestry') ||
+    (!npcs.locks.culture && parameter === 'culture') ||
+    (!npcs.locks.class && parameter === 'class') ||
+    (!npcs.locks.gender && parameter === 'gender') ||
+    (!npcs.locks.job && parameter === 'job') ||
+    (!npcs.locks.nickname && parameter === 'nickname') ||
+    (!npcs.locks.level && parameter === 'level')
   ) {
     npcs.setGenerating(true);
 
@@ -99,7 +99,7 @@ const generateParameterNpc = debounce(async function (
         if (newLevel === undefined) {
           throw new TypeError('Error generating npc level');
         }
-        npcs.getActiveNpc!.npc.level = newLevel;
+        npcs.npcs[npcs.activeNpc]!.npc.level = newLevel;
       } else {
         const newParameter = await npcParametersGenerator(currentGame.value, parameter);
         if (newParameter === undefined) {
@@ -108,22 +108,40 @@ const generateParameterNpc = debounce(async function (
         // regex: adds spaces between words
         switch (parameter) {
           case 'ancestry':
-            npcs.getActiveNpc!.npc.ancestry = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            npcs.npcs[npcs.activeNpc]!.npc.ancestry = newParameter.replaceAll(
+              /([a-z])([A-Z])/g,
+              '$1 $2'
+            );
             break;
           case 'culture':
-            npcs.getActiveNpc!.npc.culture = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            npcs.npcs[npcs.activeNpc]!.npc.culture = newParameter.replaceAll(
+              /([a-z])([A-Z])/g,
+              '$1 $2'
+            );
             break;
           case 'class':
-            npcs.getActiveNpc!.npc.class = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            npcs.npcs[npcs.activeNpc]!.npc.class = newParameter.replaceAll(
+              /([a-z])([A-Z])/g,
+              '$1 $2'
+            );
             break;
           case 'gender':
-            npcs.getActiveNpc!.npc.gender = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            npcs.npcs[npcs.activeNpc]!.npc.gender = newParameter.replaceAll(
+              /([a-z])([A-Z])/g,
+              '$1 $2'
+            );
             break;
           case 'job':
-            npcs.getActiveNpc!.npc.job = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            npcs.npcs[npcs.activeNpc]!.npc.job = newParameter.replaceAll(
+              /([a-z])([A-Z])/g,
+              '$1 $2'
+            );
             break;
           case 'nickname':
-            npcs.getActiveNpc!.npc.nickname = newParameter.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+            npcs.npcs[npcs.activeNpc]!.npc.nickname = newParameter.replaceAll(
+              /([a-z])([A-Z])/g,
+              '$1 $2'
+            );
             break;
 
           default:
@@ -150,19 +168,19 @@ let tmpGender: string;
 let tmpAncestry: string;
 let tmpCulture: string;
 const generateNamesNpc = debounce(async function () {
-  if (!npcs.getLocks.name) {
+  if (!npcs.locks.name) {
     npcs.setGenerating(true);
 
     if (
       namesIndex >= namesList.length - 1 ||
-      tmpGender !== npcs.getActiveNpc!.npc.gender ||
-      tmpAncestry !== npcs.getActiveNpc!.npc.ancestry ||
-      tmpCulture !== npcs.getActiveNpc!.npc.culture
+      tmpGender !== npcs.npcs[npcs.activeNpc]!.npc.gender ||
+      tmpAncestry !== npcs.npcs[npcs.activeNpc]!.npc.ancestry ||
+      tmpCulture !== npcs.npcs[npcs.activeNpc]!.npc.culture
     ) {
-      tmpGender = npcs.getActiveNpc!.npc.gender!;
-      tmpAncestry = npcs.getActiveNpc!.npc.ancestry!;
+      tmpGender = npcs.npcs[npcs.activeNpc]!.npc.gender!;
+      tmpAncestry = npcs.npcs[npcs.activeNpc]!.npc.ancestry!;
       if (currentGame.value === 'pf') {
-        tmpCulture = npcs.getActiveNpc!.npc.culture!;
+        tmpCulture = npcs.npcs[npcs.activeNpc]!.npc.culture!;
       }
 
       const body: {
@@ -174,34 +192,40 @@ const generateNamesNpc = debounce(async function () {
       } = {};
 
       if (
-        npcs.getActiveNpc!.npc.gender &&
-        npcParameters.getNpcParameters.genders.includes(npcs.getActiveNpc!.npc.gender)
+        npcs.npcs[npcs.activeNpc]!.npc.gender &&
+        npcParameters.npcParameters.genders.includes(npcs.npcs[npcs.activeNpc]!.npc.gender!)
       ) {
-        body.gender = npcs.getActiveNpc!.npc.gender.replaceAll(' ', '');
+        body.gender = npcs.npcs[npcs.activeNpc]!.npc.gender!.replaceAll(' ', '');
       }
 
       if (currentGame.value === 'sf') {
         if (
-          npcs.getActiveNpc!.npc.ancestry &&
-          npcParameters.getNpcParameters.ancestries.includes(npcs.getActiveNpc!.npc.ancestry)
+          npcs.npcs[npcs.activeNpc]!.npc.ancestry &&
+          npcParameters.npcParameters.ancestries.includes(npcs.npcs[npcs.activeNpc]!.npc.ancestry!)
         ) {
-          body.origin = { FromAncestry: npcs.getActiveNpc!.npc.ancestry.replaceAll(' ', '') };
+          body.origin = {
+            FromAncestry: npcs.npcs[npcs.activeNpc]!.npc.ancestry!.replaceAll(' ', '')
+          };
         }
       } else {
         if (
-          !npcs.getActiveNpc!.culture &&
-          npcs.getActiveNpc!.npc.ancestry &&
-          npcParameters.getNpcParameters.ancestries.includes(npcs.getActiveNpc!.npc.ancestry)
+          !npcs.npcs[npcs.activeNpc]!.culture &&
+          npcs.npcs[npcs.activeNpc]!.npc.ancestry &&
+          npcParameters.npcParameters.ancestries.includes(npcs.npcs[npcs.activeNpc]!.npc.ancestry!)
         ) {
-          body.origin = { FromAncestry: npcs.getActiveNpc!.npc.ancestry.replaceAll(' ', '') };
+          body.origin = {
+            FromAncestry: npcs.npcs[npcs.activeNpc]!.npc.ancestry!.replaceAll(' ', '')
+          };
         }
 
         if (
-          npcs.getActiveNpc!.culture &&
-          npcs.getActiveNpc!.npc.culture &&
-          npcParameters.getNpcParameters.cultures.includes(npcs.getActiveNpc!.npc.culture)
+          npcs.npcs[npcs.activeNpc]!.culture &&
+          npcs.npcs[npcs.activeNpc]!.npc.culture &&
+          npcParameters.npcParameters.cultures.includes(npcs.npcs[npcs.activeNpc]!.npc.culture!)
         ) {
-          body.origin = { FromCulture: npcs.getActiveNpc!.npc.culture.replaceAll(' ', '') };
+          body.origin = {
+            FromCulture: npcs.npcs[npcs.activeNpc]!.npc.culture!.replaceAll(' ', '')
+          };
         }
 
         if (body.origin?.FromAncestry === 'Leshy' && body.gender) {
@@ -224,7 +248,7 @@ const generateNamesNpc = debounce(async function () {
         }
         namesIndex = 0;
         namesList = newNames;
-        npcs.getActiveNpc!.npc.name = namesList[namesIndex];
+        npcs.npcs[npcs.activeNpc]!.npc.name = namesList[namesIndex];
       } catch (error) {
         console.error(error);
         $q.notify({
@@ -236,7 +260,7 @@ const generateNamesNpc = debounce(async function () {
       }
     } else {
       namesIndex++;
-      npcs.getActiveNpc!.npc.name = namesList[namesIndex];
+      npcs.npcs[npcs.activeNpc]!.npc.name = namesList[namesIndex];
     }
 
     npcs.setGenerating(false);
@@ -244,17 +268,17 @@ const generateNamesNpc = debounce(async function () {
 }, 300);
 
 const addCustomField = () => {
-  if (npcs.getActiveNpc!.npc.custom_fields === undefined) {
-    npcs.getActiveNpc!.npc.custom_fields = [{ name: '', body: '' }];
+  if (npcs.npcs[npcs.activeNpc]!.npc.custom_fields === undefined) {
+    npcs.npcs[npcs.activeNpc]!.npc.custom_fields = [{ name: '', body: '' }];
   } else {
-    npcs.getActiveNpc!.npc.custom_fields.push({ name: '', body: '' });
+    npcs.npcs[npcs.activeNpc]!.npc.custom_fields.push({ name: '', body: '' });
   }
 };
 
 const removeCustomField = (index: number) => {
-  npcs.getActiveNpc!.npc.custom_fields.splice(index, 1);
-  if (npcs.getActiveNpc!.npc.custom_fields.length === 0) {
-    npcs.getActiveNpc!.npc.custom_fields = [{ name: '', body: '' }];
+  npcs.npcs[npcs.activeNpc]!.npc.custom_fields.splice(index, 1);
+  if (npcs.npcs[npcs.activeNpc]!.npc.custom_fields.length === 0) {
+    npcs.npcs[npcs.activeNpc]!.npc.custom_fields = [{ name: '', body: '' }];
   }
 };
 
@@ -337,9 +361,9 @@ await router.replace({
 const openShare = async () => {
   isGenerating.value = true;
   shareDialog.value = true;
-  const currentNpc = npcs.getActiveNpc!.npc;
+  const currentNpc = npcs.npcs[npcs.activeNpc]!.npc;
   const body: shareable_npc = {
-    list_name: npcs.getActiveNpc?.name ? npcs.getActiveNpc.name : 'Default',
+    list_name: npcs.npcs[npcs.activeNpc]?.name ? npcs.npcs[npcs.activeNpc]!.name : 'Default',
     npcs_data: []
   };
 
@@ -428,12 +452,12 @@ const importNpc = () => {
     };
 
     npcs.addNpc(importNpcName.value);
-    npcList.value = npcs.getNpcs.map((npc) => npc.name);
+    npcList.value = npcs.npcs.map((npc) => npc.name);
     npcs.updateNpc(importNpcName.value, tmp_npc);
     tmpNpc.value = {
-      name: npcs.getActiveNpc!.name,
-      npc: npcs.getActiveNpc!.npc,
-      culture: npcs.getActiveNpc!.culture
+      name: npcs.npcs[npcs.activeNpc]!.name,
+      npc: npcs.npcs[npcs.activeNpc]!.npc,
+      culture: npcs.npcs[npcs.activeNpc]!.culture
     };
     saveChanges();
     importNpcName.value = '';
@@ -456,11 +480,11 @@ const addNpc = () => {
   npcNameInput.value.validate();
   if (!npcNameInput.value.hasError) {
     npcs.addNpc(newNpcName.value);
-    npcList.value = npcs.getNpcs.map((npc) => npc.name);
+    npcList.value = npcs.npcs.map((npc) => npc.name);
     tmpNpc.value = {
-      name: npcs.getActiveNpc!.name,
-      npc: npcs.getActiveNpc!.npc,
-      culture: npcs.getActiveNpc!.culture
+      name: npcs.npcs[npcs.activeNpc]!.name,
+      npc: npcs.npcs[npcs.activeNpc]!.npc,
+      culture: npcs.npcs[npcs.activeNpc]!.culture
     };
     saveChanges();
     newNpcName.value = '';
@@ -471,12 +495,12 @@ const addNpc = () => {
 const renameNpc = () => {
   npcRenameInput.value.validate();
   if (!npcRenameInput.value.hasError) {
-    npcs.getActiveNpc!.name = newNpcRename.value;
-    npcList.value = npcs.getNpcs.map((npc) => npc.name);
+    npcs.npcs[npcs.activeNpc]!.name = newNpcRename.value;
+    npcList.value = npcs.npcs.map((npc) => npc.name);
     tmpNpc.value = {
-      name: npcs.getActiveNpc!.name,
-      npc: npcs.getActiveNpc!.npc,
-      culture: npcs.getActiveNpc!.culture
+      name: npcs.npcs[npcs.activeNpc]!.name,
+      npc: npcs.npcs[npcs.activeNpc]!.npc,
+      culture: npcs.npcs[npcs.activeNpc]!.culture
     };
     saveChanges();
     newNpcRename.value = '';
@@ -486,11 +510,11 @@ const renameNpc = () => {
 
 const removeNpc = () => {
   npcs.removeNpc();
-  npcList.value = npcs.getNpcs.map((npc) => npc.name);
+  npcList.value = npcs.npcs.map((npc) => npc.name);
   tmpNpc.value = {
-    name: npcs.getActiveNpc!.name,
-    npc: npcs.getActiveNpc!.npc,
-    culture: npcs.getActiveNpc!.culture
+    name: npcs.npcs[npcs.activeNpc]!.name,
+    npc: npcs.npcs[npcs.activeNpc]!.npc,
+    culture: npcs.npcs[npcs.activeNpc]!.culture
   };
   saveChanges();
   removeNpcDialog.value = false;
@@ -499,15 +523,15 @@ const removeNpc = () => {
 const changeActiveNpc = (selected: string) => {
   npcs.changeActiveNpc(npcs.getNpcIndex(selected));
   tmpNpc.value = {
-    name: npcs.getActiveNpc!.name,
-    npc: npcs.getActiveNpc!.npc,
-    culture: npcs.getActiveNpc!.culture
+    name: npcs.npcs[npcs.activeNpc]!.name,
+    npc: npcs.npcs[npcs.activeNpc]!.npc,
+    culture: npcs.npcs[npcs.activeNpc]!.culture
   };
 };
 
 const saveChanges = () => {
   npcs.updateNpc(tmpNpc.value.name, tmpNpc.value.npc);
-  localStorage.setItem('npcs', JSON.stringify(npcs.getNpcs));
+  localStorage.setItem('npcs', JSON.stringify(npcs.npcs));
 };
 </script>
 
@@ -837,7 +861,7 @@ const saveChanges = () => {
         <div class="tw:flex tw:flex-col tw:gap-4 tw:my-4 tw:mx-6">
           <div id="v-step-4" class="tw:flex tw:py-1">
             <q-btn
-              v-if="npcs.getLocks.name"
+              v-if="npcs.locks.name"
               class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
@@ -846,7 +870,7 @@ const saveChanges = () => {
               round
               dense
               aria-label="Unlock name"
-              @click="npcs.getLocks.name = false"
+              @click="npcs.locks.name = false"
             />
             <q-btn
               v-else
@@ -858,16 +882,16 @@ const saveChanges = () => {
               round
               dense
               aria-label="Lock name"
-              @click="npcs.getLocks.name = true"
+              @click="npcs.locks.name = true"
             />
             <q-input
               label="Name"
-              v-model="npcs.getActiveNpc!.npc.name"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.name"
               class="tw:grow"
               stack-label
               dense
               outlined
-              :readonly="npcs.getLocks.name"
+              :readonly="npcs.locks.name"
             />
             <q-btn
               class="tw:flex-none tw:my-auto! tw:ml-2!"
@@ -882,7 +906,7 @@ const saveChanges = () => {
             />
             <span class="tw:mx-2" />
             <q-btn
-              v-if="npcs.getLocks.nickname"
+              v-if="npcs.locks.nickname"
               class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
@@ -891,7 +915,7 @@ const saveChanges = () => {
               round
               dense
               aria-label="Unlock nickname"
-              @click="npcs.getLocks.nickname = false"
+              @click="npcs.locks.nickname = false"
             />
             <q-btn
               v-else
@@ -903,16 +927,16 @@ const saveChanges = () => {
               round
               dense
               aria-label="Lock nickname"
-              @click="npcs.getLocks.nickname = true"
+              @click="npcs.locks.nickname = true"
             />
             <q-input
               label="Nickname"
-              v-model="npcs.getActiveNpc!.npc.nickname"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.nickname"
               class="tw:grow"
               stack-label
               dense
               outlined
-              :readonly="npcs.getLocks.nickname"
+              :readonly="npcs.locks.nickname"
             />
             <q-btn
               class="tw:flex-none tw:my-auto! tw:ml-2!"
@@ -928,7 +952,7 @@ const saveChanges = () => {
           </div>
           <div class="tw:flex tw:py-1">
             <q-btn
-              v-if="npcs.getLocks.gender"
+              v-if="npcs.locks.gender"
               class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
@@ -937,7 +961,7 @@ const saveChanges = () => {
               round
               dense
               aria-label="Unlock gender"
-              @click="npcs.getLocks.gender = false"
+              @click="npcs.locks.gender = false"
             />
             <q-btn
               v-else
@@ -949,16 +973,16 @@ const saveChanges = () => {
               round
               dense
               aria-label="Lock gender"
-              @click="npcs.getLocks.gender = true"
+              @click="npcs.locks.gender = true"
             />
             <q-input
               label="Gender"
-              v-model="npcs.getActiveNpc!.npc.gender"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.gender"
               class="tw:grow"
               stack-label
               dense
               outlined
-              :readonly="npcs.getLocks.gender"
+              :readonly="npcs.locks.gender"
             />
             <q-btn
               class="tw:flex-none tw:my-auto! tw:ml-2!"
@@ -973,11 +997,11 @@ const saveChanges = () => {
             />
             <span class="tw:mx-2" />
             <span
-              v-if="!npcs.getActiveNpc!.culture || currentGame === 'sf'"
+              v-if="!npcs.npcs[npcs.activeNpc]!.culture || currentGame === 'sf'"
               class="tw:flex-none tw:my-auto! tw:mr-2!"
             >
               <q-btn
-                v-if="npcs.getLocks.ancestry"
+                v-if="npcs.locks.ancestry"
                 :icon="biLock"
                 size="sm"
                 padding="sm"
@@ -985,7 +1009,7 @@ const saveChanges = () => {
                 round
                 dense
                 aria-label="Unlock ancestry"
-                @click="npcs.getLocks.ancestry = false"
+                @click="npcs.locks.ancestry = false"
               />
               <q-btn
                 v-else
@@ -996,12 +1020,12 @@ const saveChanges = () => {
                 round
                 dense
                 aria-label="Lock ancestry"
-                @click="npcs.getLocks.ancestry = true"
+                @click="npcs.locks.ancestry = true"
               />
             </span>
             <span v-else class="tw:flex-none tw:my-auto! tw:mr-2!">
               <q-btn
-                v-if="npcs.getLocks.culture"
+                v-if="npcs.locks.culture"
                 :icon="biLock"
                 size="sm"
                 padding="sm"
@@ -1009,7 +1033,7 @@ const saveChanges = () => {
                 round
                 dense
                 aria-label="Unlock culture"
-                @click="npcs.getLocks.culture = false"
+                @click="npcs.locks.culture = false"
               />
               <q-btn
                 v-else
@@ -1020,31 +1044,31 @@ const saveChanges = () => {
                 round
                 dense
                 aria-label="Lock culture"
-                @click="npcs.getLocks.culture = true"
+                @click="npcs.locks.culture = true"
               />
             </span>
             <q-input
-              v-if="!npcs.getActiveNpc!.culture || currentGame === 'sf'"
+              v-if="!npcs.npcs[npcs.activeNpc]!.culture || currentGame === 'sf'"
               label="Ancestry"
-              v-model="npcs.getActiveNpc!.npc.ancestry"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.ancestry"
               class="tw:grow"
               stack-label
               dense
               outlined
-              :readonly="npcs.getLocks.ancestry"
+              :readonly="npcs.locks.ancestry"
             />
             <q-input
               v-else
               label="Culture"
-              v-model="npcs.getActiveNpc!.npc.culture"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.culture"
               class="tw:grow"
               stack-label
               dense
               outlined
-              :readonly="npcs.getLocks.culture"
+              :readonly="npcs.locks.culture"
             />
             <q-btn
-              v-if="!npcs.getActiveNpc!.culture || currentGame === 'sf'"
+              v-if="!npcs.npcs[npcs.activeNpc]!.culture || currentGame === 'sf'"
               class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
@@ -1070,7 +1094,7 @@ const saveChanges = () => {
           </div>
           <div class="tw:flex tw:py-1">
             <q-btn
-              v-if="npcs.getLocks.class"
+              v-if="npcs.locks.class"
               class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
@@ -1079,7 +1103,7 @@ const saveChanges = () => {
               round
               dense
               aria-label="Unlock class"
-              @click="npcs.getLocks.class = false"
+              @click="npcs.locks.class = false"
             />
             <q-btn
               v-else
@@ -1091,16 +1115,16 @@ const saveChanges = () => {
               round
               dense
               aria-label="Lock class"
-              @click="npcs.getLocks.class = true"
+              @click="npcs.locks.class = true"
             />
             <q-input
               label="Class"
-              v-model="npcs.getActiveNpc!.npc.class"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.class"
               class="tw:grow"
               stack-label
               dense
               outlined
-              :readonly="npcs.getLocks.class"
+              :readonly="npcs.locks.class"
             />
             <q-btn
               class="tw:flex-none tw:my-auto! tw:ml-2!"
@@ -1115,7 +1139,7 @@ const saveChanges = () => {
             />
             <span class="tw:mx-2" />
             <q-btn
-              v-if="npcs.getLocks.job"
+              v-if="npcs.locks.job"
               class="tw:flex-none tw:my-auto! tw:mr-2!"
               :icon="biLock"
               size="sm"
@@ -1124,7 +1148,7 @@ const saveChanges = () => {
               round
               dense
               aria-label="Unlock job"
-              @click="npcs.getLocks.job = false"
+              @click="npcs.locks.job = false"
             />
             <q-btn
               v-else
@@ -1136,17 +1160,17 @@ const saveChanges = () => {
               round
               dense
               aria-label="Lock job"
-              @click="npcs.getLocks.job = true"
+              @click="npcs.locks.job = true"
             />
             <q-input
               label="Job"
-              v-model="npcs.getActiveNpc!.npc.job"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.job"
               class="tw:grow"
               stack-label
               multiple
               dense
               outlined
-              :readonly="npcs.getLocks.job"
+              :readonly="npcs.locks.job"
             />
             <q-btn
               class="tw:flex-none tw:my-auto! tw:ml-2!"
@@ -1164,7 +1188,7 @@ const saveChanges = () => {
             <span class="tw:ml-12 tw:text-gray-800 tw:dark:text-gray-200"> Level: </span>
             <div class="tw:flex">
               <q-btn
-                v-if="npcs.getLocks.level"
+                v-if="npcs.locks.level"
                 class="tw:flex-none tw:my-auto! tw:mr-2!"
                 :icon="biLock"
                 size="sm"
@@ -1173,7 +1197,7 @@ const saveChanges = () => {
                 round
                 dense
                 aria-label="Unlock level"
-                @click="npcs.getLocks.level = false"
+                @click="npcs.locks.level = false"
               />
               <q-btn
                 v-else
@@ -1185,10 +1209,10 @@ const saveChanges = () => {
                 round
                 dense
                 aria-label="Lock level"
-                @click="npcs.getLocks.level = true"
+                @click="npcs.locks.level = true"
               />
               <q-slider
-                v-model="npcs.getActiveNpc!.npc.level"
+                v-model="npcs.npcs[npcs.activeNpc]!.npc.level"
                 class="tw:mx-1"
                 markers
                 label-always
@@ -1197,7 +1221,7 @@ const saveChanges = () => {
                 role="menuitem"
                 :min="-1"
                 :max="25"
-                :readonly="npcs.getLocks.level"
+                :readonly="npcs.locks.level"
               />
               <q-btn
                 class="tw:flex-none tw:my-auto! tw:ml-2!"
@@ -1218,7 +1242,7 @@ const saveChanges = () => {
           <div id="v-step-5" class="tw:py-1 tw:mr-2">
             <q-input
               label="Languages"
-              v-model="npcs.getActiveNpc!.npc.languages"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.languages"
               class="tw:mx-auto"
               outlined
               dense
@@ -1229,7 +1253,7 @@ const saveChanges = () => {
           <div class="tw:py-1 tw:ml-2">
             <q-input
               label="Quirks"
-              v-model="npcs.getActiveNpc!.npc.quirk"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.quirk"
               class="tw:mx-auto"
               outlined
               dense
@@ -1239,7 +1263,7 @@ const saveChanges = () => {
           </div>
           <div class="tw:py-1 tw:mr-2">
             <q-input
-              v-model="npcs.getActiveNpc!.npc.description"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.description"
               class="tw:mx-auto"
               outlined
               dense
@@ -1250,7 +1274,7 @@ const saveChanges = () => {
           </div>
           <div class="tw:py-1 tw:ml-2">
             <q-input
-              v-model="npcs.getActiveNpc!.npc.personality"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.personality"
               class="tw:mx-auto"
               outlined
               dense
@@ -1262,7 +1286,7 @@ const saveChanges = () => {
           <div class="tw:py-1 tw:mr-2">
             <q-input
               label="Relationships"
-              v-model="npcs.getActiveNpc!.npc.relationships"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.relationships"
               class="tw:mx-auto"
               outlined
               dense
@@ -1273,7 +1297,7 @@ const saveChanges = () => {
           <div class="tw:py-1 tw:ml-2">
             <q-input
               label="Ideology"
-              v-model="npcs.getActiveNpc!.npc.ideology"
+              v-model="npcs.npcs[npcs.activeNpc]!.npc.ideology"
               class="tw:mx-auto"
               outlined
               dense
@@ -1284,7 +1308,7 @@ const saveChanges = () => {
         </div>
         <q-separator class="tw:my-2! tw:mx-6!" style="height: 2px" />
         <div id="v-step-6" class="tw:mx-6">
-          <div v-for="(item, index) in npcs.getActiveNpc!.npc.custom_fields" :key="index">
+          <div v-for="(item, index) in npcs.npcs[npcs.activeNpc]!.npc.custom_fields" :key="index">
             <div class="tw:flex tw:gap-6 tw:my-5">
               <div class="tw:flex-auto">
                 <q-input

@@ -12,10 +12,6 @@ export const itemsStore = defineStore('items', {
     generating: false
   }),
   getters: {
-    getSelectedItem: (state) => state.selectedItem,
-    getShops: (state) => state.shops,
-    getActiveShop: (state) => state.shops[state.activeShop],
-    getGenerating: (state) => state.generating,
     getTotalCost: (state) => {
       let cost = 0;
       for (const item of state.shops[state.activeShop]!.items) {

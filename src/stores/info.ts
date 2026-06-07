@@ -18,9 +18,6 @@ export const infoStore = defineStore('info', {
       color: 'lime'
     }
   }),
-  getters: {
-    getInfo: (state) => state.info
-  },
   actions: {
     setInfo(info: encounter) {
       const colorMap = {

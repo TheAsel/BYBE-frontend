@@ -61,13 +61,13 @@ const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
 
 const $q = useQuasar();
 const settings = settingsStore();
-const filterStore = filtersStore();
+const filters = filtersStore();
 const encounter = encounterStore();
 
 const encounterBuilderRef = ref();
 const router = useRouter();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 const currentAon = ref(currentGame.value === 'sf' ? 'aonsrd' : 'aonprd');
 
 const hazardToggle = ref<'creatures' | 'hazards'>('creatures');
@@ -109,10 +109,10 @@ const creatureFilters = ref<{
 }>({
   name_filter: '',
   level_filter: {
-    min: filterStore.creatureRanges.min_level,
-    max: filterStore.creatureRanges.max_level
+    min: filters.creatureRanges.min_level,
+    max: filters.creatureRanges.max_level
   },
-  hp_filter: { min: filterStore.creatureRanges.min_hp, max: filterStore.creatureRanges.max_hp },
+  hp_filter: { min: filters.creatureRanges.min_hp, max: filters.creatureRanges.max_hp },
   trait_filter: [],
   alignment_filter: [],
   size_filter: [],
@@ -131,7 +131,7 @@ const creatureFilters = ref<{
 });
 
 watch(
-  () => filterStore.creatureRanges,
+  () => filters.creatureRanges,
   (ranges) => {
     creatureFilters.value.level_filter = {
       min: ranges.min_level,
@@ -164,31 +164,31 @@ const hazardFilters = ref<{
 }>({
   name_filter: '',
   level_filter: {
-    min: filterStore.hazardRanges.min_level,
-    max: filterStore.hazardRanges.max_level
+    min: filters.hazardRanges.min_level,
+    max: filters.hazardRanges.max_level
   },
-  hp_filter: { min: filterStore.hazardRanges.min_hp, max: filterStore.hazardRanges.max_hp },
+  hp_filter: { min: filters.hazardRanges.min_hp, max: filters.hazardRanges.max_hp },
   trait_filter: [],
   complexity_filter: null,
   size_filter: [],
   rarity_filter: [],
   stealth_filter: {
-    min: filterStore.hazardRanges.min_stealth,
-    max: filterStore.hazardRanges.max_stealth
+    min: filters.hazardRanges.min_stealth,
+    max: filters.hazardRanges.max_stealth
   },
-  ac_filter: { min: filterStore.hazardRanges.min_ac, max: filterStore.hazardRanges.max_ac },
+  ac_filter: { min: filters.hazardRanges.min_ac, max: filters.hazardRanges.max_ac },
   fortitude_filter: {
-    min: filterStore.hazardRanges.min_fortitude,
-    max: filterStore.hazardRanges.max_fortitude
+    min: filters.hazardRanges.min_fortitude,
+    max: filters.hazardRanges.max_fortitude
   },
   reflex_filter: {
-    min: filterStore.hazardRanges.min_reflex,
-    max: filterStore.hazardRanges.max_reflex
+    min: filters.hazardRanges.min_reflex,
+    max: filters.hazardRanges.max_reflex
   },
-  will_filter: { min: filterStore.hazardRanges.min_will, max: filterStore.hazardRanges.max_will },
+  will_filter: { min: filters.hazardRanges.min_will, max: filters.hazardRanges.max_will },
   hardness_filter: {
-    min: filterStore.hazardRanges.min_hardness,
-    max: filterStore.hazardRanges.max_hardness
+    min: filters.hazardRanges.min_hardness,
+    max: filters.hazardRanges.max_hardness
   },
   source_filter: [],
   sort_by: 'name',
@@ -196,7 +196,7 @@ const hazardFilters = ref<{
 });
 
 watch(
-  () => filterStore.hazardRanges,
+  () => filters.hazardRanges,
   (ranges) => {
     hazardFilters.value.level_filter = {
       min: ranges.min_level,
@@ -236,11 +236,11 @@ watch(
 const fullscreen = ref(false);
 const tableHeight = ref('height: calc(100vh - 126px)');
 
-const sourceCreatureFilter = ref<string[]>(filterStore.getCreatureFilters.sources);
-const traitCreatureFilter = ref<string[]>(filterStore.getCreatureFilters.traits);
-const familyCreatureFilter = ref<string[]>(filterStore.getCreatureFilters.families);
-const sourceHazardFilter = ref<string[]>(filterStore.getHazardFilters.sources);
-const traitHazardFilter = ref<string[]>(filterStore.getHazardFilters.traits);
+const sourceCreatureFilter = ref<string[]>(filters.creatureFilters.sources);
+const traitCreatureFilter = ref<string[]>(filters.creatureFilters.traits);
+const familyCreatureFilter = ref<string[]>(filters.creatureFilters.families);
+const sourceHazardFilter = ref<string[]>(filters.hazardFilters.sources);
+const traitHazardFilter = ref<string[]>(filters.hazardFilters.traits);
 
 // ---- Creature columns declaration
 const columnCreatures: {
@@ -520,7 +520,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       max_hp_filter: creatureFilters.value.hp_filter.max,
       attack_data_filter: creatureFilters.value.attack_data_filter,
       role_threshold: 50,
-      game_system_version: settings.getGameVersion
+      game_system_version: settings.game_version
     };
     if (creatureFilters.value.name_filter !== '') {
       body.name_filter = creatureFilters.value.name_filter;
@@ -655,7 +655,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       max_will_filter: hazardFilters.value.will_filter.max,
       min_hardness_filter: hazardFilters.value.hardness_filter.min,
       max_hardness_filter: hazardFilters.value.hardness_filter.max,
-      game_system_version: settings.getGameVersion
+      game_system_version: settings.game_version
     };
     if (hazardFilters.value.name_filter !== '') {
       body.name_filter = hazardFilters.value.name_filter;
@@ -744,10 +744,10 @@ const resetCreatureFilters = () => {
     source_filter: [],
     name_filter: '',
     level_filter: {
-      min: filterStore.creatureRanges.min_level,
-      max: filterStore.creatureRanges.max_level
+      min: filters.creatureRanges.min_level,
+      max: filters.creatureRanges.max_level
     },
-    hp_filter: { min: filterStore.creatureRanges.min_hp, max: filterStore.creatureRanges.max_hp },
+    hp_filter: { min: filters.creatureRanges.min_hp, max: filters.creatureRanges.max_hp },
     trait_filter: [],
     alignment_filter: [],
     size_filter: [],
@@ -770,34 +770,34 @@ const resetHazardFilters = () => {
     source_filter: [],
     name_filter: '',
     level_filter: {
-      min: filterStore.hazardRanges.min_level,
-      max: filterStore.hazardRanges.max_level
+      min: filters.hazardRanges.min_level,
+      max: filters.hazardRanges.max_level
     },
-    hp_filter: { min: filterStore.hazardRanges.min_hp, max: filterStore.hazardRanges.max_hp },
+    hp_filter: { min: filters.hazardRanges.min_hp, max: filters.hazardRanges.max_hp },
     trait_filter: [],
     complexity_filter: null,
     size_filter: [],
     rarity_filter: [],
     stealth_filter: {
-      min: filterStore.hazardRanges.min_stealth,
-      max: filterStore.hazardRanges.max_stealth
+      min: filters.hazardRanges.min_stealth,
+      max: filters.hazardRanges.max_stealth
     },
-    ac_filter: { min: filterStore.hazardRanges.min_ac, max: filterStore.hazardRanges.max_ac },
+    ac_filter: { min: filters.hazardRanges.min_ac, max: filters.hazardRanges.max_ac },
     fortitude_filter: {
-      min: filterStore.hazardRanges.min_fortitude,
-      max: filterStore.hazardRanges.max_fortitude
+      min: filters.hazardRanges.min_fortitude,
+      max: filters.hazardRanges.max_fortitude
     },
     reflex_filter: {
-      min: filterStore.hazardRanges.min_reflex,
-      max: filterStore.hazardRanges.max_reflex
+      min: filters.hazardRanges.min_reflex,
+      max: filters.hazardRanges.max_reflex
     },
     will_filter: {
-      min: filterStore.hazardRanges.min_will,
-      max: filterStore.hazardRanges.max_will
+      min: filters.hazardRanges.min_will,
+      max: filters.hazardRanges.max_will
     },
     hardness_filter: {
-      min: filterStore.hazardRanges.min_hardness,
-      max: filterStore.hazardRanges.max_hardness
+      min: filters.hazardRanges.min_hardness,
+      max: filters.hazardRanges.max_hardness
     },
     sort_by: 'name',
     order_by: 'ascending'
@@ -1142,7 +1142,7 @@ const toggleFullscreen = () => {
 const filterCreatureSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getCreatureFilters.sources = sourceCreatureFilter.value.filter((v) =>
+    filters.creatureFilters.sources = sourceCreatureFilter.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -1151,7 +1151,7 @@ const filterCreatureSourcesFn = (val, update) => {
 const filterCreatureTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getCreatureFilters.traits = traitCreatureFilter.value.filter((v) =>
+    filters.creatureFilters.traits = traitCreatureFilter.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -1160,7 +1160,7 @@ const filterCreatureTraitsFn = (val, update) => {
 const filterCreatureFamiliesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getCreatureFilters.families = familyCreatureFilter.value.filter((v) =>
+    filters.creatureFilters.families = familyCreatureFilter.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -1169,7 +1169,7 @@ const filterCreatureFamiliesFn = (val, update) => {
 const filterHazardSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getHazardFilters.sources = sourceHazardFilter.value.filter((v) =>
+    filters.hazardFilters.sources = sourceHazardFilter.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -1178,7 +1178,7 @@ const filterHazardSourcesFn = (val, update) => {
 const filterHazardTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getHazardFilters.traits = traitHazardFilter.value.filter((v) =>
+    filters.hazardFilters.traits = traitHazardFilter.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -1234,34 +1234,34 @@ onMounted(async () => {
     if (!hazardSourcesRequest) throw new Error('Error fetching hazard sources');
     if (!hazardRangesRequest) throw new Error('Error fetching hazard ranges');
 
-    filterStore.updateTraits(traitsRequest);
-    traitCreatureFilter.value = filterStore.getCreatureFilters.traits;
+    filters.updateTraits(traitsRequest);
+    traitCreatureFilter.value = filters.creatureFilters.traits;
 
-    filterStore.updateAlignments(alignmentsRequest);
-    filterStore.updateSizes(sizesRequest);
-    filterStore.updateRarities(raritiesRequest);
+    filters.updateAlignments(alignmentsRequest);
+    filters.updateSizes(sizesRequest);
+    filters.updateRarities(raritiesRequest);
 
-    filterStore.updateFamilies(familiesRequest);
-    familyCreatureFilter.value = filterStore.getCreatureFilters.families;
+    filters.updateFamilies(familiesRequest);
+    familyCreatureFilter.value = filters.creatureFilters.families;
 
-    filterStore.updateCreatureType(typesRequest);
+    filters.updateCreatureType(typesRequest);
 
-    filterStore.updateSources(sourcesRequest);
-    sourceCreatureFilter.value = filterStore.getCreatureFilters.sources;
+    filters.updateSources(sourcesRequest);
+    sourceCreatureFilter.value = filters.creatureFilters.sources;
 
-    filterStore.updateRoles(rolesRequest);
-    filterStore.creatureRanges = creatureRangesRequest;
+    filters.updateRoles(rolesRequest);
+    filters.creatureRanges = creatureRangesRequest;
 
-    filterStore.updateHazardTraits(hazardTraitsRequest);
-    traitHazardFilter.value = filterStore.getHazardFilters.traits;
+    filters.updateHazardTraits(hazardTraitsRequest);
+    traitHazardFilter.value = filters.hazardFilters.traits;
 
-    filterStore.updateHazardSizes(hazardSizesRequest);
-    filterStore.updateHazardRarities(hazardRaritiesRequest);
+    filters.updateHazardSizes(hazardSizesRequest);
+    filters.updateHazardRarities(hazardRaritiesRequest);
 
-    filterStore.updateHazardSources(hazardSourcesRequest);
-    sourceHazardFilter.value = filterStore.getHazardFilters.sources;
+    filters.updateHazardSources(hazardSourcesRequest);
+    sourceHazardFilter.value = filters.hazardFilters.sources;
 
-    filterStore.hazardRanges = hazardRangesRequest;
+    filters.hazardRanges = hazardRangesRequest;
   } catch (error) {
     console.error(error);
     $q.notify({
@@ -1507,7 +1507,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filterStore.getCreatureFilters.sources)"
+                  :options="Object.freeze(filters.creatureFilters.sources)"
                   use-input
                   input-debounce="0"
                   :label="columnCreatures[0]!.label"
@@ -1572,8 +1572,8 @@ onMounted(async () => {
                       <q-range
                         v-model="creatureFilters.level_filter"
                         label-always
-                        :min="filterStore.creatureRanges.min_level"
-                        :max="filterStore.creatureRanges.max_level"
+                        :min="filters.creatureRanges.min_level"
+                        :max="filters.creatureRanges.max_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
@@ -1620,8 +1620,8 @@ onMounted(async () => {
                       <q-range
                         v-model="creatureFilters.hp_filter"
                         label-always
-                        :min="filterStore.creatureRanges.min_hp"
-                        :max="filterStore.creatureRanges.max_hp"
+                        :min="filters.creatureRanges.min_hp"
+                        :max="filters.creatureRanges.max_hp"
                         style="min-width: 200px"
                         aria-label="Filter HP"
                         role="menuitem"
@@ -1660,7 +1660,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filterStore.getCreatureFilters.traits)"
+                  :options="Object.freeze(filters.creatureFilters.traits)"
                   use-input
                   input-debounce="0"
                   :label="columnCreatures[4]!.label"
@@ -1698,7 +1698,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filterStore.getCreatureFilters.alignments)"
+                :options="Object.freeze(filters.creatureFilters.alignments)"
                 :label="columnCreatures[5]!.label"
                 :style="columnCreatures[5]!.style"
               />
@@ -1731,7 +1731,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filterStore.getCreatureFilters.sizes)"
+                :options="Object.freeze(filters.creatureFilters.sizes)"
                 :label="columnCreatures[6]!.label"
                 :style="columnCreatures[6]!.style"
               />
@@ -1764,7 +1764,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filterStore.getCreatureFilters.rarities)"
+                :options="Object.freeze(filters.creatureFilters.rarities)"
                 :label="columnCreatures[7]!.label"
                 :style="columnCreatures[7]!.style"
               />
@@ -1798,7 +1798,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filterStore.getCreatureFilters.families)"
+                  :options="Object.freeze(filters.creatureFilters.families)"
                   use-input
                   input-debounce="0"
                   :label="columnCreatures[8]!.label"
@@ -1836,7 +1836,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filterStore.getCreatureFilters.creature_types)"
+                :options="Object.freeze(filters.creatureFilters.creature_types)"
                 :label="columnCreatures[9]!.label"
                 :style="columnCreatures[9]!.style"
               />
@@ -1996,7 +1996,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filterStore.getCreatureFilters.creature_roles)"
+                :options="Object.freeze(filters.creatureFilters.creature_roles)"
                 :label="columnCreatures[11]!.label"
                 :style="columnCreatures[11]!.style"
               />
@@ -2070,9 +2070,8 @@ onMounted(async () => {
         <q-td :props="name">
           <q-icon
             v-if="
-              encounter.getSelectedCreature?.core_data &&
-              name.row.core_data.essential.id ===
-                encounter.getSelectedCreature?.core_data.essential.id
+              encounter.selectedCreature?.core_data &&
+              name.row.core_data.essential.id === encounter.selectedCreature?.core_data.essential.id
             "
             class="tw:mr-1 tw:align-middle"
             size="xs"
@@ -2091,7 +2090,7 @@ onMounted(async () => {
             >
           </a>
           <a
-            v-else-if="currentGame === 'sf' && settings.getAonLinks"
+            v-else-if="currentGame === 'sf' && settings.is_aon_links_on"
             :href="
               'https://2e.' +
               currentAon +
@@ -2113,7 +2112,7 @@ onMounted(async () => {
             v-if="
               currentGame === 'pf' &&
               name.row.core_data.essential.remaster &&
-              settings.getGameVersion === 'Any'
+              settings.game_version === 'Any'
             "
             dense
             color="blue"
@@ -2125,7 +2124,7 @@ onMounted(async () => {
             v-if="
               currentGame === 'pf' &&
               !name.row.core_data.essential.remaster &&
-              settings.getGameVersion === 'Any'
+              settings.game_version === 'Any'
             "
             dense
             color="red-10"
@@ -2537,7 +2536,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filterStore.getHazardFilters.sources)"
+                  :options="Object.freeze(filters.hazardFilters.sources)"
                   use-input
                   input-debounce="0"
                   :label="columnHazards[0]!.label"
@@ -2602,8 +2601,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.level_filter"
                         label-always
-                        :min="filterStore.hazardRanges.min_level"
-                        :max="filterStore.hazardRanges.max_level"
+                        :min="filters.hazardRanges.min_level"
+                        :max="filters.hazardRanges.max_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
@@ -2650,8 +2649,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.hp_filter"
                         label-always
-                        :min="filterStore.hazardRanges.min_hp"
-                        :max="filterStore.hazardRanges.max_hp"
+                        :min="filters.hazardRanges.min_hp"
+                        :max="filters.hazardRanges.max_hp"
                         style="min-width: 200px"
                         aria-label="Filter HP"
                         role="menuitem"
@@ -2690,7 +2689,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filterStore.getHazardFilters.traits)"
+                  :options="Object.freeze(filters.hazardFilters.traits)"
                   use-input
                   input-debounce="0"
                   :label="columnHazards[4]!.label"
@@ -2760,7 +2759,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filterStore.getHazardFilters.sizes)"
+                :options="Object.freeze(filters.hazardFilters.sizes)"
                 :label="columnHazards[6]!.label"
                 :style="columnHazards[6]!.style"
               />
@@ -2793,7 +2792,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filterStore.getHazardFilters.rarities)"
+                :options="Object.freeze(filters.hazardFilters.rarities)"
                 :label="columnHazards[7]!.label"
                 :style="columnHazards[7]!.style"
               />
@@ -2835,8 +2834,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.stealth_filter"
                         label-always
-                        :min="filterStore.hazardRanges.min_stealth"
-                        :max="filterStore.hazardRanges.max_stealth"
+                        :min="filters.hazardRanges.min_stealth"
+                        :max="filters.hazardRanges.max_stealth"
                         style="min-width: 200px"
                         aria-label="Filter Stealth"
                         role="menuitem"
@@ -2883,8 +2882,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.ac_filter"
                         label-always
-                        :min="filterStore.hazardRanges.min_ac"
-                        :max="filterStore.hazardRanges.max_ac"
+                        :min="filters.hazardRanges.min_ac"
+                        :max="filters.hazardRanges.max_ac"
                         style="min-width: 200px"
                         aria-label="Filter AC"
                         role="menuitem"
@@ -2932,8 +2931,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.fortitude_filter"
                         label-always
-                        :min="filterStore.hazardRanges.min_fortitude"
-                        :max="filterStore.hazardRanges.max_fortitude"
+                        :min="filters.hazardRanges.min_fortitude"
+                        :max="filters.hazardRanges.max_fortitude"
                         style="min-width: 200px"
                         aria-label="Filter Fortitude"
                         role="menuitem"
@@ -2980,8 +2979,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.reflex_filter"
                         label-always
-                        :min="filterStore.hazardRanges.min_reflex"
-                        :max="filterStore.hazardRanges.max_reflex"
+                        :min="filters.hazardRanges.min_reflex"
+                        :max="filters.hazardRanges.max_reflex"
                         style="min-width: 200px"
                         aria-label="Filter Reflex"
                         role="menuitem"
@@ -3028,8 +3027,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.will_filter"
                         label-always
-                        :min="filterStore.hazardRanges.min_will"
-                        :max="filterStore.hazardRanges.max_will"
+                        :min="filters.hazardRanges.min_will"
+                        :max="filters.hazardRanges.max_will"
                         style="min-width: 200px"
                         aria-label="Filter Will"
                         role="menuitem"
@@ -3076,8 +3075,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.hardness_filter"
                         label-always
-                        :min="filterStore.hazardRanges.min_hardness"
-                        :max="filterStore.hazardRanges.max_hardness"
+                        :min="filters.hazardRanges.min_hardness"
+                        :max="filters.hazardRanges.max_hardness"
                         style="min-width: 200px"
                         aria-label="Filter Hardness"
                         role="menuitem"
@@ -3156,16 +3155,16 @@ onMounted(async () => {
         <q-td :props="name">
           <q-icon
             v-if="
-              encounter.getSelectedHazard?.core_hazard &&
+              encounter.selectedHazard?.core_hazard &&
               name.row.core_hazard.essential.id ===
-                encounter.getSelectedHazard?.core_hazard.essential.id
+                encounter.selectedHazard?.core_hazard.essential.id
             "
             class="tw:mr-1 tw:align-middle"
             size="xs"
             :name="biCaretRight"
           />
           <a
-            v-if="settings.getAonLinks"
+            v-if="settings.is_aon_links_on"
             :href="
               'https://2e.' +
               currentAon +
@@ -3187,7 +3186,7 @@ onMounted(async () => {
             v-if="
               currentGame === 'pf' &&
               name.row.core_hazard.essential.remaster &&
-              settings.getGameVersion === 'Any'
+              settings.game_version === 'Any'
             "
             dense
             color="blue"
@@ -3199,7 +3198,7 @@ onMounted(async () => {
             v-if="
               currentGame === 'pf' &&
               !name.row.core_hazard.essential.remaster &&
-              settings.getGameVersion === 'Any'
+              settings.game_version === 'Any'
             "
             dense
             color="red-10"

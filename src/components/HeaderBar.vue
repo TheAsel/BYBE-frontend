@@ -107,7 +107,7 @@ const themeSwitch = () => {
 };
 
 const unhide = debounce(function () {
-  settings.setHiddenNav(!settings.getHiddenNav);
+  settings.setHiddenNav(!settings.hidden_nav);
 }, 50);
 </script>
 
@@ -174,7 +174,7 @@ const unhide = debounce(function () {
         <q-select
           v-if="currentPath !== '/download'"
           class="tw:ml-6"
-          v-model="settings.getGame"
+          v-model="settings.game"
           :options="gameOptions"
           :readonly="
             currentPath === '/bestiary' ||
@@ -227,7 +227,7 @@ const unhide = debounce(function () {
       <div
         id="navbar-collapse"
         class="tw:grow tw:lg:block"
-        :class="{ 'tw:hidden': settings.getHiddenNav, 'overflow-hidden': settings.getHiddenNav }"
+        :class="{ 'tw:hidden': settings.hidden_nav, 'overflow-hidden': settings.hidden_nav }"
       >
         <div class="tw:flex tw:flex-col tw:lg:flex-row">
           <div

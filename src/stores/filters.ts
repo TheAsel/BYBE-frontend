@@ -30,11 +30,6 @@ export const filtersStore = defineStore('filters', {
     },
     shopRanges: {} as shop_ranges
   }),
-  getters: {
-    getCreatureFilters: (state) => state.creatureFilters,
-    getHazardFilters: (state) => state.hazardFilters,
-    getItemFilters: (state) => state.itemFilters
-  },
   actions: {
     updateTraits(newTraits: string[]) {
       this.creatureFilters.traits = newTraits.map((trait) => {

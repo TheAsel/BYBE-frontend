@@ -26,7 +26,7 @@ useHead({
 const settings = settingsStore();
 const npcs = npcStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const tourActive = ref(false);
 const screenWidth = ref(screen.width);

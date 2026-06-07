@@ -11,17 +11,17 @@ import type { games, variants } from 'src/types/filters';
 
 const route = useRoute();
 const router = useRouter();
-const encounters = encounterStore();
+const encounter = encounterStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 const currentFont = ref(currentGame.value === 'sf' ? 'Orbitron Bold' : 'Good Pro Condensed');
 
 const changeVariant = (variant: variants) => {
-  if (encounters.getSelectedCreature?.variant_data?.variant === 'Base') {
+  if (encounter.selectedCreature?.variant_data?.variant === 'Base') {
     const routeData = router.resolve({
       name: 'bestiary',
-      query: { game: currentGame.value, id: encounters.getSelectedCreature?.core_data.essential.id }
+      query: { game: currentGame.value, id: encounter.selectedCreature?.core_data.essential.id }
     });
     globalThis.open(routeData.href, '_self');
   } else {
@@ -29,7 +29,7 @@ const changeVariant = (variant: variants) => {
       name: 'bestiary',
       query: {
         game: currentGame.value,
-        id: encounters.getSelectedCreature?.core_data.essential.id,
+        id: encounter.selectedCreature?.core_data.essential.id,
         variant: variant.toLowerCase()
       }
     });
@@ -38,7 +38,7 @@ const changeVariant = (variant: variants) => {
 };
 
 const variantStyle = (value: string | number | undefined) => {
-  if (value && encounters.getSelectedCreature?.variant_data?.variant !== 'Base') {
+  if (value && encounter.selectedCreature?.variant_data?.variant !== 'Base') {
     const valueStr = '<span class="tw:text-red-600"><b>' + value.toString() + '</b></span>';
     return valueStr;
   }
@@ -72,9 +72,9 @@ const cleanDescription = (description: string) => {
 };
 
 const perceptionString = computed(() => {
-  const perception = encounters.getSelectedCreature?.extra_data?.perception;
-  const senses = encounters.getSelectedCreature?.extra_data?.senses;
-  const spells = encounters.getSelectedCreature?.spellcaster_data?.spellcaster_entries
+  const perception = encounter.selectedCreature?.extra_data?.perception;
+  const senses = encounter.selectedCreature?.extra_data?.senses;
+  const spells = encounter.selectedCreature?.spellcaster_data?.spellcaster_entries
     .flatMap((entry) => Object.values(entry.spells))
     .flatMap((spell) => spell.name);
   let finalString = '';
@@ -84,7 +84,7 @@ const perceptionString = computed(() => {
   if (senses !== undefined && senses.length > 0) {
     for (const sense of senses) {
       let found = false;
-      for (const action of encounters.getSelectedCreature?.extra_data?.actions ?? []) {
+      for (const action of encounter.selectedCreature?.extra_data?.actions ?? []) {
         if (action.core_action.slug === sense.name) {
           finalString += action.core_action.name.toLowerCase() + ', ';
           found = true;
@@ -114,22 +114,22 @@ const perceptionString = computed(() => {
         }
       }
     }
-    if (!encounters.getSelectedCreature!.extra_data!.has_vision) {
+    if (!encounter.selectedCreature!.extra_data!.has_vision) {
       finalString += 'no vision' + ', ';
     }
-    if (encounters.getSelectedCreature?.extra_data?.perception_detail) {
-      finalString += encounters.getSelectedCreature?.extra_data?.perception_detail;
+    if (encounter.selectedCreature?.extra_data?.perception_detail) {
+      finalString += encounter.selectedCreature?.extra_data?.perception_detail;
     } else {
       finalString = finalString.substring(0, finalString.length - 2);
     }
-  } else if (encounters.getSelectedCreature?.extra_data?.perception_detail) {
-    finalString += encounters.getSelectedCreature?.extra_data?.perception_detail;
+  } else if (encounter.selectedCreature?.extra_data?.perception_detail) {
+    finalString += encounter.selectedCreature?.extra_data?.perception_detail;
   }
   return finalString;
 });
 
 const languageString = computed(() => {
-  const languages = encounters.getSelectedCreature?.extra_data?.languages;
+  const languages = encounter.selectedCreature?.extra_data?.languages;
   let finalString = '';
   if (languages !== undefined && languages.length > 0) {
     finalString += '<strong>Languages&nbsp;</strong>';
@@ -139,8 +139,8 @@ const languageString = computed(() => {
   }
   finalString = finalString.substring(0, finalString.length - 2);
   finalString += '; ';
-  if (encounters.getSelectedCreature?.extra_data?.language_detail) {
-    finalString += encounters.getSelectedCreature?.extra_data?.language_detail;
+  if (encounter.selectedCreature?.extra_data?.language_detail) {
+    finalString += encounter.selectedCreature?.extra_data?.language_detail;
   } else {
     finalString = finalString.substring(0, finalString.length - 2);
   }
@@ -148,7 +148,7 @@ const languageString = computed(() => {
 });
 
 const skillString = computed(() => {
-  const skills = encounters.getSelectedCreature?.extra_data?.skills;
+  const skills = encounter.selectedCreature?.extra_data?.skills;
   let finalString = '';
   if (skills !== undefined && skills.length > 0) {
     finalString += '<strong>Skills&nbsp;</strong>';
@@ -160,9 +160,9 @@ const skillString = computed(() => {
 });
 
 const itemString = computed(() => {
-  const weapons = encounters.getSelectedCreature?.combat_data?.weapons;
-  const items = encounters.getSelectedCreature?.extra_data?.items;
-  const armors = encounters.getSelectedCreature?.combat_data?.armors;
+  const weapons = encounter.selectedCreature?.combat_data?.weapons;
+  const items = encounter.selectedCreature?.extra_data?.items;
+  const armors = encounter.selectedCreature?.combat_data?.armors;
   let finalString = '';
   finalString += '<strong>Items&nbsp;</strong>';
   const droppedItems: string[] = [];
@@ -279,32 +279,32 @@ const itemString = computed(() => {
 });
 
 const defenceString = computed(() => {
-  const actions = encounters.getSelectedCreature?.extra_data?.actions;
+  const actions = encounter.selectedCreature?.extra_data?.actions;
   let finalString = '';
-  if (encounters.getSelectedCreature?.combat_data?.ac) {
+  if (encounter.selectedCreature?.combat_data?.ac) {
     finalString +=
-      '<strong>AC&nbsp;</strong>' + variantStyle(encounters.getSelectedCreature?.combat_data?.ac);
-    if (encounters.getSelectedCreature?.extra_data?.ac_detail) {
-      finalString += ' ' + encounters.getSelectedCreature?.extra_data?.ac_detail;
+      '<strong>AC&nbsp;</strong>' + variantStyle(encounter.selectedCreature?.combat_data?.ac);
+    if (encounter.selectedCreature?.extra_data?.ac_detail) {
+      finalString += ' ' + encounter.selectedCreature?.extra_data?.ac_detail;
     }
     finalString += ';&nbsp;';
   }
-  if (encounters.getSelectedCreature?.combat_data?.saving_throws.fortitude) {
+  if (encounter.selectedCreature?.combat_data?.saving_throws.fortitude) {
     finalString +=
       '<strong>Fort&nbsp;</strong>' +
-      variantStyle(addPlus(encounters.getSelectedCreature?.combat_data?.saving_throws.fortitude)) +
+      variantStyle(addPlus(encounter.selectedCreature?.combat_data?.saving_throws.fortitude)) +
       ';&nbsp;';
   }
-  if (encounters.getSelectedCreature?.combat_data?.saving_throws.reflex) {
+  if (encounter.selectedCreature?.combat_data?.saving_throws.reflex) {
     finalString +=
       '<strong>Ref&nbsp;</strong>' +
-      variantStyle(addPlus(encounters.getSelectedCreature?.combat_data?.saving_throws.reflex)) +
+      variantStyle(addPlus(encounter.selectedCreature?.combat_data?.saving_throws.reflex)) +
       ';&nbsp;';
   }
-  if (encounters.getSelectedCreature?.combat_data?.saving_throws.will) {
+  if (encounter.selectedCreature?.combat_data?.saving_throws.will) {
     finalString +=
       '<strong>Will&nbsp;</strong>' +
-      variantStyle(addPlus(encounters.getSelectedCreature?.combat_data?.saving_throws.will));
+      variantStyle(addPlus(encounter.selectedCreature?.combat_data?.saving_throws.will));
   }
   if (actions !== undefined && actions.length > 0) {
     finalString += '; ';
@@ -323,7 +323,7 @@ const defenceString = computed(() => {
 });
 
 const immunityString = () => {
-  const immunities = encounters.getSelectedCreature?.combat_data?.immunities;
+  const immunities = encounter.selectedCreature?.combat_data?.immunities;
   immunities?.sort();
   let finalString = '';
   if (immunities !== undefined && immunities.length > 0) {
@@ -335,7 +335,7 @@ const immunityString = () => {
 };
 
 const resistanceString = () => {
-  const resistances = encounters.getSelectedCreature?.combat_data?.resistances;
+  const resistances = encounter.selectedCreature?.combat_data?.resistances;
   resistances?.sort();
   let finalString = '';
 
@@ -378,7 +378,7 @@ const resistanceString = () => {
 };
 
 const weaknessString = () => {
-  const weaknesses = encounters.getSelectedCreature?.combat_data?.weaknesses;
+  const weaknesses = encounter.selectedCreature?.combat_data?.weaknesses;
   const weakKeys = Object.keys(weaknesses!);
   weakKeys.sort();
   let finalString = '';
@@ -387,7 +387,7 @@ const weaknessString = () => {
       finalString +=
         `${weakness.replaceAll('-', ' ')}` +
         ' ' +
-        `${encounters.getSelectedCreature?.combat_data?.weaknesses[weakness]}` +
+        `${encounter.selectedCreature?.combat_data?.weaknesses[weakness]}` +
         ', ';
     }
   }
@@ -395,32 +395,32 @@ const weaknessString = () => {
 };
 
 const healthString = computed(() => {
-  const hp = encounters.getSelectedCreature?.core_data.essential.hp;
-  const hpDetail = encounters.getSelectedCreature?.extra_data?.hp_detail;
+  const hp = encounter.selectedCreature?.core_data.essential.hp;
+  const hpDetail = encounter.selectedCreature?.extra_data?.hp_detail;
   let finalString = '';
   if (hp !== undefined) {
     finalString +=
       '<strong>HP&nbsp;</strong>' +
-      variantStyle(encounters.getSelectedCreature?.core_data.essential.hp);
+      variantStyle(encounter.selectedCreature?.core_data.essential.hp);
     if (hpDetail) {
       finalString += ', ' + hpDetail;
     }
   }
   if (
-    encounters.getSelectedCreature?.combat_data?.immunities !== undefined &&
-    encounters.getSelectedCreature?.combat_data?.immunities.length > 0
+    encounter.selectedCreature?.combat_data?.immunities !== undefined &&
+    encounter.selectedCreature?.combat_data?.immunities.length > 0
   ) {
     finalString += ';<br><strong>Immunities</strong>&nbsp;' + immunityString();
   }
   if (
-    encounters.getSelectedCreature?.combat_data?.resistances !== undefined &&
-    Object.keys(encounters.getSelectedCreature?.combat_data?.resistances).length > 0
+    encounter.selectedCreature?.combat_data?.resistances !== undefined &&
+    Object.keys(encounter.selectedCreature?.combat_data?.resistances).length > 0
   ) {
     finalString += ';<br><strong>Resistances</strong>&nbsp;' + resistanceString();
   }
   if (
-    encounters.getSelectedCreature?.combat_data?.weaknesses !== undefined &&
-    Object.keys(encounters.getSelectedCreature?.combat_data?.weaknesses).length > 0
+    encounter.selectedCreature?.combat_data?.weaknesses !== undefined &&
+    Object.keys(encounter.selectedCreature?.combat_data?.weaknesses).length > 0
   ) {
     finalString += ';<br><strong>Weaknesess</strong>&nbsp;' + weaknessString() + ';';
   }
@@ -428,21 +428,18 @@ const healthString = computed(() => {
 });
 
 const speedString = computed(() => {
-  const speeds = encounters.getSelectedCreature?.extra_data?.speeds;
+  const speeds = encounter.selectedCreature?.extra_data?.speeds;
   const speedKeys = Object.keys(speeds!);
   let finalString = '';
   if (speedKeys.length > 0) {
     for (const speed of speedKeys) {
       if (`${speed}` === 'Base') {
-        if (`${encounters.getSelectedCreature?.extra_data?.speeds[speed]}` !== '0') {
-          finalString += `${encounters.getSelectedCreature?.extra_data?.speeds[speed]}` + ' feet, ';
+        if (`${encounter.selectedCreature?.extra_data?.speeds[speed]}` !== '0') {
+          finalString += `${encounter.selectedCreature?.extra_data?.speeds[speed]}` + ' feet, ';
         }
       } else {
         finalString +=
-          `${speed}` +
-          ' ' +
-          `${encounters.getSelectedCreature?.extra_data?.speeds[speed]}` +
-          ' feet, ';
+          `${speed}` + ' ' + `${encounter.selectedCreature?.extra_data?.speeds[speed]}` + ' feet, ';
       }
     }
   }
@@ -466,17 +463,17 @@ const ordinalSuffix = (n: number) => {
 
 const spellString = computed(() => {
   const finalStrings: string[] = [];
-  for (const entry of encounters.getSelectedCreature?.spellcaster_data?.spellcaster_entries ?? []) {
+  for (const entry of encounter.selectedCreature?.spellcaster_data?.spellcaster_entries ?? []) {
     let finalString = '';
     const spellLevels: boolean[] = new Array(11).fill(false);
     finalString += '<strong>' + entry.spellcaster_data.spellcasting_name + '</strong>';
     if (entry.spellcaster_data.spellcasting_dc_mod !== 0) {
       finalString += '&nbsp;DC ' + variantStyle(entry.spellcaster_data.spellcasting_dc_mod);
     }
-    if (encounters.getSelectedCreature?.variant_data?.variant === 'Elite') {
+    if (encounter.selectedCreature?.variant_data?.variant === 'Elite') {
       finalString += ' (' + variantStyle('+4 dmg') + ')';
     }
-    if (encounters.getSelectedCreature?.variant_data?.variant === 'Weak') {
+    if (encounter.selectedCreature?.variant_data?.variant === 'Weak') {
       finalString += ' (' + variantStyle('-4 dmg') + ')';
     }
     if (entry.spellcaster_data.spellcasting_atk_mod !== 0) {
@@ -484,12 +481,12 @@ const spellString = computed(() => {
         ', attack ' + variantStyle(addPlus(entry.spellcaster_data.spellcasting_atk_mod));
     }
     if (
-      (encounters.getSelectedCreature?.core_data.essential.focus_points ?? 0) > 0 &&
+      (encounter.selectedCreature?.core_data.essential.focus_points ?? 0) > 0 &&
       entry.spellcaster_data.type_of_spellcaster === 'focus'
     ) {
-      finalString += ',&nbsp;' + encounters.getSelectedCreature?.core_data.essential.focus_points;
+      finalString += ',&nbsp;' + encounter.selectedCreature?.core_data.essential.focus_points;
 
-      if ((encounters.getSelectedCreature?.core_data.essential.focus_points ?? 0) > 1) {
+      if ((encounter.selectedCreature?.core_data.essential.focus_points ?? 0) > 1) {
         finalString += ' Focus Points';
       } else {
         finalString += ' Focus Point';
@@ -530,7 +527,7 @@ const spellString = computed(() => {
 });
 
 const actionTraitsString = (index: number) => {
-  const traits = encounters.getSelectedCreature?.extra_data?.actions[index]?.traits;
+  const traits = encounter.selectedCreature?.extra_data?.actions[index]?.traits;
   traits?.sort();
   let finalString = '';
   if (traits !== undefined && traits.length > 0) {
@@ -571,8 +568,8 @@ const openCreatureSheet = (game: games, id: number) => {
         aria-label="Open creature sheet"
         @click="
           openCreatureSheet(
-            encounters.getSelectedCreature?.game ?? currentGame,
-            encounters.getSelectedCreature!.core_data.essential.id
+            encounter.selectedCreature?.game ?? currentGame,
+            encounter.selectedCreature!.core_data.essential.id
           )
         "
       >
@@ -587,16 +584,15 @@ const openCreatureSheet = (game: games, id: number) => {
     </div>
     <a
       v-if="
-        encounters.getSelectedCreature &&
-        encounters.getSelectedCreature?.core_data.derived.archive_link
+        encounter.selectedCreature && encounter.selectedCreature?.core_data.derived.archive_link
       "
       class="tw:my-auto"
       :href="
-        encounters.getSelectedCreature.core_data.derived.archive_link +
+        encounter.selectedCreature.core_data.derived.archive_link +
         '&Weak=' +
-        (encounters.getSelectedCreature?.variant_data?.variant === 'Weak') +
+        (encounter.selectedCreature?.variant_data?.variant === 'Weak') +
         '&Elite=' +
-        (encounters.getSelectedCreature?.variant_data?.variant === 'Elite')
+        (encounter.selectedCreature?.variant_data?.variant === 'Elite')
       "
       target="_blank"
       rel="noopener"
@@ -604,23 +600,23 @@ const openCreatureSheet = (game: games, id: number) => {
       <h1
         class="tw:text-3xl! tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
       >
-        <span v-if="encounters.getSelectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
-        <span v-else-if="encounters.getSelectedCreature?.variant_data?.variant === 'Elite'"
+        <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
+        <span v-else-if="encounter.selectedCreature?.variant_data?.variant === 'Elite'"
           >Elite
         </span>
-        {{ encounters.getSelectedCreature?.core_data.essential.name }}
+        {{ encounter.selectedCreature?.core_data.essential.name }}
       </h1>
     </a>
     <a
       v-else-if="
-        settings.getAonLinks &&
-        encounters.getSelectedCreature &&
-        encounters.getSelectedCreature.game === 'sf'
+        settings.is_aon_links_on &&
+        encounter.selectedCreature &&
+        encounter.selectedCreature.game === 'sf'
       "
       class="tw:my-auto"
       :href="
         'https://2e.aonsrd.com/search?q=' +
-        encodeURIComponent(encounters.getSelectedCreature?.core_data.essential.name) +
+        encodeURIComponent(encounter.selectedCreature?.core_data.essential.name) +
         ' type%3A(creature)&type=eqs'
       "
       target="_blank"
@@ -629,38 +625,36 @@ const openCreatureSheet = (game: games, id: number) => {
       <h1
         class="tw:text-3xl! tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
       >
-        <span v-if="encounters.getSelectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
-        <span v-else-if="encounters.getSelectedCreature?.variant_data?.variant === 'Elite'"
+        <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
+        <span v-else-if="encounter.selectedCreature?.variant_data?.variant === 'Elite'"
           >Elite
         </span>
-        {{ encounters.getSelectedCreature!.core_data.essential.name }}
+        {{ encounter.selectedCreature!.core_data.essential.name }}
       </h1>
     </a>
     <h1 v-else class="tw:text-3xl! tw:leading-8 tw:my-auto">
-      <span v-if="encounters.getSelectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
-      <span v-else-if="encounters.getSelectedCreature?.variant_data?.variant === 'Elite'"
-        >Elite
-      </span>
-      {{ encounters.getSelectedCreature!.core_data.essential.name }}
+      <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
+      <span v-else-if="encounter.selectedCreature?.variant_data?.variant === 'Elite'">Elite </span>
+      {{ encounter.selectedCreature!.core_data.essential.name }}
     </h1>
     <q-space />
     <q-select
       v-if="route.path === '/bestiary'"
-      v-model="encounters.getSelectedCreature!.variant_data!.variant"
+      v-model="encounter.selectedCreature!.variant_data!.variant"
       class="tw:mx-4 tw:my-auto tw:text-2xl! only-screen"
       :options="Object.freeze(['Weak', 'Base', 'Elite'])"
       borderless
       dense
       options-dense
-      @update:model-value="changeVariant(encounters.getSelectedCreature?.variant_data?.variant!)"
+      @update:model-value="changeVariant(encounter.selectedCreature?.variant_data?.variant!)"
     />
     <div class="tw:my-1">
-      {{ encounters.getSelectedCreature?.core_data.essential.cr_type }}
+      {{ encounter.selectedCreature?.core_data.essential.cr_type }}
       <span
         :class="{
-          'tw:text-red-600': encounters.getSelectedCreature?.variant_data?.variant !== 'Base'
+          'tw:text-red-600': encounter.selectedCreature?.variant_data?.variant !== 'Base'
         }"
-        >{{ encounters.getSelectedCreature?.variant_data?.level }}</span
+        >{{ encounter.selectedCreature?.variant_data?.level }}</span
       >
     </div>
     <div class="tw:my-auto!">
@@ -673,7 +667,7 @@ const openCreatureSheet = (game: games, id: number) => {
         round
         dense
         aria-label="Remove selected creature"
-        @click="encounters.removeSelectedCreature()"
+        @click="encounter.removeSelectedCreature()"
       />
     </div>
   </div>
@@ -681,34 +675,34 @@ const openCreatureSheet = (game: games, id: number) => {
   <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
   <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white">
     <div
-      v-if="encounters.getSelectedCreature?.core_data.essential.rarity === 'Uncommon'"
+      v-if="encounter.selectedCreature?.core_data.essential.rarity === 'Uncommon'"
       class="tw:bg-[#c45500] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounters.getSelectedCreature?.core_data.essential.rarity.toUpperCase() }}
+      {{ encounter.selectedCreature?.core_data.essential.rarity.toUpperCase() }}
     </div>
     <div
-      v-else-if="encounters.getSelectedCreature?.core_data.essential.rarity === 'Rare'"
+      v-else-if="encounter.selectedCreature?.core_data.essential.rarity === 'Rare'"
       class="tw:bg-[#0c1466] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounters.getSelectedCreature?.core_data.essential.rarity.toUpperCase() }}
+      {{ encounter.selectedCreature?.core_data.essential.rarity.toUpperCase() }}
     </div>
     <div
-      v-else-if="encounters.getSelectedCreature?.core_data.essential.rarity === 'Unique'"
+      v-else-if="encounter.selectedCreature?.core_data.essential.rarity === 'Unique'"
       class="tw:bg-[#800080] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounters.getSelectedCreature?.core_data.essential.rarity.toUpperCase() }}
+      {{ encounter.selectedCreature?.core_data.essential.rarity.toUpperCase() }}
     </div>
     <div
-      v-if="encounters.getSelectedCreature?.core_data.essential.alignment !== 'No Alignment'"
+      v-if="encounter.selectedCreature?.core_data.essential.alignment !== 'No Alignment'"
       class="tw:bg-[#4287f5] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounters.getSelectedCreature?.core_data.essential.alignment.toUpperCase() }}
+      {{ encounter.selectedCreature?.core_data.essential.alignment.toUpperCase() }}
     </div>
     <div class="tw:bg-[#478c42] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1">
-      {{ encounters.getSelectedCreature?.core_data.essential.size.toUpperCase() }}
+      {{ encounter.selectedCreature?.core_data.essential.size.toUpperCase() }}
     </div>
     <div
-      v-for="item in encounters.getSelectedCreature?.core_data.traits.sort()"
+      v-for="item in encounter.selectedCreature?.core_data.traits.sort()"
       :key="item"
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
@@ -717,57 +711,57 @@ const openCreatureSheet = (game: games, id: number) => {
   </div>
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
     <div
-      v-if="encounters.getSelectedCreature?.core_data.essential.source"
+      v-if="encounter.selectedCreature?.core_data.essential.source"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     >
       <strong>Source </strong>
       <a
         :href="
           'https://store.paizo.com/search.php?search_query=' +
-          encodeURIComponent(encounters.getSelectedCreature?.core_data.essential.source) +
+          encodeURIComponent(encounter.selectedCreature?.core_data.essential.source) +
           '&section=product'
         "
         target="_blank"
         rel="noopener"
       >
         <i class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400">
-          {{ encounters.getSelectedCreature?.core_data.essential.source }}
+          {{ encounter.selectedCreature?.core_data.essential.source }}
         </i>
       </a>
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="perceptionString"></div>
     <div
       v-if="
-        encounters.getSelectedCreature?.extra_data?.languages !== undefined &&
-        encounters.getSelectedCreature?.extra_data?.languages.length > 0
+        encounter.selectedCreature?.extra_data?.languages !== undefined &&
+        encounter.selectedCreature?.extra_data?.languages.length > 0
       "
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="languageString"
     ></div>
     <div
       v-if="
-        encounters.getSelectedCreature?.extra_data?.skills !== undefined &&
-        encounters.getSelectedCreature?.extra_data?.skills.length > 0
+        encounter.selectedCreature?.extra_data?.skills !== undefined &&
+        encounter.selectedCreature?.extra_data?.skills.length > 0
       "
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="skillString"
     ></div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <strong>Str</strong>
-      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.strength) }},
+      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.strength) }},
       <strong>Dex</strong>
-      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.dexterity) }},
+      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.dexterity) }},
       <strong>Con</strong>
-      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.constitution) }},
+      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.constitution) }},
       <strong>Int</strong>
-      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.intelligence) }},
+      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.intelligence) }},
       <strong>Wis</strong>
-      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.wisdom) }},
+      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.wisdom) }},
       <strong>Cha</strong>
-      {{ addPlus(encounters.getSelectedCreature?.extra_data?.ability_scores.charisma) }}
+      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.charisma) }}
     </div>
     <template
-      v-for="(item, index) in encounters.getSelectedCreature?.extra_data?.actions"
+      v-for="(item, index) in encounter.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
       <div
@@ -786,8 +780,8 @@ const openCreatureSheet = (game: games, id: number) => {
     </template>
     <div
       v-if="
-        encounters.getSelectedCreature?.combat_data?.weapons !== undefined &&
-        encounters.getSelectedCreature?.combat_data?.weapons.length > 0 &&
+        encounter.selectedCreature?.combat_data?.weapons !== undefined &&
+        encounter.selectedCreature?.combat_data?.weapons.length > 0 &&
         itemString !== ''
       "
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
@@ -800,7 +794,7 @@ const openCreatureSheet = (game: games, id: number) => {
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="defenceString"></div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="healthString"></div>
     <template
-      v-for="(item, index) in encounters.getSelectedCreature?.extra_data?.actions"
+      v-for="(item, index) in encounter.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
       <div
@@ -829,8 +823,8 @@ const openCreatureSheet = (game: games, id: number) => {
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
     <div
       v-if="
-        encounters.getSelectedCreature?.extra_data?.speeds !== undefined &&
-        Object.keys(encounters.getSelectedCreature?.extra_data?.speeds).length > 0
+        encounter.selectedCreature?.extra_data?.speeds !== undefined &&
+        Object.keys(encounter.selectedCreature?.extra_data?.speeds).length > 0
       "
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     >
@@ -839,7 +833,7 @@ const openCreatureSheet = (game: games, id: number) => {
     </div>
 
     <template
-      v-for="item in encounters.getSelectedCreature?.combat_data?.weapons"
+      v-for="item in encounter.selectedCreature?.combat_data?.weapons"
       :key="item.item_core.id"
     >
       <div
@@ -853,7 +847,7 @@ const openCreatureSheet = (game: games, id: number) => {
         <span
           :class="{
             'tw:text-red-600 tw:font-bold':
-              encounters.getSelectedCreature?.variant_data?.variant !== 'Base'
+              encounter.selectedCreature?.variant_data?.variant !== 'Base'
           }"
           >{{ addPlus(item.weapon_data?.to_hit_bonus!) }}
           <span v-if="item.item_core.traits.includes('agile')"
@@ -878,7 +872,7 @@ const openCreatureSheet = (game: games, id: number) => {
               v-if="weapon.bonus_dmg !== 0"
               :class="{
                 'tw:text-red-600 tw:font-bold':
-                  encounters.getSelectedCreature?.variant_data?.variant !== 'Base'
+                  encounter.selectedCreature?.variant_data?.variant !== 'Base'
               }"
               >{{ addPlus(weapon.bonus_dmg) }}</span
             >
@@ -899,7 +893,7 @@ const openCreatureSheet = (game: games, id: number) => {
       <div v-html="entity" class="tw:text-base tw:text-gray-800 tw:dark:text-white" />
     </template>
     <template
-      v-for="(item, index) in encounters.getSelectedCreature?.extra_data?.actions"
+      v-for="(item, index) in encounter.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
       <div

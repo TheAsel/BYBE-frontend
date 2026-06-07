@@ -8,11 +8,6 @@ export const templateStore = defineStore('template', {
     activeTemplate: 0,
     defaultTemplates: 0
   }),
-  getters: {
-    getTemplates: (state) => state.templates,
-    getActive: (state) => state.activeTemplate,
-    getActiveTemplate: (state) => state.templates[state.activeTemplate]
-  },
   actions: {
     getTemplateIndex(templateName: string): number {
       const index = this.templates.map((template) => template.name).indexOf(templateName);

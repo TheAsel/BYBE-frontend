@@ -33,13 +33,6 @@ export const npcStore = defineStore('npc', {
       level: false
     }
   }),
-  getters: {
-    getNpcs: (state) => state.npcs,
-    getActive: (state) => state.activeNpc,
-    getActiveNpc: (state) => state.npcs[state.activeNpc],
-    getGenerating: (state) => state.generating,
-    getLocks: (state) => state.locks
-  },
   actions: {
     setActiveNpc(newActiveNpc: number) {
       this.activeNpc = newActiveNpc;

@@ -32,7 +32,7 @@ const $q = useQuasar();
 const encounters = encounterStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const creatureId = Number(route.query.id);
 const queryVariant: string = String(route.query.variant).toLowerCase();
@@ -48,7 +48,7 @@ try {
           currentGame.value,
           creatureId,
           'Weak',
-          encounters.getPwl
+          encounters.is_pwl_on
         );
         break;
       case 'elite':
@@ -57,7 +57,7 @@ try {
           currentGame.value,
           creatureId,
           'Elite',
-          encounters.getPwl
+          encounters.is_pwl_on
         );
         break;
       default:
@@ -66,7 +66,7 @@ try {
           currentGame.value,
           creatureId,
           'Base',
-          encounters.getPwl
+          encounters.is_pwl_on
         );
         break;
     }

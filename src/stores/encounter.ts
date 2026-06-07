@@ -14,15 +14,6 @@ export const encounterStore = defineStore('encounter', {
     is_pwl_on: false,
     generating: false
   }),
-  getters: {
-    getSelectedCreature: (state) => state.selectedCreature,
-    getSelectedHazard: (state) => state.selectedHazard,
-    getEncounters: (state) => state.encounters,
-    getActive: (state) => state.activeEncounter,
-    getActiveEncounter: (state) => state.encounters[state.activeEncounter],
-    getPwl: (state) => state.is_pwl_on,
-    getGenerating: (state) => state.generating
-  },
   actions: {
     setSelectedCreature(newSelectedCreature: creature) {
       this.selectedHazard = null;

@@ -32,7 +32,7 @@ const encounter = encounterStore();
 const dialog = ref(false);
 const tab = ref('General');
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 const currentAon = ref(currentGame.value === 'sf' ? 'aonsrd' : 'aonprd');
 const currentRules = ref(
   currentGame.value === 'sf'
@@ -53,27 +53,27 @@ watch(
 const creatureHazardRatio = ref<number>(100);
 
 const creatureTraits = ref<string[]>();
-const creatureTraitsOptions = ref<string[]>(filters.getCreatureFilters.traits);
+const creatureTraitsOptions = ref<string[]>(filters.creatureFilters.traits);
 const alignment = ref<alignments[]>();
 const creatureSize = ref<sizes[]>();
 const creatureRarity = ref<rarities[]>();
 const family = ref<string[]>();
-const familiesOptions = filters.getCreatureFilters.families;
+const familiesOptions = filters.creatureFilters.families;
 const creature_type = ref<string[]>();
 const creature_roles = ref<roles[]>();
 const creatureSources = ref<string[]>();
-const creatureSourcesOptions = ref<string[]>(filters.getCreatureFilters.sources);
+const creatureSourcesOptions = ref<string[]>(filters.creatureFilters.sources);
 const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
 const creature_number = ref({ min: 1, max: 20 });
 
 const hazardTraits = ref<string[]>();
-const hazardTraitsOptions = ref<string[]>(filters.getHazardFilters.traits);
+const hazardTraitsOptions = ref<string[]>(filters.hazardFilters.traits);
 const complexity = ref<complexities[]>();
 const hazardSize = ref<sizes[]>();
 const hazardRarity = ref<rarities[]>();
 const hazardSources = ref<string[]>();
-const hazardSourcesOptions = ref<string[]>(filters.getHazardFilters.sources);
+const hazardSourcesOptions = ref<string[]>(filters.hazardFilters.sources);
 const hazardStealth = ref({
   min: filters.hazardRanges.min_stealth,
   max: filters.hazardRanges.max_stealth
@@ -179,9 +179,9 @@ const restoreSettings = () => {
 const generateEncounter = debounce(async function () {
   encounter.setGenerating(true);
   saveChanges();
-  const partyLevels = party.getActiveParty!.members;
-  const is_pwl_on = encounter.getPwl;
-  const game_version = settings.getGameVersion;
+  const partyLevels = party.parties[party.activeParty]!.members;
+  const is_pwl_on = encounter.is_pwl_on;
+  const game_version = settings.game_version;
 
   const body: encounter_data = {
     creature_data: {
@@ -313,7 +313,7 @@ const saveChanges = () => {
 const filterCreatureTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.traits = creatureTraitsOptions.value.filter((v) =>
+    filters.creatureFilters.traits = creatureTraitsOptions.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -322,7 +322,7 @@ const filterCreatureTraitsFn = (val, update) => {
 const filterFamiliesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.families = familiesOptions.filter((v) =>
+    filters.creatureFilters.families = familiesOptions.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -331,7 +331,7 @@ const filterFamiliesFn = (val, update) => {
 const filterCreatureSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getCreatureFilters.sources = creatureSourcesOptions.value.filter((v) =>
+    filters.creatureFilters.sources = creatureSourcesOptions.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -340,7 +340,7 @@ const filterCreatureSourcesFn = (val, update) => {
 const filterHazardTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getHazardFilters.traits = hazardTraitsOptions.value.filter((v) =>
+    filters.hazardFilters.traits = hazardTraitsOptions.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -349,7 +349,7 @@ const filterHazardTraitsFn = (val, update) => {
 const filterHazardSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.getHazardFilters.sources = hazardSourcesOptions.value.filter((v) =>
+    filters.hazardFilters.sources = hazardSourcesOptions.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -585,7 +585,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.traits)"
+                :options="Object.freeze(filters.creatureFilters.traits)"
                 use-input
                 input-debounce="0"
                 label="Traits"
@@ -601,7 +601,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.sizes)"
+                :options="Object.freeze(filters.creatureFilters.sizes)"
                 label="Size"
                 style="max-width: 248px"
               />
@@ -613,7 +613,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.rarities)"
+                :options="Object.freeze(filters.creatureFilters.rarities)"
                 label="Rarity"
                 style="max-width: 248px"
               />
@@ -625,7 +625,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.families)"
+                :options="Object.freeze(filters.creatureFilters.families)"
                 use-input
                 input-debounce="0"
                 label="Family"
@@ -641,7 +641,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.creature_types)"
+                :options="Object.freeze(filters.creatureFilters.creature_types)"
                 label="Creature Type"
                 style="max-width: 248px"
               />
@@ -653,7 +653,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.sources)"
+                :options="Object.freeze(filters.creatureFilters.sources)"
                 use-input
                 input-debounce="0"
                 label="Sources"
@@ -671,7 +671,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.alignments)"
+                :options="Object.freeze(filters.creatureFilters.alignments)"
                 label="Alignment"
                 style="width: 248px"
               />
@@ -683,7 +683,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getCreatureFilters.creature_roles)"
+                :options="Object.freeze(filters.creatureFilters.creature_roles)"
                 label="Roles"
                 style="width: 248px"
               />
@@ -713,7 +713,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getHazardFilters.traits)"
+                :options="Object.freeze(filters.hazardFilters.traits)"
                 use-input
                 input-debounce="0"
                 label="Traits"
@@ -740,7 +740,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getHazardFilters.sizes)"
+                :options="Object.freeze(filters.hazardFilters.sizes)"
                 label="Size"
                 style="max-width: 248px"
               />
@@ -752,7 +752,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getHazardFilters.rarities)"
+                :options="Object.freeze(filters.hazardFilters.rarities)"
                 label="Rarity"
                 style="max-width: 248px"
               />
@@ -764,7 +764,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.getHazardFilters.sources)"
+                :options="Object.freeze(filters.hazardFilters.sources)"
                 use-input
                 input-debounce="0"
                 label="Sources"

@@ -3,7 +3,7 @@ import BestiarySheet from 'src/components/encounter/EncounterSheet/BestiarySheet
 import HazardSheet from 'src/components/encounter/EncounterSheet/HazardSheet.vue';
 import { encounterStore } from 'src/stores/encounter';
 
-const encounters = encounterStore();
+const encounter = encounterStore();
 </script>
 
 <template>
@@ -14,17 +14,15 @@ const encounters = encounterStore();
       <q-scroll-area style="height: calc(100vh - 128px)">
         <div
           v-if="
-            (encounters.getSelectedCreature && encounters.getSelectedCreature.core_data) ||
-            (encounters.getSelectedHazard && encounters.getSelectedHazard.core_hazard)
+            (encounter.selectedCreature && encounter.selectedCreature.core_data) ||
+            (encounter.selectedHazard && encounter.selectedHazard.core_hazard)
           "
           class="q-gutter-y-xs tw:p-4 show-print"
         >
           <BestiarySheet
-            v-if="encounters.getSelectedCreature && encounters.getSelectedCreature.core_data"
+            v-if="encounter.selectedCreature && encounter.selectedCreature.core_data"
           />
-          <HazardSheet
-            v-if="encounters.getSelectedHazard && encounters.getSelectedHazard.core_hazard"
-          />
+          <HazardSheet v-if="encounter.selectedHazard && encounter.selectedHazard.core_hazard" />
         </div>
         <div v-else class="tw:text-center tw:text-lg tw:pt-[38vh]">
           Click on an element to display its description

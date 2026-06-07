@@ -17,9 +17,6 @@ export const npcParametersStore = defineStore('npcparameters', {
       jobs: [] as string[]
     }
   }),
-  getters: {
-    getNpcParameters: (state) => state.npcParameters
-  },
   actions: {
     updateGenders(newGenders: string[]) {
       this.npcParameters.genders = newGenders.map(splitPascalCase);

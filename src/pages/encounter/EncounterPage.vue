@@ -26,10 +26,10 @@ useHead({
 });
 
 const settings = settingsStore();
-const partyStores = partyStore();
+const party = partyStore();
 const encounter = encounterStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const tourActive = ref(false);
 const screenWidth = ref(screen.width);
@@ -60,7 +60,7 @@ if (localParty) {
         if (new Set(partyNames).size !== partyNames.length) {
           throw new Error('Duplicate saved party names');
         }
-        partyStores.updateParties(parties);
+        party.updateParties(parties);
       } else {
         throw new Error('Invalid saved party format');
       }
@@ -77,7 +77,7 @@ if (localParty) {
       members: [1, 1, 1, 1]
     };
     localStorage.setItem('parties', JSON.stringify([defaultParty]));
-    partyStores.updateParties([defaultParty]);
+    party.updateParties([defaultParty]);
   }
 }
 

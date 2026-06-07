@@ -48,7 +48,7 @@ const encounter = encounterStore();
 const info = infoStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 const currentAon = ref(currentGame.value === 'sf' ? 'aonsrd' : 'aonprd');
 
 const importEncounterDialog = ref(false);
@@ -70,16 +70,16 @@ const newEncounterRename = ref('');
 
 const removeEncounterDialog = ref(false);
 
-const tmpEncounter = ref<encounter_list>(encounter.getActiveEncounter!);
-const encounters = ref<string[]>(encounter.getEncounters.map((encounter) => encounter.name));
+const tmpEncounter = ref<encounter_list>(encounter.encounters[encounter.activeEncounter]!);
+const encounters = ref<string[]>(encounter.encounters.map((encounter) => encounter.name));
 
 tmpEncounter.value = {
-  name: encounter.getActiveEncounter!.name,
-  creatures: encounter.getActiveEncounter!.creatures
+  name: encounter.encounters[encounter.activeEncounter]!.name,
+  creatures: encounter.encounters[encounter.activeEncounter]!.creatures
 };
 
 const debouncedCall = debounce(async function () {
-  const encounterList = encounter.getActiveEncounter!.creatures;
+  const encounterList = encounter.encounters[encounter.activeEncounter]!.creatures;
   const creatureLevels: number[] = [];
   const hazardLevels: { complexity: complexities; level: number }[] = [];
   for (const item of encounterList) {
@@ -109,7 +109,7 @@ const debouncedCall = debounce(async function () {
       }
     }
   }
-  const partyLevels = party.getActiveParty!.members;
+  const partyLevels = party.parties[party.activeParty]!.members;
   const localPwl = ref(localStorage.getItem('is_pwl_on'));
   switch (localPwl.value) {
     case 'true':
@@ -129,7 +129,7 @@ const debouncedCall = debounce(async function () {
     party_levels: partyLevels
   };
   try {
-    if (!encounter.getGenerating) {
+    if (!encounter.generating) {
       const returnedEncounterInfo = await encounterInfo(currentGame.value, body);
       if (returnedEncounterInfo === undefined) {
         throw new TypeError('Error calculating encounter challenge');
@@ -146,8 +146,8 @@ watch(
   [() => encounter.encounters, () => encounter.activeEncounter, () => encounter.is_pwl_on],
   async () => {
     tmpEncounter.value = {
-      name: encounter.getActiveEncounter!.name,
-      creatures: encounter.getActiveEncounter!.creatures
+      name: encounter.encounters[encounter.activeEncounter]!.name,
+      creatures: encounter.encounters[encounter.activeEncounter]!.creatures
     };
     saveChanges();
     await debouncedCall();
@@ -242,10 +242,10 @@ await router.replace({
 const openShare = async () => {
   isGenerating.value = true;
   shareDialog.value = true;
-  const encounterList = encounter.getActiveEncounter!.creatures;
+  const encounterList = encounter.encounters[encounter.activeEncounter]!.creatures;
   const body: shareable_encounter = {
-    encounter_name: encounter.getActiveEncounter?.name
-      ? encounter.getActiveEncounter.name
+    encounter_name: encounter.encounters[encounter.activeEncounter]?.name
+      ? encounter.encounters[encounter.activeEncounter]!.name
       : 'Default',
     creatures_data: [],
     hazards_data: []
@@ -370,11 +370,11 @@ const importEncounter = async () => {
       }
     }
     encounter.addEncounter(importEncounterName.value);
-    encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
+    encounters.value = encounter.encounters.map((encounter) => encounter.name);
     encounter.updateEncounter(importEncounterName.value, tmp_creatures);
     tmpEncounter.value = {
-      name: encounter.getActiveEncounter!.name,
-      creatures: [...encounter.getActiveEncounter!.creatures]
+      name: encounter.encounters[encounter.activeEncounter]!.name,
+      creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
     };
     saveChanges();
     importEncounterName.value = '';
@@ -398,10 +398,10 @@ const addEncounter = () => {
   encounterNameInput.value.validate();
   if (!encounterNameInput.value.hasError) {
     encounter.addEncounter(newEncounterName.value);
-    encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
+    encounters.value = encounter.encounters.map((encounter) => encounter.name);
     tmpEncounter.value = {
-      name: encounter.getActiveEncounter!.name,
-      creatures: [...encounter.getActiveEncounter!.creatures]
+      name: encounter.encounters[encounter.activeEncounter]!.name,
+      creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
     };
     saveChanges();
     newEncounterName.value = '';
@@ -412,11 +412,11 @@ const addEncounter = () => {
 const renameEncounter = () => {
   encounterRenameInput.value.validate();
   if (!encounterRenameInput.value.hasError) {
-    encounter.getActiveEncounter!.name = newEncounterRename.value;
-    encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
+    encounter.encounters[encounter.activeEncounter]!.name = newEncounterRename.value;
+    encounters.value = encounter.encounters.map((encounter) => encounter.name);
     tmpEncounter.value = {
-      name: encounter.getActiveEncounter!.name,
-      creatures: [...encounter.getActiveEncounter!.creatures]
+      name: encounter.encounters[encounter.activeEncounter]!.name,
+      creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
     };
     saveChanges();
     newEncounterRename.value = '';
@@ -426,10 +426,10 @@ const renameEncounter = () => {
 
 const removeEncounter = () => {
   encounter.removeEncounter();
-  encounters.value = encounter.getEncounters.map((encounter) => encounter.name);
+  encounters.value = encounter.encounters.map((encounter) => encounter.name);
   tmpEncounter.value = {
-    name: encounter.getActiveEncounter!.name,
-    creatures: [...encounter.getActiveEncounter!.creatures]
+    name: encounter.encounters[encounter.activeEncounter]!.name,
+    creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
   };
   saveChanges();
   removeEncounterDialog.value = false;
@@ -438,14 +438,14 @@ const removeEncounter = () => {
 const changeActiveEncounter = (selected: string) => {
   encounter.changeActiveEncounter(encounter.getEncounterIndex(selected));
   tmpEncounter.value = {
-    name: encounter.getActiveEncounter!.name,
-    creatures: [...encounter.getActiveEncounter!.creatures]
+    name: encounter.encounters[encounter.activeEncounter]!.name,
+    creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
   };
 };
 
 const saveChanges = () => {
   encounter.updateEncounter(tmpEncounter.value.name, tmpEncounter.value.creatures);
-  localStorage.setItem('encounters', JSON.stringify(encounter.getEncounters));
+  localStorage.setItem('encounters', JSON.stringify(encounter.encounters));
 };
 
 const openCreatureSheet = (game: games, id: number, variant: variants) => {
@@ -494,7 +494,12 @@ const showItem = debounce(async function (item: min_creature_hazard) {
     }
   } else {
     try {
-      const itemData = await requestCreatureId(item.game, item.id, item.variant!, encounter.getPwl);
+      const itemData = await requestCreatureId(
+        item.game,
+        item.id,
+        item.variant!,
+        encounter.is_pwl_on
+      );
       if (isNull(itemData) || itemData === undefined) {
         console.error('Missing creature ID');
         $q.notify({
@@ -845,8 +850,11 @@ const showItem = debounce(async function (item: min_creature_hazard) {
           >
         </div>
       </q-header>
-      <q-page-container v-if="encounter.getGenerating === false">
-        <div v-for="(item, index) in encounter.getActiveEncounter!.creatures" :key="index">
+      <q-page-container v-if="encounter.generating === false">
+        <div
+          v-for="(item, index) in encounter.encounters[encounter.activeEncounter]!.creatures"
+          :key="index"
+        >
           <div class="tw:flex">
             <div id="v-step-8" class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
               <q-btn
@@ -1030,7 +1038,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
             rounded
             size="35px"
             :value="1"
-            :color="info.getInfo.color"
+            :color="info.info.color"
             aria-label="Encounter challenge"
           >
             <div class="absolute-full flex flex-center">
@@ -1038,13 +1046,13 @@ const showItem = debounce(async function (item: min_creature_hazard) {
                 class="tw:absolute tw:text-base! tw:hidden! tw:xl:flex!"
                 color="grey-10"
                 text-color="white"
-                :label="'Challenge: ' + info.getInfo.challenge"
+                :label="'Challenge: ' + info.info.challenge"
               />
               <q-badge
                 class="tw:absolute tw:text-base! tw:xl:hidden! tw:flex!"
                 color="grey-10"
                 text-color="white"
-                :label="info.getInfo.challenge"
+                :label="info.info.challenge"
               />
             </div>
           </q-linear-progress>
@@ -1052,7 +1060,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
           <div
             class="flex flex-center text-subtitle1 font-bold tw:whitespace-nowrap tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800!"
           >
-            Cost: {{ info.getInfo.experience }} XP
+            Cost: {{ info.info.experience }} XP
           </div>
         </div>
       </q-footer>

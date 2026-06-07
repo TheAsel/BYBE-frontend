@@ -9,11 +9,6 @@ export const partyStore = defineStore('party', {
     ] as party[],
     activeParty: 0
   }),
-  getters: {
-    getParties: (state) => state.parties,
-    getActive: (state) => state.activeParty,
-    getActiveParty: (state) => state.parties[state.activeParty]
-  },
   actions: {
     getPartyIndex(partyName: string): number {
       return this.parties.map((party) => party.name).indexOf(partyName);

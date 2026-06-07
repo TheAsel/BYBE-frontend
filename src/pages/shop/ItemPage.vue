@@ -32,7 +32,7 @@ const $q = useQuasar();
 const items = itemsStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const itemId = Number(route.query.id);
 

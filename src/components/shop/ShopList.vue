@@ -36,9 +36,9 @@ const router = useRouter();
 const $q = useQuasar();
 
 const settings = settingsStore();
-const shop = itemsStore();
+const items = itemsStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const importShopDialog = ref(false);
 const importNameInput = ref();
@@ -59,19 +59,19 @@ const newShopRename = ref('');
 
 const removeShopDialog = ref(false);
 
-const tmpShop = ref<shop_list>(shop.getActiveShop!);
-const shops = ref<string[]>(shop.getShops.map((shop) => shop.name));
+const tmpShop = ref<shop_list>(items.shops[items.activeShop]!);
+const shops = ref<string[]>(items.shops.map((shop) => shop.name));
 
 tmpShop.value = {
-  name: shop.getActiveShop!.name,
-  items: shop.getActiveShop!.items
+  name: items.shops[items.activeShop]!.name,
+  items: items.shops[items.activeShop]!.items
 };
 
 // save on shop list change
-watch(shop, () => {
+watch(items, () => {
   tmpShop.value = {
-    name: shop.getActiveShop!.name,
-    items: shop.getActiveShop!.items
+    name: items.shops[items.activeShop]!.name,
+    items: items.shops[items.activeShop]!.items
   };
   saveChanges();
 });
@@ -155,9 +155,11 @@ await router.replace({
 const openShare = async () => {
   isGenerating.value = true;
   shareDialog.value = true;
-  const shopList = shop.getActiveShop!.items;
+  const shopList = items.shops[items.activeShop]!.items;
   const body: shareable_shop = {
-    shop_name: shop.getActiveShop?.name ? shop.getActiveShop.name : 'Default',
+    shop_name: items.shops[items.activeShop]?.name
+      ? items.shops[items.activeShop]!.name
+      : 'Default',
     items_data: []
   };
 
@@ -241,12 +243,12 @@ const importShop = async () => {
         console.error(error);
       }
     }
-    shop.addShop(importShopName.value);
-    shops.value = shop.getShops.map((shop) => shop.name);
-    shop.updateShop(importShopName.value, tmp_items);
+    items.addShop(importShopName.value);
+    shops.value = items.shops.map((shop) => shop.name);
+    items.updateShop(importShopName.value, tmp_items);
     tmpShop.value = {
-      name: shop.getActiveShop!.name,
-      items: [...shop.getActiveShop!.items]
+      name: items.shops[items.activeShop]!.name,
+      items: [...items.shops[items.activeShop]!.items]
     };
     saveChanges();
     importShopName.value = '';
@@ -268,11 +270,11 @@ const closeDialog = () => {
 const addShop = () => {
   shopNameInput.value.validate();
   if (!shopNameInput.value.hasError) {
-    shop.addShop(newShopName.value);
-    shops.value = shop.getShops.map((shop) => shop.name);
+    items.addShop(newShopName.value);
+    shops.value = items.shops.map((shop) => shop.name);
     tmpShop.value = {
-      name: shop.getActiveShop!.name,
-      items: [...shop.getActiveShop!.items]
+      name: items.shops[items.activeShop]!.name,
+      items: [...items.shops[items.activeShop]!.items]
     };
     saveChanges();
     newShopName.value = '';
@@ -283,11 +285,11 @@ const addShop = () => {
 const renameShop = () => {
   shopRenameInput.value.validate();
   if (!shopRenameInput.value.hasError) {
-    shop.getActiveShop!.name = newShopRename.value;
-    shops.value = shop.getShops.map((shop) => shop.name);
+    items.shops[items.activeShop]!.name = newShopRename.value;
+    shops.value = items.shops.map((shop) => shop.name);
     tmpShop.value = {
-      name: shop.getActiveShop!.name,
-      items: [...shop.getActiveShop!.items]
+      name: items.shops[items.activeShop]!.name,
+      items: [...items.shops[items.activeShop]!.items]
     };
     saveChanges();
     newShopRename.value = '';
@@ -296,27 +298,27 @@ const renameShop = () => {
 };
 
 const removeShop = () => {
-  shop.removeShop();
-  shops.value = shop.getShops.map((shop) => shop.name);
+  items.removeShop();
+  shops.value = items.shops.map((shop) => shop.name);
   tmpShop.value = {
-    name: shop.getActiveShop!.name,
-    items: [...shop.getActiveShop!.items]
+    name: items.shops[items.activeShop]!.name,
+    items: [...items.shops[items.activeShop]!.items]
   };
   saveChanges();
   removeShopDialog.value = false;
 };
 
 const changeActiveShop = (selected: string) => {
-  shop.changeActiveShop(shop.getShopIndex(selected));
+  items.changeActiveShop(items.getShopIndex(selected));
   tmpShop.value = {
-    name: shop.getActiveShop!.name,
-    items: [...shop.getActiveShop!.items]
+    name: items.shops[items.activeShop]!.name,
+    items: [...items.shops[items.activeShop]!.items]
   };
 };
 
 const saveChanges = () => {
-  shop.updateShop(tmpShop.value.name, tmpShop.value.items);
-  localStorage.setItem('shops', JSON.stringify(shop.getShops));
+  items.updateShop(tmpShop.value.name, tmpShop.value.items);
+  localStorage.setItem('shops', JSON.stringify(items.shops));
 };
 
 const showItem = debounce(async function (item: min_item) {
@@ -332,7 +334,7 @@ const showItem = debounce(async function (item: min_item) {
       });
       await router.push({ name: 'shop', query: { game: item.game } });
     } else {
-      shop.setSelectedItem(itemData);
+      items.setSelectedItem(itemData);
     }
   } catch (error) {
     console.error(error);
@@ -653,11 +655,11 @@ const showItem = debounce(async function (item: min_item) {
             label="Shops"
             @update:model-value="changeActiveShop(tmpShop.name)"
           />
-          <q-btn flat dense aria-label="Clear shop" @click="shop.clearShop">CLEAR</q-btn>
+          <q-btn flat dense aria-label="Clear shop" @click="items.clearShop">CLEAR</q-btn>
         </div>
       </q-header>
-      <q-page-container v-if="shop.getGenerating === false">
-        <div v-for="(item, index) in shop.getActiveShop!.items" :key="index">
+      <q-page-container v-if="items.generating === false">
+        <div v-for="(item, index) in items.shops[items.activeShop]!.items" :key="index">
           <div class="tw:flex">
             <div class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
               <q-btn
@@ -667,7 +669,7 @@ const showItem = debounce(async function (item: min_item) {
                 class="q-px-md"
                 :icon="biPlus"
                 aria-label="Add item"
-                @click="shop.addToShop(item, index)"
+                @click="items.addToShop(item, index)"
               />
               <q-btn
                 unelevated
@@ -676,7 +678,7 @@ const showItem = debounce(async function (item: min_item) {
                 class="q-px-md"
                 :icon="biDash"
                 aria-label="Remove item"
-                @click="shop.removeFromShop(index)"
+                @click="items.removeFromShop(index)"
               />
             </div>
             <div class="tw:flex tw:flex-row tw:grow cursor-pointer" @click="showItem(item)">
@@ -774,7 +776,7 @@ const showItem = debounce(async function (item: min_item) {
                 <span class="tw:align-middle">
                   {{ item.quantity }}
                   <a
-                    v-if="item.archive_link && settings.getAonLinks"
+                    v-if="item.archive_link && settings.is_aon_links_on"
                     :href="item.archive_link"
                     target="_blank"
                     rel="noopener"
@@ -789,7 +791,7 @@ const showItem = debounce(async function (item: min_item) {
                 </span>
               </div>
               <div class="tw:shrink tw:text-nowrap tw:my-auto tw:mx-1">
-                {{ shop.getFormattedPrice(item.price * item.quantity!, currentGame) }}
+                {{ items.getFormattedPrice(item.price * item.quantity!, currentGame) }}
               </div>
             </div>
             <div class="tw:flex-none tw:my-auto tw:ml-1 tw:mr-3">
@@ -802,7 +804,7 @@ const showItem = debounce(async function (item: min_item) {
                 :icon="biTrash"
                 round
                 aria-label="Clear item"
-                @click="shop.clearItem(item)"
+                @click="items.clearItem(item)"
               />
             </div>
           </div>
@@ -820,7 +822,7 @@ const showItem = debounce(async function (item: min_item) {
       >
         <div class="tw:flex tw:mx-4">
           <div class="text-subtitle1 font-bold tw:whitespace-nowrap tw:py-2.5 tw:pr-4">
-            Total cost: {{ shop.getFormattedPrice(shop.getTotalCost, currentGame) }}
+            Total cost: {{ items.getFormattedPrice(items.getTotalCost, currentGame) }}
           </div>
         </div>
       </q-footer>

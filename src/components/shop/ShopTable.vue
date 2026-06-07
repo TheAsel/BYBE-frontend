@@ -45,20 +45,20 @@ const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
 const $q = useQuasar();
 const settings = settingsStore();
 const items = itemsStore();
-const filterStore = filtersStore();
+const filters = filtersStore();
 
 const shopBuilderRef = ref();
 const router = useRouter();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 const currentAon = ref(
   currentGame.value === 'sf' ? 'https://2e.aonsrd.com/search' : 'https://2e.aonprd.com/Search.aspx'
 );
 
 watch(
-  () => filterStore.shopRanges,
+  () => filters.shopRanges,
   (ranges) => {
-    filters.value.level_filter = {
+    activeFilters.value.level_filter = {
       min: ranges.min_level,
       max: ranges.max_level
     };
@@ -77,7 +77,7 @@ const pagination = ref({
   rowsPerPage: 100,
   rowsNumber: 0
 });
-const filters = ref<{
+const activeFilters = ref<{
   name_filter: string;
   level_filter: { min: number; max: number };
   trait_filter: string[];
@@ -88,7 +88,7 @@ const filters = ref<{
   order_by: 'ascending' | 'descending';
 }>({
   name_filter: '',
-  level_filter: { min: filterStore.shopRanges.min_level, max: filterStore.shopRanges.max_level },
+  level_filter: { min: filters.shopRanges.min_level, max: filters.shopRanges.max_level },
   trait_filter: [],
   rarity_filter: [],
   type_filter: [],
@@ -99,8 +99,8 @@ const filters = ref<{
 const fullscreen = ref(false);
 const tableHeight = ref('height: calc(100vh - 126px)');
 
-const sourceFilter = ref<string[]>(filterStore.getItemFilters.sources);
-const traitFilter = ref<{ label: string; value: string }[]>(filterStore.getItemFilters.traits);
+const sourceFilter = ref<string[]>(filters.itemFilters.sources);
+const traitFilter = ref<{ label: string; value: string }[]>(filters.itemFilters.traits);
 
 const columns: {
   name: item_columns;
@@ -184,48 +184,48 @@ const waitForPageLoad = () =>
 
 const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: number) {
   const body: item_filters = {
-    min_level_filter: filters.value.level_filter.min,
-    max_level_filter: filters.value.level_filter.max,
-    game_system_version: settings.getGameVersion
+    min_level_filter: activeFilters.value.level_filter.min,
+    max_level_filter: activeFilters.value.level_filter.max,
+    game_system_version: settings.game_version
   };
-  if (filters.value.name_filter !== '') {
-    body.name_filter = filters.value.name_filter;
+  if (activeFilters.value.name_filter !== '') {
+    body.name_filter = activeFilters.value.name_filter;
   }
   if (
-    filters.value.trait_filter !== undefined &&
-    filters.value.trait_filter !== null &&
-    filters.value.trait_filter.length > 0
+    activeFilters.value.trait_filter !== undefined &&
+    activeFilters.value.trait_filter !== null &&
+    activeFilters.value.trait_filter.length > 0
   ) {
-    body.trait_whitelist_filter = filters.value.trait_filter;
+    body.trait_whitelist_filter = activeFilters.value.trait_filter;
   }
   if (
-    filters.value.rarity_filter !== undefined &&
-    filters.value.rarity_filter !== null &&
-    filters.value.rarity_filter.length > 0
+    activeFilters.value.rarity_filter !== undefined &&
+    activeFilters.value.rarity_filter !== null &&
+    activeFilters.value.rarity_filter.length > 0
   ) {
-    body.rarity_filter = filters.value.rarity_filter;
+    body.rarity_filter = activeFilters.value.rarity_filter;
   }
   if (
-    filters.value.type_filter !== undefined &&
-    filters.value.type_filter !== null &&
-    filters.value.type_filter.length > 0
+    activeFilters.value.type_filter !== undefined &&
+    activeFilters.value.type_filter !== null &&
+    activeFilters.value.type_filter.length > 0
   ) {
-    body.type_filter = filters.value.type_filter;
+    body.type_filter = activeFilters.value.type_filter;
   }
   if (
-    filters.value.source_filter !== undefined &&
-    filters.value.source_filter !== null &&
-    filters.value.source_filter.length > 0
+    activeFilters.value.source_filter !== undefined &&
+    activeFilters.value.source_filter !== null &&
+    activeFilters.value.source_filter.length > 0
   ) {
-    body.source_filter = filters.value.source_filter;
+    body.source_filter = activeFilters.value.source_filter;
   }
   try {
     const request = await requestItems(
       currentGame.value,
       startRow,
       rowsPerPage,
-      filters.value.sort_by,
-      filters.value.order_by,
+      activeFilters.value.sort_by,
+      activeFilters.value.order_by,
       body
     );
     if (request) {
@@ -262,9 +262,9 @@ async function onRequest(props) {
 }
 
 const resetFilters = () => {
-  filters.value = {
+  activeFilters.value = {
     name_filter: '',
-    level_filter: { min: filterStore.shopRanges.min_level, max: filterStore.shopRanges.max_level },
+    level_filter: { min: filters.shopRanges.min_level, max: filters.shopRanges.max_level },
     trait_filter: [],
     rarity_filter: [],
     type_filter: [],
@@ -277,15 +277,15 @@ const resetFilters = () => {
 const visibleColumns = ref(['name', 'level', 'type', 'rarity']);
 
 const sort = (col: item_columns) => {
-  if (filters.value.sort_by === col) {
-    if (filters.value.order_by === 'ascending') {
-      filters.value.order_by = 'descending';
+  if (activeFilters.value.sort_by === col) {
+    if (activeFilters.value.order_by === 'ascending') {
+      activeFilters.value.order_by = 'descending';
     } else {
-      filters.value.order_by = 'ascending';
+      activeFilters.value.order_by = 'ascending';
     }
   } else {
-    filters.value.order_by = 'ascending';
-    filters.value.sort_by = col;
+    activeFilters.value.order_by = 'ascending';
+    activeFilters.value.sort_by = col;
   }
 };
 
@@ -377,7 +377,7 @@ async function onTableKey(evt) {
 
   switch (evt.key) {
     case 'Enter': {
-      addItem(items.getSelectedItem!);
+      addItem(items.selectedItem!);
       break;
     }
     case 'PageUp': {
@@ -510,7 +510,7 @@ const toggleFullscreen = () => {
 const filterSourcesFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getItemFilters.sources = sourceFilter.value.filter((v) =>
+    filters.itemFilters.sources = sourceFilter.value.filter((v) =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -519,7 +519,7 @@ const filterSourcesFn = (val, update) => {
 const filterTraitsFn = (val, update) => {
   update(() => {
     const filter = val.toLowerCase();
-    filterStore.getItemFilters.traits = traitFilter.value.filter((v) =>
+    filters.itemFilters.traits = traitFilter.value.filter((v) =>
       v.label.toLowerCase().includes(filter)
     );
   });
@@ -540,21 +540,21 @@ onMounted(async () => {
     if (!templatesRequest) throw new Error('Error fetching templates');
     if (!shopRangesRequest) throw new Error('Error fetching shop ranges');
 
-    filterStore.updateItemSources(sourcesRequest);
-    sourceFilter.value = filterStore.getItemFilters.sources;
+    filters.updateItemSources(sourcesRequest);
+    sourceFilter.value = filters.itemFilters.sources;
 
-    filterStore.updateItemTraits(traitsRequest);
-    traitFilter.value = filterStore.getItemFilters.traits;
+    filters.updateItemTraits(traitsRequest);
+    traitFilter.value = filters.itemFilters.traits;
 
     templateStore().addDefaultTemplates(templatesRequest);
 
-    filterStore.shopRanges = shopRangesRequest;
+    filters.shopRanges = shopRangesRequest;
   } catch (error) {
     console.error(error);
     $q.notify({
       progress: true,
       type: 'warning',
-      message: 'Error fetching filters',
+      message: 'Error fetching activeFilters',
       icon: matPriorityHigh
     });
   }
@@ -580,7 +580,7 @@ onMounted(async () => {
       virtual-scroll-sticky-size-start="50"
       virtual-scroll-item-size="48"
       :loading="loading"
-      :filter="filters"
+      :filter="activeFilters"
       rows-per-page-label="Items per page:"
       :rows-per-page-options="[50, 100, 0]"
       table-header-class="v-step-3"
@@ -714,7 +714,7 @@ onMounted(async () => {
               :icon="biEraser"
               size="md"
               padding="sm"
-              aria-label="Clear filters"
+              aria-label="Clear activeFilters"
               @click="resetFilters"
             >
               <q-tooltip
@@ -769,13 +769,13 @@ onMounted(async () => {
             <div class="col-grow">
               <KeepAlive>
                 <q-select
-                  v-model="filters.source_filter"
+                  v-model="activeFilters.source_filter"
                   multiple
                   dense
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filterStore.getItemFilters.sources)"
+                  :options="Object.freeze(filters.itemFilters.sources)"
                   :label="columns[0]!.label"
                   :style="columns[0]!.style"
                   use-input
@@ -796,7 +796,7 @@ onMounted(async () => {
           >
             <div class="col-grow">
               <q-input
-                v-model="filters.name_filter"
+                v-model="activeFilters.name_filter"
                 dense
                 outlined
                 :label="columns[1]!.label"
@@ -832,16 +832,16 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ filters.level_filter.min }} to {{ filters.level_filter.max }}
+                  {{ activeFilters.level_filter.min }} to {{ activeFilters.level_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
                     <div class="tw:pt-8 tw:px-1">
                       <q-range
-                        v-model="filters.level_filter"
+                        v-model="activeFilters.level_filter"
                         label-always
-                        :min="filterStore.shopRanges.min_level"
-                        :max="filterStore.shopRanges.min_level"
+                        :min="filters.shopRanges.min_level"
+                        :max="filters.shopRanges.min_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
@@ -874,13 +874,13 @@ onMounted(async () => {
             <div class="col-grow">
               <KeepAlive>
                 <q-select
-                  v-model="filters.trait_filter"
+                  v-model="activeFilters.trait_filter"
                   multiple
                   dense
                   outlined
                   clearable
                   options-dense
-                  :options="filterStore.getItemFilters.traits"
+                  :options="filters.itemFilters.traits"
                   :label="columns[3]!.label"
                   :style="columns[3]!.style"
                   map-options
@@ -914,7 +914,7 @@ onMounted(async () => {
           >
             <div class="col-grow">
               <q-select
-                v-model="filters.rarity_filter"
+                v-model="activeFilters.rarity_filter"
                 multiple
                 dense
                 outlined
@@ -947,7 +947,7 @@ onMounted(async () => {
           >
             <div class="col-grow">
               <q-select
-                v-model="filters.type_filter"
+                v-model="activeFilters.type_filter"
                 multiple
                 dense
                 outlined
@@ -1032,15 +1032,15 @@ onMounted(async () => {
         <q-td :props="name">
           <q-icon
             v-if="
-              items.getSelectedItem?.core_item &&
-              name.row.core_item.id === items.getSelectedItem?.core_item.id
+              items.selectedItem?.core_item &&
+              name.row.core_item.id === items.selectedItem?.core_item.id
             "
             class="tw:mr-1 tw:align-middle"
             size="xs"
             :name="biCaretRight"
           />
           <a
-            v-if="settings.getAonLinks"
+            v-if="settings.is_aon_links_on"
             :href="currentAon + '?q=' + encodeURIComponent(name.row.core_item.name) + '&type=eqs'"
             target="_blank"
             rel="noopener"
@@ -1054,9 +1054,7 @@ onMounted(async () => {
           <span v-else class="tw:align-middle">{{ name.row.core_item.name }}</span>
           <q-chip
             v-if="
-              currentGame === 'pf' &&
-              name.row.core_item.remaster &&
-              settings.getGameVersion === 'Any'
+              currentGame === 'pf' && name.row.core_item.remaster && settings.game_version === 'Any'
             "
             dense
             color="blue"
@@ -1068,7 +1066,7 @@ onMounted(async () => {
             v-if="
               currentGame === 'pf' &&
               !name.row.core_item.remaster &&
-              settings.getGameVersion === 'Any'
+              settings.game_version === 'Any'
             "
             dense
             color="red-10"
@@ -1186,7 +1184,7 @@ onMounted(async () => {
       <template #no-data>
         <div class="row flex-center q-gutter-sm">
           <q-icon size="2em" :name="matWarning" />
-          <span> No item matches the current filters </span>
+          <span> No item matches the current activeFilters </span>
         </div>
       </template>
     </q-table>

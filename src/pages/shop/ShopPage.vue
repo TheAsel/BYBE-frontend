@@ -27,10 +27,10 @@ useHead({
 });
 
 const settings = settingsStore();
-const shop = itemsStore();
-const templatesStore = templateStore();
+const items = itemsStore();
+const template = templateStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const tourActive = ref(false);
 const screenWidth = ref(screen.width);
@@ -51,7 +51,7 @@ if (localShops) {
         if (new Set(shopNames).size !== shopNames.length) {
           throw new Error('Duplicate saved shop names');
         }
-        shop.updateShops(shops);
+        items.updateShops(shops);
       } else {
         throw new Error('Invalid saved shop format');
       }
@@ -62,7 +62,7 @@ if (localShops) {
     console.error(error);
     const defaultShop = { name: 'Default', items: [] };
     localStorage.setItem('shops', JSON.stringify([defaultShop]));
-    shop.updateShops([defaultShop]);
+    items.updateShops([defaultShop]);
   }
 }
 
@@ -83,7 +83,7 @@ if (localTemplates) {
         for (const template of templates) {
           template.default = false;
         }
-        templatesStore.updateTemplates(templates);
+        template.updateTemplates(templates);
       } else {
         throw new Error('Invalid saved template format');
       }
@@ -93,7 +93,7 @@ if (localTemplates) {
   } catch (error) {
     console.error(error);
     localStorage.setItem('shops', JSON.stringify([]));
-    templatesStore.updateTemplates([]);
+    template.updateTemplates([]);
   }
 }
 
@@ -269,23 +269,23 @@ const tmpFlightSuit: min_item = {
 const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
-    shop.addShop('Example');
+    items.addShop('Example');
     if (currentGame.value === 'sf') {
-      shop.setSelectedItem(tmpLaserRifleFull);
-      shop.addToShop(tmpLaserRifle);
-      shop.addToShop(tmpFlightSuit);
+      items.setSelectedItem(tmpLaserRifleFull);
+      items.addToShop(tmpLaserRifle);
+      items.addToShop(tmpFlightSuit);
     } else {
-      shop.setSelectedItem(tmpCloakFull);
-      shop.addToShop(tmpCloak);
-      shop.addToShop(tmpPotion);
+      items.setSelectedItem(tmpCloakFull);
+      items.addToShop(tmpCloak);
+      items.addToShop(tmpPotion);
     }
   }
 };
 
 const stopTour = () => {
   if (tourActive.value) {
-    shop.removeShop();
-    shop.removeSelectedItem();
+    items.removeShop();
+    items.removeSelectedItem();
     tourActive.value = false;
   }
 };

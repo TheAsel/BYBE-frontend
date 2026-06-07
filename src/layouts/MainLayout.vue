@@ -33,7 +33,7 @@ const backgroundStyle = computed(() => {
   if (isDownload.value) {
     imageUrl = '/home-background.webp';
   } else {
-    imageUrl = settings.getGame === 'sf' ? '/sf2e-background.webp' : '/pf2e-background.webp';
+    imageUrl = settings.game === 'sf' ? '/sf2e-background.webp' : '/pf2e-background.webp';
   }
   return {
     backgroundImage: `url('${imageUrl}')`,
@@ -84,7 +84,7 @@ try {
           |
           <span v-if="!isDownload">
             <router-link
-              :to="{ path: '/license', query: { game: settings.getGame } }"
+              :to="{ path: '/license', query: { game: settings.game } }"
               class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
               >Licenses and Policies</router-link
             >

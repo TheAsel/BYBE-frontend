@@ -9,10 +9,10 @@ import { settingsStore } from 'src/stores/settings';
 import type { games } from 'src/types/filters';
 
 const router = useRouter();
-const encounters = encounterStore();
+const encounter = encounterStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.getGame === 'sf' ? 'sf' : 'pf');
+const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const pfActionSymbol = (num: number | null, action: string) => {
   if (num === 1 || num === 2 || num === 3) {
@@ -34,7 +34,7 @@ const cleanDescription = (description: string) => {
 };
 
 const actionTraitsString = (index: number) => {
-  const traits = encounters.getSelectedHazard?.core_hazard.actions[index]?.traits;
+  const traits = encounter.selectedHazard?.core_hazard.actions[index]?.traits;
   let finalString = '';
   if (traits !== undefined && traits.length > 0) {
     finalString += ' (';
@@ -74,8 +74,8 @@ const openHazardSheet = (game: games, id: number) => {
         aria-label="Open hazard sheet"
         @click="
           openHazardSheet(
-            encounters.getSelectedHazard?.game ?? currentGame,
-            encounters.getSelectedHazard!.core_hazard.essential.id
+            encounter.selectedHazard?.game ?? currentGame,
+            encounter.selectedHazard!.core_hazard.essential.id
           )
         "
       >
@@ -89,11 +89,11 @@ const openHazardSheet = (game: games, id: number) => {
       </q-btn>
     </div>
     <a
-      v-if="settings.getAonLinks && encounters.getSelectedHazard"
+      v-if="settings.is_aon_links_on && encounter.selectedHazard"
       class="tw:my-auto"
       :href="
         'https://2e.aonprd.com/search?q=' +
-        encodeURIComponent(encounters.getSelectedHazard.core_hazard.essential.name) +
+        encodeURIComponent(encounter.selectedHazard.core_hazard.essential.name) +
         ' type%3A(hazard)&type=eqs'
       "
       target="_blank"
@@ -102,16 +102,16 @@ const openHazardSheet = (game: games, id: number) => {
       <h1
         class="tw:text-3xl! tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
       >
-        {{ encounters.getSelectedHazard?.core_hazard.essential.name }}
+        {{ encounter.selectedHazard?.core_hazard.essential.name }}
       </h1>
     </a>
     <h1 v-else class="tw:text-3xl! tw:mr-4 tw:leading-8 tw:my-auto">
-      {{ encounters.getSelectedHazard?.core_hazard.essential.name }}
+      {{ encounter.selectedHazard?.core_hazard.essential.name }}
     </h1>
     <q-space />
     <div class="tw:my-1">
       HAZARD
-      <span>{{ encounters.getSelectedHazard?.core_hazard.essential.level }}</span>
+      <span>{{ encounter.selectedHazard?.core_hazard.essential.level }}</span>
     </div>
     <div class="tw:my-auto!">
       <q-btn
@@ -123,7 +123,7 @@ const openHazardSheet = (game: games, id: number) => {
         round
         dense
         aria-label="Remove selected hazard"
-        @click="encounters.removeSelectedHazard()"
+        @click="encounter.removeSelectedHazard()"
       />
     </div>
   </div>
@@ -131,34 +131,34 @@ const openHazardSheet = (game: games, id: number) => {
   <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
   <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white">
     <div
-      v-if="encounters.getSelectedHazard?.core_hazard.essential.rarity === 'Uncommon'"
+      v-if="encounter.selectedHazard?.core_hazard.essential.rarity === 'Uncommon'"
       class="tw:bg-[#c45500] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounters.getSelectedHazard?.core_hazard.essential.rarity.toUpperCase() }}
+      {{ encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase() }}
     </div>
     <div
-      v-else-if="encounters.getSelectedHazard?.core_hazard.essential.rarity === 'Rare'"
+      v-else-if="encounter.selectedHazard?.core_hazard.essential.rarity === 'Rare'"
       class="tw:bg-[#0c1466] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounters.getSelectedHazard?.core_hazard.essential.rarity.toUpperCase() }}
+      {{ encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase() }}
     </div>
     <div
-      v-else-if="encounters.getSelectedHazard?.core_hazard.essential.rarity === 'Unique'"
+      v-else-if="encounter.selectedHazard?.core_hazard.essential.rarity === 'Unique'"
       class="tw:bg-[#800080] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounters.getSelectedHazard?.core_hazard.essential.rarity.toUpperCase() }}
+      {{ encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase() }}
     </div>
     <div class="tw:bg-[#478c42] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1">
-      {{ encounters.getSelectedHazard?.core_hazard.essential.size.toUpperCase() }}
+      {{ encounter.selectedHazard?.core_hazard.essential.size.toUpperCase() }}
     </div>
     <div
-      v-if="encounters.getSelectedHazard?.core_hazard.essential.complexity === 'Complex'"
+      v-if="encounter.selectedHazard?.core_hazard.essential.complexity === 'Complex'"
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
       COMPLEX
     </div>
     <div
-      v-for="item in encounters.getSelectedHazard?.core_hazard.traits"
+      v-for="item in encounter.selectedHazard?.core_hazard.traits"
       :key="item"
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
@@ -167,44 +167,42 @@ const openHazardSheet = (game: games, id: number) => {
   </div>
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
     <div
-      v-if="encounters.getSelectedHazard?.core_hazard.essential.source"
+      v-if="encounter.selectedHazard?.core_hazard.essential.source"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     >
       <strong>Source </strong>
       <a
         :href="
           'https://store.paizo.com/search.php?search_query=' +
-          encodeURIComponent(encounters.getSelectedHazard?.core_hazard.essential.source) +
+          encodeURIComponent(encounter.selectedHazard?.core_hazard.essential.source) +
           '&section=product'
         "
         target="_blank"
         rel="noopener"
       >
         <i class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400">
-          {{ encounters.getSelectedHazard?.core_hazard.essential.source }}
+          {{ encounter.selectedHazard?.core_hazard.essential.source }}
         </i>
       </a>
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <strong>Complexity </strong>
-      {{ encounters.getSelectedHazard?.core_hazard.essential.complexity }}
+      {{ encounter.selectedHazard?.core_hazard.essential.complexity }}
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <strong>Stealth</strong>
-      DC {{ encounters.getSelectedHazard?.core_hazard.essential.stealth }}
+      DC {{ encounter.selectedHazard?.core_hazard.essential.stealth }}
       <span
-        v-if="encounters.getSelectedHazard?.core_hazard.essential.stealth_detail"
-        v-html="
-          cleanDescription(encounters.getSelectedHazard?.core_hazard.essential.stealth_detail)
-        "
+        v-if="encounter.selectedHazard?.core_hazard.essential.stealth_detail"
+        v-html="cleanDescription(encounter.selectedHazard?.core_hazard.essential.stealth_detail)"
       />
     </div>
     <div
-      v-if="encounters.getSelectedHazard?.core_hazard.essential.description"
+      v-if="encounter.selectedHazard?.core_hazard.essential.description"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="
         '<strong>Description</strong> ' +
-        cleanDescription(encounters.getSelectedHazard?.core_hazard?.essential.description)
+        cleanDescription(encounter.selectedHazard?.core_hazard?.essential.description)
       "
     />
   </div>
@@ -212,15 +210,15 @@ const openHazardSheet = (game: games, id: number) => {
   <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
     <div
-      v-if="encounters.getSelectedHazard?.core_hazard?.essential.disable_description"
+      v-if="encounter.selectedHazard?.core_hazard?.essential.disable_description"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="
         '<strong>Disable</strong> ' +
-        cleanDescription(encounters.getSelectedHazard?.core_hazard?.essential.disable_description)
+        cleanDescription(encounter.selectedHazard?.core_hazard?.essential.disable_description)
       "
     />
     <template
-      v-for="(action, index) in encounters.getSelectedHazard?.core_hazard?.actions"
+      v-for="(action, index) in encounter.selectedHazard?.core_hazard?.actions"
       :key="action.core_action.name"
     >
       <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
@@ -236,47 +234,47 @@ const openHazardSheet = (game: games, id: number) => {
     </template>
   </div>
   <q-separator
-    v-if="encounters.getSelectedHazard?.core_hazard.essential.routine_description"
+    v-if="encounter.selectedHazard?.core_hazard.essential.routine_description"
     class="tw:my-2!"
     style="height: 2px"
   />
   <hr
-    v-if="encounters.getSelectedHazard?.core_hazard.essential.routine_description"
+    v-if="encounter.selectedHazard?.core_hazard.essential.routine_description"
     class="only-print"
     style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
   />
   <div
-    v-if="encounters.getSelectedHazard?.core_hazard.essential.routine_description"
+    v-if="encounter.selectedHazard?.core_hazard.essential.routine_description"
     class="tw:-indent-2 tw:pl-2 q-gutter-y-xs"
   >
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <span
         v-html="
           '<p><strong>Routine</strong> ' +
-          cleanDescription(encounters.getSelectedHazard.core_hazard.essential.routine_description)
+          cleanDescription(encounter.selectedHazard.core_hazard.essential.routine_description)
         "
       />
     </div>
   </div>
   <q-separator
-    v-if="encounters.getSelectedHazard?.core_hazard?.essential.reset_description"
+    v-if="encounter.selectedHazard?.core_hazard?.essential.reset_description"
     class="tw:my-2!"
     style="height: 2px"
   />
   <hr
-    v-if="encounters.getSelectedHazard?.core_hazard?.essential.reset_description"
+    v-if="encounter.selectedHazard?.core_hazard?.essential.reset_description"
     class="only-print"
     style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
   />
   <div
-    v-if="encounters.getSelectedHazard?.core_hazard?.essential.reset_description"
+    v-if="encounter.selectedHazard?.core_hazard?.essential.reset_description"
     class="tw:-indent-2 tw:pl-2 q-gutter-y-xs"
   >
     <div
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="
         '<p><strong>Reset</strong> ' +
-        cleanDescription(encounters.getSelectedHazard?.core_hazard?.essential.reset_description) +
+        cleanDescription(encounter.selectedHazard?.core_hazard?.essential.reset_description) +
         '</p>'
       "
     />

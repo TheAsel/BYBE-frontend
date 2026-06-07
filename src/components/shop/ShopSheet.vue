@@ -15,18 +15,18 @@ const items = itemsStore();
     >
       <q-scroll-area style="height: calc(100vh - 128px)">
         <div
-          v-if="items.getSelectedItem && items.getSelectedItem.core_item"
+          v-if="items.selectedItem && items.selectedItem.core_item"
           class="q-gutter-y-xs tw:p-4 show-print"
         >
-          <ArmorSheet v-if="items.getSelectedItem.core_item.item_type === 'Armor'" />
+          <ArmorSheet v-if="items.selectedItem.core_item.item_type === 'Armor'" />
           <ItemSheet
             v-if="
-              items.getSelectedItem.core_item.item_type === 'Consumable' ||
-              items.getSelectedItem.core_item.item_type === 'Equipment'
+              items.selectedItem.core_item.item_type === 'Consumable' ||
+              items.selectedItem.core_item.item_type === 'Equipment'
             "
           />
-          <ShieldSheet v-if="items.getSelectedItem.core_item.item_type === 'Shield'" />
-          <WeaponSheet v-if="items.getSelectedItem.core_item.item_type === 'Weapon'" />
+          <ShieldSheet v-if="items.selectedItem.core_item.item_type === 'Shield'" />
+          <WeaponSheet v-if="items.selectedItem.core_item.item_type === 'Weapon'" />
         </div>
         <div v-else class="tw:text-center tw:text-lg tw:pt-[38vh]">
           Click on an item to display its description

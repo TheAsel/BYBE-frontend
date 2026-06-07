@@ -10,13 +10,6 @@ export const settingsStore = defineStore('settings', {
     game_version: 'Any',
     game: 'pf'
   }),
-  getters: {
-    getHiddenNav: (state) => state.hidden_nav,
-    getExperimentalFeatures: (state) => state.experimental_features,
-    getAonLinks: (state) => state.is_aon_links_on,
-    getGameVersion: (state) => state.game_version,
-    getGame: (state) => state.game
-  },
   actions: {
     setHiddenNav(newHiddenNav: boolean) {
       this.hidden_nav = newHiddenNav;
