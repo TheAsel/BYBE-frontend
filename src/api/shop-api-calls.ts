@@ -1,3 +1,5 @@
+import { apiFetch, apiFetchText, buildUrl } from 'src/utils/fetch';
+
 import type { games, item_columns, item_filters, shop_ranges } from 'src/types/filters';
 import type { item, item_response } from 'src/types/item';
 import type { shareable_shop } from 'src/types/shop';
@@ -5,20 +7,7 @@ import type { template_data } from 'src/types/template';
 
 export async function requestFilters(game: games, filter: 'sources' | 'traits') {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/shop/' + filter,
-      requestOptions
-    );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as string[];
+    return await apiFetch<string[]>(buildUrl(process.env.API_URL!, [game, 'shop', filter]));
   } catch (error) {
     console.error(error);
   }
@@ -26,20 +15,9 @@ export async function requestFilters(game: games, filter: 'sources' | 'traits') 
 
 export async function requestTemplates(game: games) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/shop/templates_data',
-      requestOptions
+    return await apiFetch<template_data[]>(
+      buildUrl(process.env.API_URL!, [game, 'shop', 'templates_data'])
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as template_data[];
   } catch (error) {
     console.error(error);
   }
@@ -53,35 +31,18 @@ export async function requestItems(
   order_by: 'ascending' | 'descending',
   body: item_filters
 ) {
-  if (page_size === 0) {
-    page_size = -1;
-  }
-
   try {
-    const requestOptions = {
+    const url = buildUrl(process.env.API_URL!, [game, 'shop', 'list'], {
+      cursor: String(cursor),
+      page_size: String(page_size === 0 ? -1 : page_size),
+      sort_by,
+      order_by
+    });
+    return await apiFetch<item_response>(url, {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    };
-    const request =
-      process.env.API_URL +
-      '/' +
-      game +
-      '/shop/list?cursor=' +
-      cursor +
-      '&page_size=' +
-      page_size +
-      '&sort_by=' +
-      sort_by +
-      '&order_by=' +
-      order_by;
-    const response = await fetch(request, requestOptions);
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as item_response;
+    });
   } catch (error) {
     console.error(error);
   }
@@ -89,17 +50,7 @@ export async function requestItems(
 
 export async function requestShopRanges(game: games) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(process.env.API_URL + '/' + game + '/shop/ranges', requestOptions);
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as shop_ranges;
+    return await apiFetch<shop_ranges>(buildUrl(process.env.API_URL!, [game, 'shop', 'ranges']));
   } catch (error) {
     console.error(error);
   }
@@ -107,20 +58,10 @@ export async function requestShopRanges(game: games) {
 
 export async function requestItemId(game: games, item_id: number) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/shop/item/' + item_id,
-      requestOptions
+    const data = await apiFetch<{ results: item }>(
+      buildUrl(process.env.API_URL!, [game, 'shop', 'item', String(item_id)])
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data.results as item;
+    return data.results;
   } catch (error) {
     console.error(error);
   }
@@ -144,21 +85,14 @@ export async function shopGenerator(
   }
 ) {
   try {
-    const requestOptions = {
-      method: 'POST',
-      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/shop/generator',
-      requestOptions
+    return await apiFetch<item_response>(
+      buildUrl(process.env.API_URL!, [game, 'shop', 'generator']),
+      {
+        method: 'POST',
+        headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as item_response;
   } catch (error) {
     console.error(error);
   }
@@ -166,17 +100,11 @@ export async function shopGenerator(
 
 export async function generateShopLink(body: shareable_shop) {
   try {
-    const requestOptions = {
+    return await apiFetchText(buildUrl(process.env.API_URL!, ['shareable', 'shop', 'encode']), {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    };
-    const response = await fetch(process.env.API_URL + '/shareable/shop/encode', requestOptions);
-    const data = await response.text();
-    if (!response.ok) {
-      throw new Error(data);
-    }
-    return data;
+    });
   } catch (error) {
     console.error(error);
   }
@@ -184,20 +112,9 @@ export async function generateShopLink(body: shareable_shop) {
 
 export async function decodeShopLink(encoded_data: string) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/shareable/shop/decode/' + encoded_data,
-      requestOptions
+    return await apiFetch<shareable_shop>(
+      buildUrl(process.env.API_URL!, ['shareable', 'shop', 'decode', encoded_data])
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as shareable_shop;
   } catch (error) {
     console.error(error);
   }

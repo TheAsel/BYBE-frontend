@@ -1,3 +1,5 @@
+import { apiFetch, apiFetchText, buildUrl } from 'src/utils/fetch';
+
 import type { creature, creature_response } from 'src/types/creature';
 import type {
   encounter,
@@ -26,35 +28,18 @@ export async function requestCreatures(
   order_by: 'ascending' | 'descending',
   body: creature_filters
 ) {
-  if (page_size === 0) {
-    page_size = -1;
-  }
-
   try {
-    const requestOptions = {
+    const url = buildUrl(process.env.API_URL!, [game, 'bestiary', 'list'], {
+      cursor: String(cursor),
+      page_size: String(page_size === 0 ? -1 : page_size),
+      sort_by,
+      order_by
+    });
+    return await apiFetch<creature_response>(url, {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    };
-    const request =
-      process.env.API_URL +
-      '/' +
-      game +
-      '/bestiary/list?cursor=' +
-      cursor +
-      '&page_size=' +
-      page_size +
-      '&sort_by=' +
-      sort_by +
-      '&order_by=' +
-      order_by;
-    const response = await fetch(request, requestOptions);
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as creature_response;
+    });
   } catch (error) {
     console.error(error);
   }
@@ -68,35 +53,18 @@ export async function requestHazards(
   order_by: 'ascending' | 'descending',
   body: hazard_filters
 ) {
-  if (page_size === 0) {
-    page_size = -1;
-  }
-
   try {
-    const requestOptions = {
+    const url = buildUrl(process.env.API_URL!, [game, 'hazard', 'list'], {
+      cursor: String(cursor),
+      page_size: String(page_size === 0 ? -1 : page_size),
+      sort_by,
+      order_by
+    });
+    return await apiFetch<hazard_response>(url, {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    };
-    const request =
-      process.env.API_URL +
-      '/' +
-      game +
-      '/hazard/list?cursor=' +
-      cursor +
-      '&page_size=' +
-      page_size +
-      '&sort_by=' +
-      sort_by +
-      '&order_by=' +
-      order_by;
-    const response = await fetch(request, requestOptions);
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as hazard_response;
+    });
   } catch (error) {
     console.error(error);
   }
@@ -115,20 +83,7 @@ export async function requestFilters(
     | 'creature_roles'
 ) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/bestiary/' + filter,
-      requestOptions
-    );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as string[];
+    return await apiFetch<string[]>(buildUrl(process.env.API_URL!, [game, 'bestiary', filter]));
   } catch (error) {
     console.error(error);
   }
@@ -139,20 +94,7 @@ export async function requestHazardFilters(
   filter: 'traits' | 'sizes' | 'rarities' | 'sources'
 ) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/hazard/' + filter,
-      requestOptions
-    );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as string[];
+    return await apiFetch<string[]>(buildUrl(process.env.API_URL!, [game, 'hazard', filter]));
   } catch (error) {
     console.error(error);
   }
@@ -160,20 +102,9 @@ export async function requestHazardFilters(
 
 export async function requestCreatureRanges(game: games) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/bestiary/ranges',
-      requestOptions
+    return await apiFetch<bestiary_ranges>(
+      buildUrl(process.env.API_URL!, [game, 'bestiary', 'ranges'])
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as bestiary_ranges;
   } catch (error) {
     console.error(error);
   }
@@ -181,20 +112,9 @@ export async function requestCreatureRanges(game: games) {
 
 export async function requestHazardRanges(game: games) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/hazard/ranges',
-      requestOptions
+    return await apiFetch<hazard_ranges>(
+      buildUrl(process.env.API_URL!, [game, 'hazard', 'ranges'])
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as hazard_ranges;
   } catch (error) {
     console.error(error);
   }
@@ -207,28 +127,19 @@ export async function requestCreatureId(
   is_pwl_on: boolean
 ) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL +
-        '/' +
-        game +
-        '/bestiary/' +
-        variant.toLowerCase() +
-        '/' +
-        creature_id +
-        '?extra_data=true&combat_data=true&spellcasting_data=true&is_pwl_on=' +
-        is_pwl_on,
-      requestOptions
+    const data = await apiFetch<{ results: creature }>(
+      buildUrl(
+        process.env.API_URL!,
+        [game, 'bestiary', variant.toLowerCase(), String(creature_id)],
+        {
+          extra_data: 'true',
+          combat_data: 'true',
+          spellcasting_data: 'true',
+          is_pwl_on: is_pwl_on
+        }
+      )
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data.results as creature;
+    return data.results;
   } catch (error) {
     console.error(error);
   }
@@ -236,20 +147,10 @@ export async function requestCreatureId(
 
 export async function requestHazardId(game: games, hazard_id: number) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/hazard/' + hazard_id,
-      requestOptions
+    const data = await apiFetch<{ results: hazard }>(
+      buildUrl(process.env.API_URL!, [game, 'hazard', String(hazard_id)])
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data.results as hazard;
+    return data.results;
   } catch (error) {
     console.error(error);
   }
@@ -257,21 +158,11 @@ export async function requestHazardId(game: games, hazard_id: number) {
 
 export async function encounterInfo(game: games, encounter: encounter_info) {
   try {
-    const requestOptions = {
+    return await apiFetch<encounter>(buildUrl(process.env.API_URL!, [game, 'encounter', 'info']), {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(encounter)
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/encounter/info',
-      requestOptions
-    );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as encounter;
+    });
   } catch (error) {
     console.error(error);
   }
@@ -279,21 +170,14 @@ export async function encounterInfo(game: games, encounter: encounter_info) {
 
 export async function encounterGenerator(game: games, body: encounter_data) {
   try {
-    const requestOptions = {
-      method: 'POST',
-      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/encounter/generator',
-      requestOptions
+    return await apiFetch<random_encounter>(
+      buildUrl(process.env.API_URL!, [game, 'encounter', 'generator']),
+      {
+        method: 'POST',
+        headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as random_encounter;
   } catch (error) {
     console.error(error);
   }
@@ -301,20 +185,14 @@ export async function encounterGenerator(game: games, body: encounter_data) {
 
 export async function generateEncounterLink(body: shareable_encounter) {
   try {
-    const requestOptions = {
-      method: 'POST',
-      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    };
-    const response = await fetch(
-      process.env.API_URL + '/shareable/encounter/encode',
-      requestOptions
+    return await apiFetchText(
+      buildUrl(process.env.API_URL!, ['shareable', 'encounter', 'encode']),
+      {
+        method: 'POST',
+        headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }
     );
-    const data = await response.text();
-    if (!response.ok) {
-      throw new Error(data);
-    }
-    return data;
   } catch (error) {
     console.error(error);
   }
@@ -322,20 +200,9 @@ export async function generateEncounterLink(body: shareable_encounter) {
 
 export async function decodeEncounterLink(encoded_data: string) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/shareable/encounter/decode/' + encoded_data,
-      requestOptions
+    return await apiFetch<shareable_encounter>(
+      buildUrl(process.env.API_URL!, ['shareable', 'encounter', 'decode', encoded_data])
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as shareable_encounter;
   } catch (error) {
     console.error(error);
   }

@@ -1,3 +1,5 @@
+import { apiFetch, apiFetchText, buildUrl } from 'src/utils/fetch';
+
 import type { games } from 'src/types/filters';
 import type { npc, shareable_npc, valid_genders } from 'src/types/npcs';
 
@@ -6,20 +8,7 @@ export async function requestParameters(
   parameter: 'genders' | 'classes' | 'jobs' | 'cultures'
 ) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/npc/' + parameter,
-      requestOptions
-    );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as string[];
+    return await apiFetch<string[]>(buildUrl(process.env.API_URL!, [game, 'npc', parameter]));
   } catch (error) {
     console.error(error);
   }
@@ -27,20 +16,9 @@ export async function requestParameters(
 
 export async function requestAncestries(game: games) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/npc/ancestries',
-      requestOptions
+    return await apiFetch<valid_genders[]>(
+      buildUrl(process.env.API_URL!, [game, 'npc', 'ancestries'])
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as valid_genders[];
   } catch (error) {
     console.error(error);
   }
@@ -64,21 +42,11 @@ export async function npcGenerator(
   }
 ) {
   try {
-    const requestOptions = {
+    return await apiFetch<npc>(buildUrl(process.env.API_URL!, [game, 'npc', 'generator']), {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/npc/generator',
-      requestOptions
-    );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as npc;
+    });
   } catch (error) {
     console.error(error);
   }
@@ -89,20 +57,13 @@ export async function npcParametersGenerator(
   parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level' | 'culture'
 ) {
   try {
-    const requestOptions = {
-      method: 'POST',
-      headers: { accept: 'application/json', 'Content-Type': 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/npc/generator/' + parameter,
-      requestOptions
+    return await apiFetch<string>(
+      buildUrl(process.env.API_URL!, [game, 'npc', 'generator', parameter]),
+      {
+        method: 'POST',
+        headers: { accept: 'application/json', 'Content-Type': 'application/json' }
+      }
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as string;
   } catch (error) {
     console.error(error);
   }
@@ -110,20 +71,13 @@ export async function npcParametersGenerator(
 
 export async function npcLevelGenerator(game: games) {
   try {
-    const requestOptions = {
-      method: 'POST',
-      headers: { accept: 'application/json', 'Content-Type': 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/npc/generator/level',
-      requestOptions
+    return await apiFetch<number>(
+      buildUrl(process.env.API_URL!, [game, 'npc', 'generator', 'level']),
+      {
+        method: 'POST',
+        headers: { accept: 'application/json', 'Content-Type': 'application/json' }
+      }
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as number;
   } catch (error) {
     console.error(error);
   }
@@ -140,21 +94,14 @@ export async function npcNamesGenerator(
   }
 ) {
   try {
-    const requestOptions = {
-      method: 'POST',
-      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    };
-    const response = await fetch(
-      process.env.API_URL + '/' + game + '/npc/generator/names',
-      requestOptions
+    return await apiFetch<string[]>(
+      buildUrl(process.env.API_URL!, [game, 'npc', 'generator', 'names']),
+      {
+        method: 'POST',
+        headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as string[];
   } catch (error) {
     console.error(error);
   }
@@ -162,17 +109,11 @@ export async function npcNamesGenerator(
 
 export async function generateNpcLink(body: shareable_npc) {
   try {
-    const requestOptions = {
+    return await apiFetchText(buildUrl(process.env.API_URL!, ['shareable', 'npc', 'encode']), {
       method: 'POST',
       headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    };
-    const response = await fetch(process.env.API_URL + '/shareable/npc/encode', requestOptions);
-    const data = await response.text();
-    if (!response.ok) {
-      throw new Error(data);
-    }
-    return data;
+    });
   } catch (error) {
     console.error(error);
   }
@@ -180,20 +121,9 @@ export async function generateNpcLink(body: shareable_npc) {
 
 export async function decodeNpcLink(encoded_data: string) {
   try {
-    const requestOptions = {
-      method: 'GET',
-      headers: { accept: 'application/json' }
-    };
-    const response = await fetch(
-      process.env.API_URL + '/shareable/npc/decode/' + encoded_data,
-      requestOptions
+    return await apiFetch<shareable_npc>(
+      buildUrl(process.env.API_URL!, ['shareable', 'npc', 'decode', encoded_data])
     );
-    const data = await response.json();
-    if (!response.ok) {
-      const error = data?.message ?? response.status;
-      throw new Error(error);
-    }
-    return data as shareable_npc;
   } catch (error) {
     console.error(error);
   }
