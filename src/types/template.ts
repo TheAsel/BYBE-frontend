@@ -4,15 +4,15 @@ export type template = {
   default: boolean;
   name: string;
   description?: string;
-  source_filter?: string[];
-  trait_blacklist_filter?: string[];
-  trait_whitelist_filter?: string[];
-  rarity_filter?: string[];
-  type_filter?: string[];
-  armor_percentage?: number;
-  equipment_percentage?: number;
-  shield_percentage?: number;
-  weapon_percentage?: number;
+  source_filter: string[] | null;
+  trait_blacklist_filter: string[] | null;
+  trait_whitelist_filter: string[] | null;
+  rarity_filter: string[] | null;
+  type_filter: string[] | null;
+  armor_percentage: number | null;
+  equipment_percentage: number | null;
+  shield_percentage: number | null;
+  weapon_percentage: number | null;
 };
 
 export type template_data = {

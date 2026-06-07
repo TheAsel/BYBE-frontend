@@ -70,15 +70,15 @@ export async function requestItemId(game: games, item_id: number) {
 export async function shopGenerator(
   game: games,
   body: {
-    source_filter?: string[] | undefined;
-    trait_blacklist_filter?: string[] | undefined;
-    trait_whitelist_filter?: string[] | undefined;
-    rarity_filter?: string[] | undefined;
-    type_filter?: string[] | undefined;
-    armor_percentage?: number | undefined;
-    equipment_percentage?: number | undefined;
-    shield_percentage?: number | undefined;
-    weapon_percentage?: number | undefined;
+    source_filter: string[] | null;
+    trait_blacklist_filter: string[] | null;
+    trait_whitelist_filter: string[] | null;
+    rarity_filter: string[] | null;
+    type_filter: string[] | null;
+    armor_percentage: number | null;
+    equipment_percentage: number | null;
+    shield_percentage: number | null;
+    weapon_percentage: number | null;
     consumable_dices: {
       dice_size: number | null;
       n_of_dices: number | null;

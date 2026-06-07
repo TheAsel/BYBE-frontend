@@ -156,15 +156,15 @@ const generateShop = debounce(async function () {
   const game_version = settings.game_version;
 
   const body: {
-    source_filter?: string[] | undefined;
-    trait_blacklist_filter?: string[] | undefined;
-    trait_whitelist_filter?: string[] | undefined;
-    rarity_filter?: string[] | undefined;
-    type_filter?: string[] | undefined;
-    armor_percentage?: number | undefined;
-    equipment_percentage?: number | undefined;
-    shield_percentage?: number | undefined;
-    weapon_percentage?: number | undefined;
+    source_filter: string[] | null;
+    trait_blacklist_filter: string[] | null;
+    trait_whitelist_filter: string[] | null;
+    rarity_filter: string[] | null;
+    type_filter: string[] | null;
+    armor_percentage: number | null;
+    equipment_percentage: number | null;
+    shield_percentage: number | null;
+    weapon_percentage: number | null;
     consumable_dices: {
       dice_size: number | null;
       n_of_dices: number | null;
@@ -178,6 +178,15 @@ const generateShop = debounce(async function () {
     shop_template?: string;
     game_system_version: string;
   } = {
+    source_filter: null,
+    trait_blacklist_filter: null,
+    trait_whitelist_filter: null,
+    rarity_filter: null,
+    type_filter: null,
+    armor_percentage: null,
+    equipment_percentage: null,
+    shield_percentage: null,
+    weapon_percentage: null,
     consumable_dices: [
       {
         dice_size: tmpFilters.value.consumable_dices.dice_size.value,
