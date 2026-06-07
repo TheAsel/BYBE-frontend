@@ -38,8 +38,6 @@ const $q = useQuasar();
 const settings = settingsStore();
 const items = itemsStore();
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-
 const importShopDialog = ref(false);
 const importNameInput = ref();
 const importShopName = ref('');
@@ -148,7 +146,7 @@ const cleanLink = async () => {
 // clean the url from queries
 await router.replace({
   path: route.path,
-  query: { game: currentGame.value }
+  query: { game: settings.game }
 });
 
 // open the share dialog and generate the shareable link
@@ -188,8 +186,7 @@ const openShare = async () => {
   try {
     const shareableLink = await generateShopLink(body);
     if (typeof shareableLink === 'string') {
-      shareUrl.value =
-        'https://bybe.app/shop?game=' + currentGame.value + '&share=' + shareableLink;
+      shareUrl.value = 'https://bybe.app/shop?game=' + settings.game + '&share=' + shareableLink;
     } else {
       shareDialog.value = false;
       $q.notify({
@@ -791,7 +788,7 @@ const showItem = debounce(async function (item: min_item) {
                 </span>
               </div>
               <div class="tw:shrink tw:text-nowrap tw:my-auto tw:mx-1">
-                {{ items.getFormattedPrice(item.price * item.quantity!, currentGame) }}
+                {{ items.getFormattedPrice(item.price * item.quantity!, settings.game) }}
               </div>
             </div>
             <div class="tw:flex-none tw:my-auto tw:ml-1 tw:mr-3">
@@ -822,7 +819,7 @@ const showItem = debounce(async function (item: min_item) {
       >
         <div class="tw:flex tw:mx-4">
           <div class="text-subtitle1 font-bold tw:whitespace-nowrap tw:py-2.5 tw:pr-4">
-            Total cost: {{ items.getFormattedPrice(items.getTotalCost, currentGame) }}
+            Total cost: {{ items.getFormattedPrice(items.getTotalCost, settings.game) }}
           </div>
         </div>
       </q-footer>

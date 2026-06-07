@@ -12,7 +12,7 @@ import { encounterStore } from 'src/stores/encounter';
 import { settingsStore } from 'src/stores/settings';
 
 import type { creature } from 'src/types/creature';
-import type { games, variants } from 'src/types/filters';
+import type { variants } from 'src/types/filters';
 
 const title = ref('Bestiary Sheet - BYBE');
 
@@ -32,8 +32,6 @@ const $q = useQuasar();
 const encounters = encounterStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-
 const creatureId = Number(route.query.id);
 const queryVariant: string = String(route.query.variant).toLowerCase();
 const creatureVariant = ref<variants>('Base');
@@ -45,7 +43,7 @@ try {
       case 'weak':
         creatureVariant.value = 'Weak';
         creatureData = await requestCreatureId(
-          currentGame.value,
+          settings.game,
           creatureId,
           'Weak',
           encounters.is_pwl_on
@@ -54,7 +52,7 @@ try {
       case 'elite':
         creatureVariant.value = 'Elite';
         creatureData = await requestCreatureId(
-          currentGame.value,
+          settings.game,
           creatureId,
           'Elite',
           encounters.is_pwl_on
@@ -63,7 +61,7 @@ try {
       default:
         creatureVariant.value = 'Base';
         creatureData = await requestCreatureId(
-          currentGame.value,
+          settings.game,
           creatureId,
           'Base',
           encounters.is_pwl_on
@@ -78,7 +76,7 @@ try {
         message: 'Missing creature ID',
         icon: matPriorityHigh
       });
-      await router.push({ name: 'encounter', query: { game: currentGame.value } });
+      await router.push({ name: 'encounter', query: { game: settings.game } });
     } else if (creatureVariant.value === 'Base') {
       title.value = creatureData?.core_data.essential.name + ' - BYBE';
       encounters.setSelectedCreature(creatureData);
@@ -124,7 +122,7 @@ try {
       message: 'Invalid creature ID',
       icon: matPriorityHigh
     });
-    await router.push({ name: 'encounter', query: { game: currentGame.value } });
+    await router.push({ name: 'encounter', query: { game: settings.game } });
   }
 } catch (error) {
   console.error(error);

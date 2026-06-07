@@ -11,7 +11,6 @@ import ShopSheet from 'src/components/shop/ShopSheet.vue';
 import { itemsStore } from 'src/stores/items';
 import { settingsStore } from 'src/stores/settings';
 
-import type { games } from 'src/types/filters';
 import type { item } from 'src/types/item';
 
 const title = ref('Item Sheet - BYBE');
@@ -32,14 +31,12 @@ const $q = useQuasar();
 const items = itemsStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-
 const itemId = Number(route.query.id);
 
 let itemData: item | undefined;
 try {
   if (itemId !== undefined && !Number.isNaN(itemId)) {
-    itemData = await requestItemId(currentGame.value, itemId);
+    itemData = await requestItemId(settings.game, itemId);
     if (isNull(itemData) || itemData === undefined) {
       console.error('Missing item ID');
       $q.notify({
@@ -48,7 +45,7 @@ try {
         message: 'Missing item ID',
         icon: matPriorityHigh
       });
-      await router.push({ name: 'shop', query: { game: currentGame.value } });
+      await router.push({ name: 'shop', query: { game: settings.game } });
     } else {
       title.value = itemData?.core_item.name + ' - BYBE';
       items.setSelectedItem(itemData);
@@ -61,7 +58,7 @@ try {
       message: 'Invalid item ID',
       icon: matPriorityHigh
     });
-    await router.push({ name: 'shop', query: { game: currentGame.value } });
+    await router.push({ name: 'shop', query: { game: settings.game } });
   }
 } catch (error) {
   console.error(error);

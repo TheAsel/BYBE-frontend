@@ -26,7 +26,6 @@ import { npcStore } from 'src/stores/npc';
 import { npcParametersStore } from 'src/stores/npcParameters';
 import { settingsStore } from 'src/stores/settings';
 
-import type { games } from 'src/types/filters';
 import type { npc, npc_list, shareable_npc } from 'src/types/npcs';
 
 const isApp = process.env.IS_APP === 'true';
@@ -38,8 +37,6 @@ const $q = useQuasar();
 const npcParameters = npcParametersStore();
 const npcs = npcStore();
 const settings = settingsStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const importNpcDialog = ref(false);
 const importNameInput = ref();
@@ -95,13 +92,13 @@ const generateParameterNpc = debounce(async function (
 
     try {
       if (parameter === 'level') {
-        const newLevel = await npcLevelGenerator(currentGame.value);
+        const newLevel = await npcLevelGenerator(settings.game);
         if (newLevel === undefined) {
           throw new TypeError('Error generating npc level');
         }
         npcs.npcs[npcs.activeNpc]!.npc.level = newLevel;
       } else {
-        const newParameter = await npcParametersGenerator(currentGame.value, parameter);
+        const newParameter = await npcParametersGenerator(settings.game, parameter);
         if (newParameter === undefined) {
           throw new TypeError('Error generating npc ' + parameter);
         }
@@ -179,7 +176,7 @@ const generateNamesNpc = debounce(async function () {
     ) {
       tmpGender = npcs.npcs[npcs.activeNpc]!.npc.gender!;
       tmpAncestry = npcs.npcs[npcs.activeNpc]!.npc.ancestry!;
-      if (currentGame.value === 'pf') {
+      if (settings.game === 'pf') {
         tmpCulture = npcs.npcs[npcs.activeNpc]!.npc.culture!;
       }
 
@@ -198,7 +195,7 @@ const generateNamesNpc = debounce(async function () {
         body.gender = npcs.npcs[npcs.activeNpc]!.npc.gender!.replaceAll(' ', '');
       }
 
-      if (currentGame.value === 'sf') {
+      if (settings.game === 'sf') {
         if (
           npcs.npcs[npcs.activeNpc]!.npc.ancestry &&
           npcParameters.npcParameters.ancestries.includes(npcs.npcs[npcs.activeNpc]!.npc.ancestry!)
@@ -242,7 +239,7 @@ const generateNamesNpc = debounce(async function () {
       }
 
       try {
-        const newNames = await npcNamesGenerator(currentGame.value, body);
+        const newNames = await npcNamesGenerator(settings.game, body);
         if (newNames === undefined) {
           throw new TypeError('Error generating npc names');
         }
@@ -376,13 +373,13 @@ const openShare = async () => {
     level: currentNpc.level === undefined ? 1 : currentNpc.level,
     culture: currentNpc.culture === undefined ? '' : currentNpc.culture,
     class: currentNpc.class === undefined ? '' : currentNpc.class,
-    game: currentGame.value
+    game: settings.game
   });
 
   try {
     const shareableLink = await generateNpcLink(body);
     if (typeof shareableLink === 'string') {
-      shareUrl.value = 'https://bybe.app/npc?game=' + currentGame.value + '&share=' + shareableLink;
+      shareUrl.value = 'https://bybe.app/npc?game=' + settings.game + '&share=' + shareableLink;
     } else {
       shareDialog.value = false;
       $q.notify({
@@ -440,7 +437,7 @@ const importNpc = () => {
           : importNpcData.value?.npcs_data[0].class,
       game:
         importNpcData.value?.npcs_data[0].game === undefined
-          ? currentGame.value
+          ? settings.game
           : importNpcData.value?.npcs_data[0].game,
       languages: null,
       description: null,
@@ -997,7 +994,7 @@ const saveChanges = () => {
             />
             <span class="tw:mx-2" />
             <span
-              v-if="!npcs.npcs[npcs.activeNpc]!.culture || currentGame === 'sf'"
+              v-if="!npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf'"
               class="tw:flex-none tw:my-auto! tw:mr-2!"
             >
               <q-btn
@@ -1048,7 +1045,7 @@ const saveChanges = () => {
               />
             </span>
             <q-input
-              v-if="!npcs.npcs[npcs.activeNpc]!.culture || currentGame === 'sf'"
+              v-if="!npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf'"
               label="Ancestry"
               v-model="npcs.npcs[npcs.activeNpc]!.npc.ancestry"
               class="tw:grow"
@@ -1068,7 +1065,7 @@ const saveChanges = () => {
               :readonly="npcs.locks.culture"
             />
             <q-btn
-              v-if="!npcs.npcs[npcs.activeNpc]!.culture || currentGame === 'sf'"
+              v-if="!npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf'"
               class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"

@@ -6,10 +6,7 @@ import { useRoute } from 'vue-router';
 
 import NpcSheet from 'src/components/npc/NpcSheet.vue';
 import { npcStore } from 'src/stores/npc';
-import { settingsStore } from 'src/stores/settings';
-
-import type { games } from 'src/types/filters';
-import type { npc_list } from 'src/types/npcs';
+import { updateLocalStorageNpcs } from 'src/utils/local-storage';
 
 const title = ref('NPC Sheet - BYBE');
 
@@ -25,61 +22,10 @@ useHead({
 
 const route = useRoute();
 const npcs = npcStore();
-const settings = settingsStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const npcId = Number(route.query.id);
 
-const localNpcs = localStorage.getItem('npcs');
-if (localNpcs) {
-  try {
-    const parsedNpcs = JSON.parse(localNpcs);
-    if (Array.isArray(parsedNpcs)) {
-      const isCompatible = parsedNpcs.every((p) => {
-        return typeof p.name === 'string';
-      });
-      if (isCompatible) {
-        const npcList: npc_list[] = parsedNpcs;
-        const npcNames = npcList.map((p) => p.name);
-        if (new Set(npcNames).size !== npcNames.length) {
-          throw new Error('Duplicate saved npc names');
-        }
-        npcs.updateNpcs(npcList);
-      } else {
-        throw new Error('Invalid saved npc format');
-      }
-    } else {
-      throw new TypeError('Invalid saved npc format');
-    }
-  } catch (error) {
-    console.error(error);
-    const defaultNpc: npc_list = {
-      name: 'Default',
-      npc: {
-        level: 0,
-        gender: '',
-        ancestry: '',
-        culture: '',
-        class: '',
-        job: '',
-        name: '',
-        nickname: '',
-        languages: '',
-        description: '',
-        personality: '',
-        quirk: '',
-        relationships: '',
-        ideology: '',
-        custom_fields: [{ name: '', body: '' }],
-        game: currentGame.value
-      },
-      culture: false
-    };
-    localStorage.setItem('npcs', JSON.stringify([defaultNpc]));
-    npcs.updateNpcs([defaultNpc]);
-  }
-}
+updateLocalStorageNpcs();
 
 npcs.setActiveNpc(npcId);
 

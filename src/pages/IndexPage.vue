@@ -8,11 +8,8 @@ import {
   biShop
 } from '@quasar/extras/bootstrap-icons';
 import { useHead } from '@unhead/vue';
-import { ref } from 'vue';
 
 import { settingsStore } from 'src/stores/settings';
-
-import type { games } from 'src/types/filters';
 
 useHead({
   title: 'BYBE - Pathfinder & Starfinder 2e GM Tools',
@@ -25,8 +22,6 @@ useHead({
 });
 
 const settings = settingsStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const cards = [
   {
@@ -87,7 +82,7 @@ const cards = [
         :key="item.to"
         flat
         class="tw:group tw:backdrop-blur tw:border-2 tw:bg-white/5 tw:dark:bg-gray-800/20 tw:border-gray-200/20 tw:dark:border-neutral-800/20 tw:hover:border-blue-600 tw:dark:hover:border-blue-500 tw:flex tw:gap-y-6! tw:w-full tw:h-full tw:rounded-lg tw:p-5! tw:transition-all"
-        :to="{ path: item.to, query: { game: currentGame } }"
+        :to="{ path: item.to, query: { game: settings.game } }"
       >
         <q-icon
           :name="item.icon"

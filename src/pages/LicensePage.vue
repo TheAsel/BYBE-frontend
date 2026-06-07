@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
-import { ref } from 'vue';
 
 import { settingsStore } from 'src/stores/settings';
-
-import type { games } from 'src/types/filters';
 
 useHead({
   title: 'Licenses - BYBE',
@@ -17,8 +14,6 @@ useHead({
 });
 
 const settings = settingsStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 </script>
 
 <template>
@@ -28,7 +23,7 @@ const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
     >
       <q-scroll-area style="height: calc(100vh - 128px)">
         <div
-          v-if="currentGame === 'sf'"
+          v-if="settings.game === 'sf'"
           class="q-gutter-y-sm tw:p-4! tw:text-left tw:text-gray-800 tw:dark:text-white"
         >
           <h1 class="tw:text-center tw:font-bold! tw:text-2xl! tw:text-gray-800 tw:dark:text-white">

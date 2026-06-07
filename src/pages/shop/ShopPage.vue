@@ -8,12 +8,9 @@ import ShopSheet from 'src/components/shop/ShopSheet.vue';
 import ShopTable from 'src/components/shop/ShopTable.vue';
 import { itemsStore } from 'src/stores/items';
 import { settingsStore } from 'src/stores/settings';
-import { templateStore } from 'src/stores/template';
+import { updateLocalStorageShops, updateLocalStorageTemplates } from 'src/utils/local-storage';
 
-import type { games } from 'src/types/filters';
 import type { item, min_item } from 'src/types/item';
-import type { shop_list } from 'src/types/shop';
-import type { template } from 'src/types/template';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
 useHead({
@@ -28,74 +25,14 @@ useHead({
 
 const settings = settingsStore();
 const items = itemsStore();
-const template = templateStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const tourActive = ref(false);
 const screenWidth = ref(screen.width);
 
 const scrollUp = ref(false);
 
-const localShops = localStorage.getItem('shops');
-if (localShops) {
-  try {
-    const parsedShops = JSON.parse(localShops);
-    if (Array.isArray(parsedShops)) {
-      const isCompatible = parsedShops.every((p) => {
-        return typeof p.name === 'string' && Array.isArray(p.items);
-      });
-      if (isCompatible) {
-        const shops: shop_list[] = parsedShops;
-        const shopNames = shops.map((p) => p.name);
-        if (new Set(shopNames).size !== shopNames.length) {
-          throw new Error('Duplicate saved shop names');
-        }
-        items.updateShops(shops);
-      } else {
-        throw new Error('Invalid saved shop format');
-      }
-    } else {
-      throw new TypeError('Invalid saved shop format');
-    }
-  } catch (error) {
-    console.error(error);
-    const defaultShop = { name: 'Default', items: [] };
-    localStorage.setItem('shops', JSON.stringify([defaultShop]));
-    items.updateShops([defaultShop]);
-  }
-}
-
-const localTemplates = localStorage.getItem('templates');
-if (localTemplates) {
-  try {
-    const parsedTemplates = JSON.parse(localTemplates);
-    if (Array.isArray(parsedTemplates)) {
-      const isCompatible = parsedTemplates.every((p) => {
-        return typeof p.name === 'string' && typeof p.default === 'boolean';
-      });
-      if (isCompatible) {
-        const templates: template[] = parsedTemplates;
-        const templateNames = templates.map((p) => p.name);
-        if (new Set(templateNames).size !== templateNames.length) {
-          throw new Error('Duplicate saved template names');
-        }
-        for (const template of templates) {
-          template.default = false;
-        }
-        template.updateTemplates(templates);
-      } else {
-        throw new Error('Invalid saved template format');
-      }
-    } else {
-      throw new TypeError('Invalid saved template format');
-    }
-  } catch (error) {
-    console.error(error);
-    localStorage.setItem('shops', JSON.stringify([]));
-    template.updateTemplates([]);
-  }
-}
+updateLocalStorageShops();
+updateLocalStorageTemplates();
 
 const steps: Step[] = [
   {
@@ -270,7 +207,7 @@ const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
     items.addShop('Example');
-    if (currentGame.value === 'sf') {
+    if (settings.game === 'sf') {
       items.setSelectedItem(tmpLaserRifleFull);
       items.addToShop(tmpLaserRifle);
       items.addToShop(tmpFlightSuit);

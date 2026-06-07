@@ -7,12 +7,10 @@ import EncounterList from 'src/components/encounter/EncounterList.vue';
 import EncounterSheet from 'src/components/encounter/EncounterSheet.vue';
 import EncounterTable from 'src/components/encounter/EncounterTable.vue';
 import { encounterStore } from 'src/stores/encounter';
-import { partyStore } from 'src/stores/party';
 import { settingsStore } from 'src/stores/settings';
+import { updateLocalStorageEncounters, updateLocalStorageParties } from 'src/utils/local-storage';
 
-import type { encounter_list, min_creature_hazard } from 'src/types/encounter';
-import type { games } from 'src/types/filters';
-import type { party } from 'src/types/party';
+import type { min_creature_hazard } from 'src/types/encounter';
 import type { Step, VTourCallbacks, VTourOptions } from 'vue3-tour';
 
 useHead({
@@ -26,90 +24,15 @@ useHead({
 });
 
 const settings = settingsStore();
-const party = partyStore();
 const encounter = encounterStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const tourActive = ref(false);
 const screenWidth = ref(screen.width);
 
 const scrollUp = ref(false);
 
-// read party local storage
-const localParty = localStorage.getItem('parties');
-if (localParty) {
-  try {
-    const parsedParties = JSON.parse(localParty);
-    if (Array.isArray(parsedParties)) {
-      const isCompatible = parsedParties.every((p) => {
-        return (
-          typeof p.name === 'string' &&
-          Array.isArray(p.members) &&
-          p.members.every((member: undefined) => typeof member === 'number')
-        );
-      });
-      if (isCompatible) {
-        const parties: party[] = parsedParties;
-        for (const party of parties) {
-          if (!party || !party.members.every((player) => player >= 1 && player <= 20)) {
-            throw new Error('Invalid saved party levels');
-          }
-        }
-        const partyNames = parties.map((p) => p.name);
-        if (new Set(partyNames).size !== partyNames.length) {
-          throw new Error('Duplicate saved party names');
-        }
-        party.updateParties(parties);
-      } else {
-        throw new Error('Invalid saved party format');
-      }
-    } else {
-      throw new TypeError('Invalid saved party format');
-    }
-  } catch (error) {
-    console.error(error);
-    const defaultParty = {
-      name: 'Default',
-      size: 4,
-      level: 1,
-      advanced: false,
-      members: [1, 1, 1, 1]
-    };
-    localStorage.setItem('parties', JSON.stringify([defaultParty]));
-    party.updateParties([defaultParty]);
-  }
-}
-
-// read encounter local storage
-const localEncounters = localStorage.getItem('encounters');
-if (localEncounters) {
-  try {
-    const parsedEncounters = JSON.parse(localEncounters);
-    if (Array.isArray(parsedEncounters)) {
-      const isCompatible = parsedEncounters.every((p) => {
-        return typeof p.name === 'string' && Array.isArray(p.creatures);
-      });
-      if (isCompatible) {
-        const encounters: encounter_list[] = parsedEncounters;
-        const encounterNames = encounters.map((p) => p.name);
-        if (new Set(encounterNames).size !== encounterNames.length) {
-          throw new Error('Duplicate saved encounter names');
-        }
-        encounter.updateEncounters(encounters);
-      } else {
-        throw new Error('Invalid saved encounter format');
-      }
-    } else {
-      throw new TypeError('Invalid saved encounter format');
-    }
-  } catch (error) {
-    console.error(error);
-    const defaultEncounter = { name: 'Default', creatures: [] };
-    localStorage.setItem('encounters', JSON.stringify([defaultEncounter]));
-    encounter.updateEncounters([defaultEncounter]);
-  }
-}
+updateLocalStorageParties();
+updateLocalStorageEncounters();
 
 const steps: Step[] = [
   {
@@ -292,7 +215,7 @@ const startTour = () => {
   if (!tourActive.value) {
     tourActive.value = true;
     encounter.addEncounter('Example');
-    if (currentGame.value === 'sf') {
+    if (settings.game === 'sf') {
       encounter.addToEncounter(tmpFerrofluidOoze);
       encounter.addToEncounter(tmpAnaciteWingbot);
       encounter.addToEncounter(tmpAntiGravityPulse);

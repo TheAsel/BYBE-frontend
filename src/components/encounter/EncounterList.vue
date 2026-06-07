@@ -48,8 +48,7 @@ const encounter = encounterStore();
 const info = infoStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-const currentAon = ref(currentGame.value === 'sf' ? 'aonsrd' : 'aonprd');
+const currentAon = ref(settings.game === 'sf' ? 'aonsrd' : 'aonprd');
 
 const importEncounterDialog = ref(false);
 const importNameInput = ref();
@@ -130,7 +129,7 @@ const debouncedCall = debounce(async function () {
   };
   try {
     if (!encounter.generating) {
-      const returnedEncounterInfo = await encounterInfo(currentGame.value, body);
+      const returnedEncounterInfo = await encounterInfo(settings.game, body);
       if (returnedEncounterInfo === undefined) {
         throw new TypeError('Error calculating encounter challenge');
       }
@@ -235,7 +234,7 @@ const cleanLink = async () => {
 // clean the url from queries
 await router.replace({
   path: route.path,
-  query: { game: currentGame.value }
+  query: { game: settings.game }
 });
 
 // open the share dialog and generate the shareable link
@@ -290,7 +289,7 @@ const openShare = async () => {
     const shareableLink = await generateEncounterLink(body);
     if (typeof shareableLink === 'string') {
       shareUrl.value =
-        'https://bybe.app/encounter?game=' + currentGame.value + '&share=' + shareableLink;
+        'https://bybe.app/encounter?game=' + settings.game + '&share=' + shareableLink;
     } else {
       shareDialog.value = false;
       $q.notify({

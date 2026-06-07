@@ -21,7 +21,6 @@ import { itemsStore } from 'src/stores/items';
 import { settingsStore } from 'src/stores/settings';
 import { templateStore } from 'src/stores/template';
 
-import type { games } from 'src/types/filters';
 import type { min_item } from 'src/types/item';
 import type { template } from 'src/types/template';
 
@@ -32,9 +31,8 @@ const filters = filtersStore();
 const items = itemsStore();
 const template = templateStore();
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 const currentAon = ref(
-  currentGame.value === 'sf' ? 'https://2e.aonsrd.com/search' : 'https://2e.aonprd.com/Search.aspx'
+  settings.game === 'sf' ? 'https://2e.aonsrd.com/search' : 'https://2e.aonprd.com/Search.aspx'
 );
 
 const dialog = ref(false);
@@ -243,7 +241,7 @@ const generateShop = debounce(async function () {
     }
   }
   try {
-    const randomShop = await shopGenerator(currentGame.value, body);
+    const randomShop = await shopGenerator(settings.game, body);
     if (randomShop === undefined) {
       throw new TypeError('Error generating random shop');
     }

@@ -38,7 +38,7 @@ import { settingsStore } from 'src/stores/settings';
 import { templateStore } from 'src/stores/template';
 
 import type { QTableProps } from 'quasar';
-import type { games, item_columns, item_filters, rarities } from 'src/types/filters';
+import type { item_columns, item_filters, rarities } from 'src/types/filters';
 import type { item, min_item } from 'src/types/item';
 
 const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
@@ -51,9 +51,8 @@ const filters = filtersStore();
 const shopBuilderRef = ref();
 const router = useRouter();
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 const currentAon = ref(
-  currentGame.value === 'sf' ? 'https://2e.aonsrd.com/search' : 'https://2e.aonprd.com/Search.aspx'
+  settings.game === 'sf' ? 'https://2e.aonsrd.com/search' : 'https://2e.aonprd.com/Search.aspx'
 );
 
 watch(
@@ -222,7 +221,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
   }
   try {
     const request = await requestItems(
-      currentGame.value,
+      settings.game,
       startRow,
       rowsPerPage,
       activeFilters.value.sort_by,
@@ -291,7 +290,7 @@ const sort = (col: item_columns) => {
 };
 
 const openShopSheet = (id: number) => {
-  const routeData = router.resolve({ name: 'item', query: { game: currentGame.value, id: id } });
+  const routeData = router.resolve({ name: 'item', query: { game: settings.game, id: id } });
   if (process.env.IS_APP === 'true') {
     globalThis.open(routeData.href, '_self');
   } else {
@@ -301,7 +300,7 @@ const openShopSheet = (id: number) => {
 
 const addItem = debounce(function (item: item) {
   const aon_link =
-    currentGame.value === 'sf'
+    settings.game === 'sf'
       ? 'https://2e.aonsrd.com/search?q=' + encodeURIComponent(item.core_item.name) + '&type=eqs'
       : 'https://2e.aonprd.com/Search.aspx?q=' +
         encodeURIComponent(item.core_item.name) +
@@ -529,10 +528,10 @@ const filterTraitsFn = (val: string, update: (fn: () => void) => void) => {
 onMounted(async () => {
   try {
     const [sourcesRequest, traitsRequest, templatesRequest, shopRangesRequest] = await Promise.all([
-      requestFilters(currentGame.value, 'sources'),
-      requestFilters(currentGame.value, 'traits'),
-      requestTemplates(currentGame.value),
-      requestShopRanges(currentGame.value),
+      requestFilters(settings.game, 'sources'),
+      requestFilters(settings.game, 'traits'),
+      requestTemplates(settings.game),
+      requestShopRanges(settings.game),
       fetchFromServer(0, 100)
     ]);
 
@@ -1055,7 +1054,9 @@ onMounted(async () => {
           <span v-else class="tw:align-middle">{{ name.row.core_item.name }}</span>
           <q-chip
             v-if="
-              currentGame === 'pf' && name.row.core_item.remaster && settings.game_version === 'Any'
+              settings.game === 'pf' &&
+              name.row.core_item.remaster &&
+              settings.game_version === 'Any'
             "
             dense
             color="blue"
@@ -1065,7 +1066,7 @@ onMounted(async () => {
           />
           <q-chip
             v-if="
-              currentGame === 'pf' &&
+              settings.game === 'pf' &&
               !name.row.core_item.remaster &&
               settings.game_version === 'Any'
             "

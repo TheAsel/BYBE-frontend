@@ -49,7 +49,6 @@ import type {
   creature_columns,
   creature_filters,
   creature_type,
-  games,
   hazard_columns,
   hazard_filters,
   rarities,
@@ -68,8 +67,7 @@ const encounter = encounterStore();
 const encounterBuilderRef = ref();
 const router = useRouter();
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-const currentAon = ref(currentGame.value === 'sf' ? 'aonsrd' : 'aonprd');
+const currentAon = ref(settings.game === 'sf' ? 'aonsrd' : 'aonprd');
 
 const hazardToggle = ref<'creatures' | 'hazards'>('creatures');
 encounter.removeSelectedHazard();
@@ -584,7 +582,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
     }
     try {
       const request = await requestCreatures(
-        currentGame.value,
+        settings.game,
         startRow,
         rowsPerPage,
         creatureFilters.value.sort_by,
@@ -698,7 +696,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
     }
     try {
       const request = await requestHazards(
-        currentGame.value,
+        settings.game,
         startRow,
         rowsPerPage,
         hazardFilters.value.sort_by,
@@ -840,7 +838,7 @@ const sortHazards = (col: hazard_columns) => {
 const openCreatureSheet = (id: number) => {
   const routeData = router.resolve({
     name: 'bestiary',
-    query: { game: currentGame.value, id: id }
+    query: { game: settings.game, id: id }
   });
   if (process.env.IS_APP === 'true') {
     globalThis.open(routeData.href, '_self');
@@ -850,7 +848,7 @@ const openCreatureSheet = (id: number) => {
 };
 
 const openHazardSheet = (id: number) => {
-  const routeData = router.resolve({ name: 'hazard', query: { game: currentGame.value, id: id } });
+  const routeData = router.resolve({ name: 'hazard', query: { game: settings.game, id: id } });
   if (process.env.IS_APP === 'true') {
     globalThis.open(routeData.href, '_self');
   } else {
@@ -861,7 +859,7 @@ const openHazardSheet = (id: number) => {
 // ---- Add creature to encounter function
 const addCreature = debounce(function (creature: creature) {
   const aon_link =
-    currentGame.value === 'sf'
+    settings.game === 'sf'
       ? 'https://2e.aonsrd.com/search?q=' +
         encodeURIComponent(creature.core_data.essential.name) +
         ' type%3A(creature)&type=eqs'
@@ -1203,20 +1201,20 @@ onMounted(async () => {
       hazardSourcesRequest,
       hazardRangesRequest
     ] = await Promise.all([
-      requestFilters(currentGame.value, 'traits'),
-      requestFilters(currentGame.value, 'alignments'),
-      requestFilters(currentGame.value, 'sizes'),
-      requestFilters(currentGame.value, 'rarities'),
-      requestFilters(currentGame.value, 'families'),
-      requestFilters(currentGame.value, 'creature_types'),
-      requestFilters(currentGame.value, 'sources'),
-      requestFilters(currentGame.value, 'creature_roles'),
-      requestCreatureRanges(currentGame.value),
-      requestHazardFilters(currentGame.value, 'traits'),
-      requestHazardFilters(currentGame.value, 'sizes'),
-      requestHazardFilters(currentGame.value, 'rarities'),
-      requestHazardFilters(currentGame.value, 'sources'),
-      requestHazardRanges(currentGame.value),
+      requestFilters(settings.game, 'traits'),
+      requestFilters(settings.game, 'alignments'),
+      requestFilters(settings.game, 'sizes'),
+      requestFilters(settings.game, 'rarities'),
+      requestFilters(settings.game, 'families'),
+      requestFilters(settings.game, 'creature_types'),
+      requestFilters(settings.game, 'sources'),
+      requestFilters(settings.game, 'creature_roles'),
+      requestCreatureRanges(settings.game),
+      requestHazardFilters(settings.game, 'traits'),
+      requestHazardFilters(settings.game, 'sizes'),
+      requestHazardFilters(settings.game, 'rarities'),
+      requestHazardFilters(settings.game, 'sources'),
+      requestHazardRanges(settings.game),
       fetchFromServer(0, 100)
     ]);
 
@@ -2091,7 +2089,7 @@ onMounted(async () => {
             >
           </a>
           <a
-            v-else-if="currentGame === 'sf' && settings.is_aon_links_on"
+            v-else-if="settings.game === 'sf' && settings.is_aon_links_on"
             :href="
               'https://2e.' +
               currentAon +
@@ -2111,7 +2109,7 @@ onMounted(async () => {
           <span v-else class="tw:align-middle">{{ name.value }}</span>
           <q-chip
             v-if="
-              currentGame === 'pf' &&
+              settings.game === 'pf' &&
               name.row.core_data.essential.remaster &&
               settings.game_version === 'Any'
             "
@@ -2123,7 +2121,7 @@ onMounted(async () => {
           />
           <q-chip
             v-if="
-              currentGame === 'pf' &&
+              settings.game === 'pf' &&
               !name.row.core_data.essential.remaster &&
               settings.game_version === 'Any'
             "
@@ -3185,7 +3183,7 @@ onMounted(async () => {
           <span v-else class="tw:align-middle">{{ name.value }}</span>
           <q-chip
             v-if="
-              currentGame === 'pf' &&
+              settings.game === 'pf' &&
               name.row.core_hazard.essential.remaster &&
               settings.game_version === 'Any'
             "
@@ -3197,7 +3195,7 @@ onMounted(async () => {
           />
           <q-chip
             v-if="
-              currentGame === 'pf' &&
+              settings.game === 'pf' &&
               !name.row.core_hazard.essential.remaster &&
               settings.game_version === 'Any'
             "

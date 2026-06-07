@@ -11,7 +11,6 @@ import EncounterSheet from 'src/components/encounter/EncounterSheet.vue';
 import { encounterStore } from 'src/stores/encounter';
 import { settingsStore } from 'src/stores/settings';
 
-import type { games } from 'src/types/filters';
 import type { hazard } from 'src/types/hazard';
 
 const title = ref('Hazard Sheet - BYBE');
@@ -32,14 +31,12 @@ const $q = useQuasar();
 const encounters = encounterStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-
 const hazardId = Number(route.query.id);
 
 let hazardData: hazard | undefined;
 try {
   if (hazardId !== undefined && !Number.isNaN(hazardId)) {
-    hazardData = await requestHazardId(currentGame.value, hazardId);
+    hazardData = await requestHazardId(settings.game, hazardId);
     if (isNull(hazardData) || hazardData === undefined) {
       console.error('Missing hazard ID');
       $q.notify({
@@ -48,7 +45,7 @@ try {
         message: 'Missing hazard ID',
         icon: matPriorityHigh
       });
-      await router.push({ name: 'encounter', query: { game: currentGame.value } });
+      await router.push({ name: 'encounter', query: { game: settings.game } });
     } else {
       title.value = hazardData?.core_hazard.essential.name + ' - BYBE';
       encounters.setSelectedHazard(hazardData);
@@ -61,7 +58,7 @@ try {
       message: 'Invalid hazard ID',
       icon: matPriorityHigh
     });
-    await router.push({ name: 'encounter', query: { game: currentGame.value } });
+    await router.push({ name: 'encounter', query: { game: settings.game } });
   }
 } catch (error) {
   console.error(error);

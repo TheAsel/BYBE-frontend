@@ -10,15 +10,11 @@ import { npcStore } from 'src/stores/npc';
 import { npcParametersStore } from 'src/stores/npcParameters';
 import { settingsStore } from 'src/stores/settings';
 
-import type { games } from 'src/types/filters';
-
 const $q = useQuasar();
 
 const npcParameters = npcParametersStore();
 const npcs = npcStore();
 const settings = settingsStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
 
 const parameters = ref<{
   genders: string[];
@@ -48,18 +44,18 @@ onMounted(async () => {
   try {
     const [gendersRequest, ancestriesRequest, classesRequest, jobsRequest, culturesRequest] =
       await Promise.all([
-        requestParameters(currentGame.value, 'genders'),
-        requestAncestries(currentGame.value),
-        requestParameters(currentGame.value, 'classes'),
-        requestParameters(currentGame.value, 'jobs'),
-        currentGame.value === 'pf' ? requestParameters('pf', 'cultures') : Promise.resolve(null)
+        requestParameters(settings.game, 'genders'),
+        requestAncestries(settings.game),
+        requestParameters(settings.game, 'classes'),
+        requestParameters(settings.game, 'jobs'),
+        settings.game === 'pf' ? requestParameters('pf', 'cultures') : Promise.resolve(null)
       ]);
 
     if (!gendersRequest) throw new Error('Error fetching genders');
     if (!ancestriesRequest) throw new Error('Error fetching ancestries');
     if (!classesRequest) throw new Error('Error fetching classes');
     if (!jobsRequest) throw new Error('Error fetching jobs');
-    if (currentGame.value === 'pf' && !culturesRequest) throw new Error('Error fetching cultures');
+    if (settings.game === 'pf' && !culturesRequest) throw new Error('Error fetching cultures');
 
     npcParameters.updateGenders(gendersRequest);
     genderFilter.value = npcParameters.npcParameters.genders;
@@ -118,7 +114,7 @@ const generateNpc = debounce(async function () {
     body.gender_filter = tmpGenders;
   }
 
-  if (currentGame.value === 'sf') {
+  if (settings.game === 'sf') {
     if (parameters.value.ancestries && parameters.value.ancestries.length > 0) {
       const tmpAncestries = parameters.value.ancestries.map((_ancestry) => {
         return _ancestry.replaceAll(' ', '');
@@ -175,7 +171,7 @@ const generateNpc = debounce(async function () {
   };
 
   try {
-    const randomNpc = await npcGenerator(currentGame.value, body);
+    const randomNpc = await npcGenerator(settings.game, body);
     if (randomNpc === undefined) {
       throw new TypeError('Error generating random npc');
     }
@@ -194,7 +190,7 @@ const generateNpc = debounce(async function () {
       randomNpc.ancestry = randomNpc.ancestry!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
       npcs.npcs[npcs.activeNpc]!.npc.ancestry = randomNpc.ancestry;
     }
-    if (currentGame.value === 'pf' && !npcs.locks.culture) {
+    if (settings.game === 'pf' && !npcs.locks.culture) {
       randomNpc.culture = randomNpc.culture!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
       npcs.npcs[npcs.activeNpc]!.npc.culture = randomNpc.culture;
     }
@@ -341,7 +337,7 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
 
             <div class="tw:flex tw:flex-wrap tw:justify-center tw:gap-2">
               <q-select
-                v-if="npcs.npcs[npcs.activeNpc]!.culture && currentGame === 'pf'"
+                v-if="npcs.npcs[npcs.activeNpc]!.culture && settings.game === 'pf'"
                 label="Cultures"
                 v-model="parameters.cultures"
                 class="tw:grow"
@@ -371,7 +367,7 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
                 @filter="filterAncestriesFn"
               />
               <q-toggle
-                v-if="currentGame === 'pf'"
+                v-if="settings.game === 'pf'"
                 v-model="npcs.npcs[npcs.activeNpc]!.culture"
                 label="Use Culture"
                 class="tw:shrink"

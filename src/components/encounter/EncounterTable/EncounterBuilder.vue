@@ -16,7 +16,6 @@ import type {
   alignments,
   challenges,
   complexities,
-  games,
   rarities,
   roles,
   sizes
@@ -32,10 +31,9 @@ const encounter = encounterStore();
 const dialog = ref(false);
 const tab = ref('General');
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-const currentAon = ref(currentGame.value === 'sf' ? 'aonsrd' : 'aonprd');
+const currentAon = ref(settings.game === 'sf' ? 'aonsrd' : 'aonprd');
 const currentRules = ref(
-  currentGame.value === 'sf'
+  settings.game === 'sf'
     ? 'https://2e.aonsrd.com/rules/791-encounter-design'
     : 'https://2e.aonprd.com/Rules.aspx?ID=2717'
 );
@@ -224,7 +222,7 @@ const generateEncounter = debounce(async function () {
     body.challenge = tmpFilters.value.challenge!;
   }
   try {
-    const randomEncounter = await encounterGenerator(currentGame.value, body);
+    const randomEncounter = await encounterGenerator(settings.game, body);
     if (randomEncounter === undefined) {
       throw new TypeError('Error generating random encounter');
     }
