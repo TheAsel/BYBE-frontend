@@ -28,7 +28,7 @@ export function updateLocalStorageParties() {
         if (isCompatible) {
           const parties: party[] = parsedParties;
           for (const party of parties) {
-            if (!party || !party.members.every((player) => player >= 1 && player <= 20)) {
+            if (!party?.members.every((player) => player >= 1 && player <= 20)) {
               throw new Error('Invalid saved party levels');
             }
           }
