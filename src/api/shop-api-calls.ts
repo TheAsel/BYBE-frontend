@@ -2,7 +2,7 @@ import { apiFetch, apiFetchText, buildUrl } from 'src/utils/fetch';
 
 import type { games, item_columns, item_filters, shop_ranges } from 'src/types/filters';
 import type { item, item_response } from 'src/types/item';
-import type { shareable_shop } from 'src/types/shop';
+import type { shareable_shop, shop_data } from 'src/types/shop';
 import type { template_data } from 'src/types/template';
 
 export async function requestFilters(game: games, filter: 'sources' | 'traits') {
@@ -67,32 +67,7 @@ export async function requestItemId(game: games, item_id: number) {
   }
 }
 
-export async function shopGenerator(
-  game: games,
-  body: {
-    source_filter: string[] | null;
-    trait_blacklist_filter: string[] | null;
-    trait_whitelist_filter: string[] | null;
-    rarity_filter: string[] | null;
-    type_filter: string[] | null;
-    armor_percentage: number | null;
-    equipment_percentage: number | null;
-    shield_percentage: number | null;
-    weapon_percentage: number | null;
-    consumable_dices: {
-      dice_size: number | null;
-      n_of_dices: number | null;
-    }[];
-    equippable_dices: {
-      dice_size: number | null;
-      n_of_dices: number | null;
-    }[];
-    min_level: number;
-    max_level: number;
-    shop_template?: string;
-    game_system_version: string;
-  }
-) {
+export async function shopGenerator(game: games, body: shop_data) {
   try {
     return await apiFetch<item_response>(
       buildUrl(process.env.API_URL!, [game, 'shop', 'generator']),
