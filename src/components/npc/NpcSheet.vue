@@ -1,32 +1,15 @@
 <script setup lang="ts">
 import { biBoxArrowUpRight } from '@quasar/extras/bootstrap-icons';
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { npcStore } from 'src/stores/npc';
 import { settingsStore } from 'src/stores/settings';
-
-import type { games } from 'src/types/filters';
-
-const npcs = npcStore();
-const settings = settingsStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-const currentFont = ref(currentGame.value === 'sf' ? 'Orbitron Bold' : 'Good Pro Condensed');
+import { getGameFont, getGameFontSize, openSheet } from 'src/utils/sheet';
 
 const router = useRouter();
 
-const openNpcSheet = (id: number) => {
-  const routeData = router.resolve({
-    name: 'character',
-    query: { game: currentGame.value, id: id }
-  });
-  if (process.env.IS_APP === 'true') {
-    globalThis.open(routeData.href, '_self');
-  } else {
-    globalThis.open(routeData.href, '_blank');
-  }
-};
+const npcs = npcStore();
+const settings = settingsStore();
 </script>
 
 <template>
@@ -39,7 +22,11 @@ const openNpcSheet = (id: number) => {
         <div class="q-gutter-y-xs tw:p-4 show-print">
           <div
             class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
-            :style="'font-family: ' + currentFont + ', sans-serif; font-variant-caps: small-caps'"
+            :style="
+              'font-family: ' +
+              getGameFont(settings.game) +
+              ', sans-serif; font-variant-caps: small-caps'
+            "
           >
             <div class="tw:my-auto!">
               <q-btn
@@ -51,7 +38,7 @@ const openNpcSheet = (id: number) => {
                 padding="sm"
                 class="tw:mr-1! only-screen character-page-element"
                 aria-label="Open NPC sheet"
-                @click="openNpcSheet(npcs.activeNpc)"
+                @click="openSheet(router, 'character', settings.game, npcs.activeNpc)"
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -62,14 +49,14 @@ const openNpcSheet = (id: number) => {
                 </q-tooltip>
               </q-btn>
             </div>
-            <span class="tw:my-auto">
+            <h1 :class="getGameFontSize(settings.game) + ' tw:mr-4 tw:leading-8 tw:my-auto'">
               <span v-if="npcs.npcs[npcs.activeNpc]!.npc.name" class="tw:leading-8 tw:my-auto">
                 {{ npcs.npcs[npcs.activeNpc]!.npc.name }}
               </span>
               <span v-if="npcs.npcs[npcs.activeNpc]!.npc.nickname" class="tw:leading-8 tw:my-auto">
                 {{ '&nbsp;"' + npcs.npcs[npcs.activeNpc]!.npc.nickname + '"' }}
               </span>
-            </span>
+            </h1>
             <q-space />
             <div class="tw:ml-4 tw:my-1">NPC {{ npcs.npcs[npcs.activeNpc]!.npc.level }}</div>
           </div>
@@ -87,7 +74,7 @@ const openNpcSheet = (id: number) => {
             </div>
             <div
               v-if="
-                (!npcs.npcs[npcs.activeNpc]!.culture || currentGame === 'sf') &&
+                (!npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf') &&
                 npcs.npcs[npcs.activeNpc]!.npc.ancestry
               "
               class="tw:bg-[#28765d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
@@ -96,7 +83,7 @@ const openNpcSheet = (id: number) => {
             </div>
             <div
               v-if="
-                currentGame === 'pf' &&
+                settings.game === 'pf' &&
                 npcs.npcs[npcs.activeNpc]!.culture &&
                 npcs.npcs[npcs.activeNpc]!.npc.culture
               "

@@ -1,30 +1,21 @@
 <script setup lang="ts">
 import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { encounterStore } from 'src/stores/encounter';
 import { settingsStore } from 'src/stores/settings';
-
-import type { games } from 'src/types/filters';
+import {
+  actionTraitsString,
+  getGameFont,
+  getGameFontSize,
+  openSheet,
+  pfActionSymbol
+} from 'src/utils/sheet';
 
 const router = useRouter();
+
 const encounter = encounterStore();
 const settings = settingsStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-
-const pfActionSymbol = (num: number | null, action: string) => {
-  if (num === 1 || num === 2 || num === 3) {
-    return num;
-  }
-  if (action === 'free') {
-    return 4;
-  }
-  if (action === 'reaction') {
-    return 5;
-  }
-};
 
 const cleanDescription = (description: string) => {
   const cleanRegex = /<\/?>|<hr ?\/>|@Localize\[.+\]/g;
@@ -32,35 +23,16 @@ const cleanDescription = (description: string) => {
   description = description.replaceAll(cleanRegex, '');
   return description.replaceAll('<hr>', '<br>');
 };
-
-const actionTraitsString = (index: number) => {
-  const traits = encounter.selectedHazard?.core_hazard.actions[index]?.traits;
-  let finalString = '';
-  if (traits !== undefined && traits.length > 0) {
-    finalString += ' (';
-    for (const trait of traits) {
-      finalString += trait.toLowerCase().replaceAll('-', ' ') + ', ';
-    }
-    finalString = finalString.substring(0, finalString.length - 2);
-    finalString += ')';
-  }
-  return finalString;
-};
-
-const openHazardSheet = (game: games, id: number) => {
-  const routeData = router.resolve({ name: 'hazard', query: { game: game, id: id } });
-  if (process.env.IS_APP === 'true') {
-    globalThis.open(routeData.href, '_self');
-  } else {
-    globalThis.open(routeData.href, '_blank');
-  }
-};
 </script>
 
 <template>
   <div
     class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
-    style="font-family: 'Good Pro Condensed', sans-serif; font-variant-caps: small-caps"
+    :style="
+      'font-family: ' +
+      getGameFont(encounter.selectedHazard?.game ?? settings.game) +
+      ', sans-serif; font-variant-caps: small-caps'
+    "
   >
     <div class="tw:my-auto!">
       <q-btn
@@ -73,8 +45,10 @@ const openHazardSheet = (game: games, id: number) => {
         class="tw:mr-1 tw:my-auto only-screen encounter-page-element"
         aria-label="Open hazard sheet"
         @click="
-          openHazardSheet(
-            encounter.selectedHazard?.game ?? currentGame,
+          openSheet(
+            router,
+            'hazard',
+            encounter.selectedHazard?.game ?? settings.game,
             encounter.selectedHazard!.core_hazard.essential.id
           )
         "
@@ -100,12 +74,21 @@ const openHazardSheet = (game: games, id: number) => {
       rel="noopener"
     >
       <h1
-        class="tw:text-3xl! tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
+        :class="
+          getGameFontSize(encounter.selectedHazard?.game ?? settings.game) +
+          ' tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400'
+        "
       >
         {{ encounter.selectedHazard?.core_hazard.essential.name }}
       </h1>
     </a>
-    <h1 v-else class="tw:text-3xl! tw:mr-4 tw:leading-8 tw:my-auto">
+    <h1
+      v-else
+      :class="
+        getGameFontSize(encounter.selectedHazard?.game ?? settings.game) +
+        ' tw:mr-4 tw:leading-8 tw:my-auto'
+      "
+    >
       {{ encounter.selectedHazard?.core_hazard.essential.name }}
     </h1>
     <q-space />
@@ -218,7 +201,7 @@ const openHazardSheet = (game: games, id: number) => {
       "
     />
     <template
-      v-for="(action, index) in encounter.selectedHazard?.core_hazard?.actions"
+      v-for="action in encounter.selectedHazard?.core_hazard?.actions"
       :key="action.core_action.name"
     >
       <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
@@ -227,7 +210,7 @@ const openHazardSheet = (game: games, id: number) => {
           >{{ pfActionSymbol(action.core_action.n_of_actions, action.core_action.action_type) }}
         </span>
         <span v-if="action.traits !== undefined && action.traits.length > 0">
-          {{ actionTraitsString(index) }}
+          {{ actionTraitsString(action.traits) }}
         </span>
         <span v-html="' ' + cleanDescription(action.core_action.description)" />
       </div>

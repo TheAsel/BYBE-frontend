@@ -1,70 +1,25 @@
 <script setup lang="ts">
 import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { itemsStore } from 'src/stores/items';
 import { settingsStore } from 'src/stores/settings';
-
-import type { games } from 'src/types/filters';
-
-const settings = settingsStore();
-const items = itemsStore();
-
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-const currentFont = ref(currentGame.value === 'sf' ? 'Orbitron Bold' : 'Good Pro Condensed');
-const currentFontSize = ref(currentGame.value === 'sf' ? 'tw:text-2xl!' : 'tw:text-3xl!');
+import { cleanDescription, getGameFont, getGameFontSize, openSheet } from 'src/utils/sheet';
 
 const router = useRouter();
 
-const cleanSymbols = (description: string) => {
-  const symbolsRegex = /<span class="action-glyph">(\w)<\/span>/g;
-
-  const symbol = description.matchAll(symbolsRegex);
-  for (const i of symbol) {
-    if (i) {
-      description = description.replaceAll(
-        i[0],
-        '<span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl">' +
-          i[1] +
-          '</span>'
-      );
-    }
-  }
-  return description;
-};
-
-const cleanDescription = (description: string) => {
-  const cleanRegex = /<\/?(?:li)?(?:ul)?>|@Localize\[.+\]/g;
-
-  let finalString = cleanSymbols(description);
-
-  finalString = finalString.replaceAll('<p>', '<p class="tw:my-0!">');
-
-  finalString = finalString.replaceAll(
-    '<hr />',
-    '<hr class="q-separator q-separator--horizontal tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-500!" style="height: 2px;" aria-orientation="horizontal">'
-  );
-
-  finalString = finalString.replaceAll('\n', '<br style="display: block; margin-top: 0px;">');
-
-  return finalString.replaceAll(cleanRegex, '');
-};
-
-const openShopSheet = (game: games, id: number) => {
-  const routeData = router.resolve({ name: 'item', query: { game: game, id: id } });
-  if (process.env.IS_APP === 'true') {
-    globalThis.open(routeData.href, '_self');
-  } else {
-    globalThis.open(routeData.href, '_blank');
-  }
-};
+const settings = settingsStore();
+const items = itemsStore();
 </script>
 
 <template>
   <div
     class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
-    :style="'font-family: ' + currentFont + ', sans-serif; font-variant-caps: small-caps'"
+    :style="
+      'font-family: ' +
+      getGameFont(items.selectedItem?.game ?? settings.game) +
+      ', sans-serif; font-variant-caps: small-caps'
+    "
   >
     <div class="tw:my-auto!">
       <q-btn
@@ -77,7 +32,12 @@ const openShopSheet = (game: games, id: number) => {
         class="tw:mr-1 tw:my-auto only-screen item-page-element"
         aria-label="Open item sheet"
         @click="
-          openShopSheet(items.selectedItem?.game ?? currentGame, items.selectedItem!.core_item.id)
+          openSheet(
+            router,
+            'item',
+            items.selectedItem?.game ?? settings.game,
+            items.selectedItem!.core_item.id
+          )
         "
       >
         <q-tooltip
@@ -106,14 +66,20 @@ const openShopSheet = (game: games, id: number) => {
     >
       <h1
         :class="
-          currentFontSize +
+          getGameFontSize(items.selectedItem?.game ?? settings.game) +
           ' tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400'
         "
       >
         {{ items.selectedItem!.core_item.name }}
       </h1>
     </a>
-    <h1 v-else :class="currentFontSize + ' tw:mr-4 tw:leading-8 tw:my-auto'">
+    <h1
+      v-else
+      :class="
+        getGameFontSize(items.selectedItem?.game ?? settings.game) +
+        ' tw:mr-4 tw:leading-8 tw:my-auto'
+      "
+    >
       {{ items.selectedItem!.core_item.name }}
     </h1>
     <q-space />
@@ -186,7 +152,7 @@ const openShopSheet = (game: games, id: number) => {
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     >
       <strong>Price</strong>
-      {{ items.getFormattedPrice(items.selectedItem!.core_item.price, currentGame) }};
+      {{ items.getFormattedPrice(items.selectedItem!.core_item.price, settings.game) }};
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <span v-if="items.selectedItem!.core_item.usage">

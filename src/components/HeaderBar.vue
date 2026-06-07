@@ -177,10 +177,7 @@ const unhide = debounce(function () {
           v-model="settings.game"
           :options="gameOptions"
           :readonly="
-            currentPath === '/bestiary' ||
-            currentPath === '/item' ||
-            currentPath === '/bestiary' ||
-            currentPath === '/item'
+            currentPath === '/bestiary' || currentPath === '/item' || currentPath === '/character'
           "
           emit-value
           map-options

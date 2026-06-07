@@ -1,34 +1,39 @@
 <script setup lang="ts">
 import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
 import { upperFirst } from 'lodash-es';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { encounterStore } from 'src/stores/encounter';
 import { settingsStore } from 'src/stores/settings';
+import {
+  actionTraitsString,
+  addPlus,
+  getGameFont,
+  getGameFontSize,
+  openSheet,
+  pfActionSymbol
+} from 'src/utils/sheet';
 
-import type { games, variants } from 'src/types/filters';
+import type { variants } from 'src/types/filters';
 
 const route = useRoute();
 const router = useRouter();
 const encounter = encounterStore();
 const settings = settingsStore();
 
-const currentGame = ref<games>(settings.game === 'sf' ? 'sf' : 'pf');
-const currentFont = ref(currentGame.value === 'sf' ? 'Orbitron Bold' : 'Good Pro Condensed');
-
 const changeVariant = (variant: variants) => {
   if (encounter.selectedCreature?.variant_data?.variant === 'Base') {
     const routeData = router.resolve({
       name: 'bestiary',
-      query: { game: currentGame.value, id: encounter.selectedCreature?.core_data.essential.id }
+      query: { game: settings.game, id: encounter.selectedCreature?.core_data.essential.id }
     });
     globalThis.open(routeData.href, '_self');
   } else {
     const routeData = router.resolve({
       name: 'bestiary',
       query: {
-        game: currentGame.value,
+        game: settings.game,
         id: encounter.selectedCreature?.core_data.essential.id,
         variant: variant.toLowerCase()
       }
@@ -45,29 +50,8 @@ const variantStyle = (value: string | number | undefined) => {
   return value;
 };
 
-const addPlus = (value: number | undefined) => {
-  if (value !== undefined && value > 0) {
-    return '+' + value;
-  } else {
-    return value;
-  }
-};
-
-const pfActionSymbol = (num: number | null, action: string) => {
-  if (num === 1 || num === 2 || num === 3) {
-    return num;
-  }
-  if (action === 'free') {
-    return 4;
-  }
-  if (action === 'reaction') {
-    return 5;
-  }
-};
-
 const cleanDescription = (description: string) => {
   const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
-
   return description.replaceAll(cleanRegex, '');
 };
 
@@ -525,36 +509,16 @@ const spellString = computed(() => {
   }
   return finalStrings;
 });
-
-const actionTraitsString = (index: number) => {
-  const traits = encounter.selectedCreature?.extra_data?.actions[index]?.traits;
-  traits?.sort();
-  let finalString = '';
-  if (traits !== undefined && traits.length > 0) {
-    finalString += ' (';
-    for (const trait of traits) {
-      finalString += trait.toLowerCase().replaceAll('-', ' ') + ', ';
-    }
-    finalString = finalString.substring(0, finalString.length - 2);
-    finalString += ')';
-  }
-  return finalString;
-};
-
-const openCreatureSheet = (game: games, id: number) => {
-  const routeData = router.resolve({ name: 'bestiary', query: { game: game, id: id } });
-  if (process.env.IS_APP === 'true') {
-    globalThis.open(routeData.href, '_self');
-  } else {
-    globalThis.open(routeData.href, '_blank');
-  }
-};
 </script>
 
 <template>
   <div
     class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
-    :style="'font-family: ' + currentFont + ', sans-serif; font-variant-caps: small-caps'"
+    :style="
+      'font-family: ' +
+      getGameFont(encounter.selectedCreature?.game ?? settings.game) +
+      ', sans-serif; font-variant-caps: small-caps'
+    "
   >
     <div class="tw:my-auto!">
       <q-btn
@@ -567,8 +531,10 @@ const openCreatureSheet = (game: games, id: number) => {
         class="tw:mr-1 tw:my-auto only-screen encounter-page-element"
         aria-label="Open creature sheet"
         @click="
-          openCreatureSheet(
-            encounter.selectedCreature?.game ?? currentGame,
+          openSheet(
+            router,
+            'bestiary',
+            encounter.selectedCreature?.game ?? settings.game,
             encounter.selectedCreature!.core_data.essential.id
           )
         "
@@ -598,7 +564,10 @@ const openCreatureSheet = (game: games, id: number) => {
       rel="noopener"
     >
       <h1
-        class="tw:text-3xl! tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
+        :class="
+          getGameFontSize(encounter.selectedCreature?.game ?? settings.game) +
+          ' tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400'
+        "
       >
         <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
         <span v-else-if="encounter.selectedCreature?.variant_data?.variant === 'Elite'"
@@ -623,7 +592,10 @@ const openCreatureSheet = (game: games, id: number) => {
       rel="noopener"
     >
       <h1
-        class="tw:text-3xl! tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
+        :class="
+          getGameFontSize(encounter.selectedCreature?.game ?? settings.game) +
+          ' tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400'
+        "
       >
         <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
         <span v-else-if="encounter.selectedCreature?.variant_data?.variant === 'Elite'"
@@ -632,7 +604,13 @@ const openCreatureSheet = (game: games, id: number) => {
         {{ encounter.selectedCreature!.core_data.essential.name }}
       </h1>
     </a>
-    <h1 v-else class="tw:text-3xl! tw:leading-8 tw:my-auto">
+    <h1
+      v-else
+      :class="
+        getGameFontSize(encounter.selectedCreature?.game ?? settings.game) +
+        ' tw:mr-4 tw:leading-8 tw:my-auto'
+      "
+    >
       <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
       <span v-else-if="encounter.selectedCreature?.variant_data?.variant === 'Elite'">Elite </span>
       {{ encounter.selectedCreature!.core_data.essential.name }}
@@ -761,7 +739,7 @@ const openCreatureSheet = (game: games, id: number) => {
       {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.charisma) }}
     </div>
     <template
-      v-for="(item, index) in encounter.selectedCreature?.extra_data?.actions"
+      v-for="item in encounter.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
       <div
@@ -773,7 +751,7 @@ const openCreatureSheet = (game: games, id: number) => {
           >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
         </span>
         <span v-if="item.traits !== undefined && item.traits.length > 0">
-          {{ actionTraitsString(index) }}
+          {{ actionTraitsString(item.traits) }}
         </span>
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>
@@ -794,7 +772,7 @@ const openCreatureSheet = (game: games, id: number) => {
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="defenceString"></div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="healthString"></div>
     <template
-      v-for="(item, index) in encounter.selectedCreature?.extra_data?.actions"
+      v-for="item in encounter.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
       <div
@@ -812,7 +790,7 @@ const openCreatureSheet = (game: games, id: number) => {
           >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
         </span>
         <span v-if="item.traits !== undefined && item.traits.length > 0">
-          {{ actionTraitsString(index) }}
+          {{ actionTraitsString(item.traits) }}
         </span>
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>
@@ -893,7 +871,7 @@ const openCreatureSheet = (game: games, id: number) => {
       <div v-html="entity" class="tw:text-base tw:text-gray-800 tw:dark:text-white" />
     </template>
     <template
-      v-for="(item, index) in encounter.selectedCreature?.extra_data?.actions"
+      v-for="item in encounter.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
       <div
@@ -905,7 +883,7 @@ const openCreatureSheet = (game: games, id: number) => {
           >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
         </span>
         <span v-if="item.traits !== undefined && item.traits.length > 0">
-          {{ actionTraitsString(index) }}
+          {{ actionTraitsString(item.traits) }}
         </span>
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>

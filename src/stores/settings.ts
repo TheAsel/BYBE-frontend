@@ -8,7 +8,7 @@ export const settingsStore = defineStore('settings', {
     experimental_features: false,
     is_aon_links_on: false,
     game_version: 'Any',
-    game: 'pf'
+    game: '' as games
   }),
   actions: {
     setHiddenNav(newHiddenNav: boolean) {
