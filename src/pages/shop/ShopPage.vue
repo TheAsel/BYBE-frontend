@@ -270,7 +270,7 @@ const toggleSheetView = () => {
 </script>
 
 <template>
-  <q-page id="pageRef" class="tw:h-full row items-center justify-between tw:overflow-scroll">
+  <q-page id="pageRef" class="tw:h-full row items-center justify-between tw:overflow-auto">
     <v-tour
       name="/shop"
       :steps="steps"
