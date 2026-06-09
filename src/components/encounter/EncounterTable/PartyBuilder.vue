@@ -36,6 +36,7 @@ const tmpParty = ref<party>({
   members: [...party.parties[party.activeParty]!.members]
 });
 const parties = ref(party.parties.map((party) => party.name));
+const selectedParty = ref(party.parties[party.activeParty]!.name);
 
 const dialog = ref(false);
 
@@ -58,35 +59,38 @@ const restoreParty = () => {
 
 const validateLevel = (index: number) => {
   const value = tmpParty.value.members[index];
-  if ((value && value < 1) || value === 0) {
+  if (typeof value !== 'number' || value < 1 || value === 0) {
     tmpParty.value.members[index] = 1;
-  }
-  if (value && value > 20) {
+  } else if (value > 20) {
     tmpParty.value.members[index] = 20;
   }
   tmpParty.value.members[index] = Math.round(tmpParty.value.members[index]!);
 };
 
 const validateSimpleParty = () => {
-  if (tmpParty.value.size && tmpParty.value.level) {
-    if (tmpParty.value.size < 1 || tmpParty.value.size === 0) {
-      tmpParty.value.size = 1;
-    }
-    if (tmpParty.value.size > 20) {
-      tmpParty.value.size = 20;
-    }
-    tmpParty.value.size = Math.round(tmpParty.value.size);
-
-    if (tmpParty.value.level < 1 || tmpParty.value.level === 0) {
-      tmpParty.value.level = 1;
-    }
-    if (tmpParty.value.level && tmpParty.value.level > 20) {
-      tmpParty.value.level = 20;
-    }
-    tmpParty.value.level = Math.round(tmpParty.value.level);
-
-    tmpParty.value.members = new Array(tmpParty.value.size).fill(tmpParty.value.level);
+  if (
+    typeof tmpParty.value.size !== 'number' ||
+    tmpParty.value.size < 1 ||
+    tmpParty.value.size === 0
+  ) {
+    tmpParty.value.size = 1;
+  } else if (tmpParty.value.size > 20) {
+    tmpParty.value.size = 20;
   }
+  tmpParty.value.size = Math.round(tmpParty.value.size);
+
+  if (
+    typeof tmpParty.value.level !== 'number' ||
+    tmpParty.value.level < 1 ||
+    tmpParty.value.level === 0
+  ) {
+    tmpParty.value.level = 1;
+  } else if (tmpParty.value.level && tmpParty.value.level > 20) {
+    tmpParty.value.level = 20;
+  }
+  tmpParty.value.level = Math.round(tmpParty.value.level);
+
+  tmpParty.value.members = new Array(tmpParty.value.size).fill(tmpParty.value.level);
 };
 
 const updateAdvanced = () => {
@@ -134,6 +138,7 @@ const addParty = () => {
   partyNameInput.value.validate();
   if (!partyNameInput.value.hasError) {
     party.addParty(newPartyName.value);
+    selectedParty.value = newPartyName.value;
     parties.value = party.parties.map((party) => party.name);
     tmpParty.value = {
       name: party.parties[party.activeParty]!.name,
@@ -150,6 +155,7 @@ const addParty = () => {
 
 const removeParty = () => {
   party.removeParty();
+  selectedParty.value = party.parties[party.activeParty]!.name;
   parties.value = party.parties.map((party) => party.name);
   tmpParty.value = {
     name: party.parties[party.activeParty]!.name,
@@ -206,13 +212,13 @@ const saveChanges = () => {
         </div>
         <div class="row">
           <q-select
-            v-model="tmpParty.name"
+            v-model="selectedParty"
             dense
             style="width: 180px"
             outlined
             :options="parties"
             label="Active Party"
-            @update:model-value="changeActiveParty(tmpParty.name)"
+            @update:model-value="changeActiveParty"
           />
           <q-btn
             class="tw:my-auto! tw:mx-2! tw:max-h-[33.15px]!"

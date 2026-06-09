@@ -13,6 +13,7 @@ import type { games } from 'src/types/filters';
 
 const settings = settingsStore();
 const isApp = process.env.IS_APP === 'true';
+const repoUrl = 'https://github.com/' + process.env.REPO_URL;
 
 TailwindDarkFix();
 
@@ -279,7 +280,7 @@ const unhide = debounce(function () {
               padding="sm"
               class="tw:text-gray-800! tw:dark:text-gray-200!"
               :icon="biGithub"
-              href="https://github.com/TheAsel/BYBE-frontend"
+              :href="repoUrl"
               target="_blank"
               aria-label="GitHub link"
               rel="noopener"

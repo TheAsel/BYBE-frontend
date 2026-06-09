@@ -254,17 +254,17 @@ onUnmounted(() => {
 });
 
 const sheetVisible = ref(true);
-const sheetWidth = ref('tw:md:w-[27%]!');
-const tableWidth = ref('tw:md:w-[46%]!');
+const sheetWidth = ref('tw:md:w-[27%] tw:p-4!');
+const tableWidth = ref('tw:md:w-[46%] tw:pl-4! tw:md:pl-0!');
 
 const toggleSheetView = () => {
   sheetVisible.value = !sheetVisible.value;
   if (sheetVisible.value) {
-    sheetWidth.value = 'tw:md:w-[27%]!';
-    tableWidth.value = 'tw:md:w-[46%]!';
+    sheetWidth.value = 'tw:md:w-[27%] tw:p-4!';
+    tableWidth.value = 'tw:md:w-[46%] tw:pl-4! tw:md:pl-0!';
   } else {
-    sheetWidth.value = 'tw:md:w-[0%]! tw:px-0! tw:collapse';
-    tableWidth.value = 'tw:md:w-[73%]!';
+    sheetWidth.value = 'tw:md:w-[0%] tw:p-0! tw:collapse tw:none';
+    tableWidth.value = 'tw:md:w-[73%] tw:pl-4!';
   }
 };
 </script>
@@ -279,22 +279,23 @@ const toggleSheetView = () => {
     />
     <ShopSheet
       v-if="screenWidth >= 768"
-      class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
+      class="tw:py-4 tw:pl-4 tw:w-full tw:transition-all tw:duration-300"
       :class="sheetWidth"
     />
     <ShopTable
       id="table"
-      class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
+      class="tw:p-4 tw:md:px-0 tw:w-full tw:transition-all tw:duration-300"
       :class="tableWidth"
       :toggle-sheet-view="toggleSheetView"
       :sheet-visible="sheetVisible"
     />
     <ShopSheet
       v-if="screenWidth < 768"
-      class="q-pa-md tw:w-full tw:transition-all tw:duration-300"
+      v-show="sheetVisible"
+      class="tw:md:px-0 tw:md:py-4 tw:w-full tw:transition-all tw:duration-300"
       :class="sheetWidth"
     />
-    <ShopList id="list" class="q-pa-md tw:w-full tw:md:w-[27%]" />
+    <ShopList id="list" class="tw:p-4 tw:w-full tw:md:w-[27%]" />
     <q-page-sticky
       v-if="screenWidth < 768"
       position="bottom-right"

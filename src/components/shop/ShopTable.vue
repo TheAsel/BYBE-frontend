@@ -1030,52 +1030,38 @@ onMounted(async () => {
       </template>
       <template #body-cell-name="name">
         <q-td :props="name">
-          <q-icon
-            v-if="
-              items.selectedItem?.core_item &&
-              name.row.core_item.id === items.selectedItem?.core_item.id
-            "
-            class="tw:mr-1 tw:align-middle"
-            size="xs"
-            :name="biCaretRight"
-          />
-          <a
-            v-if="settings.is_aon_links_on"
-            :href="currentAon + '?q=' + encodeURIComponent(name.row.core_item.name) + '&type=eqs'"
-            target="_blank"
-            rel="noopener"
-            class="tw:inline tw:align-middle"
-          >
-            <span
-              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
-              >{{ name.row.core_item.name }}</span
+          <div class="row items-center wrap">
+            <q-icon
+              v-if="
+                items.selectedItem?.core_item &&
+                name.row.core_item.id === items.selectedItem?.core_item.id
+              "
+              class="tw:mr-1 tw:align-middle"
+              size="xs"
+              :name="biCaretRight"
+            />
+            <a
+              v-if="settings.is_aon_links_on"
+              :href="currentAon + '?q=' + encodeURIComponent(name.row.core_item.name) + '&type=eqs'"
+              target="_blank"
+              rel="noopener"
+              class="tw:inline tw:align-middle"
             >
-          </a>
-          <span v-else class="tw:align-middle">{{ name.row.core_item.name }}</span>
-          <q-chip
-            v-if="
-              settings.game === 'pf' &&
-              name.row.core_item.remaster &&
-              settings.game_version === 'Any'
-            "
-            dense
-            color="blue"
-            text-color="white"
-            class="tw:ml-1! tw:text-xs!"
-            label="Remaster"
-          />
-          <q-chip
-            v-if="
-              settings.game === 'pf' &&
-              !name.row.core_item.remaster &&
-              settings.game_version === 'Any'
-            "
-            dense
-            color="red-10"
-            text-color="white"
-            class="tw:ml-1! tw:text-xs!"
-            label="Legacy"
-          />
+              <span
+                class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
+                >{{ name.row.core_item.name }}</span
+              >
+            </a>
+            <span v-else class="tw:align-middle">{{ name.row.core_item.name }}</span>
+            <q-chip
+              v-if="settings.game === 'pf' && settings.game_version === 'Any'"
+              dense
+              :color="name.row.core_item.remaster ? 'blue' : 'red-10'"
+              text-color="white"
+              class="tw:ml-1 tw:text-xs!"
+              :label="name.row.core_item.remaster ? 'Remaster' : 'Legacy'"
+            />
+          </div>
         </q-td>
       </template>
       <template #body-cell-trait="trait">

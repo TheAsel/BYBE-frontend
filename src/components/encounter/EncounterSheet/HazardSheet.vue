@@ -93,7 +93,7 @@ const cleanDescription = (description: string) => {
     </h1>
     <q-space />
     <div class="tw:my-1">
-      HAZARD
+      Hazard
       <span>{{ encounter.selectedHazard?.core_hazard.essential.level }}</span>
     </div>
     <div class="tw:my-auto!">

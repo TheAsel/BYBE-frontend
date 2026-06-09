@@ -175,9 +175,9 @@ onUnmounted(() => {
       :options="getTourOptions()"
       :callbacks="getTourCallbacks(startTour, stopTour)"
     />
-    <NpcGenerator id="generator" class="q-pa-md tw:w-full tw:md:w-[33%]" />
-    <NpcEditor class="q-pa-md tw:w-full tw:md:w-[33%]" />
-    <NpcSheet id="sheet" class="q-pa-md tw:w-full tw:md:w-[33%]" />
+    <NpcGenerator id="generator" class="tw:p-4 tw:w-full tw:md:w-[33%]" />
+    <NpcEditor class="tw:p-4 tw:md:px-0 tw:md:py-4 tw:w-full tw:md:w-[34%]" />
+    <NpcSheet id="sheet" class="tw:p-4 tw:md:px-4 tw:w-full tw:md:w-[33%]" />
     <q-page-sticky
       v-if="screenWidth < 768"
       position="bottom-right"

@@ -8,7 +8,7 @@ import {
   biTrash,
   biXLg
 } from '@quasar/extras/bootstrap-icons';
-import { fasScroll } from '@quasar/extras/fontawesome-v7';
+import { fasDragon, fasLandMineOn } from '@quasar/extras/fontawesome-v7';
 import { matPriorityHigh } from '@quasar/extras/material-icons';
 import { debounce, isNull } from 'lodash-es';
 import { copyToClipboard, useQuasar } from 'quasar';
@@ -447,30 +447,6 @@ const saveChanges = () => {
   localStorage.setItem('encounters', JSON.stringify(encounter.encounters));
 };
 
-const openCreatureSheet = (game: games, id: number, variant: variants) => {
-  const routeData = router.resolve({
-    name: 'bestiary',
-    query: { game: game, id: id, variant: variant }
-  });
-  if (isApp) {
-    globalThis.open(routeData.href, '_self');
-  } else {
-    globalThis.open(routeData.href, '_blank');
-  }
-};
-
-const openHazardSheet = (game: games, id: number) => {
-  const routeData = router.resolve({
-    name: 'hazard',
-    query: { game: game, id: id }
-  });
-  if (isApp) {
-    globalThis.open(routeData.href, '_self');
-  } else {
-    globalThis.open(routeData.href, '_blank');
-  }
-};
-
 const showItem = debounce(async function (item: min_creature_hazard) {
   if (item.is_hazard) {
     try {
@@ -880,48 +856,46 @@ const showItem = debounce(async function (item: min_creature_hazard) {
                 @click="showItem(item)"
               >
                 <div class="tw:flex-1 tw:my-auto tw:mx-1" style="min-width: 100px">
-                  <q-btn
+                  <q-chip
                     v-if="item.is_hazard === false"
-                    round
-                    unelevated
-                    :icon="fasScroll"
-                    size="sm"
-                    class="tw:mr-2!"
-                    target="_blank"
-                    aria-label="Open creature sheet"
-                    @click="openCreatureSheet(item.game, item.id, item.variant!)"
+                    text-color="white"
+                    :clickable="false"
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Creature type"
                   >
-                    <q-tooltip
-                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      Open creature sheet
-                    </q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    v-else
-                    round
-                    unelevated
-                    :icon="fasScroll"
-                    size="sm"
-                    class="tw:mr-2!"
-                    target="_blank"
-                    aria-label="Open hazard sheet"
-                    @click="openHazardSheet(item.game, item.id)"
+                    <q-avatar class="tw:visible" :icon="fasDragon" color="blue">
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Creature
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
+                  <q-chip
+                    v-if="item.is_hazard === true"
+                    text-color="white"
+                    :clickable="false"
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Hazard type"
                   >
-                    <q-tooltip
-                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      Open hazard sheet
-                    </q-tooltip>
-                  </q-btn>
+                    <q-avatar class="tw:visible" :icon="fasLandMineOn" color="red">
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Hazard
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
                   <span class="tw:align-middle">
                     {{ item.quantity }}
                     <a
-                      v-if="item.archive_link"
+                      v-if="item.archive_link && settings.is_aon_links_on"
                       :href="
                         item.archive_link +
                         '&Weak=' +

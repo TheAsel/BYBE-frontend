@@ -2067,70 +2067,57 @@ onMounted(async () => {
       </template>
       <template #body-cell-name="name">
         <q-td :props="name">
-          <q-icon
-            v-if="
-              encounter.selectedCreature?.core_data &&
-              name.row.core_data.essential.id === encounter.selectedCreature?.core_data.essential.id
-            "
-            class="tw:mr-1 tw:align-middle"
-            size="xs"
-            :name="biCaretRight"
-          />
-          <a
-            v-if="name.row.core_data.derived.archive_link"
-            :href="name.row.core_data.derived.archive_link"
-            target="_blank"
-            rel="noopener"
-            class="tw:inline tw:align-middle"
-          >
-            <span
-              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
-              >{{ name.value }}</span
+          <div class="row items-center wrap">
+            <q-icon
+              v-if="
+                encounter.selectedCreature?.core_data &&
+                name.row.core_data.essential.id ===
+                  encounter.selectedCreature?.core_data.essential.id
+              "
+              class="tw:mr-1 tw:align-middle"
+              size="xs"
+              :name="biCaretRight"
+            />
+            <a
+              v-if="name.row.core_data.derived.archive_link"
+              :href="name.row.core_data.derived.archive_link"
+              target="_blank"
+              rel="noopener"
+              class="tw:inline tw:align-middle"
             >
-          </a>
-          <a
-            v-else-if="settings.game === 'sf' && settings.is_aon_links_on"
-            :href="
-              'https://2e.' +
-              currentAon +
-              '.com/search?q=' +
-              encodeURIComponent(name.value) +
-              ' type%3A(creature)&type=eqs'
-            "
-            target="_blank"
-            rel="noopener"
-            class="tw:inline tw:align-middle"
-          >
-            <span
-              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
-              >{{ name.value }}</span
+              <span
+                class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
+                >{{ name.value }}</span
+              >
+            </a>
+            <a
+              v-else-if="settings.game === 'sf' && settings.is_aon_links_on"
+              :href="
+                'https://2e.' +
+                currentAon +
+                '.com/search?q=' +
+                encodeURIComponent(name.value) +
+                ' type%3A(creature)&type=eqs'
+              "
+              target="_blank"
+              rel="noopener"
+              class="tw:inline tw:align-middle"
             >
-          </a>
-          <span v-else class="tw:align-middle">{{ name.value }}</span>
-          <q-chip
-            v-if="
-              settings.game === 'pf' &&
-              name.row.core_data.essential.remaster &&
-              settings.game_version === 'Any'
-            "
-            dense
-            color="blue"
-            text-color="white"
-            class="tw:ml-1 tw:text-xs!"
-            label="Remaster"
-          />
-          <q-chip
-            v-if="
-              settings.game === 'pf' &&
-              !name.row.core_data.essential.remaster &&
-              settings.game_version === 'Any'
-            "
-            dense
-            color="red-10"
-            text-color="white"
-            class="tw:ml-1 tw:text-xs!"
-            label="Legacy"
-          />
+              <span
+                class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
+                >{{ name.value }}</span
+              >
+            </a>
+            <span v-else class="tw:align-middle">{{ name.value }}</span>
+            <q-chip
+              v-if="settings.game === 'pf' && settings.game_version === 'Any'"
+              dense
+              :color="name.row.core_data.essential.remaster ? 'blue' : 'red-10'"
+              text-color="white"
+              class="tw:ml-1 tw:text-xs!"
+              :label="name.row.core_data.essential.remaster ? 'Remaster' : 'Legacy'"
+            />
+          </div>
         </q-td>
       </template>
       <template #body-cell-trait="traits">
@@ -3152,59 +3139,45 @@ onMounted(async () => {
       </template>
       <template #body-cell-name="name">
         <q-td :props="name">
-          <q-icon
-            v-if="
-              encounter.selectedHazard?.core_hazard &&
-              name.row.core_hazard.essential.id ===
-                encounter.selectedHazard?.core_hazard.essential.id
-            "
-            class="tw:mr-1 tw:align-middle"
-            size="xs"
-            :name="biCaretRight"
-          />
-          <a
-            v-if="settings.is_aon_links_on"
-            :href="
-              'https://2e.' +
-              currentAon +
-              '.com/search?q=' +
-              encodeURIComponent(name.value) +
-              ' type%3A(hazard)&type=eqs'
-            "
-            target="_blank"
-            rel="noopener"
-            class="tw:inline tw:align-middle"
-          >
-            <span
-              class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
-              >{{ name.value }}</span
+          <div class="row items-center wrap">
+            <q-icon
+              v-if="
+                encounter.selectedHazard?.core_hazard &&
+                name.row.core_hazard.essential.id ===
+                  encounter.selectedHazard?.core_hazard.essential.id
+              "
+              class="tw:mr-1 tw:align-middle"
+              size="xs"
+              :name="biCaretRight"
+            />
+            <a
+              v-if="settings.is_aon_links_on"
+              :href="
+                'https://2e.' +
+                currentAon +
+                '.com/search?q=' +
+                encodeURIComponent(name.value) +
+                ' type%3A(hazard)&type=eqs'
+              "
+              target="_blank"
+              rel="noopener"
+              class="tw:inline tw:align-middle"
             >
-          </a>
-          <span v-else class="tw:align-middle">{{ name.value }}</span>
-          <q-chip
-            v-if="
-              settings.game === 'pf' &&
-              name.row.core_hazard.essential.remaster &&
-              settings.game_version === 'Any'
-            "
-            dense
-            color="blue"
-            text-color="white"
-            class="tw:ml-1 tw:text-xs!"
-            label="Remaster"
-          />
-          <q-chip
-            v-if="
-              settings.game === 'pf' &&
-              !name.row.core_hazard.essential.remaster &&
-              settings.game_version === 'Any'
-            "
-            dense
-            color="red-10"
-            text-color="white"
-            class="tw:ml-1 tw:text-xs!"
-            label="Legacy"
-          />
+              <span
+                class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400 tw:max-w-62.5 tw:whitespace-normal"
+                >{{ name.value }}</span
+              >
+            </a>
+            <span v-else class="tw:align-middle">{{ name.value }}</span>
+            <q-chip
+              v-if="settings.game === 'pf' && settings.game_version === 'Any'"
+              dense
+              :color="name.row.core_hazard.essential.remaster ? 'blue' : 'red-10'"
+              text-color="white"
+              class="tw:ml-1 tw:text-xs!"
+              :label="name.row.core_hazard.essential.remaster ? 'Remaster' : 'Legacy'"
+            />
+          </div>
         </q-td>
       </template>
       <template #body-cell-trait="traits">

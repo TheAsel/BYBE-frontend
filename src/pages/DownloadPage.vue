@@ -60,7 +60,7 @@ onMounted(async () => {
       </q-tabs>
       <q-separator />
       <div
-        class="tw:h-full tw:opacity-85 tw:dark:opacity-90 q-pa-md tw:w-full tw:md:w-228 tw:mx-auto"
+        class="tw:h-full tw:opacity-85 tw:dark:opacity-90 q-pa-md tw:w-full tw:md:w-190 tw:mx-auto"
       >
         <div
           class="tw:h-full tw:place-content-center tw:text-left tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700"
