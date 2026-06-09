@@ -340,7 +340,7 @@ const showItem = debounce(async function (item: min_item) {
 </script>
 
 <template>
-  <div class="q-pa-md tw:w-full tw:md:w-[27%] only-screen">
+  <div class="tw:h-full only-screen">
     <q-dialog
       v-model="importShopDialog"
       aria-label="Import shared shop dialog"
@@ -566,8 +566,7 @@ const showItem = debounce(async function (item: min_item) {
       id="v-step-4"
       view="lHh lpr lFf"
       container
-      style="height: calc(100vh - 126px)"
-      class="tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
+      class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
     >
       <q-header
         bordered
@@ -656,157 +655,162 @@ const showItem = debounce(async function (item: min_item) {
         </div>
       </q-header>
       <q-page-container v-if="items.generating === false">
-        <div v-for="(item, index) in items.shops[items.activeShop]!.items" :key="index">
-          <div class="tw:flex">
-            <div class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
-              <q-btn
-                unelevated
-                :ripple="false"
-                size="sm"
-                class="q-px-md"
-                :icon="biPlus"
-                aria-label="Add item"
-                @click="items.addToShop(item, index)"
-              />
-              <q-btn
-                unelevated
-                :ripple="false"
-                size="sm"
-                class="q-px-md"
-                :icon="biDash"
-                aria-label="Remove item"
-                @click="items.removeFromShop(index)"
-              />
-            </div>
-            <div class="tw:flex tw:flex-row tw:grow cursor-pointer" @click="showItem(item)">
-              <div class="tw:grow tw:my-auto tw:mx-1" style="min-width: 100px">
-                <q-chip
-                  v-if="item.type === 'Armor'"
-                  text-color="white"
-                  :clickable="false"
+        <q-page class="tw:min-h-auto!">
+          <div v-for="(item, index) in items.shops[items.activeShop]!.items" :key="index">
+            <div class="tw:flex">
+              <div class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
+                <q-btn
+                  unelevated
                   :ripple="false"
-                  class="tw:p-1! tw:invisible"
-                  aria-label="Armor item type"
-                >
-                  <q-avatar class="tw:visible" :icon="mdiTshirtCrew" color="blue">
-                    <q-tooltip
-                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      Armor
-                    </q-tooltip>
-                  </q-avatar>
-                </q-chip>
-                <q-chip
-                  v-if="item.type === 'Consumable'"
-                  text-color="white"
-                  :clickable="false"
+                  size="sm"
+                  class="q-px-md"
+                  :icon="biPlus"
+                  aria-label="Add item"
+                  @click="items.addToShop(item, index)"
+                />
+                <q-btn
+                  unelevated
                   :ripple="false"
-                  class="tw:p-1! tw:invisible"
-                  aria-label="Consumable item type"
-                >
-                  <q-avatar class="tw:visible" :icon="mdiFoodDrumstick" color="orange">
-                    <q-tooltip
-                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      Consumable
-                    </q-tooltip>
-                  </q-avatar>
-                </q-chip>
-                <q-chip
-                  v-if="item.type === 'Equipment'"
-                  text-color="white"
-                  :clickable="false"
-                  :ripple="false"
-                  class="tw:p-1! tw:invisible"
-                  aria-label="Equipment item type"
-                >
-                  <q-avatar class="tw:visible" :icon="mdiRing" color="green">
-                    <q-tooltip
-                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      Equipment
-                    </q-tooltip>
-                  </q-avatar>
-                </q-chip>
-                <q-chip
-                  v-if="item.type === 'Shield'"
-                  text-color="white"
-                  :clickable="false"
-                  :ripple="false"
-                  class="tw:p-1! tw:invisible"
-                  aria-label="Shield item type"
-                >
-                  <q-avatar class="tw:visible" :icon="mdiShield" color="purple">
-                    <q-tooltip
-                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      Shield
-                    </q-tooltip>
-                  </q-avatar>
-                </q-chip>
-                <q-chip
-                  v-if="item.type === 'Weapon'"
-                  text-color="white"
-                  :clickable="false"
-                  :ripple="false"
-                  class="tw:p-1! tw:invisible"
-                  aria-label="Weapon item type"
-                >
-                  <q-avatar class="tw:visible" :icon="mdiSword" color="red">
-                    <q-tooltip
-                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      Weapon
-                    </q-tooltip>
-                  </q-avatar>
-                </q-chip>
-                <span class="tw:align-middle">
-                  {{ item.quantity }}
-                  <a
-                    v-if="item.archive_link && settings.is_aon_links_on"
-                    :href="item.archive_link"
-                    target="_blank"
-                    rel="noopener"
+                  size="sm"
+                  class="q-px-md"
+                  :icon="biDash"
+                  aria-label="Remove item"
+                  @click="items.removeFromShop(index)"
+                />
+              </div>
+              <div
+                class="tw:flex tw:flex-wrap tw:flex-row tw:grow cursor-pointer"
+                @click="showItem(item)"
+              >
+                <div class="tw:grow tw:my-auto tw:mx-1" style="min-width: 100px">
+                  <q-chip
+                    v-if="item.type === 'Armor'"
+                    text-color="white"
+                    :clickable="false"
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Armor item type"
                   >
-                    <span
-                      class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
-                      >{{ item.name }}</span
+                    <q-avatar class="tw:visible" :icon="mdiTshirtCrew" color="blue">
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Armor
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
+                  <q-chip
+                    v-if="item.type === 'Consumable'"
+                    text-color="white"
+                    :clickable="false"
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Consumable item type"
+                  >
+                    <q-avatar class="tw:visible" :icon="mdiFoodDrumstick" color="orange">
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Consumable
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
+                  <q-chip
+                    v-if="item.type === 'Equipment'"
+                    text-color="white"
+                    :clickable="false"
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Equipment item type"
+                  >
+                    <q-avatar class="tw:visible" :icon="mdiRing" color="green">
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Equipment
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
+                  <q-chip
+                    v-if="item.type === 'Shield'"
+                    text-color="white"
+                    :clickable="false"
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Shield item type"
+                  >
+                    <q-avatar class="tw:visible" :icon="mdiShield" color="purple">
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Shield
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
+                  <q-chip
+                    v-if="item.type === 'Weapon'"
+                    text-color="white"
+                    :clickable="false"
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Weapon item type"
+                  >
+                    <q-avatar class="tw:visible" :icon="mdiSword" color="red">
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Weapon
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
+                  <span class="tw:align-middle">
+                    {{ item.quantity }}
+                    <a
+                      v-if="item.archive_link && settings.is_aon_links_on"
+                      :href="item.archive_link"
+                      target="_blank"
+                      rel="noopener"
                     >
-                  </a>
-                  <span v-else>{{ item.name }}</span>
-                  — Lv. {{ item.level }}
-                </span>
+                      <span
+                        class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
+                        >{{ item.name }}</span
+                      >
+                    </a>
+                    <span v-else>{{ item.name }}</span>
+                    — Lv. {{ item.level }}
+                  </span>
+                </div>
+                <div class="tw:shrink tw:text-nowrap tw:my-auto tw:mx-1">
+                  {{ items.getFormattedPrice(item.price * item.quantity!, settings.game) }}
+                </div>
               </div>
-              <div class="tw:shrink tw:text-nowrap tw:my-auto tw:mx-1">
-                {{ items.getFormattedPrice(item.price * item.quantity!, settings.game) }}
+              <div class="tw:flex-none tw:my-auto tw:ml-1 tw:mr-3">
+                <q-btn
+                  unelevated
+                  :ripple="false"
+                  size="sm"
+                  padding="sm"
+                  class="q-px-sm"
+                  :icon="biTrash"
+                  round
+                  aria-label="Clear item"
+                  @click="items.clearItem(item)"
+                />
               </div>
             </div>
-            <div class="tw:flex-none tw:my-auto tw:ml-1 tw:mr-3">
-              <q-btn
-                unelevated
-                :ripple="false"
-                size="sm"
-                padding="sm"
-                class="q-px-sm"
-                :icon="biTrash"
-                round
-                aria-label="Clear item"
-                @click="items.clearItem(item)"
-              />
-            </div>
+            <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
           </div>
-          <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
-        </div>
+        </q-page>
       </q-page-container>
       <q-page-container v-else class="tw:flex" style="height: 78vh">
         <div class="tw:m-auto">

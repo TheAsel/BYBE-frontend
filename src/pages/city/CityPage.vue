@@ -13,7 +13,7 @@ useHead({
 </script>
 
 <template>
-  <div style="min-height: calc(100vh - 94px)" class="row items-center justify-evenly">
+  <div class="tw:h-full tw:place-content-center">
     <div
       class="tw:text-center tw:py-10 tw:px-4 tw:sm:px-6 tw:lg:px-8 tw:drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
     >

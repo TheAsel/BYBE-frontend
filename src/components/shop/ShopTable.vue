@@ -97,7 +97,7 @@ const activeFilters = ref<{
   order_by: 'ascending'
 });
 const fullscreen = ref(false);
-const tableHeight = ref('height: calc(100vh - 126px)');
+const tableOpacity = ref('');
 
 const sourceFilter = ref<string[]>(filters.itemFilters.sources);
 const traitFilter = ref<{ label: string; value: string }[]>(filters.itemFilters.traits);
@@ -501,9 +501,9 @@ onUnmounted(() => {
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
-    tableHeight.value = 'height: 100%; opacity: 1';
+    tableOpacity.value = 'opacity: 1';
   } else {
-    tableHeight.value = 'height: calc(100vh - 128px)';
+    tableOpacity.value = '';
   }
 };
 
@@ -562,13 +562,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="only-screen">
+  <div class="tw:h-full only-screen">
     <q-table
       id="v-step-0"
       ref="itemTable"
       v-model:pagination="pagination"
-      class="sticky-header-table tw:opacity-85 tw:dark:opacity-90 tw:bg-white! tw:border tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
-      :style="tableHeight"
+      class="sticky-header-table tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:bg-white! tw:border tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
+      :style="tableOpacity"
       color="primary"
       flat
       bordered

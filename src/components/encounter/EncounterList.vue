@@ -520,7 +520,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
 </script>
 
 <template>
-  <div class="q-pa-md tw:w-full tw:md:w-[27%]">
+  <div class="tw:h-full">
     <q-dialog
       v-model="importEncounterDialog"
       aria-label="Import shared encounter dialog"
@@ -758,8 +758,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
       id="v-step-7"
       view="lHh lpr lFf"
       container
-      style="height: calc(100vh - 126px)"
-      class="tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
+      class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
     >
       <q-header
         bordered
@@ -850,177 +849,182 @@ const showItem = debounce(async function (item: min_creature_hazard) {
         </div>
       </q-header>
       <q-page-container v-if="encounter.generating === false">
-        <div
-          v-for="(item, index) in encounter.encounters[encounter.activeEncounter]!.creatures"
-          :key="index"
-        >
-          <div class="tw:flex">
-            <div id="v-step-8" class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
-              <q-btn
-                unelevated
-                :ripple="false"
-                size="sm"
-                class="q-px-md"
-                :icon="biPlus"
-                aria-label="Add creature"
-                @click="encounter.addToEncounter(item, index)"
-              />
-              <q-btn
-                unelevated
-                :ripple="false"
-                size="sm"
-                class="q-px-md"
-                :icon="biDash"
-                aria-label="Remove creature"
-                @click="encounter.removeFromEncounter(index)"
-              />
-            </div>
-            <div class="tw:flex tw:flex-row tw:grow cursor-pointer" @click="showItem(item)">
-              <div class="tw:flex-1 tw:my-auto tw:mx-1" style="min-width: 100px">
+        <q-page class="tw:min-h-auto!">
+          <div
+            v-for="(item, index) in encounter.encounters[encounter.activeEncounter]!.creatures"
+            :key="index"
+          >
+            <div class="tw:flex tw:item-center">
+              <div id="v-step-8" class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
                 <q-btn
-                  v-if="item.is_hazard === false"
-                  round
                   unelevated
-                  :icon="fasScroll"
+                  :ripple="false"
                   size="sm"
-                  class="tw:mr-2!"
-                  target="_blank"
-                  aria-label="Open creature sheet"
-                  @click="openCreatureSheet(item.game, item.id, item.variant!)"
-                >
-                  <q-tooltip
-                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    Open creature sheet
-                  </q-tooltip>
-                </q-btn>
+                  class="q-px-md"
+                  :icon="biPlus"
+                  aria-label="Add creature"
+                  @click="encounter.addToEncounter(item, index)"
+                />
                 <q-btn
-                  v-else
-                  round
                   unelevated
-                  :icon="fasScroll"
+                  :ripple="false"
                   size="sm"
-                  class="tw:mr-2!"
-                  target="_blank"
-                  aria-label="Open hazard sheet"
-                  @click="openHazardSheet(item.game, item.id)"
-                >
-                  <q-tooltip
-                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    Open hazard sheet
-                  </q-tooltip>
-                </q-btn>
-                <span class="tw:align-middle">
-                  {{ item.quantity }}
-                  <a
-                    v-if="item.archive_link"
-                    :href="
-                      item.archive_link +
-                      '&Weak=' +
-                      (item.variant === 'Weak') +
-                      '&Elite=' +
-                      (item.variant === 'Elite')
-                    "
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    <span
-                      class="tw:text-blue-600! tw:decoration-2 tw:hover:underline tw:dark:text-blue-400!"
-                      >{{ item.name }}</span
-                    >
-                  </a>
-                  <span v-else>{{ item.name }}</span>
-                  — Lv. {{ item.level }}
-                </span>
+                  class="q-px-md"
+                  :icon="biDash"
+                  aria-label="Remove creature"
+                  @click="encounter.removeFromEncounter(index)"
+                />
               </div>
               <div
-                id="v-step-9"
-                v-if="item.is_hazard === false"
-                class="tw:flex-initial tw:my-auto tw:mx-1"
+                class="tw:flex tw:flex-wrap tw:flex-row tw:grow cursor-pointer"
+                @click="showItem(item)"
               >
-                <q-btn-group unelevated flat spread>
+                <div class="tw:flex-1 tw:my-auto tw:mx-1" style="min-width: 100px">
                   <q-btn
-                    flat
-                    label="Weak"
-                    size="15px"
-                    :class="
-                      item.variant === 'Weak'
-                        ? 'tw:text-green-500!'
-                        : 'tw:dark:text-gray-200! tw:text-gray-400!'
-                    "
-                    padding="xs"
-                    class="text-weight-bold"
-                    @click="encounter.changeVariant(index, 'Weak')"
-                  />
+                    v-if="item.is_hazard === false"
+                    round
+                    unelevated
+                    :icon="fasScroll"
+                    size="sm"
+                    class="tw:mr-2!"
+                    target="_blank"
+                    aria-label="Open creature sheet"
+                    @click="openCreatureSheet(item.game, item.id, item.variant!)"
+                  >
+                    <q-tooltip
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Open creature sheet
+                    </q-tooltip>
+                  </q-btn>
                   <q-btn
+                    v-else
+                    round
+                    unelevated
+                    :icon="fasScroll"
+                    size="sm"
+                    class="tw:mr-2!"
+                    target="_blank"
+                    aria-label="Open hazard sheet"
+                    @click="openHazardSheet(item.game, item.id)"
+                  >
+                    <q-tooltip
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Open hazard sheet
+                    </q-tooltip>
+                  </q-btn>
+                  <span class="tw:align-middle">
+                    {{ item.quantity }}
+                    <a
+                      v-if="item.archive_link"
+                      :href="
+                        item.archive_link +
+                        '&Weak=' +
+                        (item.variant === 'Weak') +
+                        '&Elite=' +
+                        (item.variant === 'Elite')
+                      "
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      <span
+                        class="tw:text-blue-600! tw:decoration-2 tw:hover:underline tw:dark:text-blue-400!"
+                        >{{ item.name }}</span
+                      >
+                    </a>
+                    <span v-else>{{ item.name }}</span>
+                    — Lv. {{ item.level }}
+                  </span>
+                </div>
+                <div
+                  id="v-step-9"
+                  v-if="item.is_hazard === false"
+                  class="tw:flex-initial tw:my-auto tw:mx-1"
+                >
+                  <q-btn-group unelevated flat spread>
+                    <q-btn
+                      flat
+                      label="Weak"
+                      size="15px"
+                      :class="
+                        item.variant === 'Weak'
+                          ? 'tw:text-green-500!'
+                          : 'tw:dark:text-gray-200! tw:text-gray-400!'
+                      "
+                      padding="xs"
+                      class="text-weight-bold"
+                      @click="encounter.changeVariant(index, 'Weak')"
+                    />
+                    <q-btn
+                      flat
+                      label="Base"
+                      size="15px"
+                      :class="
+                        item.variant === 'Base'
+                          ? 'tw:text-blue-500!'
+                          : 'tw:dark:text-gray-200! tw:text-gray-400!'
+                      "
+                      padding="xs"
+                      class="text-weight-bold"
+                      @click="encounter.changeVariant(index, 'Base')"
+                    />
+                    <q-btn
+                      flat
+                      label="Elite"
+                      size="15px"
+                      :class="
+                        item.variant === 'Elite'
+                          ? 'tw:text-orange-500!'
+                          : 'tw:dark:text-gray-200! tw:text-gray-400!'
+                      "
+                      padding="xs"
+                      class="text-weight-bold"
+                      @click="encounter.changeVariant(index, 'Elite')"
+                    />
+                  </q-btn-group>
+                </div>
+                <div v-else class="tw:flex-initial tw:my-auto tw:mx-1">
+                  <span
+                    v-if="item.complexity === 'Simple'"
                     flat
-                    label="Base"
                     size="15px"
-                    :class="
-                      item.variant === 'Base'
-                        ? 'tw:text-blue-500!'
-                        : 'tw:dark:text-gray-200! tw:text-gray-400!'
-                    "
                     padding="xs"
-                    class="text-weight-bold"
-                    @click="encounter.changeVariant(index, 'Base')"
-                  />
-                  <q-btn
+                    class="tw:text-green-500! text-weight-bold"
+                  >
+                    SIMPLE
+                  </span>
+                  <span
+                    v-else
                     flat
-                    label="Elite"
                     size="15px"
-                    :class="
-                      item.variant === 'Elite'
-                        ? 'tw:text-orange-500!'
-                        : 'tw:dark:text-gray-200! tw:text-gray-400!'
-                    "
                     padding="xs"
-                    class="text-weight-bold"
-                    @click="encounter.changeVariant(index, 'Elite')"
-                  />
-                </q-btn-group>
+                    class="tw:text-orange-500! text-weight-bold"
+                  >
+                    COMPLEX
+                  </span>
+                </div>
               </div>
-              <div v-else class="tw:flex-initial tw:my-auto tw:mx-1">
-                <span
-                  v-if="item.complexity === 'Simple'"
-                  flat
-                  size="15px"
-                  padding="xs"
-                  class="tw:text-green-500! text-weight-bold"
-                >
-                  SIMPLE
-                </span>
-                <span
-                  v-else
-                  flat
-                  size="15px"
-                  padding="xs"
-                  class="tw:text-orange-500! text-weight-bold"
-                >
-                  COMPLEX
-                </span>
+              <div class="tw:flex-initial tw:my-auto tw:ml-1 tw:mr-3">
+                <q-btn
+                  unelevated
+                  :ripple="false"
+                  size="sm"
+                  padding="sm"
+                  :icon="biTrash"
+                  round
+                  aria-label="Clear creature"
+                  @click="encounter.clearCreature(item)"
+                />
               </div>
             </div>
-            <div class="tw:flex-initial tw:my-auto tw:ml-1 tw:mr-3">
-              <q-btn
-                unelevated
-                :ripple="false"
-                size="sm"
-                padding="sm"
-                :icon="biTrash"
-                round
-                aria-label="Clear creature"
-                @click="encounter.clearCreature(item)"
-              />
-            </div>
+            <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
           </div>
-          <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
-        </div>
+        </q-page>
       </q-page-container>
       <q-page-container v-else class="tw:flex" style="height: 78vh">
         <div class="tw:m-auto">

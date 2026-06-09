@@ -278,7 +278,6 @@ p {
 
 <style scoped>
 .hazard-sheet {
-  min-height: calc(100vh - 94px) !important;
   font-family: 'Good Pro', sans-serif;
 }
 

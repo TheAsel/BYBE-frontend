@@ -9,11 +9,11 @@ const items = itemsStore();
 </script>
 
 <template>
-  <div class="item-sheet">
+  <div class="item-sheet tw:h-full">
     <div
-      class="tw:opacity-85 tw:dark:opacity-90 tw:items-center tw:text-left tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700 hide-print"
+      class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:items-center tw:text-left tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700 hide-print"
     >
-      <q-scroll-area style="height: calc(100vh - 128px)">
+      <q-scroll-area class="tw:h-full">
         <div
           v-if="items.selectedItem && items.selectedItem.core_item"
           class="q-gutter-y-xs tw:p-4 show-print"
@@ -46,7 +46,6 @@ const items = itemsStore();
 
 <style lang="scss">
 .item-sheet {
-  min-height: calc(100vh - 96px) !important;
   font-family: 'Good Pro', sans-serif;
 }
 

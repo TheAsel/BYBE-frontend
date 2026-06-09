@@ -901,7 +901,6 @@ const spellString = computed(() => {
 
 <style scoped>
 .creature-sheet {
-  min-height: calc(100vh - 94px) !important;
   font-family: 'Good Pro', sans-serif;
 }
 

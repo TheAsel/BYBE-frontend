@@ -533,7 +533,7 @@ const saveChanges = () => {
 </script>
 
 <template>
-  <div class="q-pa-md tw:w-full tw:md:w-[34%]">
+  <div class="tw:h-full">
     <q-dialog
       v-model="importNpcDialog"
       aria-label="Import shared npc dialog"
@@ -759,8 +759,7 @@ const saveChanges = () => {
       id="v-step-2"
       view="lHh lpr lFf"
       container
-      style="height: calc(100vh - 126px)"
-      class="tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200 tw:rounded-xl tw:shadow-sm tw:bg-white tw:dark:bg-gray-800 tw:dark:border-gray-700"
+      class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200 tw:rounded-xl tw:shadow-sm tw:bg-white tw:dark:bg-gray-800 tw:dark:border-gray-700"
     >
       <q-header
         bordered

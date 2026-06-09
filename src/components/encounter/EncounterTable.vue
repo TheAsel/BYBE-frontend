@@ -233,7 +233,7 @@ watch(
 );
 
 const fullscreen = ref(false);
-const tableHeight = ref('height: calc(100vh - 126px)');
+const tableOpacity = ref('');
 
 const sourceCreatureFilter = ref<string[]>(filters.creatureFilters.sources);
 const traitCreatureFilter = ref<string[]>(filters.creatureFilters.traits);
@@ -1132,9 +1132,9 @@ onUnmounted(() => {
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
-    tableHeight.value = 'height: 100%; opacity: 1';
+    tableOpacity.value = 'opacity: 1';
   } else {
-    tableHeight.value = 'height: calc(100vh - 126px)';
+    tableOpacity.value = '';
   }
 };
 
@@ -1274,14 +1274,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="q-pa-md tw:w-full tw:md:w-[73%]">
+  <div class="tw:h-full">
     <q-table
       v-if="hazardToggle === 'creatures'"
       id="v-step-0"
       ref="encounterTable"
       v-model:pagination="pagination"
-      class="sticky-header-table tw:opacity-85 tw:dark:opacity-90 tw:bg-white tw:border! tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
-      :style="tableHeight"
+      class="sticky-header-table tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:bg-white tw:border! tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
+      :style="tableOpacity"
       color="primary"
       flat
       bordered
@@ -2309,8 +2309,8 @@ onMounted(async () => {
       id="v-step-0"
       ref="encounterTable"
       v-model:pagination="pagination"
-      class="sticky-header-table tw:opacity-85 tw:dark:opacity-90 tw:bg-white tw:border! tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
-      :style="tableHeight"
+      class="sticky-header-table tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:bg-white tw:border! tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
+      :style="tableOpacity"
       color="primary"
       flat
       bordered

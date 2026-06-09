@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 import { useHead } from '@unhead/vue';
-import { ref } from 'vue';
+import { scroll } from 'quasar';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 import NpcEditor from 'src/components/npc/NpcEditor.vue';
 import NpcGenerator from 'src/components/npc/NpcGenerator.vue';
@@ -9,7 +10,6 @@ import NpcSheet from 'src/components/npc/NpcSheet.vue';
 import { npcStore } from 'src/stores/npc';
 import { settingsStore } from 'src/stores/settings';
 import { updateLocalStorageNpcs } from 'src/utils/local-storage';
-import { scrollPage } from 'src/utils/navigation';
 import { getTourCallbacks, getTourOptions } from 'src/utils/vue-tour';
 
 import type { npc } from 'src/types/npcs';
@@ -132,29 +132,52 @@ const stopTour = () => {
   }
 };
 
+const pageRef = ref<HTMLElement>();
+
 function scrollDirection() {
-  const footers = Array.from(document.querySelectorAll('footer'));
-  const footer = footers.at(-1);
-  const top = footer?.getBoundingClientRect().top;
-  if (top) {
-    scrollUp.value = top < globalThis.innerHeight;
-  }
+  scroll.getVerticalScrollPosition(pageRef.value!);
+  scrollUp.value = scroll.getVerticalScrollPosition(pageRef.value!) > 0;
 }
+
+function scrollPage() {
+  const settings = settingsStore();
+  settings.setHiddenNav(true);
+  setTimeout(() => {
+    if (scrollUp.value) {
+      scroll.setVerticalScrollPosition(pageRef.value!, 0, 500);
+    } else {
+      scroll.setVerticalScrollPosition(pageRef.value!, pageRef.value!.scrollHeight, 500);
+    }
+  }, 10);
+}
+
+const handleResize = () => {
+  screenWidth.value = screen.width;
+};
+
+onMounted(() => {
+  pageRef.value = document.getElementById('pageRef')!;
+  pageRef.value.addEventListener('scroll', scrollDirection);
+  globalThis.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  pageRef.value!.removeEventListener('scroll', scrollDirection);
+  globalThis.removeEventListener('resize', handleResize);
+});
 </script>
 
 <template>
-  <div class="row items-center justify-between">
+  <q-page id="pageRef" class="tw:h-full row items-center justify-between tw:overflow-scroll">
     <v-tour
       name="/npc"
       :steps="steps"
       :options="getTourOptions()"
       :callbacks="getTourCallbacks(startTour, stopTour)"
     />
-    <NpcGenerator id="generator" />
-    <q-space />
-    <NpcEditor />
-    <q-space />
-    <NpcSheet id="sheet" />
+    <NpcGenerator id="generator" class="q-pa-md tw:w-full tw:md:w-[33%]" />
+    <NpcEditor class="q-pa-md tw:w-full tw:md:w-[33%]" />
+    <NpcSheet id="sheet" class="q-pa-md tw:w-full tw:md:w-[33%]" />
     <q-page-sticky
       v-if="screenWidth < 768"
       position="bottom-right"
@@ -162,22 +185,12 @@ function scrollDirection() {
       class="tw:z-10 tw:opacity-85 only-screen"
     >
       <q-btn
-        v-if="scrollUp"
         fab
-        :icon="matArrowUpward"
+        :icon="scrollUp ? matArrowUpward : matArrowDownward"
         padding="sm"
         color="primary"
-        @click="scrollPage(true, 'generator', 'sheet')"
-      />
-      <q-btn
-        v-else
-        fab
-        :icon="matArrowDownward"
-        padding="sm"
-        color="primary"
-        @click="scrollPage(false, 'generator', 'sheet')"
+        @click="scrollPage"
       />
     </q-page-sticky>
-    <q-scroll-observer @scroll="scrollDirection" />
-  </div>
+  </q-page>
 </template>

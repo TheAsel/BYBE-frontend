@@ -60,14 +60,14 @@ try {
 </script>
 
 <template>
-  <q-layout view="hHh lpr fFf" :style="backgroundStyle">
+  <q-layout view="hHh lpr fFf" :style="backgroundStyle" class="tw:h-full">
     <HeaderBar class="tw:backdrop-blur-2xl tw:bg-white/90! tw:dark:bg-black/70!" />
 
-    <q-page-container class="tw:pb-0! tw:min-h-[90vh]">
+    <q-page-container class="tw:flex tw:flex-col tw:h-full">
       <router-view />
     </q-page-container>
-    <footer
-      class="tw:relative tw:bottom-0 tw:inset-x-0 tw:text-center tw:py-2 tw:my-0! tw:border-t tw:border-gray-200 tw:dark:border-gray-700 tw:backdrop-blur-2xl tw:bg-white/90! tw:dark:bg-black/70!"
+    <q-footer
+      class="tw:text-center tw:py-2 tw:my-0! tw:border-t tw:border-gray-200 tw:dark:border-gray-700 tw:backdrop-blur-2xl tw:bg-white/90! tw:dark:bg-black/70!"
     >
       <div class="tw:max-w-340 tw:mx-auto tw:px-4 tw:sm:px-6 tw:lg:px-8">
         <p class="tw:text-sm tw:text-neutral-500 tw:dark:text-neutral-400 tw:mb-0!">
@@ -100,7 +100,7 @@ try {
           </a>
         </p>
       </div>
-    </footer>
+    </q-footer>
   </q-layout>
 </template>
 

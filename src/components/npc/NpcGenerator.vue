@@ -275,13 +275,12 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
 </script>
 
 <template>
-  <div class="q-pa-md tw:w-full tw:md:w-[33%]">
+  <div class="tw:h-full">
     <q-layout
       id="v-step-0"
       view="lHh lpr lFf"
       container
-      style="height: calc(100vh - 126px)"
-      class="tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200 tw:rounded-xl tw:shadow-sm tw:bg-white tw:dark:bg-gray-800 tw:dark:border-gray-700"
+      class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200 tw:rounded-xl tw:shadow-sm tw:bg-white tw:dark:bg-gray-800 tw:dark:border-gray-700"
     >
       <q-header
         bordered
@@ -340,7 +339,7 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
                 v-if="npcs.npcs[npcs.activeNpc]!.culture && settings.game === 'pf'"
                 label="Cultures"
                 v-model="parameters.cultures"
-                class="tw:grow"
+                class="tw:grow tw:max-w-full"
                 multiple
                 dense
                 outlined
@@ -355,7 +354,7 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
                 v-else
                 label="Ancestries"
                 v-model="parameters.ancestries"
-                class="tw:grow"
+                class="tw:grow tw:max-w-full"
                 multiple
                 dense
                 outlined
