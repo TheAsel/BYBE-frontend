@@ -187,11 +187,10 @@ const unhide = debounce(function () {
         >
           <!-- How the selected item appears -->
           <template #selected-item="scope">
-            <q-img
+            <img
               :src="scope.opt.src"
               :alt="scope.opt.label"
-              fit="contain"
-              style="width: 160px; height: 40px"
+              style="width: 160px; height: 40px; object-fit: contain"
             />
           </template>
 
@@ -199,11 +198,10 @@ const unhide = debounce(function () {
           <template #option="scope">
             <q-item clickable v-ripple @click="changeGame(scope.opt.value)">
               <q-item-section avatar>
-                <q-img
+                <img
                   :src="scope.opt.src"
                   :alt="scope.opt.label"
-                  fit="contain"
-                  style="width: 160px; height: 40px"
+                  style="width: 160px; height: 40px; object-fit: contain"
                 />
               </q-item-section>
             </q-item>
