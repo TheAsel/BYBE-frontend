@@ -357,7 +357,7 @@ defineExpose({ generateEncounter });
 </script>
 
 <template>
-  <q-btn id="v-step-2" push label="Generator Settings" @click="restoreSettings" />
+  <q-btn id="shepherd-2" push label="Generator Settings" @click="restoreSettings" />
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center tw:flex">

@@ -192,7 +192,7 @@ const saveChanges = () => {
 </script>
 
 <template>
-  <q-btn id="v-step-1" push label="Party" @click="restoreParty" />
+  <q-btn id="shepherd-1" push label="Party" @click="restoreParty" />
   <q-dialog v-model="dialog" aria-label="Player">
     <q-card flat bordered>
       <q-card-section class="items-center">

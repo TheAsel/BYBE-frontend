@@ -1277,7 +1277,7 @@ onMounted(async () => {
   <div class="tw:h-full">
     <q-table
       v-if="hazardToggle === 'creatures'"
-      id="v-step-0"
+      id="shepherd-0"
       ref="encounterTable"
       v-model:pagination="pagination"
       class="sticky-header-table tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:bg-white tw:border! tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
@@ -1296,7 +1296,7 @@ onMounted(async () => {
       :filter="creatureFilters"
       rows-per-page-label="Creatures per page:"
       :rows-per-page-options="[50, 100, 0]"
-      table-header-class="v-step-6"
+      table-header-class="shepherd-6"
       row-key="name"
       selection="single"
       :fullscreen="fullscreen"
@@ -1323,7 +1323,7 @@ onMounted(async () => {
             <span v-if="!fullscreen">
               <q-btn
                 v-if="props.sheetVisible"
-                id="v-step-12"
+                id="shepherd-12"
                 flat
                 round
                 dense
@@ -1344,7 +1344,7 @@ onMounted(async () => {
               </q-btn>
               <q-btn
                 v-else
-                id="v-step-12"
+                id="shepherd-12"
                 flat
                 round
                 dense
@@ -1367,11 +1367,11 @@ onMounted(async () => {
             <q-btn-group push>
               <PartyBuilder />
               <q-separator vertical />
-              <q-btn v-if="loading" id="v-step-2" push label="Generator Settings" />
+              <q-btn v-if="loading" id="shepherd-2" push label="Generator Settings" />
               <EncounterBuilder v-else ref="encounterBuilderRef" />
               <q-separator vertical />
               <q-btn
-                id="v-step-3"
+                id="shepherd-3"
                 push
                 dense
                 class="tw:p-2!"
@@ -1418,7 +1418,7 @@ onMounted(async () => {
           </div>
           <div class="tw:flex tw:grow tw:justify-center">
             <q-btn-toggle
-              id="v-step-4"
+              id="shepherd-4"
               :disable="fullscreen"
               v-model="hazardToggle"
               push
@@ -1456,7 +1456,7 @@ onMounted(async () => {
                 Clear Filters
               </q-tooltip>
             </q-btn>
-            <div id="v-step-5">
+            <div id="shepherd-5">
               <q-select
                 v-model="visibleCreatureColumns"
                 multiple
@@ -2293,7 +2293,7 @@ onMounted(async () => {
     </q-table>
     <q-table
       v-else
-      id="v-step-0"
+      id="shepherd-0"
       ref="encounterTable"
       v-model:pagination="pagination"
       class="sticky-header-table tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:bg-white tw:border! tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
@@ -2312,7 +2312,7 @@ onMounted(async () => {
       :filter="hazardFilters"
       rows-per-page-label="Hazards per page:"
       :rows-per-page-options="[50, 100, 0]"
-      table-header-class="v-step-6"
+      table-header-class="shepherd-6"
       row-key="name"
       selection="single"
       :fullscreen="fullscreen"
@@ -2339,7 +2339,7 @@ onMounted(async () => {
             <span v-if="!fullscreen">
               <q-btn
                 v-if="props.sheetVisible"
-                id="v-step-12"
+                id="shepherd-12"
                 flat
                 round
                 dense
@@ -2360,7 +2360,7 @@ onMounted(async () => {
               </q-btn>
               <q-btn
                 v-else
-                id="v-step-12"
+                id="shepherd-12"
                 flat
                 round
                 dense
@@ -2383,11 +2383,11 @@ onMounted(async () => {
             <q-btn-group push>
               <PartyBuilder />
               <q-separator vertical />
-              <q-btn v-if="loading" id="v-step-2" push label="Generator Settings" />
+              <q-btn v-if="loading" id="shepherd-2" push label="Generator Settings" />
               <EncounterBuilder v-else ref="encounterBuilderRef" />
               <q-separator vertical />
               <q-btn
-                id="v-step-3"
+                id="shepherd-3"
                 push
                 dense
                 class="tw:p-2!"
@@ -2434,7 +2434,7 @@ onMounted(async () => {
           </div>
           <div class="tw:flex tw:grow tw:justify-center">
             <q-btn-toggle
-              id="v-step-4"
+              id="shepherd-4"
               :disable="fullscreen"
               v-model="hazardToggle"
               push
@@ -2472,7 +2472,7 @@ onMounted(async () => {
                 Clear Filters
               </q-tooltip>
             </q-btn>
-            <div id="v-step-5">
+            <div id="shepherd-5">
               <q-select
                 v-model="visibleHazardColumns"
                 multiple

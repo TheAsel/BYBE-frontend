@@ -277,7 +277,7 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
 <template>
   <div class="tw:h-full">
     <q-layout
-      id="v-step-0"
+      id="shepherd-0"
       view="lHh lpr lFf"
       container
       class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200 tw:rounded-xl tw:shadow-sm tw:bg-white tw:dark:bg-gray-800 tw:dark:border-gray-700"
@@ -427,7 +427,7 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
         <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
         <div class="tw:flex tw:grow tw:justify-center tw:my-2 tw:mx-8">
           <q-btn
-            id="v-step-1"
+            id="shepherd-1"
             color="primary"
             push
             label="Generate NPC"

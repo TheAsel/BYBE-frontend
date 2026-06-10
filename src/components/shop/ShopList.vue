@@ -563,7 +563,7 @@ const showItem = debounce(async function (item: min_item) {
     </q-dialog>
 
     <q-layout
-      id="v-step-4"
+      id="shepherd-4"
       view="lHh lpr lFf"
       container
       class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
@@ -574,7 +574,7 @@ const showItem = debounce(async function (item: min_item) {
       >
         <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
           <q-btn
-            id="v-step-5"
+            id="shepherd-5"
             class="tw:grow"
             :icon="biShare"
             label="Share"

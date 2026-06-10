@@ -7,6 +7,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import SettingsMenu from 'src/components/SettingsMenu.vue';
 import { settingsStore } from 'src/stores/settings';
+import { createTourEncounter, createTourNpc, createTourShop } from 'src/utils/tours';
 import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
 
 import type { games } from 'src/types/filters';
@@ -304,7 +305,19 @@ const unhide = debounce(function () {
               aria-label="Start help tour"
               @click="
                 settings.setHiddenNav(true);
-                $tours[currentPath]!.start();
+                switch (currentPath) {
+                  case '/encounter':
+                    createTourEncounter().start();
+                    break;
+                  case '/shop':
+                    createTourShop().start();
+                    break;
+                  case '/npc':
+                    createTourNpc().start();
+                    break;
+                  default:
+                    break;
+                }
               "
             >
               HELP

@@ -731,7 +731,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
     </q-dialog>
 
     <q-layout
-      id="v-step-7"
+      id="shepherd-7"
       view="lHh lpr lFf"
       container
       class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
@@ -742,7 +742,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
       >
         <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
           <q-btn
-            id="v-step-10"
+            id="shepherd-10"
             class="tw:grow"
             :icon="biShare"
             label="Share"
@@ -831,7 +831,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
             :key="index"
           >
             <div class="tw:flex tw:item-center">
-              <div id="v-step-8" class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
+              <div id="shepherd-8" class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
                 <q-btn
                   unelevated
                   :ripple="false"
@@ -916,7 +916,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
                   </span>
                 </div>
                 <div
-                  id="v-step-9"
+                  id="shepherd-9"
                   v-if="item.is_hazard === false"
                   class="tw:flex-initial tw:my-auto tw:mx-1"
                 >
@@ -1011,7 +1011,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
       >
         <div class="tw:flex tw:mx-4 tw:my-1.5">
           <q-linear-progress
-            id="v-step-11"
+            id="shepherd-11"
             rounded
             size="35px"
             :value="1"

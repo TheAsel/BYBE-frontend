@@ -2,6 +2,7 @@
 import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
 import { useHead } from '@unhead/vue';
 import { scroll } from 'quasar';
+import Shepherd from 'shepherd.js';
 import { onMounted, onUnmounted, ref } from 'vue';
 
 import ShopList from 'src/components/shop/ShopList.vue';
@@ -10,10 +11,8 @@ import ShopTable from 'src/components/shop/ShopTable.vue';
 import { itemsStore } from 'src/stores/items';
 import { settingsStore } from 'src/stores/settings';
 import { updateLocalStorageShops, updateLocalStorageTemplates } from 'src/utils/local-storage';
-import { getTourCallbacks, getTourOptions } from 'src/utils/vue-tour';
 
 import type { item, min_item } from 'src/types/item';
-import type { Step } from 'vue3-tour';
 
 useHead({
   title: 'Shop Generator - BYBE',
@@ -28,70 +27,12 @@ useHead({
 const settings = settingsStore();
 const items = itemsStore();
 
-const tourActive = ref(false);
 const screenWidth = ref(screen.width);
 
 const scrollUp = ref(false);
 
 updateLocalStorageShops();
 updateLocalStorageTemplates();
-
-const steps: Step[] = [
-  {
-    target: '#v-step-0',
-    content:
-      'This is the item list. Click on a row to show its description and double click it to add it to the shop to the right.',
-    params: {
-      placement: 'auto'
-    }
-  },
-  {
-    target: '#v-step-1',
-    content:
-      'From this window you can define your preferred settings for the random shop generator and create custom templates.',
-    params: {
-      placement: 'bottom'
-    }
-  },
-  {
-    target: '#v-step-2',
-    content:
-      'Clicking this button will generate a new random shop, based on the generator settings previously described.',
-    params: {
-      placement: 'bottom'
-    }
-  },
-  {
-    target: '.v-step-3',
-    content: 'Here you can sort the columns and narrow your search with the various filters.',
-    params: {
-      placement: 'auto'
-    }
-  },
-  {
-    target: '#v-step-4',
-    content:
-      'This is the shop list, where the items you added or randomly generated will be displayed. You can also increase or decrease the number of each individual item.',
-    params: {
-      placement: 'auto'
-    }
-  },
-  {
-    target: '#v-step-5',
-    content:
-      'Clicking this button will generate a link to your current shop that you can copy and share.',
-    params: {
-      placement: 'auto'
-    }
-  },
-  {
-    target: '#v-step-6',
-    content: "Click here to show or hide the selected item's description.",
-    params: {
-      placement: 'auto'
-    }
-  }
-];
 
 // PF2E shop
 const tmpCloakFull: item = {
@@ -195,9 +136,9 @@ const tmpFlightSuit: min_item = {
   quantity: 1
 };
 
-const startTour = () => {
-  if (!tourActive.value) {
-    tourActive.value = true;
+Shepherd.on('start', () => {
+  const index = items.shops.findIndex((obj) => obj.name === 'Example');
+  if (index === -1) {
     items.addShop('Example');
     if (settings.game === 'sf') {
       items.setSelectedItem(tmpLaserRifleFull);
@@ -208,16 +149,17 @@ const startTour = () => {
       items.addToShop(tmpCloak);
       items.addToShop(tmpPotion);
     }
+  } else {
+    items.changeActiveShop(index);
   }
-};
+});
 
-const stopTour = () => {
-  if (tourActive.value) {
+['complete', 'cancel'].forEach((event) =>
+  Shepherd.on(event, () => {
     items.removeShop();
     items.removeSelectedItem();
-    tourActive.value = false;
-  }
-};
+  })
+);
 
 const pageRef = ref<HTMLElement>();
 
@@ -271,12 +213,6 @@ const toggleSheetView = () => {
 
 <template>
   <q-page id="pageRef" class="tw:h-full row items-center justify-between tw:overflow-auto">
-    <v-tour
-      name="/shop"
-      :steps="steps"
-      :options="getTourOptions()"
-      :callbacks="getTourCallbacks(startTour, stopTour)"
-    />
     <ShopSheet
       v-if="screenWidth >= 768"
       class="tw:py-4 tw:pl-4 tw:w-full tw:transition-all tw:duration-300"

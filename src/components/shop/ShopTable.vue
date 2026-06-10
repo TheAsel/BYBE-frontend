@@ -564,7 +564,7 @@ onMounted(async () => {
 <template>
   <div class="tw:h-full only-screen">
     <q-table
-      id="v-step-0"
+      id="shepherd-0"
       ref="itemTable"
       v-model:pagination="pagination"
       class="sticky-header-table tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:bg-white! tw:border tw:border-gray-200! tw:rounded-xl! tw:shadow-sm tw:overflow-hidden tw:dark:bg-gray-800! tw:dark:border-gray-700!"
@@ -583,7 +583,7 @@ onMounted(async () => {
       :filter="activeFilters"
       rows-per-page-label="Items per page:"
       :rows-per-page-options="[50, 100, 0]"
-      table-header-class="v-step-3"
+      table-header-class="shepherd-3"
       row-key="name"
       selection="single"
       :fullscreen="fullscreen"
@@ -614,7 +614,7 @@ onMounted(async () => {
             <span v-if="!fullscreen">
               <q-btn
                 v-if="props.sheetVisible"
-                id="v-step-6"
+                id="shepherd-6"
                 flat
                 round
                 dense
@@ -635,7 +635,7 @@ onMounted(async () => {
               </q-btn>
               <q-btn
                 v-else
-                id="v-step-6"
+                id="shepherd-6"
                 flat
                 round
                 dense
@@ -656,11 +656,11 @@ onMounted(async () => {
               </q-btn>
             </span>
             <q-btn-group push>
-              <q-btn v-if="loading" id="v-step-1" push label="Generator Settings" />
+              <q-btn v-if="loading" id="shepherd-1" push label="Generator Settings" />
               <ShopBuilder v-else ref="shopBuilderRef" />
               <q-separator vertical />
               <q-btn
-                id="v-step-2"
+                id="shepherd-2"
                 push
                 dense
                 class="tw:p-2!"

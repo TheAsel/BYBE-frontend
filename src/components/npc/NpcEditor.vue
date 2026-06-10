@@ -756,7 +756,7 @@ const saveChanges = () => {
     </q-dialog>
 
     <q-layout
-      id="v-step-2"
+      id="shepherd-2"
       view="lHh lpr lFf"
       container
       class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:overflow-auto tw:border tw:border-gray-200 tw:rounded-xl tw:shadow-sm tw:bg-white tw:dark:bg-gray-800 tw:dark:border-gray-700"
@@ -767,7 +767,7 @@ const saveChanges = () => {
       >
         <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
           <q-btn
-            id="v-step-3"
+            id="shepherd-3"
             class="tw:grow"
             :icon="biShare"
             label="Share"
@@ -855,7 +855,7 @@ const saveChanges = () => {
       </q-header>
       <q-page-container>
         <div class="tw:flex tw:flex-col tw:gap-4 tw:my-4 tw:mx-6">
-          <div id="v-step-4" class="tw:flex tw:py-1">
+          <div id="shepherd-4" class="tw:flex tw:py-1">
             <q-btn
               v-if="npcs.locks.name"
               class="tw:flex-none tw:my-auto! tw:mr-2!"
@@ -1235,7 +1235,7 @@ const saveChanges = () => {
         </div>
         <q-separator class="tw:my-2! tw:mx-6!" style="height: 2px" />
         <div class="tw:grid tw:grid-cols-2 tw:gap-3 tw:my-4 tw:mx-6">
-          <div id="v-step-5" class="tw:py-1 tw:mr-2">
+          <div id="shepherd-5" class="tw:py-1 tw:mr-2">
             <q-input
               label="Languages"
               v-model="npcs.npcs[npcs.activeNpc]!.npc.languages"
@@ -1303,7 +1303,7 @@ const saveChanges = () => {
           </div>
         </div>
         <q-separator class="tw:my-2! tw:mx-6!" style="height: 2px" />
-        <div id="v-step-6" class="tw:mx-6">
+        <div id="shepherd-6" class="tw:mx-6">
           <div v-for="(item, index) in npcs.npcs[npcs.activeNpc]!.npc.custom_fields" :key="index">
             <div class="tw:flex tw:gap-6 tw:my-5">
               <div class="tw:flex-auto">

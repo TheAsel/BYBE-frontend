@@ -19,7 +19,7 @@ export default defineConfig((/* ctx */) => {
     boot: ['globals'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
-    css: ['app.scss', 'tailwind.css', 'scrollbar.sass'],
+    css: ['app.scss', 'tailwind.css', 'scrollbar.sass', 'shepherd.css'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
