@@ -317,10 +317,10 @@ const settings = settingsStore();
           >
             Guns and Gears Remastered
           </h2>
-          <p
-            ><b> Pathfinder Guns & Gears Remastered </b>© 2025, Paizo Inc.;
-            Authors: TBD.</p
-          >
+          <p>
+            <b> Pathfinder Guns & Gears Remastered </b>© 2025, Paizo Inc.;
+            Authors: TBD.
+          </p>
 
           <h2
             class="tw:text-center tw:font-bold! tw:text-base! tw:mt-0 tw:text-gray-800 tw:dark:text-white"
@@ -343,10 +343,10 @@ const settings = settingsStore();
             <b> Pathfinder Adventure Path #203: Shepherd of Decay </b>© 2024,
             Paizo Inc.; Author: Mike Kimmel with John Compton
           </p>
-          <p
-            ><b> Curtain Call Player's Guide </b>© 2024, Paizo Inc.; Author:
-            James Jacobs.</p
-          >
+          <p>
+            <b> Curtain Call Player's Guide </b>© 2024, Paizo Inc.; Author:
+            James Jacobs.
+          </p>
           <p>
             <b> Pathfinder Adventure Path #204: Stage Fright </b>© 2024, Paizo
             Inc.; Author: Richard Pett, with Rue Dickey, Katrina Hennessy, and
@@ -378,10 +378,9 @@ const settings = settingsStore();
             Paizo Inc.; Author: Kendra Leigh Speedling, with John Compton,
             Michelle Y. Kim, and Genevieve Rudat Olejnik.
           </p>
-          <p
-            ><b> Spore War Player's Guide </b>© 2025, Paizo Inc.; Author:
-            TBD.</p
-          >
+          <p>
+            <b> Spore War Player's Guide </b>© 2025, Paizo Inc.; Author: TBD.
+          </p>
           <p>
             <b> Pathfinder Adventure Path #210: Whispers in the Dirt </b>© 2025,
             Paizo Inc.; Author: Jason Buhlman.
@@ -553,13 +552,13 @@ const settings = settingsStore();
           >
             Paizo Blog
           </h2>
-          <p
-            ><b> Fine-tuning Ancestries </b>© 2023, Paizo Inc.; Author: Jason
-            Bulmahn.</p
-          >
-          <p
-            ><b> Apex of Power </b>© 2023, Paizo Inc.; Author: Jason Bulmahn.</p
-          >
+          <p>
+            <b> Fine-tuning Ancestries </b>© 2023, Paizo Inc.; Author: Jason
+            Bulmahn.
+          </p>
+          <p>
+            <b> Apex of Power </b>© 2023, Paizo Inc.; Author: Jason Bulmahn.
+          </p>
 
           <h1
             class="tw:text-center tw:font-bold! tw:text-2xl! tw:text-gray-800 tw:dark:text-white"
@@ -581,9 +580,9 @@ const settings = settingsStore();
           >
             Expressly Designated Licensed Material
           </h1>
-          <p
-            >This product contains no Expressly Designated Licensed Material.</p
-          >
+          <p>
+            This product contains no Expressly Designated Licensed Material.
+          </p>
 
           <q-separator />
 
@@ -902,10 +901,10 @@ const settings = settingsStore();
             Authors: Jesse Decker and Chris Thomasson.
           </p>
           <p><b> Book of the Righteous </b>© 2002, Aaron Loeb.</p>
-          <p
-            ><b> Legions of Hell </b>© 2001, Green Ronin Publishing; Author:
-            Chris Pramas.</p
-          >
+          <p>
+            <b> Legions of Hell </b>© 2001, Green Ronin Publishing; Author:
+            Chris Pramas.
+          </p>
           <p>
             <b> The Unholy Warrior's Handbook </b>© 2003, Green Ronin
             Publishing; Author: Robert J. Schwalb.
@@ -1225,10 +1224,10 @@ const settings = settingsStore();
             <b> Pathfinder Adventure: Troubles in Otari </b>© 2020, Paizo Inc.;
             Author: Jason Keeley, Liz Liddell, and Ron Lundeen.
           </p>
-          <p
-            ><b> Pathfinder Adventure: Malevolence </b>© 2021, Paizo Inc.;
-            Author: James Jacobs.</p
-          >
+          <p>
+            <b> Pathfinder Adventure: Malevolence </b>© 2021, Paizo Inc.;
+            Author: James Jacobs.
+          </p>
           <p>
             <b> Pathfinder Adventure: Night of the Gray Death </b>© 2021, Paizo
             Inc.; Author: Ron Lundeen.
@@ -1315,10 +1314,10 @@ const settings = settingsStore();
             Paizo Inc.; Authors: Luis Loza, with James Jacobs, Alex Riggs, and
             Owen K.C. Stephens.
           </p>
-          <p
-            ><b> Extinction Curse Player's Guide </b>© 2020, Paizo Inc.; Author:
-            Ron Lundeen.</p
-          >
+          <p>
+            <b> Extinction Curse Player's Guide </b>© 2020, Paizo Inc.; Author:
+            Ron Lundeen.
+          </p>
           <p>
             <b> Pathfinder Adventure Path #151: The Show Must Go On </b>© 2020,
             Paizo Inc.; Authors: Jason Tondro, with Andrew Mullen, Patrick
@@ -1383,10 +1382,10 @@ const settings = settingsStore();
             <b> Pathfinder Adventure Path #162: Ruins of the Radiant Siege </b>©
             2020, Paizo Inc.; Authors: Amber Stewart
           </p>
-          <p
-            ><b> Abomination Vaults Player's Guide </b>© 2021, Paizo Inc.;
-            Author: Ron Lundeen.</p
-          >
+          <p>
+            <b> Abomination Vaults Player's Guide </b>© 2021, Paizo Inc.;
+            Author: Ron Lundeen.
+          </p>
           <p>
             <b> Pathfinder Adventure Path #163: Ruins of Gauntlight </b>© 2021,
             Paizo Inc.; Authors: James Jacobs
@@ -1486,10 +1485,10 @@ const settings = settingsStore();
             <b> Pathfinder Adventure Path #180: The Smoking Gun </b>© 2022,
             Paizo Inc.; Author: Cole Kronewitter.
           </p>
-          <p
-            ><b> Blood Lords Player's Guide </b>© 2022, Paizo Inc.; Author: Ron
-            Lundeen</p
-          >
+          <p>
+            <b> Blood Lords Player's Guide </b>© 2022, Paizo Inc.; Author: Ron
+            Lundeen
+          </p>
           <p>
             <b> Pathfinder Adventure Path #181: Zombie Feast </b>© 2022, Paizo
             Inc.; Author: Mike Kimmel.
@@ -1514,10 +1513,10 @@ const settings = settingsStore();
             <b> Pathfinder Adventure Path #186: Ghost King's Rage </b>© 2022,
             Paizo Inc.; Author: Jessica Catalan.
           </p>
-          <p
-            ><b> Gatewalkers Player's Guide </b>© 2022, Paizo Inc.; Author:
-            Patrick Renie.</p
-          >
+          <p>
+            <b> Gatewalkers Player's Guide </b>© 2022, Paizo Inc.; Author:
+            Patrick Renie.
+          </p>
           <p>
             <b> Pathfinder Adventure Path #187: The Seventh Arch </b>© 2023,
             Paizo Inc.; Author: James L. Sutter.
@@ -1531,10 +1530,10 @@ const settings = settingsStore();
               Pathfinder Adventure Path #189: Dreamers Of The Nameless Spires </b
             >© 2023, Paizo Inc.; Author: James Jacobs.
           </p>
-          <p
-            ><b> Stolen Fate Player's Guide </b>© 2023, Paizo Inc.; Author:
-            James Jacobs.</p
-          >
+          <p>
+            <b> Stolen Fate Player's Guide </b>© 2023, Paizo Inc.; Author: James
+            Jacobs.
+          </p>
           <p>
             <b> Pathfinder Adventure Path #190: The Choosing </b>© 2023, Paizo
             Inc.; Author: Ron Lundeen.
@@ -2290,10 +2289,10 @@ const settings = settingsStore();
             Authors: Jesse Decker and Chris Thomasson.
           </p>
           <p><b> Book of the Righteous </b>© 2002, Aaron Loeb.</p>
-          <p
-            ><b> Legions of Hell </b>© 2001, Green Ronin Publishing; Author:
-            Chris Pramas.</p
-          >
+          <p>
+            <b> Legions of Hell </b>© 2001, Green Ronin Publishing; Author:
+            Chris Pramas.
+          </p>
           <p>
             <b> The Unholy Warrior's Handbook </b>© 2003, Green Ronin
             Publishing; Author: Robert J. Schwalb.
@@ -2551,10 +2550,10 @@ const settings = settingsStore();
             <b> Pathfinder Critical Hit Deck </b>© 2019, Paizo Inc.; Author:
             Stephen Radney-MacFarland, Illustrator: Yanis Cardin.
           </p>
-          <p
-            ><b> Pathfinder Hero Point Deck </b>© 2021, Paizo Inc.; Author:
-            Jason Bulmahn</p
-          >
+          <p>
+            <b> Pathfinder Hero Point Deck </b>© 2021, Paizo Inc.; Author: Jason
+            Bulmahn
+          </p>
           <p><b> Pathfinder Harrow Deck </b>© 2023, Paizo Inc.; Author: TBD</p>
 
           <h2
@@ -2602,14 +2601,14 @@ const settings = settingsStore();
             <b> No-Prep Character: Chea </b>© 2021, Paizo Inc.; Authors: Eleanor
             Ferron, Luis Loza; Illustrator: Rashad Pozdnyakov.
           </p>
-          <p
-            ><b> No-Prep Character: Eleukas </b>© 2021, Paizo Inc.; Author: Ron
-            Lundeen.</p
-          >
-          <p
-            ><b> GM's Toolkit: Secret Keeper's Mask </b>© 2021, Paizo Inc.;
-            Author: Ron Lundeen.</p
-          >
+          <p>
+            <b> No-Prep Character: Eleukas </b>© 2021, Paizo Inc.; Author: Ron
+            Lundeen.
+          </p>
+          <p>
+            <b> GM's Toolkit: Secret Keeper's Mask </b>© 2021, Paizo Inc.;
+            Author: Ron Lundeen.
+          </p>
           <p>
             <b> Pathfinder Encounter: Heaving Kobolds </b>© 2021, Paizo Inc.;
             Author: Ron Lundeen.
@@ -2618,26 +2617,25 @@ const settings = settingsStore();
             <b> A Caroling Horse (Of Course. Of Course.) </b>© 2021, Paizo Inc.;
             Author: Eleanor Ferron.
           </p>
-          <p
-            ><b> GM's Toolbox: Gravehall </b>© 2020, Paizo Inc.; Author: Ron
-            Lundeen.</p
-          >
-          <p
-            ><b> The Waters of Stone Ring Pond </b>© 2020, Paizo Inc.; Author:
-            Ron Lundeen.</p
-          >
-          <p
-            ><b> Redpitch Alchemy </b>© 2020, Paizo Inc.; Author: Ron
-            Lundeen.</p
-          >
+          <p>
+            <b> GM's Toolbox: Gravehall </b>© 2020, Paizo Inc.; Author: Ron
+            Lundeen.
+          </p>
+          <p>
+            <b> The Waters of Stone Ring Pond </b>© 2020, Paizo Inc.; Author:
+            Ron Lundeen.
+          </p>
+          <p>
+            <b> Redpitch Alchemy </b>© 2020, Paizo Inc.; Author: Ron Lundeen.
+          </p>
           <p>
             <b> Pathfinder Encounter: We Be Zombies! </b>© 2020, Paizo Inc.;
             Author: Ron Lundeen.
           </p>
-          <p
-            ><b> No-Prep Character: Morlibint </b>© 2020, Paizo Inc.; Author
-            Unknown.</p
-          >
+          <p>
+            <b> No-Prep Character: Morlibint </b>© 2020, Paizo Inc.; Author
+            Unknown.
+          </p>
           <p>
             <b> No-Prep Character: Pr'rall </b>© 2020, Paizo Inc.; Author: Mark
             Moreland, Illustrator: Marius Bota.

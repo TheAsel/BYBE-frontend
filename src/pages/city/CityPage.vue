@@ -22,9 +22,9 @@ useHead({
       >
         Work in progress...
       </h1>
-      <p class="tw:mt-3! tw:text-lg tw:text-gray-300"
-        >This feature is being worked on.</p
-      >
+      <p class="tw:mt-3! tw:text-lg tw:text-gray-300">
+        This feature is being worked on.
+      </p>
     </div>
   </div>
 </template>

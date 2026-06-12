@@ -71,9 +71,9 @@ const settings = settingsStore();
               </span>
             </h1>
             <q-space />
-            <div class="tw:ml-4 tw:my-1"
-              >NPC {{ npcs.npcs[npcs.activeNpc]!.npc.level }}</div
-            >
+            <div class="tw:ml-4 tw:my-1">
+              NPC {{ npcs.npcs[npcs.activeNpc]!.npc.level }}
+            </div>
           </div>
           <q-separator class="tw:my-2!" style="height: 2px" />
           <hr

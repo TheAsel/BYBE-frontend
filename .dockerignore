@@ -3,6 +3,5 @@
 .quasar
 .vscode
 dist
-fly.toml
 node_modules
 .env.local

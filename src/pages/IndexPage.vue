@@ -5,7 +5,7 @@ import {
   biHouses,
   biPencil,
   biPersonVcard,
-  biShop,
+  biShop
 } from "@quasar/extras/bootstrap-icons";
 import { useHead } from "@unhead/vue";
 
@@ -16,9 +16,9 @@ useHead({
   link: [
     {
       rel: "canonical",
-      href: "https://bybe.app",
-    },
-  ],
+      href: "https://bybe.app"
+    }
+  ]
 });
 
 const settings = settingsStore();
@@ -29,14 +29,14 @@ const cards = [
     to: "/encounter",
     description: "Balance or randomly create combat encounters.",
     subtext: "Try it out",
-    icon: biCalculator,
+    icon: biCalculator
   },
   {
     name: "Shop Generator",
     to: "/shop",
     description: "Create various types of shops of a specific level.",
     subtext: "Try it out",
-    icon: biShop,
+    icon: biShop
   },
   {
     name: "NPC Generator",
@@ -44,14 +44,14 @@ const cards = [
     description:
       "Quickly generate an NPC's name, ancestry, background and quirks.",
     subtext: "Try it out",
-    icon: biPersonVcard,
+    icon: biPersonVcard
   },
   {
     name: "Creature Generator",
     to: "/creature",
     description: "Create custom creatures with the help of custom generation.",
     subtext: "Work in progress...",
-    icon: biPencil,
+    icon: biPencil
   },
   {
     name: "City Planner",
@@ -59,8 +59,8 @@ const cards = [
     description:
       "Combine what you created with the other tools to plan an entire city.",
     subtext: "Work in progress...",
-    icon: biHouses,
-  },
+    icon: biHouses
+  }
 ];
 </script>
 
