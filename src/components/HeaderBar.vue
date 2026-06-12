@@ -50,12 +50,12 @@ const gameOptions = [
   {
     label: 'Pathfinder 2e',
     value: 'pf',
-    src: '/pf2e-logo.webp'
+    src: '/imgs/logos/pf2e-logo.webp'
   },
   {
     label: 'Starfinder 2e',
     value: 'sf',
-    src: '/sf2e-logo.webp'
+    src: '/imgs/logos/sf2e-logo.webp'
   }
 ];
 
@@ -132,14 +132,14 @@ const unhide = debounce(function () {
               v-if="theme === 'light'"
               width="36px"
               height="36px"
-              src="/favicon-64x64-light.webp"
+              src="/imgs/icons/favicon-64x64-light.webp"
               alt="Light BYBE logo"
             />
             <img
               v-else
               width="36px"
               height="36px"
-              src="/favicon-64x64-dark.webp"
+              src="/imgs/icons/favicon-64x64-dark.webp"
               alt="Dark BYBE logo"
             />
           </q-avatar>
@@ -156,14 +156,14 @@ const unhide = debounce(function () {
               v-if="theme === 'light'"
               width="36px"
               height="36px"
-              src="/favicon-64x64-light.webp"
+              src="/imgs/icons/favicon-64x64-light.webp"
               alt="Light BYBE logo"
             />
             <img
               v-else
               width="36px"
               height="36px"
-              src="/favicon-64x64-dark.webp"
+              src="/imgs/icons/favicon-64x64-dark.webp"
               alt="Dark BYBE logo"
             />
           </q-avatar>

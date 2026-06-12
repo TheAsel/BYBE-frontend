@@ -87,32 +87,32 @@ const diceSelect = [
   {
     label: 'D4',
     value: 4,
-    icon: 'img:/dice/d4.webp'
+    icon: 'img:/imgs/dices/d4.webp'
   },
   {
     label: 'D6',
     value: 6,
-    icon: 'img:/dice/d6.webp'
+    icon: 'img:/imgs/dices/d6.webp'
   },
   {
     label: 'D8',
     value: 8,
-    icon: 'img:/dice/d8.webp'
+    icon: 'img:/imgs/dices/d8.webp'
   },
   {
     label: 'D10',
     value: 10,
-    icon: 'img:/dice/d10.webp'
+    icon: 'img:/imgs/dices/d10.webp'
   },
   {
     label: 'D12',
     value: 12,
-    icon: 'img:/dice/d12.webp'
+    icon: 'img:/imgs/dices/d12.webp'
   },
   {
     label: 'D20',
     value: 20,
-    icon: 'img:/dice/d20.webp'
+    icon: 'img:/imgs/dices/d20.webp'
   }
 ];
 

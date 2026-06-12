@@ -31,9 +31,12 @@ const backgroundStyle = computed(() => {
   let imageUrl: string;
 
   if (isDownload.value) {
-    imageUrl = '/home-background.webp';
+    imageUrl = '/imgs/backgrounds/mixed-background.webp';
   } else {
-    imageUrl = settings.game === 'sf' ? '/sf2e-background.webp' : '/pf2e-background.webp';
+    imageUrl =
+      settings.game === 'sf'
+        ? '/imgs/backgrounds/sf2e-background.webp'
+        : '/imgs/backgrounds/pf2e-background.webp';
   }
   return {
     backgroundImage: `url('${imageUrl}')`,
