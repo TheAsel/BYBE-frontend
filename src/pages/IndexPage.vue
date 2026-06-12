@@ -5,7 +5,7 @@ import {
   biHouses,
   biPencil,
   biPersonVcard,
-  biShop
+  biShop,
 } from "@quasar/extras/bootstrap-icons";
 import { useHead } from "@unhead/vue";
 
@@ -16,9 +16,9 @@ useHead({
   link: [
     {
       rel: "canonical",
-      href: "https://bybe.app"
-    }
-  ]
+      href: "https://bybe.app",
+    },
+  ],
 });
 
 const settings = settingsStore();
@@ -29,14 +29,14 @@ const cards = [
     to: "/encounter",
     description: "Balance or randomly create combat encounters.",
     subtext: "Try it out",
-    icon: biCalculator
+    icon: biCalculator,
   },
   {
     name: "Shop Generator",
     to: "/shop",
     description: "Create various types of shops of a specific level.",
     subtext: "Try it out",
-    icon: biShop
+    icon: biShop,
   },
   {
     name: "NPC Generator",
@@ -44,14 +44,14 @@ const cards = [
     description:
       "Quickly generate an NPC's name, ancestry, background and quirks.",
     subtext: "Try it out",
-    icon: biPersonVcard
+    icon: biPersonVcard,
   },
   {
     name: "Creature Generator",
     to: "/creature",
     description: "Create custom creatures with the help of custom generation.",
     subtext: "Work in progress...",
-    icon: biPencil
+    icon: biPencil,
   },
   {
     name: "City Planner",
@@ -59,14 +59,14 @@ const cards = [
     description:
       "Combine what you created with the other tools to plan an entire city.",
     subtext: "Work in progress...",
-    icon: biHouses
-  }
+    icon: biHouses,
+  },
 ];
 </script>
 
 <template>
   <div
-    class="tw:place-content-center tw:overflow-auto tw:h-full tw:max-w-7xl tw:px-4 tw:sm:px-6 tw:lg:px-8 tw:py-4 tw:pt-0 tw:2xl:py-14 tw:mx-auto"
+    class="tw:place-content-center tw:overflow-auto tw:h-full tw:w-full! tw:px-4 tw:sm:px-6 tw:lg:px-8 tw:py-4 tw:pt-0 tw:2xl:py-14 tw:mx-auto"
   >
     <div
       class="tw:max-w-3xl tw:mx-auto tw:text-center tw:my-4 tw:2xl:mb-14 tw:drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
@@ -79,7 +79,9 @@ const cards = [
         Masters.
       </h2>
     </div>
-    <div class="tw:grid tw:sm:grid-cols-2 tw:lg:grid-cols-3 tw:gap-6">
+    <div
+      class="tw:grid tw:sm:grid-cols-2 tw:lg:grid-cols-3 tw:gap-6 tw:mx-auto tw:max-w-7xl"
+    >
       <!-- Cards -->
       <router-link
         v-for="item in cards"
