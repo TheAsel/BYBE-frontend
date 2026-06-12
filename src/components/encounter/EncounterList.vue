@@ -7,13 +7,13 @@ import {
   biShare,
   biTrash,
   biXLg
-} from '@quasar/extras/bootstrap-icons';
-import { fasDragon, fasLandMineOn } from '@quasar/extras/fontawesome-v7';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { debounce, isNull } from 'lodash-es';
-import { copyToClipboard, useQuasar } from 'quasar';
-import { ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+} from "@quasar/extras/bootstrap-icons";
+import { fasDragon, fasLandMineOn } from "@quasar/extras/fontawesome-v7";
+import { matPriorityHigh } from "@quasar/extras/material-icons";
+import { debounce, isNull } from "lodash-es";
+import { copyToClipboard, useQuasar } from "quasar";
+import { ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import {
   decodeEncounterLink,
@@ -21,21 +21,21 @@ import {
   generateEncounterLink,
   requestCreatureId,
   requestHazardId
-} from 'src/api/encounter-api-calls';
-import { encounterStore } from 'src/stores/encounter';
-import { infoStore } from 'src/stores/info';
-import { partyStore } from 'src/stores/party';
-import { settingsStore } from 'src/stores/settings';
+} from "@/api/encounter-api-calls";
+import { encounterStore } from "@/stores/encounter";
+import { infoStore } from "@/stores/info";
+import { partyStore } from "@/stores/party";
+import { settingsStore } from "@/stores/settings";
 
 import type {
   encounter_info,
   encounter_list,
   min_creature_hazard,
   shareable_encounter
-} from 'src/types/encounter';
-import type { complexities, games, variants } from 'src/types/filters';
+} from "@/types/encounter";
+import type { complexities, games, variants } from "@/types/filters";
 
-const isApp = process.env.IS_APP === 'true';
+const isApp = import.meta.env.IS_APP;
 
 const route = useRoute();
 const router = useRouter();
@@ -48,29 +48,33 @@ const encounter = encounterStore();
 const info = infoStore();
 const settings = settingsStore();
 
-const currentAon = ref(settings.game === 'sf' ? 'aonsrd' : 'aonprd');
+const currentAon = ref(settings.game === "sf" ? "aonsrd" : "aonprd");
 
 const importEncounterDialog = ref(false);
 const importNameInput = ref();
-const importEncounterName = ref('');
+const importEncounterName = ref("");
 const importEncounterData = ref<shareable_encounter>();
 
 const shareDialog = ref(false);
-const shareUrl = ref('');
+const shareUrl = ref("");
 const isGenerating = ref(false);
 
 const newEncounterDialog = ref(false);
 const encounterNameInput = ref();
-const newEncounterName = ref('');
+const newEncounterName = ref("");
 
 const renameEncounterDialog = ref(false);
 const encounterRenameInput = ref();
-const newEncounterRename = ref('');
+const newEncounterRename = ref("");
 
 const removeEncounterDialog = ref(false);
 
-const tmpEncounter = ref<encounter_list>(encounter.encounters[encounter.activeEncounter]!);
-const encounters = ref<string[]>(encounter.encounters.map((encounter) => encounter.name));
+const tmpEncounter = ref<encounter_list>(
+  encounter.encounters[encounter.activeEncounter]!
+);
+const encounters = ref<string[]>(
+  encounter.encounters.map(encounter => encounter.name)
+);
 
 tmpEncounter.value = {
   name: encounter.encounters[encounter.activeEncounter]!.name,
@@ -78,21 +82,22 @@ tmpEncounter.value = {
 };
 
 const debouncedCall = debounce(async function () {
-  const encounterList = encounter.encounters[encounter.activeEncounter]!.creatures;
+  const encounterList =
+    encounter.encounters[encounter.activeEncounter]!.creatures;
   const creatureLevels: number[] = [];
   const hazardLevels: { complexity: complexities; level: number }[] = [];
   for (const item of encounterList) {
     for (let j = 0; j < item.quantity!; j++) {
       if (item.is_hazard === false) {
         switch (item.variant) {
-          case 'Weak':
+          case "Weak":
             if (item.level === 1) {
               creatureLevels.push(item.level - 2);
             } else {
               creatureLevels.push(item.level - 1);
             }
             break;
-          case 'Elite':
+          case "Elite":
             if (item.level === -1 || item.level === 0) {
               creatureLevels.push(item.level + 2);
             } else {
@@ -109,21 +114,24 @@ const debouncedCall = debounce(async function () {
     }
   }
   const partyLevels = party.parties[party.activeParty]!.members;
-  const localPwl = ref(localStorage.getItem('is_pwl_on'));
+  const localPwl = ref(localStorage.getItem("is_pwl_on"));
   switch (localPwl.value) {
-    case 'true':
+    case "true":
       is_pwl_on.value = true;
       break;
-    case 'false':
+    case "false":
       is_pwl_on.value = false;
       break;
     default:
       is_pwl_on.value = false;
-      localStorage.setItem('is_pwl_on', 'false');
+      localStorage.setItem("is_pwl_on", "false");
       break;
   }
   const body: encounter_info = {
-    creatures_params: { enemy_levels: creatureLevels, is_pwl_on: is_pwl_on.value },
+    creatures_params: {
+      enemy_levels: creatureLevels,
+      is_pwl_on: is_pwl_on.value
+    },
     hazards_params: { hazards: hazardLevels },
     party_levels: partyLevels
   };
@@ -131,7 +139,7 @@ const debouncedCall = debounce(async function () {
     if (!encounter.generating) {
       const returnedEncounterInfo = await encounterInfo(settings.game, body);
       if (returnedEncounterInfo === undefined) {
-        throw new TypeError('Error calculating encounter challenge');
+        throw new TypeError("Error calculating encounter challenge");
       }
       info.setInfo(returnedEncounterInfo);
     }
@@ -142,7 +150,11 @@ const debouncedCall = debounce(async function () {
 
 // get info on creature list change
 watch(
-  [() => encounter.encounters, () => encounter.activeEncounter, () => encounter.is_pwl_on],
+  [
+    () => encounter.encounters,
+    () => encounter.activeEncounter,
+    () => encounter.is_pwl_on
+  ],
   async () => {
     tmpEncounter.value = {
       name: encounter.encounters[encounter.activeEncounter]!.name,
@@ -164,20 +176,21 @@ await debouncedCall();
 
 // read the "share" query and decode it
 const shareQuery =
-  String(route.query.share) === 'undefined' || String(route.query.share) === 'null'
-    ? ''
+  String(route.query.share) === "undefined" ||
+  String(route.query.share) === "null"
+    ? ""
     : String(route.query.share);
 const encodedData = ref(shareQuery);
 
 const decodeData = async () => {
-  if (encodedData.value !== '') {
+  if (encodedData.value !== "") {
     isGenerating.value = true;
     importEncounterDialog.value = true;
     try {
       const decodedData = await decodeEncounterLink(encodedData.value);
       if (decodedData === undefined) {
         importEncounterDialog.value = false;
-        throw new TypeError('Error importing encounter');
+        throw new TypeError("Error importing encounter");
       }
       importEncounterData.value = decodedData;
       importEncounterName.value = decodedData.encounter_name;
@@ -186,8 +199,8 @@ const decodeData = async () => {
       console.error(error);
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Error importing encounter',
+        type: "warning",
+        message: "Error importing encounter",
         icon: matPriorityHigh
       });
     }
@@ -197,7 +210,7 @@ const decodeData = async () => {
 await decodeData();
 
 // clean and check the link for manual app import
-const sharedLink = ref('');
+const sharedLink = ref("");
 const cleanLink = async () => {
   try {
     const parsedUrl = new URL(sharedLink.value);
@@ -206,22 +219,22 @@ const cleanLink = async () => {
       closeDialog();
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Invalid page for this link',
+        type: "warning",
+        message: "Invalid page for this link",
         icon: matPriorityHigh
       });
-      throw new Error('Invalid page for this link');
+      throw new Error("Invalid page for this link");
     }
-    const share = parsedUrl.searchParams.get('share');
-    if (share === null || share === '') {
+    const share = parsedUrl.searchParams.get("share");
+    if (share === null || share === "") {
       closeDialog();
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Missing share hash',
+        type: "warning",
+        message: "Missing share hash",
         icon: matPriorityHigh
       });
-      throw new TypeError('Missing share code');
+      throw new TypeError("Missing share code");
     }
     encodedData.value = share;
     closeDialog();
@@ -241,29 +254,30 @@ await router.replace({
 const openShare = async () => {
   isGenerating.value = true;
   shareDialog.value = true;
-  const encounterList = encounter.encounters[encounter.activeEncounter]!.creatures;
+  const encounterList =
+    encounter.encounters[encounter.activeEncounter]!.creatures;
   const body: shareable_encounter = {
     encounter_name: encounter.encounters[encounter.activeEncounter]?.name
       ? encounter.encounters[encounter.activeEncounter]!.name
-      : 'Default',
+      : "Default",
     creatures_data: [],
     hazards_data: []
   };
 
   for (const item of encounterList) {
-    if (item.game !== 'pf' && item.game !== 'sf') {
+    if (item.game !== "pf" && item.game !== "sf") {
       shareDialog.value = false;
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'This legacy list cannot be shared',
+        type: "warning",
+        message: "This legacy list cannot be shared",
         icon: matPriorityHigh
       });
       return;
     }
 
     if (item.is_hazard === false) {
-      const tmp_variant: variants = item.variant ? item.variant : 'Base';
+      const tmp_variant: variants = item.variant ? item.variant : "Base";
       const tmp_qty: number = item.quantity ? item.quantity : 1;
       const tmp_game: games = item.game;
 
@@ -287,15 +301,18 @@ const openShare = async () => {
 
   try {
     const shareableLink = await generateEncounterLink(body);
-    if (typeof shareableLink === 'string') {
+    if (typeof shareableLink === "string") {
       shareUrl.value =
-        'https://bybe.app/encounter?game=' + settings.game + '&share=' + shareableLink;
+        "https://bybe.app/encounter?game=" +
+        settings.game +
+        "&share=" +
+        shareableLink;
     } else {
       shareDialog.value = false;
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Error generating shared link',
+        type: "warning",
+        message: "Error generating shared link",
         icon: matPriorityHigh
       });
     }
@@ -304,8 +321,8 @@ const openShare = async () => {
     console.error(error);
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Error generating shared link',
+      type: "warning",
+      message: "Error generating shared link",
       icon: matPriorityHigh
     });
   }
@@ -326,7 +343,7 @@ const importEncounter = async () => {
         );
 
         if (fetchedCreatureData === undefined) {
-          throw new TypeError('Undefined response');
+          throw new TypeError("Undefined response");
         }
         tmp_creatures.push({
           game: creature.game,
@@ -344,20 +361,23 @@ const importEncounter = async () => {
     }
     for (const hazard of importEncounterData.value?.hazards_data ?? []) {
       try {
-        const fetchedHazardsData = await requestHazardId(hazard.game, hazard.id);
+        const fetchedHazardsData = await requestHazardId(
+          hazard.game,
+          hazard.id
+        );
 
         if (fetchedHazardsData === undefined) {
-          throw new TypeError('Undefined response');
+          throw new TypeError("Undefined response");
         }
         tmp_creatures.push({
           game: hazard.game,
           id: hazard.id,
           archive_link:
-            'https://2e.' +
+            "https://2e." +
             currentAon.value +
-            '.com/search?q=' +
+            ".com/search?q=" +
             encodeURIComponent(fetchedHazardsData.core_hazard.essential.name) +
-            ' type%3A(hazard)&type=eqs',
+            " type%3A(hazard)&type=eqs",
           name: fetchedHazardsData.core_hazard.essential.name,
           level: fetchedHazardsData.core_hazard.essential.level,
           quantity: hazard.qty,
@@ -369,14 +389,14 @@ const importEncounter = async () => {
       }
     }
     encounter.addEncounter(importEncounterName.value);
-    encounters.value = encounter.encounters.map((encounter) => encounter.name);
+    encounters.value = encounter.encounters.map(encounter => encounter.name);
     encounter.updateEncounter(importEncounterName.value, tmp_creatures);
     tmpEncounter.value = {
       name: encounter.encounters[encounter.activeEncounter]!.name,
       creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
     };
     saveChanges();
-    importEncounterName.value = '';
+    importEncounterName.value = "";
     importEncounterDialog.value = false;
   }
 };
@@ -387,23 +407,23 @@ const closeDialog = () => {
   newEncounterDialog.value = false;
   renameEncounterDialog.value = false;
   removeEncounterDialog.value = false;
-  sharedLink.value = '';
-  importEncounterName.value = '';
-  newEncounterName.value = '';
-  newEncounterRename.value = '';
+  sharedLink.value = "";
+  importEncounterName.value = "";
+  newEncounterName.value = "";
+  newEncounterRename.value = "";
 };
 
 const addEncounter = () => {
   encounterNameInput.value.validate();
   if (!encounterNameInput.value.hasError) {
     encounter.addEncounter(newEncounterName.value);
-    encounters.value = encounter.encounters.map((encounter) => encounter.name);
+    encounters.value = encounter.encounters.map(encounter => encounter.name);
     tmpEncounter.value = {
       name: encounter.encounters[encounter.activeEncounter]!.name,
       creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
     };
     saveChanges();
-    newEncounterName.value = '';
+    newEncounterName.value = "";
     newEncounterDialog.value = false;
   }
 };
@@ -411,21 +431,22 @@ const addEncounter = () => {
 const renameEncounter = () => {
   encounterRenameInput.value.validate();
   if (!encounterRenameInput.value.hasError) {
-    encounter.encounters[encounter.activeEncounter]!.name = newEncounterRename.value;
-    encounters.value = encounter.encounters.map((encounter) => encounter.name);
+    encounter.encounters[encounter.activeEncounter]!.name =
+      newEncounterRename.value;
+    encounters.value = encounter.encounters.map(encounter => encounter.name);
     tmpEncounter.value = {
       name: encounter.encounters[encounter.activeEncounter]!.name,
       creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
     };
     saveChanges();
-    newEncounterRename.value = '';
+    newEncounterRename.value = "";
     renameEncounterDialog.value = false;
   }
 };
 
 const removeEncounter = () => {
   encounter.removeEncounter();
-  encounters.value = encounter.encounters.map((encounter) => encounter.name);
+  encounters.value = encounter.encounters.map(encounter => encounter.name);
   tmpEncounter.value = {
     name: encounter.encounters[encounter.activeEncounter]!.name,
     creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
@@ -443,8 +464,11 @@ const changeActiveEncounter = (selected: string) => {
 };
 
 const saveChanges = () => {
-  encounter.updateEncounter(tmpEncounter.value.name, tmpEncounter.value.creatures);
-  localStorage.setItem('encounters', JSON.stringify(encounter.encounters));
+  encounter.updateEncounter(
+    tmpEncounter.value.name,
+    tmpEncounter.value.creatures
+  );
+  localStorage.setItem("encounters", JSON.stringify(encounter.encounters));
 };
 
 const showItem = debounce(async function (item: min_creature_hazard) {
@@ -452,14 +476,14 @@ const showItem = debounce(async function (item: min_creature_hazard) {
     try {
       const itemData = await requestHazardId(item.game, item.id);
       if (isNull(itemData) || itemData === undefined) {
-        console.error('Missing hazard ID');
+        console.error("Missing hazard ID");
         $q.notify({
           progress: true,
-          type: 'warning',
-          message: 'Missing hazard ID',
+          type: "warning",
+          message: "Missing hazard ID",
           icon: matPriorityHigh
         });
-        await router.push({ name: 'encounter', query: { game: item.game } });
+        await router.push({ name: "encounter", query: { game: item.game } });
       } else {
         encounter.removeSelectedCreature();
         encounter.setSelectedHazard(itemData);
@@ -476,14 +500,14 @@ const showItem = debounce(async function (item: min_creature_hazard) {
         encounter.is_pwl_on
       );
       if (isNull(itemData) || itemData === undefined) {
-        console.error('Missing creature ID');
+        console.error("Missing creature ID");
         $q.notify({
           progress: true,
-          type: 'warning',
-          message: 'Missing creature ID',
+          type: "warning",
+          message: "Missing creature ID",
           icon: matPriorityHigh
         });
-        await router.push({ name: 'encounter', query: { game: item.game } });
+        await router.push({ name: "encounter", query: { game: item.game } });
       } else {
         encounter.removeSelectedHazard();
         encounter.setSelectedCreature(itemData);
@@ -519,8 +543,9 @@ const showItem = debounce(async function (item: min_creature_hazard) {
             :rules="[
               (val: string) => !!val || 'Field is required',
               (val: string) =>
-                !encounters.some((name) => name.toLowerCase() === val.toLowerCase()) ||
-                'This encounter already exists'
+                !encounters.some(
+                  name => name.toLowerCase() === val.toLowerCase()
+                ) || 'This encounter already exists'
             ]"
             @keyup.enter="importEncounter"
           />
@@ -545,7 +570,11 @@ const showItem = debounce(async function (item: min_creature_hazard) {
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
+    <q-dialog
+      v-model="shareDialog"
+      aria-label="Share dialog"
+      @escape-key="closeDialog"
+    >
       <q-card flat bordered style="min-height: 210px; width: 320px">
         <q-card-section>
           <div class="row">
@@ -578,7 +607,10 @@ const showItem = debounce(async function (item: min_creature_hazard) {
               <q-btn label="Import" @click="cleanLink" />
             </div>
           </q-card-section>
-          <q-separator inset class="tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-700!" />
+          <q-separator
+            inset
+            class="tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-700!"
+          />
         </div>
         <div v-if="!isGenerating">
           <q-card-section class="tw:wrap-normal tw:py-1!">
@@ -586,7 +618,11 @@ const showItem = debounce(async function (item: min_creature_hazard) {
           </q-card-section>
           <q-card-section>
             <div class="row tw:gap-4">
-              <q-field class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!" outlined dense>
+              <q-field
+                class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!"
+                outlined
+                dense
+              >
                 <template v-slot:control>
                   <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!">
                     {{ shareUrl }}
@@ -628,8 +664,9 @@ const showItem = debounce(async function (item: min_creature_hazard) {
             :rules="[
               (val: string) => !!val || 'Field is required',
               (val: string) =>
-                !encounters.some((name) => name.toLowerCase() === val.toLowerCase()) ||
-                'This encounter already exists'
+                !encounters.some(
+                  name => name.toLowerCase() === val.toLowerCase()
+                ) || 'This encounter already exists'
             ]"
             @keyup.enter="addEncounter"
           />
@@ -676,8 +713,9 @@ const showItem = debounce(async function (item: min_creature_hazard) {
             :rules="[
               (val: string) => !!val || 'Field is required',
               (val: string) =>
-                !encounters.some((name) => name.toLowerCase() === val.toLowerCase()) ||
-                'This encounter already exists'
+                !encounters.some(
+                  name => name.toLowerCase() === val.toLowerCase()
+                ) || 'This encounter already exists'
             ]"
             @keyup.enter="renameEncounter"
           />
@@ -740,7 +778,9 @@ const showItem = debounce(async function (item: min_creature_hazard) {
         bordered
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
+        <div
+          class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2"
+        >
           <q-btn
             id="shepherd-10"
             class="tw:grow"
@@ -819,7 +859,11 @@ const showItem = debounce(async function (item: min_creature_hazard) {
             label="Encounters"
             @update:model-value="changeActiveEncounter(tmpEncounter.name)"
           />
-          <q-btn flat dense aria-label="Clear encounter" @click="encounter.clearEncounter"
+          <q-btn
+            flat
+            dense
+            aria-label="Clear encounter"
+            @click="encounter.clearEncounter"
             >CLEAR</q-btn
           >
         </div>
@@ -827,11 +871,16 @@ const showItem = debounce(async function (item: min_creature_hazard) {
       <q-page-container v-if="encounter.generating === false">
         <q-page class="tw:min-h-auto!">
           <div
-            v-for="(item, index) in encounter.encounters[encounter.activeEncounter]!.creatures"
+            v-for="(item, index) in encounter.encounters[
+              encounter.activeEncounter
+            ]!.creatures"
             :key="index"
           >
             <div class="tw:flex tw:item-center">
-              <div id="shepherd-8" class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
+              <div
+                id="shepherd-8"
+                class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1"
+              >
                 <q-btn
                   unelevated
                   :ripple="false"
@@ -855,7 +904,10 @@ const showItem = debounce(async function (item: min_creature_hazard) {
                 class="tw:flex tw:flex-wrap tw:flex-row tw:grow cursor-pointer"
                 @click="showItem(item)"
               >
-                <div class="tw:flex-1 tw:my-auto tw:mx-1" style="min-width: 100px">
+                <div
+                  class="tw:flex-1 tw:my-auto tw:mx-1"
+                  style="min-width: 100px"
+                >
                   <q-chip
                     v-if="item.is_hazard === false"
                     text-color="white"
@@ -882,7 +934,11 @@ const showItem = debounce(async function (item: min_creature_hazard) {
                     class="tw:p-1! tw:invisible"
                     aria-label="Hazard type"
                   >
-                    <q-avatar class="tw:visible" :icon="fasLandMineOn" color="red">
+                    <q-avatar
+                      class="tw:visible"
+                      :icon="fasLandMineOn"
+                      color="red"
+                    >
                       <q-tooltip
                         class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                         anchor="top middle"
@@ -1002,7 +1058,10 @@ const showItem = debounce(async function (item: min_creature_hazard) {
       </q-page-container>
       <q-page-container v-else class="tw:flex" style="height: 78vh">
         <div class="tw:m-auto">
-          <q-spinner-gears class="tw:mx-auto tw:text-black tw:dark:text-white" size="5em" />
+          <q-spinner-gears
+            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            size="5em"
+          />
         </div>
       </q-page-container>
       <q-footer
@@ -1033,7 +1092,10 @@ const showItem = debounce(async function (item: min_creature_hazard) {
               />
             </div>
           </q-linear-progress>
-          <q-separator vertical class="tw:mx-4! tw:bg-gray-200! tw:dark:bg-gray-700!" />
+          <q-separator
+            vertical
+            class="tw:mx-4! tw:bg-gray-200! tw:dark:bg-gray-700!"
+          />
           <div
             class="flex flex-center text-subtitle1 font-bold tw:whitespace-nowrap tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800!"
           >

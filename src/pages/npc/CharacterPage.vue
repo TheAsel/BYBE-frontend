@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { matPrint } from '@quasar/extras/material-icons';
-import { useHead } from '@unhead/vue';
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { matPrint } from "@quasar/extras/material-icons";
+import { useHead } from "@unhead/vue";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 
-import NpcSheet from 'src/components/npc/NpcSheet.vue';
-import { npcStore } from 'src/stores/npc';
-import { updateLocalStorageNpcs } from 'src/utils/local-storage';
+import NpcSheet from "@/components/npc/NpcSheet.vue";
+import { npcStore } from "@/stores/npc";
+import { updateLocalStorageNpcs } from "@/utils/local-storage";
 
-const title = ref('NPC Sheet - BYBE');
+const title = ref("NPC Sheet - BYBE");
 
 useHead({
   title: title,
   link: [
     {
-      rel: 'canonical',
-      href: 'https://bybe.app/character'
+      rel: "canonical",
+      href: "https://bybe.app/character"
     }
   ]
 });
@@ -41,6 +41,12 @@ const printPage = () => {
     :offset="[18, 18]"
     class="tw:z-10 only-screen tw:opacity-85"
   >
-    <q-btn fab :icon="matPrint" color="primary" aria-label="Print item sheet" @click="printPage" />
+    <q-btn
+      fab
+      :icon="matPrint"
+      color="primary"
+      aria-label="Print item sheet"
+      @click="printPage"
+    />
   </q-page-sticky>
 </template>

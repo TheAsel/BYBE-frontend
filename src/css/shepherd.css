@@ -13,7 +13,7 @@
   flex-grow: 1;
   justify-content: center;
 
-  font-family: 'Good Pro Condensed', sans-serif;
+  font-family: "Good Pro Condensed", sans-serif;
   font-size: 1.5rem;
   display: flex;
 }
@@ -99,13 +99,13 @@
   padding: 0.75em;
   padding-bottom: 0;
   padding-left: 2rem;
-  font-family: 'Good Pro Condensed', sans-serif;
+  font-family: "Good Pro Condensed", sans-serif;
   font-size: 1.5rem;
 }
 
 .shepherd-text {
   color: #000000bf;
-  font-family: 'Good Pro', sans-serif;
+  font-family: "Good Pro", sans-serif;
   font-size: 1.3rem;
   line-height: 1.3em;
   padding-left: 2rem;
@@ -247,23 +247,23 @@
 
 .shepherd-arrow:before {
   background: #fff;
-  content: '';
+  content: "";
   transform: rotate(45deg);
 }
 
-.shepherd-element[data-popper-placement^='top'] > .shepherd-arrow {
+.shepherd-element[data-popper-placement^="top"] > .shepherd-arrow {
   bottom: -8px;
 }
 
-.shepherd-element[data-popper-placement^='bottom'] > .shepherd-arrow {
+.shepherd-element[data-popper-placement^="bottom"] > .shepherd-arrow {
   top: -8px;
 }
 
-.shepherd-element[data-popper-placement^='left'] > .shepherd-arrow {
+.shepherd-element[data-popper-placement^="left"] > .shepherd-arrow {
   right: -8px;
 }
 
-.shepherd-element[data-popper-placement^='right'] > .shepherd-arrow {
+.shepherd-element[data-popper-placement^="right"] > .shepherd-arrow {
   left: -8px;
 }
 

@@ -8,22 +8,22 @@ import {
   biTrash,
   biX,
   biXLg
-} from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { mdiCloseCircle } from '@quasar/extras/mdi-v7';
-import { capitalize, cloneDeep, debounce } from 'lodash-es';
-import { useQuasar } from 'quasar';
-import { nextTick, ref } from 'vue';
+} from "@quasar/extras/bootstrap-icons";
+import { matPriorityHigh } from "@quasar/extras/material-icons";
+import { mdiCloseCircle } from "@quasar/extras/mdi-v7";
+import { capitalize, cloneDeep, debounce } from "lodash-es";
+import { useQuasar } from "quasar";
+import { nextTick, ref } from "vue";
 
-import { shopGenerator } from 'src/api/shop-api-calls';
-import { filtersStore } from 'src/stores/filters';
-import { itemsStore } from 'src/stores/items';
-import { settingsStore } from 'src/stores/settings';
-import { templateStore } from 'src/stores/template';
+import { shopGenerator } from "@/api/shop-api-calls";
+import { filtersStore } from "@/stores/filters";
+import { itemsStore } from "@/stores/items";
+import { settingsStore } from "@/stores/settings";
+import { templateStore } from "@/stores/template";
 
-import type { min_item } from 'src/types/item';
-import type { shop_data } from 'src/types/shop';
-import type { template } from 'src/types/template';
+import type { min_item } from "@/types/item";
+import type { shop_data } from "@/types/shop";
+import type { template } from "@/types/template";
 
 const $q = useQuasar();
 
@@ -33,15 +33,21 @@ const items = itemsStore();
 const template = templateStore();
 
 const currentAon = ref(
-  settings.game === 'sf' ? 'https://2e.aonsrd.com/search' : 'https://2e.aonprd.com/Search.aspx'
+  settings.game === "sf"
+    ? "https://2e.aonsrd.com/search"
+    : "https://2e.aonprd.com/Search.aspx"
 );
 
 const dialog = ref(false);
-const tab = ref('General');
+const tab = ref("General");
 
-const selectedTraits = ref<{ label: string; value: string; state: boolean | null }[]>([]);
-const traitOptions = ref<{ label: string; value: string; state: boolean | null }[]>(
-  filters.itemFilters.traits.map((trait) => ({
+const selectedTraits = ref<
+  { label: string; value: string; state: boolean | null }[]
+>([]);
+const traitOptions = ref<
+  { label: string; value: string; state: boolean | null }[]
+>(
+  filters.itemFilters.traits.map(trait => ({
     label: trait.label,
     value: trait.value,
     state: null
@@ -61,8 +67,8 @@ const editTraitSelect = ref();
 
 const newTemplate = ref<template>({
   default: false,
-  name: '',
-  description: '',
+  name: "",
+  description: "",
   source_filter: [],
   trait_blacklist_filter: [],
   trait_whitelist_filter: [],
@@ -85,41 +91,49 @@ const weaponOn = ref(true);
 
 const diceSelect = [
   {
-    label: 'D4',
+    label: "D4",
     value: 4,
-    icon: 'img:/imgs/dices/d4.webp'
+    icon: "img:/imgs/dices/d4.webp"
   },
   {
-    label: 'D6',
+    label: "D6",
     value: 6,
-    icon: 'img:/imgs/dices/d6.webp'
+    icon: "img:/imgs/dices/d6.webp"
   },
   {
-    label: 'D8',
+    label: "D8",
     value: 8,
-    icon: 'img:/imgs/dices/d8.webp'
+    icon: "img:/imgs/dices/d8.webp"
   },
   {
-    label: 'D10',
+    label: "D10",
     value: 10,
-    icon: 'img:/imgs/dices/d10.webp'
+    icon: "img:/imgs/dices/d10.webp"
   },
   {
-    label: 'D12',
+    label: "D12",
     value: 12,
-    icon: 'img:/imgs/dices/d12.webp'
+    icon: "img:/imgs/dices/d12.webp"
   },
   {
-    label: 'D20',
+    label: "D20",
     value: 20,
-    icon: 'img:/imgs/dices/d20.webp'
+    icon: "img:/imgs/dices/d20.webp"
   }
 ];
 
-const template_list = ref<string[]>(template.templates.map((template) => template.name));
+const template_list = ref<string[]>(
+  template.templates.map(template => template.name)
+);
 
-const consumable_dices = ref({ dice_size: { label: 'D4', value: 4 }, n_of_dices: 3 });
-const equippable_dices = ref({ dice_size: { label: 'D4', value: 4 }, n_of_dices: 3 });
+const consumable_dices = ref({
+  dice_size: { label: "D4", value: 4 },
+  n_of_dices: 3
+});
+const equippable_dices = ref({
+  dice_size: { label: "D4", value: 4 },
+  n_of_dices: 3
+});
 const levels = ref({ min: 0, max: 25 });
 
 const tmpFilters = ref({
@@ -146,7 +160,9 @@ const restoreSettings = () => {
     n_of_dices: equippable_dices.value.n_of_dices
   };
   tmpFilters.value.levels = levels.value;
-  tmpFilters.value.shop_template = cloneDeep(template.templates[template.activeTemplate]);
+  tmpFilters.value.shop_template = cloneDeep(
+    template.templates[template.activeTemplate]
+  );
 };
 
 const generateShop = debounce(async function () {
@@ -201,28 +217,33 @@ const generateShop = debounce(async function () {
       body.shop_template = tmpFilters.value.shop_template.name;
     } else {
       body.source_filter = tmpFilters.value.shop_template.source_filter;
-      body.trait_blacklist_filter = tmpFilters.value.shop_template.trait_blacklist_filter;
-      body.trait_whitelist_filter = tmpFilters.value.shop_template.trait_whitelist_filter;
+      body.trait_blacklist_filter =
+        tmpFilters.value.shop_template.trait_blacklist_filter;
+      body.trait_whitelist_filter =
+        tmpFilters.value.shop_template.trait_whitelist_filter;
       body.rarity_filter = tmpFilters.value.shop_template.rarity_filter;
       body.type_filter = tmpFilters.value.shop_template.type_filter;
       if (tmpFilters.value.shop_template.armor_percentage! > 0) {
         body.armor_percentage = tmpFilters.value.shop_template.armor_percentage;
       }
       if (tmpFilters.value.shop_template.equipment_percentage! > 0) {
-        body.equipment_percentage = tmpFilters.value.shop_template.equipment_percentage;
+        body.equipment_percentage =
+          tmpFilters.value.shop_template.equipment_percentage;
       }
       if (tmpFilters.value.shop_template.shield_percentage! > 0) {
-        body.shield_percentage = tmpFilters.value.shop_template.shield_percentage;
+        body.shield_percentage =
+          tmpFilters.value.shop_template.shield_percentage;
       }
       if (tmpFilters.value.shop_template.weapon_percentage! > 0) {
-        body.weapon_percentage = tmpFilters.value.shop_template.weapon_percentage;
+        body.weapon_percentage =
+          tmpFilters.value.shop_template.weapon_percentage;
       }
     }
   }
   try {
     const randomShop = await shopGenerator(settings.game, body);
     if (randomShop === undefined) {
-      throw new TypeError('Error generating random shop');
+      throw new TypeError("Error generating random shop");
     }
     if (randomShop.count > 0 && randomShop.results) {
       items.clearShop();
@@ -232,9 +253,9 @@ const generateShop = debounce(async function () {
           id: randomShop.results[i]!.core_item.id,
           archive_link:
             currentAon.value +
-            '?q=' +
+            "?q=" +
             encodeURIComponent(randomShop.results[i]!.core_item.name) +
-            '&type=eqs',
+            "&type=eqs",
           name: randomShop.results[i]!.core_item.name,
           level: randomShop.results[i]!.core_item.level,
           type: randomShop.results[i]!.core_item.item_type,
@@ -246,8 +267,8 @@ const generateShop = debounce(async function () {
     } else {
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'No shop could be generated from the current filters',
+        type: "warning",
+        message: "No shop could be generated from the current filters",
         icon: matPriorityHigh
       });
     }
@@ -286,8 +307,8 @@ const validateNumber = (consumables: boolean) => {
 const resetTemplateDialog = () => {
   newTemplate.value = {
     default: false,
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     source_filter: [],
     trait_blacklist_filter: [],
     trait_whitelist_filter: [],
@@ -306,14 +327,14 @@ const resetTemplateDialog = () => {
   equipmentOn.value = true;
   shieldOn.value = true;
   weaponOn.value = true;
-  tab.value = 'General';
+  tab.value = "General";
 };
 
 const addTemplate = async () => {
   try {
     newNameInput.value.validate();
     if (newNameInput.value.hasError) {
-      tab.value = 'General';
+      tab.value = "General";
       await nextTick(() => {
         newNameInput.value.validate();
       });
@@ -331,21 +352,23 @@ const addTemplate = async () => {
         }
       }
       if (armorOn.value) {
-        newTemplate.value.type_filter?.push('Armor');
+        newTemplate.value.type_filter?.push("Armor");
       }
       if (equipmentOn.value) {
-        newTemplate.value.type_filter?.push('Equipment');
+        newTemplate.value.type_filter?.push("Equipment");
       }
       if (shieldOn.value) {
-        newTemplate.value.type_filter?.push('Shield');
+        newTemplate.value.type_filter?.push("Shield");
       }
       if (weaponOn.value) {
-        newTemplate.value.type_filter?.push('Weapon');
+        newTemplate.value.type_filter?.push("Weapon");
       }
-      newTemplate.value.type_filter?.push('Consumable');
+      newTemplate.value.type_filter?.push("Consumable");
       template.addTemplate(newTemplate.value);
-      template_list.value = template.templates.map((template) => template.name);
-      tmpFilters.value.shop_template = cloneDeep(template.templates[template.activeTemplate]);
+      template_list.value = template.templates.map(template => template.name);
+      tmpFilters.value.shop_template = cloneDeep(
+        template.templates[template.activeTemplate]
+      );
       saveChanges();
       newTemplateDialog.value = false;
       resetTemplateDialog();
@@ -360,12 +383,16 @@ const duplicateTemplate = () => {
     duplicateNameInput.value.validate();
     if (!duplicateNameInput.value.hasError) {
       const newName = newTemplate.value.name;
-      newTemplate.value = cloneDeep(template.templates[template.activeTemplate]!);
+      newTemplate.value = cloneDeep(
+        template.templates[template.activeTemplate]!
+      );
       newTemplate.value.name = newName;
       newTemplate.value.default = false;
       template.addTemplate(newTemplate.value);
-      template_list.value = template.templates.map((template) => template.name);
-      tmpFilters.value.shop_template = cloneDeep(template.templates[template.activeTemplate]);
+      template_list.value = template.templates.map(template => template.name);
+      tmpFilters.value.shop_template = cloneDeep(
+        template.templates[template.activeTemplate]
+      );
       saveChanges();
       duplicateTemplateDialog.value = false;
       resetTemplateDialog();
@@ -377,10 +404,10 @@ const duplicateTemplate = () => {
 
 const openEditDialog = async () => {
   newTemplate.value = cloneDeep(template.templates[template.activeTemplate]!);
-  armorOn.value = newTemplate.value.type_filter!.includes('Armor');
-  equipmentOn.value = newTemplate.value.type_filter!.includes('Equipment');
-  shieldOn.value = newTemplate.value.type_filter!.includes('Shield');
-  weaponOn.value = newTemplate.value.type_filter!.includes('Weapon');
+  armorOn.value = newTemplate.value.type_filter!.includes("Armor");
+  equipmentOn.value = newTemplate.value.type_filter!.includes("Equipment");
+  shieldOn.value = newTemplate.value.type_filter!.includes("Shield");
+  weaponOn.value = newTemplate.value.type_filter!.includes("Weapon");
   for (const trait of selectedTraits.value) {
     trait.state = null;
   }
@@ -388,10 +415,10 @@ const openEditDialog = async () => {
   for (const trait of newTemplate.value.trait_blacklist_filter ?? []) {
     selectedTraits.value.push({
       label: trait
-        .split('-')
-        .map((str) => capitalize(str))
-        .join(' ')
-        .replace('Additive', 'Additive '),
+        .split("-")
+        .map(str => capitalize(str))
+        .join(" ")
+        .replace("Additive", "Additive "),
       value: trait,
       state: false
     });
@@ -399,10 +426,10 @@ const openEditDialog = async () => {
   for (const trait of newTemplate.value.trait_whitelist_filter ?? []) {
     selectedTraits.value.push({
       label: trait
-        .split('-')
-        .map((str) => capitalize(str))
-        .join(' ')
-        .replace('Additive', 'Additive '),
+        .split("-")
+        .map(str => capitalize(str))
+        .join(" ")
+        .replace("Additive", "Additive "),
       value: trait,
       state: true
     });
@@ -423,7 +450,7 @@ const editTemplate = async () => {
   try {
     editNameInput.value.validate();
     if (editNameInput.value.hasError) {
-      tab.value = 'General';
+      tab.value = "General";
       await nextTick(() => {
         editNameInput.value.validate();
       });
@@ -446,22 +473,27 @@ const editTemplate = async () => {
       newTemplate.value.trait_blacklist_filter = newBlacklist;
       const newTypes: string[] = [];
       if (armorOn.value) {
-        newTypes.push('Armor');
+        newTypes.push("Armor");
       }
       if (equipmentOn.value) {
-        newTypes.push('Equipment');
+        newTypes.push("Equipment");
       }
       if (shieldOn.value) {
-        newTypes.push('Shield');
+        newTypes.push("Shield");
       }
       if (weaponOn.value) {
-        newTypes.push('Weapon');
+        newTypes.push("Weapon");
       }
-      newTypes.push('Consumable');
+      newTypes.push("Consumable");
       newTemplate.value.type_filter = newTypes;
-      template.updateTemplate(template.templates[template.activeTemplate]!.name, newTemplate.value);
-      template_list.value = template.templates.map((template) => template.name);
-      tmpFilters.value.shop_template = cloneDeep(template.templates[template.activeTemplate]);
+      template.updateTemplate(
+        template.templates[template.activeTemplate]!.name,
+        newTemplate.value
+      );
+      template_list.value = template.templates.map(template => template.name);
+      tmpFilters.value.shop_template = cloneDeep(
+        template.templates[template.activeTemplate]
+      );
       saveChanges();
       editTemplateDialog.value = false;
       resetTemplateDialog();
@@ -473,8 +505,10 @@ const editTemplate = async () => {
 
 const removeTemplate = () => {
   template.removeTemplate();
-  template_list.value = template.templates.map((template) => template.name);
-  tmpFilters.value.shop_template = cloneDeep(template.templates[template.activeTemplate]);
+  template_list.value = template.templates.map(template => template.name);
+  tmpFilters.value.shop_template = cloneDeep(
+    template.templates[template.activeTemplate]
+  );
   saveChanges();
   removeTemplateDialog.value = false;
   resetTemplateDialog();
@@ -482,20 +516,32 @@ const removeTemplate = () => {
 
 const changeActiveTemplate = (selected: string) => {
   template.changeActiveTemplate(template.getTemplateIndex(selected));
-  tmpFilters.value.shop_template = cloneDeep(template.templates[template.activeTemplate]);
+  tmpFilters.value.shop_template = cloneDeep(
+    template.templates[template.activeTemplate]
+  );
 };
 
 const saveChanges = () => {
   consumable_dices.value = tmpFilters.value.consumable_dices;
   equippable_dices.value = tmpFilters.value.equippable_dices;
   levels.value = tmpFilters.value.levels;
-  template.changeActiveTemplate(template.getTemplateIndex(tmpFilters.value.shop_template!.name));
-  const customTemplates = template.templates.filter((template) => template.default === false);
-  localStorage.setItem('templates', JSON.stringify(customTemplates));
+  template.changeActiveTemplate(
+    template.getTemplateIndex(tmpFilters.value.shop_template!.name)
+  );
+  const customTemplates = template.templates.filter(
+    template => template.default === false
+  );
+  localStorage.setItem("templates", JSON.stringify(customTemplates));
 };
 
-const toggleTraits = (opt: { label: string; value: string; state: boolean | null }) => {
-  const index = selectedTraits.value.findIndex((trait) => trait.label === opt.label);
+const toggleTraits = (opt: {
+  label: string;
+  value: string;
+  state: boolean | null;
+}) => {
+  const index = selectedTraits.value.findIndex(
+    trait => trait.label === opt.label
+  );
   if (index === -1) {
     selectedTraits.value.push(opt);
   } else if (opt.state === null) {
@@ -508,13 +554,17 @@ const toggleTraits = (opt: { label: string; value: string; state: boolean | null
 const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.itemFilters.sources = sourceFilter.filter((v) => v.toLowerCase().includes(filter));
+    filters.itemFilters.sources = sourceFilter.filter(v =>
+      v.toLowerCase().includes(filter)
+    );
   });
 };
 
 const filterTraitsFn = (val: string, update: (fn: () => void) => void) => {
   const filter = val.toLowerCase();
-  const filtered = traitFilter.filter((v) => v.label.toLowerCase().includes(filter));
+  const filtered = traitFilter.filter(v =>
+    v.label.toLowerCase().includes(filter)
+  );
   update(() => {
     traitOptions.value = filtered;
   });
@@ -524,7 +574,12 @@ defineExpose({ generateShop });
 </script>
 
 <template>
-  <q-btn id="shepherd-1" push label="Generator Settings" @click="restoreSettings" />
+  <q-btn
+    id="shepherd-1"
+    push
+    label="Generator Settings"
+    @click="restoreSettings"
+  />
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center">
@@ -545,7 +600,9 @@ defineExpose({ generateShop });
       <q-card-section style="max-height: 46rem">
         <div class="tw:space-y-3">
           <div class="tw:flex">
-            <q-badge outline class="tw:grow tw:text-sm!"> Equippable items: </q-badge>
+            <q-badge outline class="tw:grow tw:text-sm!">
+              Equippable items:
+            </q-badge>
             <q-toggle
               v-model="fixedEquipmentDice"
               label="Fixed number?"
@@ -586,7 +643,9 @@ defineExpose({ generateShop });
             </q-select>
           </div>
           <div class="tw:flex">
-            <q-badge outline class="tw:grow tw:text-sm!"> Consumable items: </q-badge>
+            <q-badge outline class="tw:grow tw:text-sm!">
+              Consumable items:
+            </q-badge>
             <q-toggle
               v-model="fixedConsumableDice"
               label="Fixed number?"
@@ -653,7 +712,9 @@ defineExpose({ generateShop });
               :options="template_list"
               label="Shop template"
               class="tw:w-52 tw:mx-4"
-              @update:model-value="changeActiveTemplate(tmpFilters.shop_template!.name)"
+              @update:model-value="
+                changeActiveTemplate(tmpFilters.shop_template!.name)
+              "
             >
               <q-tooltip
                 class="text-caption text-center tw:max-w-72 tw:text-wrap tw:text-ellipsis tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -665,7 +726,13 @@ defineExpose({ generateShop });
                 {{ tmpFilters.shop_template!.description }}
               </q-tooltip>
             </q-select>
-            <q-icon flat round size="xs" :name="biQuestionCircle" class="tw:m-auto tw:mr-2">
+            <q-icon
+              flat
+              round
+              size="xs"
+              :name="biQuestionCircle"
+              class="tw:m-auto tw:mr-2"
+            >
               <q-tooltip
                 class="text-caption text-left tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 anchor="top middle"
@@ -729,7 +796,10 @@ defineExpose({ generateShop });
                 </q-tabs>
                 <q-tab-panels v-model="tab" animated>
                   <q-tab-panel name="General" class="tw:px-3!">
-                    <q-card-section class="tw:space-y-3" style="max-height: 46rem">
+                    <q-card-section
+                      class="tw:space-y-3"
+                      style="max-height: 46rem"
+                    >
                       <q-input
                         ref="newNameInput"
                         v-model="newTemplate.name"
@@ -744,7 +814,7 @@ defineExpose({ generateShop });
                           (val: string) => !!val || 'Field is required',
                           (val: string) =>
                             !template_list.some(
-                              (name) => name.toLowerCase() === val.toLowerCase()
+                              name => name.toLowerCase() === val.toLowerCase()
                             ) || 'This template already exists'
                         ]"
                       />
@@ -814,7 +884,9 @@ defineExpose({ generateShop });
                               <q-toggle
                                 v-model="scope.opt.state"
                                 toggle-indeterminate
-                                :color="scope.opt.state === true ? 'positive' : 'red'"
+                                :color="
+                                  scope.opt.state === true ? 'positive' : 'red'
+                                "
                                 :keep-color="scope.opt.state !== null"
                                 :checked-icon="biCheck"
                                 :unchecked-icon="biX"
@@ -843,7 +915,14 @@ defineExpose({ generateShop });
                         outlined
                         clearable
                         options-dense
-                        :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
+                        :options="
+                          Object.freeze([
+                            'Common',
+                            'Uncommon',
+                            'Rare',
+                            'Unique'
+                          ])
+                        "
                         use-input
                         input-debounce="0"
                         label="Rarity"
@@ -869,7 +948,7 @@ defineExpose({ generateShop });
                           (val: string) => !!val || 'Field is required',
                           (val: string) =>
                             !template_list.some(
-                              (name) => name.toLowerCase() === val.toLowerCase()
+                              name => name.toLowerCase() === val.toLowerCase()
                             ) || 'This template already exists'
                         ]"
                       />
@@ -898,7 +977,9 @@ defineExpose({ generateShop });
                               newTemplate.weapon_percentage!
                             "
                             :step="5"
-                            :label-value="'Min: ' + newTemplate.armor_percentage + '%'"
+                            :label-value="
+                              'Min: ' + newTemplate.armor_percentage + '%'
+                            "
                             :disable="!armorOn"
                             class="tw:px-3"
                             style="min-width: 236px"
@@ -931,7 +1012,9 @@ defineExpose({ generateShop });
                               newTemplate.weapon_percentage!
                             "
                             :step="5"
-                            :label-value="'Min: ' + newTemplate.equipment_percentage + '%'"
+                            :label-value="
+                              'Min: ' + newTemplate.equipment_percentage + '%'
+                            "
                             :disable="!equipmentOn"
                             class="tw:px-3"
                             style="min-width: 236px"
@@ -964,7 +1047,9 @@ defineExpose({ generateShop });
                               newTemplate.weapon_percentage!
                             "
                             :step="5"
-                            :label-value="'Min: ' + newTemplate.shield_percentage + '%'"
+                            :label-value="
+                              'Min: ' + newTemplate.shield_percentage + '%'
+                            "
                             :disable="!shieldOn"
                             class="tw:px-3"
                             style="min-width: 236px"
@@ -997,7 +1082,9 @@ defineExpose({ generateShop });
                               newTemplate.shield_percentage!
                             "
                             :step="5"
-                            :label-value="'Min: ' + newTemplate.weapon_percentage + '%'"
+                            :label-value="
+                              'Min: ' + newTemplate.weapon_percentage + '%'
+                            "
                             :disable="!weaponOn"
                             class="tw:px-3"
                             style="min-width: 236px"
@@ -1081,8 +1168,9 @@ defineExpose({ generateShop });
                     :rules="[
                       (val: string) => !!val || 'Field is required',
                       (val: string) =>
-                        !template_list.some((name) => name.toLowerCase() === val.toLowerCase()) ||
-                        'This template already exists'
+                        !template_list.some(
+                          name => name.toLowerCase() === val.toLowerCase()
+                        ) || 'This template already exists'
                     ]"
                     @keyup.enter="duplicateTemplate"
                   />
@@ -1160,7 +1248,10 @@ defineExpose({ generateShop });
                 </q-tabs>
                 <q-tab-panels v-model="tab" animated>
                   <q-tab-panel name="General" class="tw:px-3!">
-                    <q-card-section class="tw:space-y-3" style="max-height: 46rem">
+                    <q-card-section
+                      class="tw:space-y-3"
+                      style="max-height: 46rem"
+                    >
                       <q-input
                         ref="editNameInput"
                         v-model="newTemplate.name"
@@ -1175,10 +1266,11 @@ defineExpose({ generateShop });
                           (val: string) => !!val || 'Field is required',
                           (val: string) =>
                             !template_list.some(
-                              (name) =>
+                              name =>
                                 name.toLowerCase() === val.toLowerCase() &&
                                 newTemplate.name !==
-                                  template.templates[template.activeTemplate]!.name
+                                  template.templates[template.activeTemplate]!
+                                    .name
                             ) || 'This template already exists'
                         ]"
                       />
@@ -1249,7 +1341,9 @@ defineExpose({ generateShop });
                               <q-toggle
                                 v-model="scope.opt.state"
                                 toggle-indeterminate
-                                :color="scope.opt.state === true ? 'positive' : 'red'"
+                                :color="
+                                  scope.opt.state === true ? 'positive' : 'red'
+                                "
                                 :keep-color="scope.opt.state !== null"
                                 :checked-icon="biCheck"
                                 :unchecked-icon="biX"
@@ -1278,7 +1372,14 @@ defineExpose({ generateShop });
                         outlined
                         clearable
                         options-dense
-                        :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
+                        :options="
+                          Object.freeze([
+                            'Common',
+                            'Uncommon',
+                            'Rare',
+                            'Unique'
+                          ])
+                        "
                         use-input
                         input-debounce="0"
                         label="Rarity"
@@ -1304,10 +1405,11 @@ defineExpose({ generateShop });
                           (val: string) => !!val || 'Field is required',
                           (val: string) =>
                             !template_list.some(
-                              (name) =>
+                              name =>
                                 name.toLowerCase() === val.toLowerCase() &&
                                 newTemplate.name !==
-                                  template.templates[template.activeTemplate]!.name
+                                  template.templates[template.activeTemplate]!
+                                    .name
                             ) || 'This template already exists'
                         ]"
                       />
@@ -1336,7 +1438,9 @@ defineExpose({ generateShop });
                               newTemplate.weapon_percentage!
                             "
                             :step="5"
-                            :label-value="'Min: ' + newTemplate.armor_percentage + '%'"
+                            :label-value="
+                              'Min: ' + newTemplate.armor_percentage + '%'
+                            "
                             :disable="!armorOn"
                             class="tw:px-3"
                             style="min-width: 236px"
@@ -1369,7 +1473,9 @@ defineExpose({ generateShop });
                               newTemplate.weapon_percentage!
                             "
                             :step="5"
-                            :label-value="'Min: ' + newTemplate.equipment_percentage + '%'"
+                            :label-value="
+                              'Min: ' + newTemplate.equipment_percentage + '%'
+                            "
                             :disable="!equipmentOn"
                             class="tw:px-3"
                             style="min-width: 236px"
@@ -1402,7 +1508,9 @@ defineExpose({ generateShop });
                               newTemplate.weapon_percentage!
                             "
                             :step="5"
-                            :label-value="'Min: ' + newTemplate.shield_percentage + '%'"
+                            :label-value="
+                              'Min: ' + newTemplate.shield_percentage + '%'
+                            "
                             :disable="!shieldOn"
                             class="tw:px-3"
                             style="min-width: 236px"
@@ -1435,7 +1543,9 @@ defineExpose({ generateShop });
                               newTemplate.shield_percentage!
                             "
                             :step="5"
-                            :label-value="'Min: ' + newTemplate.weapon_percentage + '%'"
+                            :label-value="
+                              'Min: ' + newTemplate.weapon_percentage + '%'
+                            "
                             :disable="!weaponOn"
                             class="tw:px-3"
                             style="min-width: 236px"
@@ -1581,7 +1691,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type='number'] {
+input[type="number"] {
   appearance: textfield;
 }
 </style>

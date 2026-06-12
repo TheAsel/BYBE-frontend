@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-import type { template, template_data } from 'src/types/template';
+import type { template, template_data } from "@/types/template";
 
-export const templateStore = defineStore('template', {
+export const templateStore = defineStore("template", {
   state: () => ({
     templates: [] as template[],
     activeTemplate: 0,
@@ -10,7 +10,9 @@ export const templateStore = defineStore('template', {
   }),
   actions: {
     getTemplateIndex(templateName: string): number {
-      const index = this.templates.map((template) => template.name).indexOf(templateName);
+      const index = this.templates
+        .map(template => template.name)
+        .indexOf(templateName);
       return index;
     },
     updateTemplate(oldName: string, newTemplate: template) {
@@ -53,7 +55,7 @@ export const templateStore = defineStore('template', {
         newTemplates.push(template);
       }
       this.templates = newTemplates;
-      this.changeActiveTemplate(this.getTemplateIndex('General'));
+      this.changeActiveTemplate(this.getTemplateIndex("General"));
     },
     addTemplate(newTemplate: template) {
       this.templates.push(newTemplate);
@@ -61,7 +63,7 @@ export const templateStore = defineStore('template', {
     },
     removeTemplate() {
       this.templates.splice(this.activeTemplate, 1);
-      this.changeActiveTemplate(this.getTemplateIndex('General'));
+      this.changeActiveTemplate(this.getTemplateIndex("General"));
     }
   }
 });

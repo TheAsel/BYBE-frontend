@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import BestiarySheet from 'src/components/encounter/EncounterSheet/BestiarySheet.vue';
-import HazardSheet from 'src/components/encounter/EncounterSheet/HazardSheet.vue';
-import { encounterStore } from 'src/stores/encounter';
+import BestiarySheet from "@/components/encounter/EncounterSheet/BestiarySheet.vue";
+import HazardSheet from "@/components/encounter/EncounterSheet/HazardSheet.vue";
+import { encounterStore } from "@/stores/encounter";
 
 const encounter = encounterStore();
 </script>
@@ -14,15 +14,22 @@ const encounter = encounterStore();
       <q-scroll-area class="tw:h-full">
         <div
           v-if="
-            (encounter.selectedCreature && encounter.selectedCreature.core_data) ||
+            (encounter.selectedCreature &&
+              encounter.selectedCreature.core_data) ||
             (encounter.selectedHazard && encounter.selectedHazard.core_hazard)
           "
           class="q-gutter-y-xs tw:p-4 show-print"
         >
           <BestiarySheet
-            v-if="encounter.selectedCreature && encounter.selectedCreature.core_data"
+            v-if="
+              encounter.selectedCreature && encounter.selectedCreature.core_data
+            "
           />
-          <HazardSheet v-if="encounter.selectedHazard && encounter.selectedHazard.core_hazard" />
+          <HazardSheet
+            v-if="
+              encounter.selectedHazard && encounter.selectedHazard.core_hazard
+            "
+          />
         </div>
         <div v-else class="tw:text-center tw:text-lg tw:pt-[38vh]">
           Click on an element to display its description
@@ -34,7 +41,7 @@ const encounter = encounterStore();
 
 <style>
 .action-glyph {
-  font-family: 'Pathfinder2eActions', sans-serif;
+  font-family: "Pathfinder2eActions", sans-serif;
   font-size: 24px;
   line-height: calc(2 / 1.5);
 }
@@ -42,7 +49,7 @@ const encounter = encounterStore();
 
 <style lang="scss">
 .encounter-sheet {
-  font-family: 'Good Pro', sans-serif;
+  font-family: "Good Pro", sans-serif;
 }
 
 .encounter-page {

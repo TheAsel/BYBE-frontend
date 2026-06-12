@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { matPrint, matPriorityHigh } from '@quasar/extras/material-icons';
-import { useHead } from '@unhead/vue';
-import { isNull } from 'lodash-es';
-import { useQuasar } from 'quasar';
-import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { matPrint, matPriorityHigh } from "@quasar/extras/material-icons";
+import { useHead } from "@unhead/vue";
+import { isNull } from "lodash-es";
+import { useQuasar } from "quasar";
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-import { requestItemId } from 'src/api/shop-api-calls';
-import ShopSheet from 'src/components/shop/ShopSheet.vue';
-import { itemsStore } from 'src/stores/items';
-import { settingsStore } from 'src/stores/settings';
+import { requestItemId } from "@/api/shop-api-calls";
+import ShopSheet from "@/components/shop/ShopSheet.vue";
+import { itemsStore } from "@/stores/items";
+import { settingsStore } from "@/stores/settings";
 
-import type { item } from 'src/types/item';
+import type { item } from "@/types/item";
 
-const title = ref('Item Sheet - BYBE');
+const title = ref("Item Sheet - BYBE");
 
 useHead({
   title: title,
   link: [
     {
-      rel: 'canonical',
-      href: 'https://bybe.app/item'
+      rel: "canonical",
+      href: "https://bybe.app/item"
     }
   ]
 });
@@ -38,27 +38,27 @@ try {
   if (itemId !== undefined && !Number.isNaN(itemId)) {
     itemData = await requestItemId(settings.game, itemId);
     if (isNull(itemData) || itemData === undefined) {
-      console.error('Missing item ID');
+      console.error("Missing item ID");
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Missing item ID',
+        type: "warning",
+        message: "Missing item ID",
         icon: matPriorityHigh
       });
-      await router.push({ name: 'shop', query: { game: settings.game } });
+      await router.push({ name: "shop", query: { game: settings.game } });
     } else {
-      title.value = itemData?.core_item.name + ' - BYBE';
+      title.value = itemData?.core_item.name + " - BYBE";
       items.setSelectedItem(itemData);
     }
   } else {
-    console.error('Invalid item ID');
+    console.error("Invalid item ID");
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Invalid item ID',
+      type: "warning",
+      message: "Invalid item ID",
       icon: matPriorityHigh
     });
-    await router.push({ name: 'shop', query: { game: settings.game } });
+    await router.push({ name: "shop", query: { game: settings.game } });
   }
 } catch (error) {
   console.error(error);
@@ -76,6 +76,12 @@ const printPage = () => {
     :offset="[18, 18]"
     class="tw:z-10 only-screen tw:opacity-85"
   >
-    <q-btn fab :icon="matPrint" color="primary" aria-label="Print item sheet" @click="printPage" />
+    <q-btn
+      fab
+      :icon="matPrint"
+      color="primary"
+      aria-label="Print item sheet"
+      @click="printPage"
+    />
   </q-page-sticky>
 </template>

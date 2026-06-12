@@ -1,14 +1,14 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-import type { games } from 'src/types/filters';
+import type { games } from "@/types/filters";
 
-export const settingsStore = defineStore('settings', {
+export const settingsStore = defineStore("settings", {
   state: () => ({
     hidden_nav: true,
     experimental_features: false,
     is_aon_links_on: false,
-    game_version: 'Any',
-    game: '' as games
+    game_version: "Any",
+    game: "" as games
   }),
   actions: {
     setHiddenNav(newHiddenNav: boolean) {

@@ -1,12 +1,12 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-import type { encounter } from 'src/types/encounter';
+import type { encounter } from "@/types/encounter";
 
-export const infoStore = defineStore('info', {
+export const infoStore = defineStore("info", {
   state: () => ({
     info: {
       experience: 0,
-      challenge: 'Trivial',
+      challenge: "Trivial",
       encounter_exp_levels: {
         Moderate: 0,
         Trivial: 0,
@@ -15,23 +15,23 @@ export const infoStore = defineStore('info', {
         Severe: 0,
         Impossible: 0
       },
-      color: 'lime'
+      color: "lime"
     }
   }),
   actions: {
     setInfo(info: encounter) {
       const colorMap = {
-        Trivial: 'lime',
-        Low: 'green',
-        Moderate: 'amber',
-        Severe: 'orange',
-        Extreme: 'red',
-        Impossible: 'purple-10'
+        Trivial: "lime",
+        Low: "green",
+        Moderate: "amber",
+        Severe: "orange",
+        Extreme: "red",
+        Impossible: "purple-10"
       } as const;
 
       this.info = {
         ...info,
-        color: colorMap[info.challenge] ?? 'lime'
+        color: colorMap[info.challenge] ?? "lime"
       };
     }
   }

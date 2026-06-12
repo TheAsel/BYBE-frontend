@@ -1,61 +1,61 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 
-import { requestRepoInfo } from 'src/api/github-api';
-import HeaderBar from 'src/components/HeaderBar.vue';
-import { settingsStore } from 'src/stores/settings';
+import { requestRepoInfo } from "@/api/github-api";
+import HeaderBar from "@/components/HeaderBar.vue";
+import { settingsStore } from "@/stores/settings";
 
-import { version } from '../../package.json';
+import { version } from "@/../package.json";
 
 const newestVersion = ref(version);
-const isApp = process.env.IS_APP === 'true';
-const repoUrl = process.env.REPO_URL;
-const latestRelease = 'https://github.com/' + repoUrl + '/releases/latest';
+const isApp = import.meta.env.IS_APP;
+const repoUrl = import.meta.env.REPO_URL;
+const latestRelease = "https://github.com/" + repoUrl + "/releases/latest";
 
 const settings = settingsStore();
 
 const route = useRoute();
 const isDownload = computed(() => {
-  return route.path === '/download';
+  return route.path === "/download";
 });
 
 const queryGame: string = String(route.query.game).toLowerCase();
-if (queryGame === 'sf') {
-  settings.setGame('sf');
+if (queryGame === "sf") {
+  settings.setGame("sf");
 } else {
-  settings.setGame('pf');
+  settings.setGame("pf");
 }
 
 const backgroundStyle = computed(() => {
   let imageUrl: string;
 
   if (isDownload.value) {
-    imageUrl = '/imgs/backgrounds/mixed-background.webp';
+    imageUrl = "/imgs/backgrounds/mixed-background.webp";
   } else {
     imageUrl =
-      settings.game === 'sf'
-        ? '/imgs/backgrounds/sf2e-background.webp'
-        : '/imgs/backgrounds/pf2e-background.webp';
+      settings.game === "sf"
+        ? "/imgs/backgrounds/sf2e-background.webp"
+        : "/imgs/backgrounds/pf2e-background.webp";
   }
   return {
     backgroundImage: `url('${imageUrl}')`,
-    backgroundPosition: 'center',
-    backgroundSize: 'cover',
-    position: 'absolute'
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+    position: "absolute"
   };
 });
 
 try {
-  if (process.env.REPO_URL) {
-    const repoInfo = await requestRepoInfo(process.env.REPO_URL);
+  if (import.meta.env.REPO_URL) {
+    const repoInfo = await requestRepoInfo(import.meta.env.REPO_URL);
     if (repoInfo) {
       newestVersion.value = repoInfo.name.substring(1);
     } else {
-      throw new Error('Error fetching repository info');
+      throw new Error("Error fetching repository info");
     }
   } else {
-    throw new Error('.env variable REPO_URL not set');
+    throw new Error(".env variable REPO_URL not set");
   }
 } catch (error) {
   console.error(error);
@@ -64,7 +64,9 @@ try {
 
 <template>
   <q-layout view="hHh lpr fFf" :style="backgroundStyle" class="tw:h-full">
-    <HeaderBar class="tw:backdrop-blur-2xl tw:bg-white/90! tw:dark:bg-black/70!" />
+    <HeaderBar
+      class="tw:backdrop-blur-2xl tw:bg-white/90! tw:dark:bg-black/70!"
+    />
 
     <q-page-container class="tw:flex tw:flex-col tw:h-full">
       <router-view />
@@ -73,7 +75,9 @@ try {
       class="tw:text-center tw:py-2 tw:my-0! tw:border-t tw:border-gray-200 tw:dark:border-gray-700 tw:backdrop-blur-2xl tw:bg-white/90! tw:dark:bg-black/70!"
     >
       <div class="tw:max-w-340 tw:mx-auto tw:px-4 tw:sm:px-6 tw:lg:px-8">
-        <p class="tw:text-sm tw:text-neutral-500 tw:dark:text-neutral-400 tw:mb-0!">
+        <p
+          class="tw:text-sm tw:text-neutral-500 tw:dark:text-neutral-400 tw:mb-0!"
+        >
           BYBE - v{{ version }}
           <a
             v-if="version !== newestVersion && !isApp"

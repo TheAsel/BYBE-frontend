@@ -8,12 +8,12 @@ import {
   biTrash,
   biUnlock,
   biXLg
-} from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { debounce } from 'lodash-es';
-import { copyToClipboard, useQuasar } from 'quasar';
-import { ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+} from "@quasar/extras/bootstrap-icons";
+import { matPriorityHigh } from "@quasar/extras/material-icons";
+import { debounce } from "lodash-es";
+import { copyToClipboard, useQuasar } from "quasar";
+import { ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import {
   decodeNpcLink,
@@ -21,14 +21,14 @@ import {
   npcLevelGenerator,
   npcNamesGenerator,
   npcParametersGenerator
-} from 'src/api/npc-api-calls';
-import { npcStore } from 'src/stores/npc';
-import { npcParametersStore } from 'src/stores/npcParameters';
-import { settingsStore } from 'src/stores/settings';
+} from "@/api/npc-api-calls";
+import { npcStore } from "@/stores/npc";
+import { npcParametersStore } from "@/stores/npcParameters";
+import { settingsStore } from "@/stores/settings";
 
-import type { npc, npc_list, shareable_npc } from 'src/types/npcs';
+import type { npc, npc_list, shareable_npc } from "@/types/npcs";
 
-const isApp = process.env.IS_APP === 'true';
+const isApp = import.meta.env.IS_APP;
 
 const route = useRoute();
 const router = useRouter();
@@ -40,25 +40,25 @@ const settings = settingsStore();
 
 const importNpcDialog = ref(false);
 const importNameInput = ref();
-const importNpcName = ref('');
+const importNpcName = ref("");
 const importNpcData = ref<shareable_npc>();
 
 const shareDialog = ref(false);
-const shareUrl = ref('');
+const shareUrl = ref("");
 const isGenerating = ref(false);
 
 const newNpcDialog = ref(false);
 const npcNameInput = ref();
-const newNpcName = ref('');
+const newNpcName = ref("");
 
 const renameNpcDialog = ref(false);
 const npcRenameInput = ref();
-const newNpcRename = ref('');
+const newNpcRename = ref("");
 
 const removeNpcDialog = ref(false);
 
 const tmpNpc = ref<npc_list>(npcs.npcs[npcs.activeNpc]!);
-const npcList = ref<string[]>(npcs.npcs.map((npc) => npc.name));
+const npcList = ref<string[]>(npcs.npcs.map(npc => npc.name));
 
 tmpNpc.value = {
   name: npcs.npcs[npcs.activeNpc]!.name,
@@ -77,67 +77,77 @@ watch(npcs, () => {
 });
 
 const generateParameterNpc = debounce(async function (
-  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level' | 'culture'
+  parameter:
+    | "ancestry"
+    | "class"
+    | "gender"
+    | "job"
+    | "nickname"
+    | "level"
+    | "culture"
 ) {
   if (
-    (!npcs.locks.ancestry && parameter === 'ancestry') ||
-    (!npcs.locks.culture && parameter === 'culture') ||
-    (!npcs.locks.class && parameter === 'class') ||
-    (!npcs.locks.gender && parameter === 'gender') ||
-    (!npcs.locks.job && parameter === 'job') ||
-    (!npcs.locks.nickname && parameter === 'nickname') ||
-    (!npcs.locks.level && parameter === 'level')
+    (!npcs.locks.ancestry && parameter === "ancestry") ||
+    (!npcs.locks.culture && parameter === "culture") ||
+    (!npcs.locks.class && parameter === "class") ||
+    (!npcs.locks.gender && parameter === "gender") ||
+    (!npcs.locks.job && parameter === "job") ||
+    (!npcs.locks.nickname && parameter === "nickname") ||
+    (!npcs.locks.level && parameter === "level")
   ) {
     npcs.setGenerating(true);
 
     try {
-      if (parameter === 'level') {
+      if (parameter === "level") {
         const newLevel = await npcLevelGenerator(settings.game);
         if (newLevel === undefined) {
-          throw new TypeError('Error generating npc level');
+          throw new TypeError("Error generating npc level");
         }
         npcs.npcs[npcs.activeNpc]!.npc.level = newLevel;
       } else {
-        const newParameter = await npcParametersGenerator(settings.game, parameter);
+        const newParameter = await npcParametersGenerator(
+          settings.game,
+          parameter
+        );
         if (newParameter === undefined) {
-          throw new TypeError('Error generating npc ' + parameter);
+          throw new TypeError("Error generating npc " + parameter);
         }
         // regex: adds spaces between words
         switch (parameter) {
-          case 'ancestry':
+          case "ancestry":
             npcs.npcs[npcs.activeNpc]!.npc.ancestry = newParameter.replaceAll(
               /([a-z])([A-Z])/g,
-              '$1 $2'
+              "$1 $2"
             );
             break;
-          case 'culture':
+          case "culture":
             npcs.npcs[npcs.activeNpc]!.npc.culture = newParameter.replaceAll(
               /([a-z])([A-Z])/g,
-              '$1 $2'
+              "$1 $2"
             );
             break;
-          case 'class':
+          case "class":
             npcs.npcs[npcs.activeNpc]!.npc.class = newParameter.replaceAll(
               /([a-z])([A-Z])/g,
-              '$1 $2'
+              "$1 $2"
             );
             break;
-          case 'gender':
+          case "gender":
             npcs.npcs[npcs.activeNpc]!.npc.gender = newParameter.replaceAll(
               /([a-z])([A-Z])/g,
-              '$1 $2'
+              "$1 $2"
             );
             break;
-          case 'job':
+          case "job":
             npcs.npcs[npcs.activeNpc]!.npc.job = newParameter.replaceAll(
               /([a-z])([A-Z])/g,
-              '$1 $2'
+              "$1 $2"
             );
             break;
-          case 'nickname':
+          case "nickname":
             npcs.npcs[npcs.activeNpc]!.npc.nickname = newParameter.replaceAll(
               /([a-z])([A-Z])/g,
-              '$1 $2'
+              "$1 $2"
             );
             break;
 
@@ -149,8 +159,8 @@ const generateParameterNpc = debounce(async function (
       console.error(error);
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Error generating random npc ' + parameter,
+        type: "warning",
+        message: "Error generating random npc " + parameter,
         icon: matPriorityHigh
       });
     }
@@ -176,7 +186,7 @@ const generateNamesNpc = debounce(async function () {
     ) {
       tmpGender = npcs.npcs[npcs.activeNpc]!.npc.gender!;
       tmpAncestry = npcs.npcs[npcs.activeNpc]!.npc.ancestry!;
-      if (settings.game === 'pf') {
+      if (settings.game === "pf") {
         tmpCulture = npcs.npcs[npcs.activeNpc]!.npc.culture!;
       }
 
@@ -190,58 +200,79 @@ const generateNamesNpc = debounce(async function () {
 
       if (
         npcs.npcs[npcs.activeNpc]!.npc.gender &&
-        npcParameters.npcParameters.genders.includes(npcs.npcs[npcs.activeNpc]!.npc.gender!)
+        npcParameters.npcParameters.genders.includes(
+          npcs.npcs[npcs.activeNpc]!.npc.gender!
+        )
       ) {
-        body.gender = npcs.npcs[npcs.activeNpc]!.npc.gender!.replaceAll(' ', '');
+        body.gender = npcs.npcs[npcs.activeNpc]!.npc.gender!.replaceAll(
+          " ",
+          ""
+        );
       }
 
-      if (settings.game === 'sf') {
+      if (settings.game === "sf") {
         if (
           npcs.npcs[npcs.activeNpc]!.npc.ancestry &&
-          npcParameters.npcParameters.ancestries.includes(npcs.npcs[npcs.activeNpc]!.npc.ancestry!)
+          npcParameters.npcParameters.ancestries.includes(
+            npcs.npcs[npcs.activeNpc]!.npc.ancestry!
+          )
         ) {
           body.origin = {
-            FromAncestry: npcs.npcs[npcs.activeNpc]!.npc.ancestry!.replaceAll(' ', '')
+            FromAncestry: npcs.npcs[npcs.activeNpc]!.npc.ancestry!.replaceAll(
+              " ",
+              ""
+            )
           };
         }
       } else {
         if (
           !npcs.npcs[npcs.activeNpc]!.culture &&
           npcs.npcs[npcs.activeNpc]!.npc.ancestry &&
-          npcParameters.npcParameters.ancestries.includes(npcs.npcs[npcs.activeNpc]!.npc.ancestry!)
+          npcParameters.npcParameters.ancestries.includes(
+            npcs.npcs[npcs.activeNpc]!.npc.ancestry!
+          )
         ) {
           body.origin = {
-            FromAncestry: npcs.npcs[npcs.activeNpc]!.npc.ancestry!.replaceAll(' ', '')
+            FromAncestry: npcs.npcs[npcs.activeNpc]!.npc.ancestry!.replaceAll(
+              " ",
+              ""
+            )
           };
         }
 
         if (
           npcs.npcs[npcs.activeNpc]!.culture &&
           npcs.npcs[npcs.activeNpc]!.npc.culture &&
-          npcParameters.npcParameters.cultures.includes(npcs.npcs[npcs.activeNpc]!.npc.culture!)
+          npcParameters.npcParameters.cultures.includes(
+            npcs.npcs[npcs.activeNpc]!.npc.culture!
+          )
         ) {
           body.origin = {
-            FromCulture: npcs.npcs[npcs.activeNpc]!.npc.culture!.replaceAll(' ', '')
+            FromCulture: npcs.npcs[npcs.activeNpc]!.npc.culture!.replaceAll(
+              " ",
+              ""
+            )
           };
         }
 
-        if (body.origin?.FromAncestry === 'Leshy' && body.gender) {
-          if (body.gender !== 'NonBinary') {
+        if (body.origin?.FromAncestry === "Leshy" && body.gender) {
+          if (body.gender !== "NonBinary") {
             $q.notify({
               progress: true,
-              type: 'warning',
-              message: 'Invalid gender for this ancestry, defaulting to Non Binary',
+              type: "warning",
+              message:
+                "Invalid gender for this ancestry, defaulting to Non Binary",
               icon: matPriorityHigh
             });
           }
-          body.gender = 'NonBinary';
+          body.gender = "NonBinary";
         }
       }
 
       try {
         const newNames = await npcNamesGenerator(settings.game, body);
         if (newNames === undefined) {
-          throw new TypeError('Error generating npc names');
+          throw new TypeError("Error generating npc names");
         }
         namesIndex = 0;
         namesList = newNames;
@@ -250,8 +281,8 @@ const generateNamesNpc = debounce(async function () {
         console.error(error);
         $q.notify({
           progress: true,
-          type: 'warning',
-          message: 'Error generating random npc names',
+          type: "warning",
+          message: "Error generating random npc names",
           icon: matPriorityHigh
         });
       }
@@ -266,35 +297,36 @@ const generateNamesNpc = debounce(async function () {
 
 const addCustomField = () => {
   if (npcs.npcs[npcs.activeNpc]!.npc.custom_fields === undefined) {
-    npcs.npcs[npcs.activeNpc]!.npc.custom_fields = [{ name: '', body: '' }];
+    npcs.npcs[npcs.activeNpc]!.npc.custom_fields = [{ name: "", body: "" }];
   } else {
-    npcs.npcs[npcs.activeNpc]!.npc.custom_fields.push({ name: '', body: '' });
+    npcs.npcs[npcs.activeNpc]!.npc.custom_fields.push({ name: "", body: "" });
   }
 };
 
 const removeCustomField = (index: number) => {
   npcs.npcs[npcs.activeNpc]!.npc.custom_fields.splice(index, 1);
   if (npcs.npcs[npcs.activeNpc]!.npc.custom_fields.length === 0) {
-    npcs.npcs[npcs.activeNpc]!.npc.custom_fields = [{ name: '', body: '' }];
+    npcs.npcs[npcs.activeNpc]!.npc.custom_fields = [{ name: "", body: "" }];
   }
 };
 
 // read the "share" query and decode it
 const shareQuery =
-  String(route.query.share) === 'undefined' || String(route.query.share) === 'null'
-    ? ''
+  String(route.query.share) === "undefined" ||
+  String(route.query.share) === "null"
+    ? ""
     : String(route.query.share);
 const encodedData = ref(shareQuery);
 
 const decodeData = async () => {
-  if (encodedData.value !== '') {
+  if (encodedData.value !== "") {
     isGenerating.value = true;
     importNpcDialog.value = true;
     try {
       const decodedData = await decodeNpcLink(encodedData.value);
       if (decodedData === undefined) {
         importNpcDialog.value = false;
-        throw new TypeError('Error importing npc');
+        throw new TypeError("Error importing npc");
       }
       importNpcData.value = decodedData;
       importNpcName.value = decodedData.list_name;
@@ -303,8 +335,8 @@ const decodeData = async () => {
       console.error(error);
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Error importing npc',
+        type: "warning",
+        message: "Error importing npc",
         icon: matPriorityHigh
       });
     }
@@ -314,7 +346,7 @@ const decodeData = async () => {
 await decodeData();
 
 // clean and check the link for manual app import
-const sharedLink = ref('');
+const sharedLink = ref("");
 const cleanLink = async () => {
   try {
     const parsedUrl = new URL(sharedLink.value);
@@ -323,22 +355,22 @@ const cleanLink = async () => {
       closeDialog();
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Invalid page for this link',
+        type: "warning",
+        message: "Invalid page for this link",
         icon: matPriorityHigh
       });
-      throw new Error('Invalid page for this link');
+      throw new Error("Invalid page for this link");
     }
-    const share = parsedUrl.searchParams.get('share');
-    if (share === null || share === '') {
+    const share = parsedUrl.searchParams.get("share");
+    if (share === null || share === "") {
       closeDialog();
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Missing share hash',
+        type: "warning",
+        message: "Missing share hash",
         icon: matPriorityHigh
       });
-      throw new TypeError('Missing share code');
+      throw new TypeError("Missing share code");
     }
     encodedData.value = share;
     closeDialog();
@@ -360,32 +392,38 @@ const openShare = async () => {
   shareDialog.value = true;
   const currentNpc = npcs.npcs[npcs.activeNpc]!.npc;
   const body: shareable_npc = {
-    list_name: npcs.npcs[npcs.activeNpc]?.name ? npcs.npcs[npcs.activeNpc]!.name : 'Default',
+    list_name: npcs.npcs[npcs.activeNpc]?.name
+      ? npcs.npcs[npcs.activeNpc]!.name
+      : "Default",
     npcs_data: []
   };
 
   body.npcs_data.push({
-    name: currentNpc.name === undefined ? '' : currentNpc.name,
-    nickname: currentNpc.nickname === null ? '' : currentNpc.nickname,
-    gender: currentNpc.gender === undefined ? '' : currentNpc.gender,
-    ancestry: currentNpc.ancestry === undefined ? '' : currentNpc.ancestry,
-    job: currentNpc.job === undefined ? '' : currentNpc.job,
+    name: currentNpc.name === undefined ? "" : currentNpc.name,
+    nickname: currentNpc.nickname === null ? "" : currentNpc.nickname,
+    gender: currentNpc.gender === undefined ? "" : currentNpc.gender,
+    ancestry: currentNpc.ancestry === undefined ? "" : currentNpc.ancestry,
+    job: currentNpc.job === undefined ? "" : currentNpc.job,
     level: currentNpc.level === undefined ? 1 : currentNpc.level,
-    culture: currentNpc.culture === undefined ? '' : currentNpc.culture,
-    class: currentNpc.class === undefined ? '' : currentNpc.class,
+    culture: currentNpc.culture === undefined ? "" : currentNpc.culture,
+    class: currentNpc.class === undefined ? "" : currentNpc.class,
     game: settings.game
   });
 
   try {
     const shareableLink = await generateNpcLink(body);
-    if (typeof shareableLink === 'string') {
-      shareUrl.value = 'https://bybe.app/npc?game=' + settings.game + '&share=' + shareableLink;
+    if (typeof shareableLink === "string") {
+      shareUrl.value =
+        "https://bybe.app/npc?game=" +
+        settings.game +
+        "&share=" +
+        shareableLink;
     } else {
       shareDialog.value = false;
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Error generating shared link',
+        type: "warning",
+        message: "Error generating shared link",
         icon: matPriorityHigh
       });
     }
@@ -394,8 +432,8 @@ const openShare = async () => {
     console.error(error);
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Error generating shared link',
+      type: "warning",
+      message: "Error generating shared link",
       icon: matPriorityHigh
     });
   }
@@ -409,19 +447,19 @@ const importNpc = () => {
       name: importNpcData.value?.npcs_data[0].name,
       nickname:
         importNpcData.value.npcs_data[0].nickname === undefined
-          ? ''
+          ? ""
           : importNpcData.value.npcs_data[0].nickname,
       gender:
         importNpcData.value?.npcs_data[0].gender === undefined
-          ? ''
+          ? ""
           : importNpcData.value?.npcs_data[0].gender,
       ancestry:
         importNpcData.value?.npcs_data[0].ancestry === undefined
-          ? ''
+          ? ""
           : importNpcData.value?.npcs_data[0].ancestry,
       job:
         importNpcData.value?.npcs_data[0].job === undefined
-          ? ''
+          ? ""
           : importNpcData.value?.npcs_data[0].job,
       level:
         importNpcData.value?.npcs_data[0].level === undefined
@@ -429,11 +467,11 @@ const importNpc = () => {
           : importNpcData.value?.npcs_data[0].level,
       culture:
         importNpcData.value?.npcs_data[0].culture === undefined
-          ? ''
+          ? ""
           : importNpcData.value?.npcs_data[0].culture,
       class:
         importNpcData.value?.npcs_data[0].class === undefined
-          ? ''
+          ? ""
           : importNpcData.value?.npcs_data[0].class,
       game:
         importNpcData.value?.npcs_data[0].game === undefined
@@ -445,11 +483,11 @@ const importNpc = () => {
       quirk: null,
       relationships: null,
       ideology: null,
-      custom_fields: [{ name: '', body: '' }]
+      custom_fields: [{ name: "", body: "" }]
     };
 
     npcs.addNpc(importNpcName.value);
-    npcList.value = npcs.npcs.map((npc) => npc.name);
+    npcList.value = npcs.npcs.map(npc => npc.name);
     npcs.updateNpc(importNpcName.value, tmp_npc);
     tmpNpc.value = {
       name: npcs.npcs[npcs.activeNpc]!.name,
@@ -457,7 +495,7 @@ const importNpc = () => {
       culture: npcs.npcs[npcs.activeNpc]!.culture
     };
     saveChanges();
-    importNpcName.value = '';
+    importNpcName.value = "";
     importNpcDialog.value = false;
   }
 };
@@ -468,23 +506,23 @@ const closeDialog = () => {
   newNpcDialog.value = false;
   renameNpcDialog.value = false;
   npcNameInput.value = false;
-  importNpcName.value = '';
-  newNpcName.value = '';
-  newNpcRename.value = '';
+  importNpcName.value = "";
+  newNpcName.value = "";
+  newNpcRename.value = "";
 };
 
 const addNpc = () => {
   npcNameInput.value.validate();
   if (!npcNameInput.value.hasError) {
     npcs.addNpc(newNpcName.value);
-    npcList.value = npcs.npcs.map((npc) => npc.name);
+    npcList.value = npcs.npcs.map(npc => npc.name);
     tmpNpc.value = {
       name: npcs.npcs[npcs.activeNpc]!.name,
       npc: npcs.npcs[npcs.activeNpc]!.npc,
       culture: npcs.npcs[npcs.activeNpc]!.culture
     };
     saveChanges();
-    newNpcName.value = '';
+    newNpcName.value = "";
     newNpcDialog.value = false;
   }
 };
@@ -493,21 +531,21 @@ const renameNpc = () => {
   npcRenameInput.value.validate();
   if (!npcRenameInput.value.hasError) {
     npcs.npcs[npcs.activeNpc]!.name = newNpcRename.value;
-    npcList.value = npcs.npcs.map((npc) => npc.name);
+    npcList.value = npcs.npcs.map(npc => npc.name);
     tmpNpc.value = {
       name: npcs.npcs[npcs.activeNpc]!.name,
       npc: npcs.npcs[npcs.activeNpc]!.npc,
       culture: npcs.npcs[npcs.activeNpc]!.culture
     };
     saveChanges();
-    newNpcRename.value = '';
+    newNpcRename.value = "";
     renameNpcDialog.value = false;
   }
 };
 
 const removeNpc = () => {
   npcs.removeNpc();
-  npcList.value = npcs.npcs.map((npc) => npc.name);
+  npcList.value = npcs.npcs.map(npc => npc.name);
   tmpNpc.value = {
     name: npcs.npcs[npcs.activeNpc]!.name,
     npc: npcs.npcs[npcs.activeNpc]!.npc,
@@ -528,7 +566,7 @@ const changeActiveNpc = (selected: string) => {
 
 const saveChanges = () => {
   npcs.updateNpc(tmpNpc.value.name, tmpNpc.value.npc);
-  localStorage.setItem('npcs', JSON.stringify(npcs.npcs));
+  localStorage.setItem("npcs", JSON.stringify(npcs.npcs));
 };
 </script>
 
@@ -556,8 +594,9 @@ const saveChanges = () => {
             :rules="[
               (val: string) => !!val || 'Field is required',
               (val: string) =>
-                !npcList.some((name) => name.toLowerCase() === val.toLowerCase()) ||
-                'This NPC already exists'
+                !npcList.some(
+                  name => name.toLowerCase() === val.toLowerCase()
+                ) || 'This NPC already exists'
             ]"
             @keyup.enter="importNpc"
           />
@@ -582,7 +621,11 @@ const saveChanges = () => {
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
+    <q-dialog
+      v-model="shareDialog"
+      aria-label="Share dialog"
+      @escape-key="closeDialog"
+    >
       <q-card flat bordered style="min-height: 210px; width: 320px">
         <q-card-section>
           <div class="row">
@@ -615,7 +658,10 @@ const saveChanges = () => {
               <q-btn label="Import" @click="cleanLink" />
             </div>
           </q-card-section>
-          <q-separator inset class="tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-700!" />
+          <q-separator
+            inset
+            class="tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-700!"
+          />
         </div>
         <div v-if="!isGenerating">
           <q-card-section class="tw:wrap-normal tw:py-1!">
@@ -623,7 +669,11 @@ const saveChanges = () => {
           </q-card-section>
           <q-card-section>
             <div class="row tw:gap-4">
-              <q-field class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!" outlined dense>
+              <q-field
+                class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!"
+                outlined
+                dense
+              >
                 <template v-slot:control>
                   <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!">
                     {{ shareUrl }}
@@ -643,7 +693,11 @@ const saveChanges = () => {
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="newNpcDialog" aria-label="New npc dialog" @escape-key="closeDialog">
+    <q-dialog
+      v-model="newNpcDialog"
+      aria-label="New npc dialog"
+      @escape-key="closeDialog"
+    >
       <q-card flat bordered>
         <q-card-section>
           <div class="text-h6">New NPC name</div>
@@ -661,8 +715,9 @@ const saveChanges = () => {
             :rules="[
               (val: string) => !!val || 'Field is required',
               (val: string) =>
-                !npcList.some((name) => name.toLowerCase() === val.toLowerCase()) ||
-                'This NPC already exists'
+                !npcList.some(
+                  name => name.toLowerCase() === val.toLowerCase()
+                ) || 'This NPC already exists'
             ]"
             @keyup.enter="addNpc"
           />
@@ -687,7 +742,11 @@ const saveChanges = () => {
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="renameNpcDialog" aria-label="New npc dialog" @escape-key="closeDialog">
+    <q-dialog
+      v-model="renameNpcDialog"
+      aria-label="New npc dialog"
+      @escape-key="closeDialog"
+    >
       <q-card flat bordered>
         <q-card-section>
           <div class="text-h6">Rename NPC</div>
@@ -705,8 +764,9 @@ const saveChanges = () => {
             :rules="[
               (val: string) => !!val || 'Field is required',
               (val: string) =>
-                !npcList.some((name) => name.toLowerCase() === val.toLowerCase()) ||
-                'This NPC already exists'
+                !npcList.some(
+                  name => name.toLowerCase() === val.toLowerCase()
+                ) || 'This NPC already exists'
             ]"
             @keyup.enter="renameNpc"
           />
@@ -731,7 +791,11 @@ const saveChanges = () => {
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="removeNpcDialog" aria-label="Remove npc dialog" @escape-key="closeDialog">
+    <q-dialog
+      v-model="removeNpcDialog"
+      aria-label="Remove npc dialog"
+      @escape-key="closeDialog"
+    >
       <q-card flat bordered>
         <q-card-section>
           <div class="text-h6">Remove this NPC?</div>
@@ -765,7 +829,9 @@ const saveChanges = () => {
         bordered
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
+        <div
+          class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2"
+        >
           <q-btn
             id="shepherd-3"
             class="tw:grow"
@@ -850,7 +916,9 @@ const saveChanges = () => {
             label="NPCs"
             @update:model-value="changeActiveNpc(tmpNpc.name)"
           />
-          <q-btn flat dense aria-label="Clear npc" @click="npcs.clearNpc">CLEAR</q-btn>
+          <q-btn flat dense aria-label="Clear npc" @click="npcs.clearNpc"
+            >CLEAR</q-btn
+          >
         </div>
       </q-header>
       <q-page-container>
@@ -993,7 +1061,9 @@ const saveChanges = () => {
             />
             <span class="tw:mx-2" />
             <span
-              v-if="!npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf'"
+              v-if="
+                !npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf'
+              "
               class="tw:flex-none tw:my-auto! tw:mr-2!"
             >
               <q-btn
@@ -1044,7 +1114,9 @@ const saveChanges = () => {
               />
             </span>
             <q-input
-              v-if="!npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf'"
+              v-if="
+                !npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf'
+              "
               label="Ancestry"
               v-model="npcs.npcs[npcs.activeNpc]!.npc.ancestry"
               class="tw:grow"
@@ -1064,7 +1136,9 @@ const saveChanges = () => {
               :readonly="npcs.locks.culture"
             />
             <q-btn
-              v-if="!npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf'"
+              v-if="
+                !npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf'
+              "
               class="tw:flex-none tw:my-auto! tw:ml-2!"
               :icon="biArrowRepeat"
               size="sm"
@@ -1181,7 +1255,9 @@ const saveChanges = () => {
             />
           </div>
           <div class="tw:flex tw:flex-col tw:mb-3">
-            <span class="tw:ml-12 tw:text-gray-800 tw:dark:text-gray-200"> Level: </span>
+            <span class="tw:ml-12 tw:text-gray-800 tw:dark:text-gray-200">
+              Level:
+            </span>
             <div class="tw:flex">
               <q-btn
                 v-if="npcs.locks.level"
@@ -1304,7 +1380,11 @@ const saveChanges = () => {
         </div>
         <q-separator class="tw:my-2! tw:mx-6!" style="height: 2px" />
         <div id="shepherd-6" class="tw:mx-6">
-          <div v-for="(item, index) in npcs.npcs[npcs.activeNpc]!.npc.custom_fields" :key="index">
+          <div
+            v-for="(item, index) in npcs.npcs[npcs.activeNpc]!.npc
+              .custom_fields"
+            :key="index"
+          >
             <div class="tw:flex tw:gap-6 tw:my-5">
               <div class="tw:flex-auto">
                 <q-input

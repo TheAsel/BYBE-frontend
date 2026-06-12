@@ -9,7 +9,7 @@ import {
   biEraser,
   biFullscreen,
   biFullscreenExit
-} from '@quasar/extras/bootstrap-icons';
+} from "@quasar/extras/bootstrap-icons";
 import {
   fasCrosshairs,
   fasGraduationCap,
@@ -18,13 +18,13 @@ import {
   fasMeteor,
   fasUserNinja,
   fasUserShield
-} from '@quasar/extras/fontawesome-v7';
-import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
-import { mdiBowArrow, mdiMagicStaff, mdiSword } from '@quasar/extras/mdi-v7';
-import { capitalize, debounce } from 'lodash-es';
-import { useQuasar } from 'quasar';
-import { onMounted, onUnmounted, ref, toRaw, watch } from 'vue';
-import { useRouter } from 'vue-router';
+} from "@quasar/extras/fontawesome-v7";
+import { matPriorityHigh, matWarning } from "@quasar/extras/material-icons";
+import { mdiBowArrow, mdiMagicStaff, mdiSword } from "@quasar/extras/mdi-v7";
+import { capitalize, debounce } from "lodash-es";
+import { useQuasar } from "quasar";
+import { onMounted, onUnmounted, ref, toRaw, watch } from "vue";
+import { useRouter } from "vue-router";
 
 import {
   requestCreatureRanges,
@@ -33,16 +33,16 @@ import {
   requestHazardFilters,
   requestHazardRanges,
   requestHazards
-} from 'src/api/encounter-api-calls';
-import EncounterBuilder from 'src/components/encounter/EncounterTable/EncounterBuilder.vue';
-import PartyBuilder from 'src/components/encounter/EncounterTable/PartyBuilder.vue';
-import { encounterStore } from 'src/stores/encounter';
-import { filtersStore } from 'src/stores/filters';
-import { settingsStore } from 'src/stores/settings';
+} from "@/api/encounter-api-calls";
+import EncounterBuilder from "@/components/encounter/EncounterTable/EncounterBuilder.vue";
+import PartyBuilder from "@/components/encounter/EncounterTable/PartyBuilder.vue";
+import { encounterStore } from "@/stores/encounter";
+import { filtersStore } from "@/stores/filters";
+import { settingsStore } from "@/stores/settings";
 
-import type { QTableProps } from 'quasar';
-import type { creature } from 'src/types/creature';
-import type { min_creature_hazard } from 'src/types/encounter';
+import type { QTableProps } from "quasar";
+import type { creature } from "@/types/creature";
+import type { min_creature_hazard } from "@/types/encounter";
 import type {
   alignments,
   complexities,
@@ -54,8 +54,8 @@ import type {
   rarities,
   roles,
   sizes
-} from 'src/types/filters';
-import type { hazard } from 'src/types/hazard';
+} from "@/types/filters";
+import type { hazard } from "@/types/hazard";
 
 const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
 
@@ -67,9 +67,9 @@ const encounter = encounterStore();
 const encounterBuilderRef = ref();
 const router = useRouter();
 
-const currentAon = ref(settings.game === 'sf' ? 'aonsrd' : 'aonprd');
+const currentAon = ref(settings.game === "sf" ? "aonsrd" : "aonprd");
 
-const hazardToggle = ref<'creatures' | 'hazards'>('creatures');
+const hazardToggle = ref<"creatures" | "hazards">("creatures");
 encounter.removeSelectedHazard();
 
 const encounterTable = ref();
@@ -79,7 +79,7 @@ const creatureRows = ref<creature[]>([]);
 const hazardRows = ref<hazard[]>([]);
 const loading = ref(true);
 const pagination = ref({
-  sortBy: 'name',
+  sortBy: "name",
   descending: false,
   page: 1,
   rowsPerPage: 100,
@@ -104,14 +104,17 @@ const creatureFilters = ref<{
   role_filter: roles[];
   source_filter: string[];
   sort_by: creature_columns;
-  order_by: 'ascending' | 'descending';
+  order_by: "ascending" | "descending";
 }>({
-  name_filter: '',
+  name_filter: "",
   level_filter: {
     min: filters.creatureRanges.min_level,
     max: filters.creatureRanges.max_level
   },
-  hp_filter: { min: filters.creatureRanges.min_hp, max: filters.creatureRanges.max_hp },
+  hp_filter: {
+    min: filters.creatureRanges.min_hp,
+    max: filters.creatureRanges.max_hp
+  },
   trait_filter: [],
   alignment_filter: [],
   size_filter: [],
@@ -125,13 +128,13 @@ const creatureFilters = ref<{
   },
   role_filter: [],
   source_filter: [],
-  sort_by: 'name',
-  order_by: 'ascending'
+  sort_by: "name",
+  order_by: "ascending"
 });
 
 watch(
   () => filters.creatureRanges,
-  (ranges) => {
+  ranges => {
     creatureFilters.value.level_filter = {
       min: ranges.min_level,
       max: ranges.max_level
@@ -159,14 +162,17 @@ const hazardFilters = ref<{
   hardness_filter: { min: number; max: number };
   source_filter: string[];
   sort_by: hazard_columns;
-  order_by: 'ascending' | 'descending';
+  order_by: "ascending" | "descending";
 }>({
-  name_filter: '',
+  name_filter: "",
   level_filter: {
     min: filters.hazardRanges.min_level,
     max: filters.hazardRanges.max_level
   },
-  hp_filter: { min: filters.hazardRanges.min_hp, max: filters.hazardRanges.max_hp },
+  hp_filter: {
+    min: filters.hazardRanges.min_hp,
+    max: filters.hazardRanges.max_hp
+  },
   trait_filter: [],
   complexity_filter: null,
   size_filter: [],
@@ -175,7 +181,10 @@ const hazardFilters = ref<{
     min: filters.hazardRanges.min_stealth,
     max: filters.hazardRanges.max_stealth
   },
-  ac_filter: { min: filters.hazardRanges.min_ac, max: filters.hazardRanges.max_ac },
+  ac_filter: {
+    min: filters.hazardRanges.min_ac,
+    max: filters.hazardRanges.max_ac
+  },
   fortitude_filter: {
     min: filters.hazardRanges.min_fortitude,
     max: filters.hazardRanges.max_fortitude
@@ -184,19 +193,22 @@ const hazardFilters = ref<{
     min: filters.hazardRanges.min_reflex,
     max: filters.hazardRanges.max_reflex
   },
-  will_filter: { min: filters.hazardRanges.min_will, max: filters.hazardRanges.max_will },
+  will_filter: {
+    min: filters.hazardRanges.min_will,
+    max: filters.hazardRanges.max_will
+  },
   hardness_filter: {
     min: filters.hazardRanges.min_hardness,
     max: filters.hazardRanges.max_hardness
   },
   source_filter: [],
-  sort_by: 'name',
-  order_by: 'ascending'
+  sort_by: "name",
+  order_by: "ascending"
 });
 
 watch(
   () => filters.hazardRanges,
-  (ranges) => {
+  ranges => {
     hazardFilters.value.level_filter = {
       min: ranges.min_level,
       max: ranges.max_level
@@ -233,7 +245,7 @@ watch(
 );
 
 const fullscreen = ref(false);
-const tableOpacity = ref('');
+const tableOpacity = ref("");
 
 const sourceCreatureFilter = ref<string[]>(filters.creatureFilters.sources);
 const traitCreatureFilter = ref<string[]>(filters.creatureFilters.traits);
@@ -247,121 +259,121 @@ const columnCreatures: {
   label: string;
   field: (row: creature) => string | number | string[] | boolean[];
   required?: boolean;
-  align?: 'left' | 'right' | 'center';
+  align?: "left" | "right" | "center";
   sortable?: boolean;
   style?: string;
 }[] = [
   {
-    name: 'source',
-    label: 'Source',
-    field: (row) => row.core_data.essential.source,
+    name: "source",
+    label: "Source",
+    field: row => row.core_data.essential.source,
     required: false,
-    align: 'center',
+    align: "center",
     sortable: true,
-    style: 'min-width: 120px; max-width: 120px;'
+    style: "min-width: 120px; max-width: 120px;"
   },
   {
-    name: 'name',
-    label: 'Name',
-    field: (row) => row.core_data.essential.name,
+    name: "name",
+    label: "Name",
+    field: row => row.core_data.essential.name,
     required: true,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 225px;'
+    style: "min-width: 225px;"
   },
   {
-    name: 'level',
-    label: 'Level',
-    field: (row) => row.core_data.essential.base_level,
+    name: "level",
+    label: "Level",
+    field: row => row.core_data.essential.base_level,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 80px;'
+    style: "min-width: 80px;"
   },
   {
-    name: 'hp',
-    label: 'HP',
-    field: (row) => row.core_data.essential.hp,
+    name: "hp",
+    label: "HP",
+    field: row => row.core_data.essential.hp,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px;'
+    style: "min-width: 100px;"
   },
   {
-    name: 'trait',
-    label: 'Traits',
-    field: (row) => row.core_data.traits,
+    name: "trait",
+    label: "Traits",
+    field: row => row.core_data.traits,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 110px; max-width: 180px;'
+    style: "min-width: 110px; max-width: 180px;"
   },
   {
-    name: 'alignment',
-    label: 'Alignment',
-    field: (row) => row.core_data.essential.alignment,
+    name: "alignment",
+    label: "Alignment",
+    field: row => row.core_data.essential.alignment,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 135px; max-width: 180px;'
+    style: "min-width: 135px; max-width: 180px;"
   },
   {
-    name: 'size',
-    label: 'Size',
-    field: (row) => row.core_data.essential.size,
+    name: "size",
+    label: "Size",
+    field: row => row.core_data.essential.size,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px; max-width: 180px;'
+    style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: 'rarity',
-    label: 'Rarity',
-    field: (row) => row.core_data.essential.rarity,
+    name: "rarity",
+    label: "Rarity",
+    field: row => row.core_data.essential.rarity,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px; max-width: 180px;'
+    style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: 'family',
-    label: 'Family',
-    field: (row) => row.core_data.essential.family,
+    name: "family",
+    label: "Family",
+    field: row => row.core_data.essential.family,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 125px; max-width: 180px;'
+    style: "min-width: 125px; max-width: 180px;"
   },
   {
-    name: 'type',
-    label: 'Type',
-    field: (row) => row.core_data.essential.cr_type,
+    name: "type",
+    label: "Type",
+    field: row => row.core_data.essential.cr_type,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px'
+    style: "min-width: 100px"
   },
   {
-    name: 'attack',
-    label: 'Attacks',
-    field: (row) => [
+    name: "attack",
+    label: "Attacks",
+    field: row => [
       row.core_data.derived.attack_data.melee,
       row.core_data.derived.attack_data.ranged,
       row.core_data.derived.attack_data.spellcaster
     ],
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 80px;'
+    style: "min-width: 80px;"
   },
   {
-    name: 'role',
-    label: 'Roles',
-    field: (row) => row.core_data.derived.creature_role!,
+    name: "role",
+    label: "Roles",
+    field: row => row.core_data.derived.creature_role!,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px; max-width: 200px;'
+    style: "min-width: 100px; max-width: 200px;"
   }
 ];
 
@@ -371,147 +383,150 @@ const columnHazards: {
   label: string;
   field: (row: hazard) => string | number | string[] | boolean[] | null;
   required?: boolean;
-  align?: 'left' | 'right' | 'center';
+  align?: "left" | "right" | "center";
   sortable?: boolean;
   style?: string;
 }[] = [
   {
-    name: 'source',
-    label: 'Source',
-    field: (row) => row.core_hazard.essential.source,
+    name: "source",
+    label: "Source",
+    field: row => row.core_hazard.essential.source,
     required: false,
-    align: 'center',
+    align: "center",
     sortable: true,
-    style: 'min-width: 120px; max-width: 120px;'
+    style: "min-width: 120px; max-width: 120px;"
   },
   {
-    name: 'name',
-    label: 'Name',
-    field: (row) => row.core_hazard.essential.name,
+    name: "name",
+    label: "Name",
+    field: row => row.core_hazard.essential.name,
     required: true,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 225px;'
+    style: "min-width: 225px;"
   },
   {
-    name: 'level',
-    label: 'Level',
-    field: (row) => row.core_hazard.essential.level,
+    name: "level",
+    label: "Level",
+    field: row => row.core_hazard.essential.level,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 80px;'
+    style: "min-width: 80px;"
   },
   {
-    name: 'hp',
-    label: 'HP',
-    field: (row) => row.core_hazard.essential.hp,
+    name: "hp",
+    label: "HP",
+    field: row => row.core_hazard.essential.hp,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px;'
+    style: "min-width: 100px;"
   },
   {
-    name: 'trait',
-    label: 'Traits',
-    field: (row) => row.core_hazard.traits,
+    name: "trait",
+    label: "Traits",
+    field: row => row.core_hazard.traits,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 110px; max-width: 180px;'
+    style: "min-width: 110px; max-width: 180px;"
   },
   {
-    name: 'complexity',
-    label: 'Complexity',
-    field: (row) => row.core_hazard.essential.complexity,
+    name: "complexity",
+    label: "Complexity",
+    field: row => row.core_hazard.essential.complexity,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 135px; max-width: 180px;'
+    style: "min-width: 135px; max-width: 180px;"
   },
   {
-    name: 'size',
-    label: 'Size',
-    field: (row) => row.core_hazard.essential.size,
+    name: "size",
+    label: "Size",
+    field: row => row.core_hazard.essential.size,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px; max-width: 180px;'
+    style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: 'rarity',
-    label: 'Rarity',
-    field: (row) => row.core_hazard.essential.rarity,
+    name: "rarity",
+    label: "Rarity",
+    field: row => row.core_hazard.essential.rarity,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px; max-width: 180px;'
+    style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: 'stealth',
-    label: 'Stealth',
-    field: (row) => row.core_hazard.essential.stealth,
+    name: "stealth",
+    label: "Stealth",
+    field: row => row.core_hazard.essential.stealth,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px;'
+    style: "min-width: 100px;"
   },
   {
-    name: 'ac',
-    label: 'AC',
-    field: (row) => row.core_hazard.essential.ac,
+    name: "ac",
+    label: "AC",
+    field: row => row.core_hazard.essential.ac,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px;'
+    style: "min-width: 100px;"
   },
   {
-    name: 'fortitude',
-    label: 'Fortitude',
-    field: (row) => row.core_hazard.essential.fortitude,
+    name: "fortitude",
+    label: "Fortitude",
+    field: row => row.core_hazard.essential.fortitude,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px;'
+    style: "min-width: 100px;"
   },
   {
-    name: 'reflex',
-    label: 'Reflex',
-    field: (row) => row.core_hazard.essential.reflex,
+    name: "reflex",
+    label: "Reflex",
+    field: row => row.core_hazard.essential.reflex,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px;'
+    style: "min-width: 100px;"
   },
   {
-    name: 'will',
-    label: 'Will',
-    field: (row) => row.core_hazard.essential.will,
+    name: "will",
+    label: "Will",
+    field: row => row.core_hazard.essential.will,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px;'
+    style: "min-width: 100px;"
   },
   {
-    name: 'hardness',
-    label: 'Hardness',
-    field: (row) => row.core_hazard.essential.hardness,
+    name: "hardness",
+    label: "Hardness",
+    field: row => row.core_hazard.essential.hardness,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px;'
+    style: "min-width: 100px;"
   }
 ];
 
 // Waits for the table pagination to load
 let resolveWhenLoaded: (() => void) | null = null;
 const waitForPageLoad = () =>
-  new Promise<void>((resolve) => {
+  new Promise<void>(resolve => {
     resolveWhenLoaded = resolve;
   });
 
-const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: number) {
-  if (hazardToggle.value === 'creatures') {
+const fetchFromServer = debounce(async function (
+  startRow: number,
+  rowsPerPage: number
+) {
+  if (hazardToggle.value === "creatures") {
     const body: creature_filters = {
       min_level_filter: creatureFilters.value.level_filter.min,
       max_level_filter: creatureFilters.value.level_filter.max,
@@ -521,7 +536,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       role_threshold: 50,
       game_system_version: settings.game_version
     };
-    if (creatureFilters.value.name_filter !== '') {
+    if (creatureFilters.value.name_filter !== "") {
       body.name_filter = creatureFilters.value.name_filter;
     }
     if (
@@ -594,19 +609,34 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
         for (const creature of request.results) {
           // calculate the roles of the creature, by picking the percentages that are at least over 50%
           const rolePercentages: { role: roles; percentage: number }[] = [
-            { role: 'Brute', percentage: creature.core_data.derived.role_data.brute },
             {
-              role: 'Magical Striker',
+              role: "Brute",
+              percentage: creature.core_data.derived.role_data.brute
+            },
+            {
+              role: "Magical Striker",
               percentage: creature.core_data.derived.role_data.magical_striker
             },
             {
-              role: 'Skill Paragon',
+              role: "Skill Paragon",
               percentage: creature.core_data.derived.role_data.skill_paragon
             },
-            { role: 'Skirmisher', percentage: creature.core_data.derived.role_data.skirmisher },
-            { role: 'Sniper', percentage: creature.core_data.derived.role_data.sniper },
-            { role: 'Soldier', percentage: creature.core_data.derived.role_data.soldier },
-            { role: 'Spellcaster', percentage: creature.core_data.derived.role_data.spellcaster }
+            {
+              role: "Skirmisher",
+              percentage: creature.core_data.derived.role_data.skirmisher
+            },
+            {
+              role: "Sniper",
+              percentage: creature.core_data.derived.role_data.sniper
+            },
+            {
+              role: "Soldier",
+              percentage: creature.core_data.derived.role_data.soldier
+            },
+            {
+              role: "Spellcaster",
+              percentage: creature.core_data.derived.role_data.spellcaster
+            }
           ];
           const rolesList: roles[] = [];
           for (const role of rolePercentages) {
@@ -617,7 +647,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
           if (rolePercentages.length > 0) {
             creature.core_data.derived.creature_role = rolesList;
           } else {
-            creature.core_data.derived.creature_role = ['None'];
+            creature.core_data.derived.creature_role = ["None"];
           }
         }
         creatureRows.value = request.results;
@@ -625,14 +655,14 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
         resolveWhenLoaded?.();
         resolveWhenLoaded = null;
       } else {
-        throw new Error('Error loading creatures');
+        throw new Error("Error loading creatures");
       }
     } catch (error) {
       console.error(error);
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Error loading the creatures',
+        type: "warning",
+        message: "Error loading the creatures",
         icon: matPriorityHigh
       });
     }
@@ -656,7 +686,7 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       max_hardness_filter: hazardFilters.value.hardness_filter.max,
       game_system_version: settings.game_version
     };
-    if (hazardFilters.value.name_filter !== '') {
+    if (hazardFilters.value.name_filter !== "") {
       body.name_filter = hazardFilters.value.name_filter;
     }
     if (
@@ -710,21 +740,23 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
         resolveWhenLoaded?.();
         resolveWhenLoaded = null;
       } else {
-        throw new Error('Error loading hazards');
+        throw new Error("Error loading hazards");
       }
     } catch (error) {
       console.error(error);
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Error loading the hazards',
+        type: "warning",
+        message: "Error loading the hazards",
         icon: matPriorityHigh
       });
     }
   }
 }, 300);
 
-async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
+async function onRequest(
+  props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
+) {
   const { page, rowsPerPage } = props.pagination;
 
   loading.value = true;
@@ -741,12 +773,15 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 const resetCreatureFilters = () => {
   creatureFilters.value = {
     source_filter: [],
-    name_filter: '',
+    name_filter: "",
     level_filter: {
       min: filters.creatureRanges.min_level,
       max: filters.creatureRanges.max_level
     },
-    hp_filter: { min: filters.creatureRanges.min_hp, max: filters.creatureRanges.max_hp },
+    hp_filter: {
+      min: filters.creatureRanges.min_hp,
+      max: filters.creatureRanges.max_hp
+    },
     trait_filter: [],
     alignment_filter: [],
     size_filter: [],
@@ -759,20 +794,23 @@ const resetCreatureFilters = () => {
       spellcaster: null
     },
     role_filter: [],
-    sort_by: 'name',
-    order_by: 'ascending'
+    sort_by: "name",
+    order_by: "ascending"
   };
 };
 
 const resetHazardFilters = () => {
   hazardFilters.value = {
     source_filter: [],
-    name_filter: '',
+    name_filter: "",
     level_filter: {
       min: filters.hazardRanges.min_level,
       max: filters.hazardRanges.max_level
     },
-    hp_filter: { min: filters.hazardRanges.min_hp, max: filters.hazardRanges.max_hp },
+    hp_filter: {
+      min: filters.hazardRanges.min_hp,
+      max: filters.hazardRanges.max_hp
+    },
     trait_filter: [],
     complexity_filter: null,
     size_filter: [],
@@ -781,7 +819,10 @@ const resetHazardFilters = () => {
       min: filters.hazardRanges.min_stealth,
       max: filters.hazardRanges.max_stealth
     },
-    ac_filter: { min: filters.hazardRanges.min_ac, max: filters.hazardRanges.max_ac },
+    ac_filter: {
+      min: filters.hazardRanges.min_ac,
+      max: filters.hazardRanges.max_ac
+    },
     fortitude_filter: {
       min: filters.hazardRanges.min_fortitude,
       max: filters.hazardRanges.max_fortitude
@@ -798,25 +839,39 @@ const resetHazardFilters = () => {
       min: filters.hazardRanges.min_hardness,
       max: filters.hazardRanges.max_hardness
     },
-    sort_by: 'name',
-    order_by: 'ascending'
+    sort_by: "name",
+    order_by: "ascending"
   };
 };
 
 // ---- Table and visible columns
-const visibleCreatureColumns = ref(['name', 'level', 'trait', 'type', 'attack', 'role']);
-const visibleHazardColumns = ref(['name', 'level', 'trait', 'complexity', 'rarity', 'stealth']);
+const visibleCreatureColumns = ref([
+  "name",
+  "level",
+  "trait",
+  "type",
+  "attack",
+  "role"
+]);
+const visibleHazardColumns = ref([
+  "name",
+  "level",
+  "trait",
+  "complexity",
+  "rarity",
+  "stealth"
+]);
 
 // ---- Creatures column sort function
 const sortCreatures = (col: creature_columns) => {
   if (creatureFilters.value.sort_by === col) {
-    if (creatureFilters.value.order_by === 'ascending') {
-      creatureFilters.value.order_by = 'descending';
+    if (creatureFilters.value.order_by === "ascending") {
+      creatureFilters.value.order_by = "descending";
     } else {
-      creatureFilters.value.order_by = 'ascending';
+      creatureFilters.value.order_by = "ascending";
     }
   } else {
-    creatureFilters.value.order_by = 'ascending';
+    creatureFilters.value.order_by = "ascending";
     creatureFilters.value.sort_by = col;
   }
 };
@@ -824,45 +879,48 @@ const sortCreatures = (col: creature_columns) => {
 // ---- Hazards column sort function
 const sortHazards = (col: hazard_columns) => {
   if (hazardFilters.value.sort_by === col) {
-    if (hazardFilters.value.order_by === 'ascending') {
-      hazardFilters.value.order_by = 'descending';
+    if (hazardFilters.value.order_by === "ascending") {
+      hazardFilters.value.order_by = "descending";
     } else {
-      hazardFilters.value.order_by = 'ascending';
+      hazardFilters.value.order_by = "ascending";
     }
   } else {
-    hazardFilters.value.order_by = 'ascending';
+    hazardFilters.value.order_by = "ascending";
     hazardFilters.value.sort_by = col;
   }
 };
 
 const openCreatureSheet = (id: number) => {
   const routeData = router.resolve({
-    name: 'bestiary',
+    name: "bestiary",
     query: { game: settings.game, id: id }
   });
-  if (process.env.IS_APP === 'true') {
-    globalThis.open(routeData.href, '_self');
+  if (import.meta.env.IS_APP === true) {
+    globalThis.open(routeData.href, "_self");
   } else {
-    globalThis.open(routeData.href, '_blank');
+    globalThis.open(routeData.href, "_blank");
   }
 };
 
 const openHazardSheet = (id: number) => {
-  const routeData = router.resolve({ name: 'hazard', query: { game: settings.game, id: id } });
-  if (process.env.IS_APP === 'true') {
-    globalThis.open(routeData.href, '_self');
+  const routeData = router.resolve({
+    name: "hazard",
+    query: { game: settings.game, id: id }
+  });
+  if (import.meta.env.IS_APP === true) {
+    globalThis.open(routeData.href, "_self");
   } else {
-    globalThis.open(routeData.href, '_blank');
+    globalThis.open(routeData.href, "_blank");
   }
 };
 
 // ---- Add creature to encounter function
 const addCreature = debounce(function (creature: creature) {
   const aon_link =
-    settings.game === 'sf'
-      ? 'https://2e.aonsrd.com/search?q=' +
+    settings.game === "sf"
+      ? "https://2e.aonsrd.com/search?q=" +
         encodeURIComponent(creature.core_data.essential.name) +
-        ' type%3A(creature)&type=eqs'
+        " type%3A(creature)&type=eqs"
       : creature.core_data.derived.archive_link;
   const min_creature: min_creature_hazard = {
     game: creature.game,
@@ -870,7 +928,7 @@ const addCreature = debounce(function (creature: creature) {
     archive_link: aon_link,
     name: creature.core_data.essential.name,
     level: creature.core_data.essential.base_level,
-    variant: 'Base',
+    variant: "Base",
     is_hazard: false
   };
   encounter.addToEncounter(min_creature);
@@ -882,11 +940,11 @@ const addHazard = debounce(function (hazard: hazard) {
     game: hazard.game,
     id: hazard.core_hazard.essential.id,
     archive_link:
-      'https://2e.' +
+      "https://2e." +
       currentAon.value +
-      '.com/search?q=' +
+      ".com/search?q=" +
       encodeURIComponent(hazard.core_hazard.essential.name) +
-      ' type%3A(hazard)&type=eqs',
+      " type%3A(hazard)&type=eqs",
     name: hazard.core_hazard.essential.name,
     level: hazard.core_hazard.essential.level,
     is_hazard: true,
@@ -918,15 +976,15 @@ async function onTableKey(evt: KeyboardEvent) {
   if (
     navigationActive.value !== true ||
     ![
-      'Enter',
-      'PageUp',
-      'PageDown',
-      'Home',
-      'End',
-      'ArrowLeft',
-      'ArrowUp',
-      'ArrowRight',
-      'ArrowDown'
+      "Enter",
+      "PageUp",
+      "PageDown",
+      "Home",
+      "End",
+      "ArrowLeft",
+      "ArrowUp",
+      "ArrowRight",
+      "ArrowDown"
     ].includes(evt.key) ||
     encounterTable.value === null ||
     loading.value === true
@@ -943,18 +1001,22 @@ async function onTableKey(evt: KeyboardEvent) {
   }
 
   const currentIndex =
-    selected.value.length > 0 ? computedRows.indexOf(toRaw(selected.value[0])) : -1;
+    selected.value.length > 0
+      ? computedRows.indexOf(toRaw(selected.value[0]))
+      : -1;
   const currentPage = pagination.value.page;
   const rowsPerPage =
-    pagination.value.rowsPerPage === 0 ? computedRowsNumber : pagination.value.rowsPerPage;
+    pagination.value.rowsPerPage === 0
+      ? computedRowsNumber
+      : pagination.value.rowsPerPage;
   const lastIndex = computedRows.length - 1;
   const lastPage = Math.ceil(computedRowsNumber / rowsPerPage);
 
   let index = currentIndex;
 
   switch (evt.key) {
-    case 'Enter': {
-      if (hazardToggle.value === 'hazards') {
+    case "Enter": {
+      if (hazardToggle.value === "hazards") {
         const tmp_hazard = selected.value[0]! as hazard;
         addHazard(tmp_hazard);
       } else {
@@ -963,11 +1025,11 @@ async function onTableKey(evt: KeyboardEvent) {
       }
       break;
     }
-    case 'PageUp': {
+    case "PageUp": {
       index = 0;
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
-      if (hazardToggle.value === 'hazards') {
+      if (hazardToggle.value === "hazards") {
         const tmp_hazard = selected.value[0]! as hazard;
         encounter.setSelectedHazard(tmp_hazard);
       } else {
@@ -977,11 +1039,11 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    case 'PageDown': {
+    case "PageDown": {
       index = rowsPerPage - 1;
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
-      if (hazardToggle.value === 'hazards') {
+      if (hazardToggle.value === "hazards") {
         const tmp_hazard = selected.value[0]! as hazard;
         encounter.setSelectedHazard(tmp_hazard);
       } else {
@@ -991,7 +1053,7 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    case 'Home': {
+    case "Home": {
       index = 0;
       const promise = waitForPageLoad();
       encounterTable.value.firstPage();
@@ -999,7 +1061,7 @@ async function onTableKey(evt: KeyboardEvent) {
 
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
-      if (hazardToggle.value === 'hazards') {
+      if (hazardToggle.value === "hazards") {
         const tmp_hazard = selected.value[0]! as hazard;
         encounter.setSelectedHazard(tmp_hazard);
       } else {
@@ -1009,7 +1071,7 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    case 'End': {
+    case "End": {
       index = rowsPerPage - 1;
       const promise = waitForPageLoad();
       encounterTable.value.lastPage();
@@ -1017,7 +1079,7 @@ async function onTableKey(evt: KeyboardEvent) {
 
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
-      if (hazardToggle.value === 'hazards') {
+      if (hazardToggle.value === "hazards") {
         const tmp_hazard = selected.value[0]! as hazard;
         encounter.setSelectedHazard(tmp_hazard);
       } else {
@@ -1027,7 +1089,7 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.scrollTo(index - 1);
       break;
     }
-    case 'ArrowLeft': {
+    case "ArrowLeft": {
       const page = currentPage <= 1 ? lastPage : currentPage - 1;
       index = 0;
       const promise = waitForPageLoad();
@@ -1040,7 +1102,7 @@ async function onTableKey(evt: KeyboardEvent) {
 
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
-      if (hazardToggle.value === 'hazards') {
+      if (hazardToggle.value === "hazards") {
         const tmp_hazard = selected.value[0]! as hazard;
         encounter.setSelectedHazard(tmp_hazard);
       } else {
@@ -1050,12 +1112,12 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    case 'ArrowUp': {
+    case "ArrowUp": {
       if (currentIndex > 0) {
         index = currentIndex - 1;
         const { computedRows } = encounterTable.value;
         selected.value = [computedRows[index]];
-        if (hazardToggle.value === 'hazards') {
+        if (hazardToggle.value === "hazards") {
           const tmp_hazard = selected.value[0]! as hazard;
           encounter.setSelectedHazard(tmp_hazard);
         } else {
@@ -1066,7 +1128,7 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.scrollTo(index - 1);
       break;
     }
-    case 'ArrowRight': {
+    case "ArrowRight": {
       const page = currentPage >= lastPage ? 1 : currentPage + 1;
       index = 0;
       const promise = waitForPageLoad();
@@ -1079,7 +1141,7 @@ async function onTableKey(evt: KeyboardEvent) {
 
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
-      if (hazardToggle.value === 'hazards') {
+      if (hazardToggle.value === "hazards") {
         const tmp_hazard = selected.value[0]! as hazard;
         encounter.setSelectedHazard(tmp_hazard);
       } else {
@@ -1089,12 +1151,12 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.scrollTo(index);
       break;
     }
-    case 'ArrowDown': {
+    case "ArrowDown": {
       if (currentIndex < lastIndex) {
         index = currentIndex + 1;
         const { computedRows } = encounterTable.value;
         selected.value = [computedRows[index]];
-        if (hazardToggle.value === 'hazards') {
+        if (hazardToggle.value === "hazards") {
           const tmp_hazard = selected.value[0]! as hazard;
           encounter.setSelectedHazard(tmp_hazard);
         } else {
@@ -1113,7 +1175,7 @@ function onGlobalKey(evt: KeyboardEvent) {
   if (isTextInput(evt.target)) {
     return;
   }
-  if (evt.key.toLowerCase() === 'b') {
+  if (evt.key.toLowerCase() === "b") {
     if (evt.ctrlKey || evt.metaKey) {
       evt.preventDefault();
       props.toggleSheetView!();
@@ -1122,62 +1184,77 @@ function onGlobalKey(evt: KeyboardEvent) {
 }
 
 onMounted(() => {
-  globalThis.addEventListener('keydown', onGlobalKey);
+  globalThis.addEventListener("keydown", onGlobalKey);
 });
 
 onUnmounted(() => {
-  globalThis.removeEventListener('keydown', onGlobalKey);
+  globalThis.removeEventListener("keydown", onGlobalKey);
 });
 
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
-    tableOpacity.value = 'opacity: 1';
+    tableOpacity.value = "opacity: 1";
   } else {
-    tableOpacity.value = '';
+    tableOpacity.value = "";
   }
 };
 
-const filterCreatureSourcesFn = (val: string, update: (fn: () => void) => void) => {
+const filterCreatureSourcesFn = (
+  val: string,
+  update: (fn: () => void) => void
+) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.sources = sourceCreatureFilter.value.filter((v) =>
+    filters.creatureFilters.sources = sourceCreatureFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
 };
 
-const filterCreatureTraitsFn = (val: string, update: (fn: () => void) => void) => {
+const filterCreatureTraitsFn = (
+  val: string,
+  update: (fn: () => void) => void
+) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.traits = traitCreatureFilter.value.filter((v) =>
+    filters.creatureFilters.traits = traitCreatureFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
 };
 
-const filterCreatureFamiliesFn = (val: string, update: (fn: () => void) => void) => {
+const filterCreatureFamiliesFn = (
+  val: string,
+  update: (fn: () => void) => void
+) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.families = familyCreatureFilter.value.filter((v) =>
+    filters.creatureFilters.families = familyCreatureFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
 };
 
-const filterHazardSourcesFn = (val: string, update: (fn: () => void) => void) => {
+const filterHazardSourcesFn = (
+  val: string,
+  update: (fn: () => void) => void
+) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.hazardFilters.sources = sourceHazardFilter.value.filter((v) =>
+    filters.hazardFilters.sources = sourceHazardFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
 };
 
-const filterHazardTraitsFn = (val: string, update: (fn: () => void) => void) => {
+const filterHazardTraitsFn = (
+  val: string,
+  update: (fn: () => void) => void
+) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.hazardFilters.traits = traitHazardFilter.value.filter((v) =>
+    filters.hazardFilters.traits = traitHazardFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -1201,37 +1278,42 @@ onMounted(async () => {
       hazardSourcesRequest,
       hazardRangesRequest
     ] = await Promise.all([
-      requestFilters(settings.game, 'traits'),
-      requestFilters(settings.game, 'alignments'),
-      requestFilters(settings.game, 'sizes'),
-      requestFilters(settings.game, 'rarities'),
-      requestFilters(settings.game, 'families'),
-      requestFilters(settings.game, 'creature_types'),
-      requestFilters(settings.game, 'sources'),
-      requestFilters(settings.game, 'creature_roles'),
+      requestFilters(settings.game, "traits"),
+      requestFilters(settings.game, "alignments"),
+      requestFilters(settings.game, "sizes"),
+      requestFilters(settings.game, "rarities"),
+      requestFilters(settings.game, "families"),
+      requestFilters(settings.game, "creature_types"),
+      requestFilters(settings.game, "sources"),
+      requestFilters(settings.game, "creature_roles"),
       requestCreatureRanges(settings.game),
-      requestHazardFilters(settings.game, 'traits'),
-      requestHazardFilters(settings.game, 'sizes'),
-      requestHazardFilters(settings.game, 'rarities'),
-      requestHazardFilters(settings.game, 'sources'),
+      requestHazardFilters(settings.game, "traits"),
+      requestHazardFilters(settings.game, "sizes"),
+      requestHazardFilters(settings.game, "rarities"),
+      requestHazardFilters(settings.game, "sources"),
       requestHazardRanges(settings.game),
       fetchFromServer(0, 100)
     ]);
 
-    if (!traitsRequest) throw new Error('Error fetching creature traits');
-    if (!alignmentsRequest) throw new Error('Error fetching creature alignments');
-    if (!sizesRequest) throw new Error('Error fetching creature sizes');
-    if (!raritiesRequest) throw new Error('Error fetching creature rarities');
-    if (!familiesRequest) throw new Error('Error fetching creature families');
-    if (!typesRequest) throw new Error('Error fetching creature creature_types');
-    if (!sourcesRequest) throw new Error('Error fetching creature sources');
-    if (!rolesRequest) throw new Error('Error fetching creature creature_roles');
-    if (!creatureRangesRequest) throw new Error('Error fetching creature ranges');
-    if (!hazardTraitsRequest) throw new Error('Error fetching hazard traits');
-    if (!hazardSizesRequest) throw new Error('Error fetching hazard sizes');
-    if (!hazardRaritiesRequest) throw new Error('Error fetching hazard rarities');
-    if (!hazardSourcesRequest) throw new Error('Error fetching hazard sources');
-    if (!hazardRangesRequest) throw new Error('Error fetching hazard ranges');
+    if (!traitsRequest) throw new Error("Error fetching creature traits");
+    if (!alignmentsRequest)
+      throw new Error("Error fetching creature alignments");
+    if (!sizesRequest) throw new Error("Error fetching creature sizes");
+    if (!raritiesRequest) throw new Error("Error fetching creature rarities");
+    if (!familiesRequest) throw new Error("Error fetching creature families");
+    if (!typesRequest)
+      throw new Error("Error fetching creature creature_types");
+    if (!sourcesRequest) throw new Error("Error fetching creature sources");
+    if (!rolesRequest)
+      throw new Error("Error fetching creature creature_roles");
+    if (!creatureRangesRequest)
+      throw new Error("Error fetching creature ranges");
+    if (!hazardTraitsRequest) throw new Error("Error fetching hazard traits");
+    if (!hazardSizesRequest) throw new Error("Error fetching hazard sizes");
+    if (!hazardRaritiesRequest)
+      throw new Error("Error fetching hazard rarities");
+    if (!hazardSourcesRequest) throw new Error("Error fetching hazard sources");
+    if (!hazardRangesRequest) throw new Error("Error fetching hazard ranges");
 
     filters.updateTraits(traitsRequest);
     traitCreatureFilter.value = filters.creatureFilters.traits;
@@ -1265,8 +1347,8 @@ onMounted(async () => {
     console.error(error);
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Error fetching filters',
+      type: "warning",
+      message: "Error fetching filters",
       icon: matPriorityHigh
     });
   }
@@ -1314,7 +1396,10 @@ onMounted(async () => {
     >
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
-          <q-spinner-gears class="tw:mx-auto tw:text-black tw:dark:text-white" size="5em" />
+          <q-spinner-gears
+            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            size="5em"
+          />
         </q-inner-loading>
       </template>
       <template #top>
@@ -1367,7 +1452,12 @@ onMounted(async () => {
             <q-btn-group push>
               <PartyBuilder />
               <q-separator vertical />
-              <q-btn v-if="loading" id="shepherd-2" push label="Generator Settings" />
+              <q-btn
+                v-if="loading"
+                id="shepherd-2"
+                push
+                label="Generator Settings"
+              />
               <EncounterBuilder v-else ref="encounterBuilderRef" />
               <q-separator vertical />
               <q-btn
@@ -1563,7 +1653,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ creatureFilters.level_filter.min }} to {{ creatureFilters.level_filter.max }}
+                  {{ creatureFilters.level_filter.min }} to
+                  {{ creatureFilters.level_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -1611,7 +1702,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ creatureFilters.hp_filter.min }} to {{ creatureFilters.hp_filter.max }}
+                  {{ creatureFilters.hp_filter.min }} to
+                  {{ creatureFilters.hp_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -1899,9 +1991,13 @@ onMounted(async () => {
                         v-model="creatureFilters.attack_data_filter.melee"
                         :icon="mdiSword"
                         :color="
-                          creatureFilters.attack_data_filter.melee === true ? 'positive' : 'red'
+                          creatureFilters.attack_data_filter.melee === true
+                            ? 'positive'
+                            : 'red'
                         "
-                        :keep-color="creatureFilters.attack_data_filter.melee !== null"
+                        :keep-color="
+                          creatureFilters.attack_data_filter.melee !== null
+                        "
                         size="xl"
                         toggle-indeterminate
                         role="menuitemcheckbox"
@@ -1921,9 +2017,13 @@ onMounted(async () => {
                         v-model="creatureFilters.attack_data_filter.ranged"
                         :icon="mdiBowArrow"
                         :color="
-                          creatureFilters.attack_data_filter.ranged === true ? 'positive' : 'red'
+                          creatureFilters.attack_data_filter.ranged === true
+                            ? 'positive'
+                            : 'red'
                         "
-                        :keep-color="creatureFilters.attack_data_filter.ranged !== null"
+                        :keep-color="
+                          creatureFilters.attack_data_filter.ranged !== null
+                        "
                         size="xl"
                         toggle-indeterminate
                         role="menuitemcheckbox"
@@ -1943,11 +2043,15 @@ onMounted(async () => {
                         v-model="creatureFilters.attack_data_filter.spellcaster"
                         :icon="mdiMagicStaff"
                         :color="
-                          creatureFilters.attack_data_filter.spellcaster === true
+                          creatureFilters.attack_data_filter.spellcaster ===
+                          true
                             ? 'positive'
                             : 'red'
                         "
-                        :keep-color="creatureFilters.attack_data_filter.spellcaster !== null"
+                        :keep-color="
+                          creatureFilters.attack_data_filter.spellcaster !==
+                          null
+                        "
                         size="xl"
                         toggle-indeterminate
                         role="menuitemcheckbox"
@@ -2024,7 +2128,9 @@ onMounted(async () => {
           size="sm"
           aria-label="Open item sheet"
           target="_blank"
-          @click="openCreatureSheet(selectedCreature.row.core_data.essential.id)"
+          @click="
+            openCreatureSheet(selectedCreature.row.core_data.essential.id)
+          "
         >
           <q-tooltip
             class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2115,7 +2221,9 @@ onMounted(async () => {
               :color="name.row.core_data.essential.remaster ? 'blue' : 'red-10'"
               text-color="white"
               class="tw:ml-1 tw:text-xs!"
-              :label="name.row.core_data.essential.remaster ? 'Remaster' : 'Legacy'"
+              :label="
+                name.row.core_data.essential.remaster ? 'Remaster' : 'Legacy'
+              "
             />
           </div>
         </q-td>
@@ -2131,7 +2239,7 @@ onMounted(async () => {
                 .map((trait: string) => {
                   return capitalize(trait);
                 })
-                .join(', ')
+                .join(", ")
             }}
           </span>
         </q-td>
@@ -2185,7 +2293,11 @@ onMounted(async () => {
       <template #body-cell-role="creatureRoles">
         <q-td :props="creatureRoles">
           <q-icon
-            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Brute')"
+            v-if="
+              creatureRoles.row.core_data.derived.creature_role.includes(
+                'Brute'
+              )
+            "
             :name="fasHandFist"
             size="sm"
             left
@@ -2199,7 +2311,11 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Magical Striker')"
+            v-if="
+              creatureRoles.row.core_data.derived.creature_role.includes(
+                'Magical Striker'
+              )
+            "
             :name="fasMeteor"
             size="sm"
             left
@@ -2213,7 +2329,11 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Skill Paragon')"
+            v-if="
+              creatureRoles.row.core_data.derived.creature_role.includes(
+                'Skill Paragon'
+              )
+            "
             :name="fasGraduationCap"
             size="sm"
             left
@@ -2227,7 +2347,11 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Skirmisher')"
+            v-if="
+              creatureRoles.row.core_data.derived.creature_role.includes(
+                'Skirmisher'
+              )
+            "
             :name="fasUserNinja"
             size="sm"
             left
@@ -2241,7 +2365,11 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Sniper')"
+            v-if="
+              creatureRoles.row.core_data.derived.creature_role.includes(
+                'Sniper'
+              )
+            "
             :name="fasCrosshairs"
             size="sm"
             left
@@ -2255,7 +2383,11 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Soldier')"
+            v-if="
+              creatureRoles.row.core_data.derived.creature_role.includes(
+                'Soldier'
+              )
+            "
             :name="fasUserShield"
             size="sm"
             left
@@ -2269,7 +2401,11 @@ onMounted(async () => {
             </q-tooltip>
           </q-icon>
           <q-icon
-            v-if="creatureRoles.row.core_data.derived.creature_role.includes('Spellcaster')"
+            v-if="
+              creatureRoles.row.core_data.derived.creature_role.includes(
+                'Spellcaster'
+              )
+            "
             :name="fasHatWizard"
             size="sm"
             left
@@ -2330,7 +2466,10 @@ onMounted(async () => {
     >
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
-          <q-spinner-gears class="tw:mx-auto tw:text-black tw:dark:text-white" size="5em" />
+          <q-spinner-gears
+            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            size="5em"
+          />
         </q-inner-loading>
       </template>
       <template #top>
@@ -2383,7 +2522,12 @@ onMounted(async () => {
             <q-btn-group push>
               <PartyBuilder />
               <q-separator vertical />
-              <q-btn v-if="loading" id="shepherd-2" push label="Generator Settings" />
+              <q-btn
+                v-if="loading"
+                id="shepherd-2"
+                push
+                label="Generator Settings"
+              />
               <EncounterBuilder v-else ref="encounterBuilderRef" />
               <q-separator vertical />
               <q-btn
@@ -2579,7 +2723,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ hazardFilters.level_filter.min }} to {{ hazardFilters.level_filter.max }}
+                  {{ hazardFilters.level_filter.min }} to
+                  {{ hazardFilters.level_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -2627,7 +2772,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ hazardFilters.hp_filter.min }} to {{ hazardFilters.hp_filter.max }}
+                  {{ hazardFilters.hp_filter.min }} to
+                  {{ hazardFilters.hp_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -2812,7 +2958,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ hazardFilters.stealth_filter.min }} to {{ hazardFilters.stealth_filter.max }}
+                  {{ hazardFilters.stealth_filter.min }} to
+                  {{ hazardFilters.stealth_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -2860,7 +3007,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ hazardFilters.ac_filter.min }} to {{ hazardFilters.ac_filter.max }}
+                  {{ hazardFilters.ac_filter.min }} to
+                  {{ hazardFilters.ac_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -2957,7 +3105,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ hazardFilters.reflex_filter.min }} to {{ hazardFilters.reflex_filter.max }}
+                  {{ hazardFilters.reflex_filter.min }} to
+                  {{ hazardFilters.reflex_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -3005,7 +3154,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ hazardFilters.will_filter.min }} to {{ hazardFilters.will_filter.max }}
+                  {{ hazardFilters.will_filter.min }} to
+                  {{ hazardFilters.will_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -3053,7 +3203,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ hazardFilters.hardness_filter.min }} to {{ hazardFilters.hardness_filter.max }}
+                  {{ hazardFilters.hardness_filter.min }} to
+                  {{ hazardFilters.hardness_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -3172,10 +3323,14 @@ onMounted(async () => {
             <q-chip
               v-if="settings.game === 'pf' && settings.game_version === 'Any'"
               dense
-              :color="name.row.core_hazard.essential.remaster ? 'blue' : 'red-10'"
+              :color="
+                name.row.core_hazard.essential.remaster ? 'blue' : 'red-10'
+              "
               text-color="white"
               class="tw:ml-1 tw:text-xs!"
-              :label="name.row.core_hazard.essential.remaster ? 'Remaster' : 'Legacy'"
+              :label="
+                name.row.core_hazard.essential.remaster ? 'Remaster' : 'Legacy'
+              "
             />
           </div>
         </q-td>
@@ -3191,7 +3346,7 @@ onMounted(async () => {
                 .map((trait: string) => {
                   return capitalize(trait);
                 })
-                .join(', ')
+                .join(", ")
             }}
           </span>
         </q-td>

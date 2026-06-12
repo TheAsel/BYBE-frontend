@@ -1,14 +1,16 @@
-import { apiFetch, apiFetchText, buildUrl } from 'src/utils/fetch';
+import { apiFetch, apiFetchText, buildUrl } from "@/utils/fetch";
 
-import type { games } from 'src/types/filters';
-import type { npc, shareable_npc, valid_genders } from 'src/types/npcs';
+import type { games } from "@/types/filters";
+import type { npc, shareable_npc, valid_genders } from "@/types/npcs";
 
 export async function requestParameters(
   game: games,
-  parameter: 'genders' | 'classes' | 'jobs' | 'cultures'
+  parameter: "genders" | "classes" | "jobs" | "cultures"
 ) {
   try {
-    return await apiFetch<string[]>(buildUrl(process.env.API_URL!, [game, 'npc', parameter]));
+    return await apiFetch<string[]>(
+      buildUrl(import.meta.env.API_URL, [game, "npc", parameter])
+    );
   } catch (error) {
     console.error(error);
   }
@@ -17,7 +19,7 @@ export async function requestParameters(
 export async function requestAncestries(game: games) {
   try {
     return await apiFetch<valid_genders[]>(
-      buildUrl(process.env.API_URL!, [game, 'npc', 'ancestries'])
+      buildUrl(import.meta.env.API_URL, [game, "npc", "ancestries"])
     );
   } catch (error) {
     console.error(error);
@@ -42,11 +44,17 @@ export async function npcGenerator(
   }
 ) {
   try {
-    return await apiFetch<npc>(buildUrl(process.env.API_URL!, [game, 'npc', 'generator']), {
-      method: 'POST',
-      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
+    return await apiFetch<npc>(
+      buildUrl(import.meta.env.API_URL, [game, "npc", "generator"]),
+      {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      }
+    );
   } catch (error) {
     console.error(error);
   }
@@ -54,14 +62,24 @@ export async function npcGenerator(
 
 export async function npcParametersGenerator(
   game: games,
-  parameter: 'ancestry' | 'class' | 'gender' | 'job' | 'nickname' | 'level' | 'culture'
+  parameter:
+    | "ancestry"
+    | "class"
+    | "gender"
+    | "job"
+    | "nickname"
+    | "level"
+    | "culture"
 ) {
   try {
     return await apiFetch<string>(
-      buildUrl(process.env.API_URL!, [game, 'npc', 'generator', parameter]),
+      buildUrl(import.meta.env.API_URL, [game, "npc", "generator", parameter]),
       {
-        method: 'POST',
-        headers: { accept: 'application/json', 'Content-Type': 'application/json' }
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json"
+        }
       }
     );
   } catch (error) {
@@ -72,10 +90,13 @@ export async function npcParametersGenerator(
 export async function npcLevelGenerator(game: games) {
   try {
     return await apiFetch<number>(
-      buildUrl(process.env.API_URL!, [game, 'npc', 'generator', 'level']),
+      buildUrl(import.meta.env.API_URL, [game, "npc", "generator", "level"]),
       {
-        method: 'POST',
-        headers: { accept: 'application/json', 'Content-Type': 'application/json' }
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json"
+        }
       }
     );
   } catch (error) {
@@ -95,10 +116,13 @@ export async function npcNamesGenerator(
 ) {
   try {
     return await apiFetch<string[]>(
-      buildUrl(process.env.API_URL!, [game, 'npc', 'generator', 'names']),
+      buildUrl(import.meta.env.API_URL, [game, "npc", "generator", "names"]),
       {
-        method: 'POST',
-        headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify(body)
       }
     );
@@ -109,11 +133,17 @@ export async function npcNamesGenerator(
 
 export async function generateNpcLink(body: shareable_npc) {
   try {
-    return await apiFetchText(buildUrl(process.env.API_URL!, ['shareable', 'npc', 'encode']), {
-      method: 'POST',
-      headers: { accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
+    return await apiFetchText(
+      buildUrl(import.meta.env.API_URL, ["shareable", "npc", "encode"]),
+      {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      }
+    );
   } catch (error) {
     console.error(error);
   }
@@ -122,7 +152,12 @@ export async function generateNpcLink(body: shareable_npc) {
 export async function decodeNpcLink(encoded_data: string) {
   try {
     return await apiFetch<shareable_npc>(
-      buildUrl(process.env.API_URL!, ['shareable', 'npc', 'decode', encoded_data])
+      buildUrl(import.meta.env.API_URL, [
+        "shareable",
+        "npc",
+        "decode",
+        encoded_data
+      ])
     );
   } catch (error) {
     console.error(error);

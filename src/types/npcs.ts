@@ -1,4 +1,4 @@
-import type { games } from 'src/types/filters';
+import type { games } from "@/types/filters";
 
 export type valid_genders = {
   ancestry: string;

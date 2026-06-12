@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import { matArrowDownward, matArrowUpward } from '@quasar/extras/material-icons';
-import { useHead } from '@unhead/vue';
-import { scroll } from 'quasar';
-import Shepherd from 'shepherd.js';
-import { onMounted, onUnmounted, ref } from 'vue';
+import {
+  matArrowDownward,
+  matArrowUpward
+} from "@quasar/extras/material-icons";
+import { useHead } from "@unhead/vue";
+import { scroll } from "quasar";
+import Shepherd from "shepherd.js";
+import { onMounted, onUnmounted, ref } from "vue";
 
-import EncounterList from 'src/components/encounter/EncounterList.vue';
-import EncounterSheet from 'src/components/encounter/EncounterSheet.vue';
-import EncounterTable from 'src/components/encounter/EncounterTable.vue';
-import { encounterStore } from 'src/stores/encounter';
-import { settingsStore } from 'src/stores/settings';
-import { updateLocalStorageEncounters, updateLocalStorageParties } from 'src/utils/local-storage';
+import EncounterList from "@/components/encounter/EncounterList.vue";
+import EncounterSheet from "@/components/encounter/EncounterSheet.vue";
+import EncounterTable from "@/components/encounter/EncounterTable.vue";
+import { encounterStore } from "@/stores/encounter";
+import { settingsStore } from "@/stores/settings";
+import {
+  updateLocalStorageEncounters,
+  updateLocalStorageParties
+} from "@/utils/local-storage";
 
-import type { min_creature_hazard } from 'src/types/encounter';
+import type { min_creature_hazard } from "@/types/encounter";
 
 useHead({
-  title: 'Encounter Builder - BYBE',
+  title: "Encounter Builder - BYBE",
   link: [
     {
-      rel: 'canonical',
-      href: 'https://bybe.app/encounter'
+      rel: "canonical",
+      href: "https://bybe.app/encounter"
     }
   ]
 });
@@ -35,67 +41,67 @@ updateLocalStorageEncounters();
 
 // PF2E encounter
 const tmpKoboldMage: min_creature_hazard = {
-  game: 'pf',
+  game: "pf",
   id: 5009,
-  archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3074',
-  name: 'Kobold Cavern Mage',
+  archive_link: "https://2e.aonprd.com/NPCs.aspx?ID=3074",
+  name: "Kobold Cavern Mage",
   level: 2,
-  variant: 'Base',
+  variant: "Base",
   is_hazard: false
 };
 const tmpKoboldWarrior: min_creature_hazard = {
-  game: 'pf',
+  game: "pf",
   id: 4977,
-  archive_link: 'https://2e.aonprd.com/NPCs.aspx?ID=3072',
-  name: 'Kobold Warrior',
+  archive_link: "https://2e.aonprd.com/NPCs.aspx?ID=3072",
+  name: "Kobold Warrior",
   level: -1,
-  variant: 'Base',
+  variant: "Base",
   is_hazard: false
 };
 const tmpMirrorDoor: min_creature_hazard = {
-  game: 'pf',
+  game: "pf",
   id: 459,
-  archive_link: 'https://2e.aonprd.com/Hazards.aspx?ID=626',
-  name: 'Mirror Door',
+  archive_link: "https://2e.aonprd.com/Hazards.aspx?ID=626",
+  name: "Mirror Door",
   level: -1,
   is_hazard: true,
-  complexity: 'Simple'
+  complexity: "Simple"
 };
 
 //SF2E encounter
 const tmpFerrofluidOoze: min_creature_hazard = {
-  game: 'sf',
+  game: "sf",
   id: 157,
-  archive_link: 'https://2e.aonsrd.com/creatures/66-ferrofluid-ooze',
-  name: 'Ferrofluid Ooze',
+  archive_link: "https://2e.aonsrd.com/creatures/66-ferrofluid-ooze",
+  name: "Ferrofluid Ooze",
   level: 2,
-  variant: 'Base',
+  variant: "Base",
   is_hazard: false
 };
 const tmpAnaciteWingbot: min_creature_hazard = {
-  game: 'sf',
+  game: "sf",
   id: 11,
-  archive_link: 'https://2e.aonsrd.com/creatures/2-anacite-wingbot',
-  name: 'Anacite Wingbot',
+  archive_link: "https://2e.aonsrd.com/creatures/2-anacite-wingbot",
+  name: "Anacite Wingbot",
   level: -1,
-  variant: 'Base',
+  variant: "Base",
   is_hazard: false
 };
 const tmpAntiGravityPulse: min_creature_hazard = {
-  game: 'sf',
+  game: "sf",
   id: 18,
-  archive_link: 'https://2e.aonsrd.com/hazards/5-anti-gravity-pulse',
-  name: 'Anti-Gravity Pulse',
+  archive_link: "https://2e.aonsrd.com/hazards/5-anti-gravity-pulse",
+  name: "Anti-Gravity Pulse",
   level: 0,
   is_hazard: true,
-  complexity: 'Simple'
+  complexity: "Simple"
 };
 
-Shepherd.on('start', () => {
-  const index = encounter.encounters.findIndex((obj) => obj.name === 'Example');
+Shepherd.on("start", () => {
+  const index = encounter.encounters.findIndex(obj => obj.name === "Example");
   if (index === -1) {
-    encounter.addEncounter('Example');
-    if (settings.game === 'sf') {
+    encounter.addEncounter("Example");
+    if (settings.game === "sf") {
       encounter.addToEncounter(tmpFerrofluidOoze);
       encounter.addToEncounter(tmpAnaciteWingbot);
       encounter.addToEncounter(tmpAntiGravityPulse);
@@ -109,7 +115,7 @@ Shepherd.on('start', () => {
   }
 });
 
-['complete', 'cancel'].forEach((event) =>
+["complete", "cancel"].forEach(event =>
   Shepherd.on(event, () => {
     encounter.removeEncounter();
   })
@@ -129,7 +135,11 @@ function scrollPage() {
     if (scrollUp.value) {
       scroll.setVerticalScrollPosition(pageRef.value!, 0, 500);
     } else {
-      scroll.setVerticalScrollPosition(pageRef.value!, pageRef.value!.scrollHeight, 500);
+      scroll.setVerticalScrollPosition(
+        pageRef.value!,
+        pageRef.value!.scrollHeight,
+        500
+      );
     }
   }, 10);
 }
@@ -139,34 +149,37 @@ const handleResize = () => {
 };
 
 onMounted(() => {
-  pageRef.value = document.getElementById('pageRef')!;
-  pageRef.value.addEventListener('scroll', scrollDirection);
-  globalThis.addEventListener('resize', handleResize);
+  pageRef.value = document.getElementById("pageRef")!;
+  pageRef.value.addEventListener("scroll", scrollDirection);
+  globalThis.addEventListener("resize", handleResize);
 });
 
 onUnmounted(() => {
-  pageRef.value!.removeEventListener('scroll', scrollDirection);
-  globalThis.removeEventListener('resize', handleResize);
+  pageRef.value!.removeEventListener("scroll", scrollDirection);
+  globalThis.removeEventListener("resize", handleResize);
 });
 
 const sheetVisible = ref(true);
-const sheetWidth = ref('tw:md:w-[27%] tw:p-4!');
-const tableWidth = ref('tw:md:w-[46%] tw:pl-4! tw:md:pl-0!');
+const sheetWidth = ref("tw:md:w-[27%] tw:p-4!");
+const tableWidth = ref("tw:md:w-[46%] tw:pl-4! tw:md:pl-0!");
 
 const toggleSheetView = () => {
   sheetVisible.value = !sheetVisible.value;
   if (sheetVisible.value) {
-    sheetWidth.value = 'tw:md:w-[27%] tw:p-4!';
-    tableWidth.value = 'tw:md:w-[46%] tw:pl-4! tw:md:pl-0!';
+    sheetWidth.value = "tw:md:w-[27%] tw:p-4!";
+    tableWidth.value = "tw:md:w-[46%] tw:pl-4! tw:md:pl-0!";
   } else {
-    sheetWidth.value = 'tw:md:w-[0%] tw:p-0! tw:collapse';
-    tableWidth.value = 'tw:md:w-[73%] tw:pl-4!';
+    sheetWidth.value = "tw:md:w-[0%] tw:p-0! tw:collapse";
+    tableWidth.value = "tw:md:w-[73%] tw:pl-4!";
   }
 };
 </script>
 
 <template>
-  <q-page id="pageRef" class="tw:h-full row items-center justify-between tw:overflow-auto">
+  <q-page
+    id="pageRef"
+    class="tw:h-full row items-center justify-between tw:overflow-auto"
+  >
     <EncounterSheet
       v-if="screenWidth >= 768"
       class="tw:py-4 tw:pl-4 tw:w-full tw:transition-all tw:duration-300"

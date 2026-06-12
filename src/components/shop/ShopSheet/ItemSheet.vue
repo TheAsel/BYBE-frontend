@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
-import { useRouter } from 'vue-router';
+import { biBoxArrowUpRight, biXLg } from "@quasar/extras/bootstrap-icons";
+import { useRouter } from "vue-router";
 
-import { itemsStore } from 'src/stores/items';
-import { settingsStore } from 'src/stores/settings';
-import { cleanDescription, getGameFont, getGameFontSize, openSheet } from 'src/utils/sheet';
+import { itemsStore } from "@/stores/items";
+import { settingsStore } from "@/stores/settings";
+import {
+  cleanDescription,
+  getGameFont,
+  getGameFontSize,
+  openSheet
+} from "@/utils/sheet";
 
 const router = useRouter();
 
@@ -99,7 +104,10 @@ const items = itemsStore();
     </div>
   </div>
   <q-separator class="tw:my-2!" style="height: 2px" />
-  <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
+  <hr
+    class="only-print"
+    style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+  />
   <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white">
     <div
       v-if="items.selectedItem!.core_item.rarity === 'Uncommon'"
@@ -124,7 +132,9 @@ const items = itemsStore();
       :key="item"
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ item.toUpperCase().replaceAll('-', ' ').replace('ADDITIVE', 'ADDITIVE ') }}
+      {{
+        item.toUpperCase().replaceAll("-", " ").replace("ADDITIVE", "ADDITIVE ")
+      }}
     </div>
   </div>
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
@@ -142,7 +152,9 @@ const items = itemsStore();
         target="_blank"
         rel="noopener"
       >
-        <i class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400">
+        <i
+          class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
+        >
           {{ items.selectedItem!.core_item.source }}
         </i>
       </a>
@@ -152,7 +164,12 @@ const items = itemsStore();
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     >
       <strong>Price</strong>
-      {{ items.getFormattedPrice(items.selectedItem!.core_item.price, settings.game) }};
+      {{
+        items.getFormattedPrice(
+          items.selectedItem!.core_item.price,
+          settings.game
+        )
+      }};
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <span v-if="items.selectedItem!.core_item.usage">
@@ -164,7 +181,10 @@ const items = itemsStore();
     </div>
   </div>
   <q-separator class="tw:my-2!" style="height: 2px" />
-  <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
+  <hr
+    class="only-print"
+    style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+  />
   <div
     class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     v-html="cleanDescription(items.selectedItem!.core_item.description)"

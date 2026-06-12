@@ -1,17 +1,25 @@
-export async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
+export async function apiFetch<T>(
+  url: string,
+  options?: RequestInit
+): Promise<T> {
   const response = await fetch(url, options);
-  const contentType = response.headers.get('content-type');
-  const data = contentType?.includes('application/json') ? await response.json() : null;
+  const contentType = response.headers.get("content-type");
+  const data = contentType?.includes("application/json")
+    ? await response.json()
+    : null;
 
   if (!response.ok) {
     const error = data?.message ?? response.status;
-    throw new Error(typeof error === 'string' ? error : String(error));
+    throw new Error(typeof error === "string" ? error : String(error));
   }
 
   return data as T;
 }
 
-export async function apiFetchText(url: string, options?: RequestInit): Promise<string> {
+export async function apiFetchText(
+  url: string,
+  options?: RequestInit
+): Promise<string> {
   const response = await fetch(url, options);
   const data = await response.text();
 
@@ -28,7 +36,7 @@ export function buildUrl(
   searchParams?: Record<string, string | number | boolean>
 ): string {
   const url = new URL(baseUrl);
-  url.pathname = pathSegments.filter(Boolean).join('/');
+  url.pathname = pathSegments.filter(Boolean).join("/");
 
   if (searchParams) {
     for (const [key, value] of Object.entries(searchParams)) {

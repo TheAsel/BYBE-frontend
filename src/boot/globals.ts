@@ -1,5 +1,5 @@
-import { defineBoot } from '#q-app/wrappers';
-import { createHead } from '@unhead/vue/client';
+import { defineBoot } from "#q-app";
+import { createHead } from "@unhead/vue/client";
 
 const head = createHead();
 

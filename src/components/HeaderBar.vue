@@ -1,20 +1,29 @@
 <script setup lang="ts">
-import { biGithub, biList, biMoon, biSun } from '@quasar/extras/bootstrap-icons';
-import { debounce } from 'lodash-es';
-import { useQuasar } from 'quasar';
-import { ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import {
+  biGithub,
+  biList,
+  biMoon,
+  biSun
+} from "@quasar/extras/bootstrap-icons";
+import { debounce } from "lodash-es";
+import { useQuasar } from "quasar";
+import { ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-import SettingsMenu from 'src/components/SettingsMenu.vue';
-import { settingsStore } from 'src/stores/settings';
-import { createTourEncounter, createTourNpc, createTourShop } from 'src/utils/tours';
-import { TailwindDarkFix } from 'src/utils/tw-dark-fix';
+import SettingsMenu from "@/components/SettingsMenu.vue";
+import { settingsStore } from "@/stores/settings";
+import {
+  createTourEncounter,
+  createTourNpc,
+  createTourShop
+} from "@/utils/tours";
+import { TailwindDarkFix } from "@/utils/tw-dark-fix";
 
-import type { games } from 'src/types/filters';
+import type { games } from "@/types/filters";
 
 const settings = settingsStore();
-const isApp = process.env.IS_APP === 'true';
-const repoUrl = 'https://github.com/' + process.env.REPO_URL;
+const isApp = import.meta.env.IS_APP;
+const repoUrl = "https://github.com/" + import.meta.env.REPO_URL;
 
 TailwindDarkFix();
 
@@ -22,9 +31,9 @@ const route = useRoute();
 const router = useRouter();
 const currentPath = ref(route.path);
 const isTourPage = ref(
-  currentPath.value.startsWith('/encounter') ||
-    currentPath.value.startsWith('/shop') ||
-    currentPath.value.startsWith('/npc')
+  currentPath.value.startsWith("/encounter") ||
+    currentPath.value.startsWith("/shop") ||
+    currentPath.value.startsWith("/npc")
 );
 
 watch(
@@ -32,79 +41,79 @@ watch(
   () => {
     currentPath.value = route.path;
     isTourPage.value =
-      currentPath.value.startsWith('/encounter') ||
-      currentPath.value.startsWith('/shop') ||
-      currentPath.value.startsWith('/npc');
+      currentPath.value.startsWith("/encounter") ||
+      currentPath.value.startsWith("/shop") ||
+      currentPath.value.startsWith("/npc");
   }
 );
 
 const navigation = [
-  { name: 'Encounter Builder', to: 'encounter' },
-  { name: 'Shop Generator', to: 'shop' },
-  { name: 'NPC Generator', to: 'npc' },
-  { name: 'Creature Generator', to: 'creature' },
-  { name: 'City Planner', to: 'city' }
+  { name: "Encounter Builder", to: "encounter" },
+  { name: "Shop Generator", to: "shop" },
+  { name: "NPC Generator", to: "npc" },
+  { name: "Creature Generator", to: "creature" },
+  { name: "City Planner", to: "city" }
 ];
 
 const gameOptions = [
   {
-    label: 'Pathfinder 2e',
-    value: 'pf',
-    src: '/imgs/logos/pf2e-logo.webp'
+    label: "Pathfinder 2e",
+    value: "pf",
+    src: "/imgs/logos/pf2e-logo.webp"
   },
   {
-    label: 'Starfinder 2e',
-    value: 'sf',
-    src: '/imgs/logos/sf2e-logo.webp'
+    label: "Starfinder 2e",
+    value: "sf",
+    src: "/imgs/logos/sf2e-logo.webp"
   }
 ];
 
 function changeGame(value: games) {
   settings.setGame(value);
-  if (value === 'sf') {
+  if (value === "sf") {
     const routeData = router.resolve({
       path: route.path,
-      query: { game: 'sf' }
+      query: { game: "sf" }
     });
-    globalThis.open(routeData.href, '_self');
+    globalThis.open(routeData.href, "_self");
   } else {
     const routeData = router.resolve({
       path: route.path,
-      query: { game: 'pf' }
+      query: { game: "pf" }
     });
-    globalThis.open(routeData.href, '_self');
+    globalThis.open(routeData.href, "_self");
   }
 }
 
 const $q = useQuasar();
-const theme = ref(localStorage.getItem('theme'));
+const theme = ref(localStorage.getItem("theme"));
 
 switch (theme.value) {
-  case 'dark':
+  case "dark":
     $q.dark.set(true);
     break;
-  case 'light':
+  case "light":
     $q.dark.set(false);
     break;
 
   default:
-    localStorage.setItem('theme', 'dark');
+    localStorage.setItem("theme", "dark");
     $q.dark.set(true);
     break;
 }
 
-if (theme.value === 'dark') {
+if (theme.value === "dark") {
   $q.dark.set(true);
 }
 
 const themeSwitch = () => {
   $q.dark.toggle();
   if ($q.dark.isActive) {
-    theme.value = 'dark';
-    localStorage.setItem('theme', 'dark');
+    theme.value = "dark";
+    localStorage.setItem("theme", "dark");
   } else {
-    theme.value = 'light';
-    localStorage.setItem('theme', 'light');
+    theme.value = "light";
+    localStorage.setItem("theme", "light");
   }
 };
 
@@ -143,7 +152,11 @@ const unhide = debounce(function () {
               alt="Dark BYBE logo"
             />
           </q-avatar>
-          <div class="tw:my-auto tw:ml-4 tw:text-gray-800 tw:dark:text-gray-200">BYBE</div>
+          <div
+            class="tw:my-auto tw:ml-4 tw:text-gray-800 tw:dark:text-gray-200"
+          >
+            BYBE
+          </div>
         </router-link>
         <router-link
           v-else
@@ -179,7 +192,9 @@ const unhide = debounce(function () {
           v-model="settings.game"
           :options="gameOptions"
           :readonly="
-            currentPath === '/bestiary' || currentPath === '/item' || currentPath === '/character'
+            currentPath === '/bestiary' ||
+            currentPath === '/item' ||
+            currentPath === '/character'
           "
           emit-value
           map-options
@@ -224,7 +239,10 @@ const unhide = debounce(function () {
       <div
         id="navbar-collapse"
         class="tw:grow tw:lg:block"
-        :class="{ 'tw:hidden': settings.hidden_nav, 'overflow-hidden': settings.hidden_nav }"
+        :class="{
+          'tw:hidden': settings.hidden_nav,
+          'overflow-hidden': settings.hidden_nav
+        }"
       >
         <div class="tw:flex tw:flex-col tw:lg:flex-row">
           <div
@@ -269,9 +287,15 @@ const unhide = debounce(function () {
             >Download
           </router-link>
 
-          <q-separator vertical inset class="tw:lg:block tw:hidden tw:lg:mx-7!" />
+          <q-separator
+            vertical
+            inset
+            class="tw:lg:block tw:hidden tw:lg:mx-7!"
+          />
 
-          <div class="tw:flex tw:items-center tw:gap-x-2! tw:lg:gap-x-2! tw:relative">
+          <div
+            class="tw:flex tw:items-center tw:gap-x-2! tw:lg:gap-x-2! tw:relative"
+          >
             <q-btn
               flat
               round

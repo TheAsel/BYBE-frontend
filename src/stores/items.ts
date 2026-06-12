@@ -1,18 +1,18 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-import type { games } from 'src/types/filters';
-import type { item, min_item } from 'src/types/item';
-import type { shop_list } from 'src/types/shop';
+import type { games } from "@/types/filters";
+import type { item, min_item } from "@/types/item";
+import type { shop_list } from "@/types/shop";
 
-export const itemsStore = defineStore('items', {
+export const itemsStore = defineStore("items", {
   state: () => ({
     selectedItem: {} as item | null,
-    shops: [{ name: 'Default', items: [] }] as shop_list[],
+    shops: [{ name: "Default", items: [] }] as shop_list[],
     activeShop: 0,
     generating: false
   }),
   getters: {
-    getTotalCost: (state) => {
+    getTotalCost: state => {
       let cost = 0;
       for (const item of state.shops[state.activeShop]!.items) {
         for (let i = 0; i < item.quantity; i++) {
@@ -33,7 +33,10 @@ export const itemsStore = defineStore('items', {
       this.shops = newShopList;
     },
     clearShop() {
-      this.shops[this.activeShop]!.items.splice(0, this.shops[this.activeShop]!.items.length);
+      this.shops[this.activeShop]!.items.splice(
+        0,
+        this.shops[this.activeShop]!.items.length
+      );
     },
     clearItem(item: min_item) {
       const index = this.shops[this.activeShop]!.items.indexOf(item);
@@ -69,11 +72,11 @@ export const itemsStore = defineStore('items', {
       this.shops.splice(this.activeShop, 1);
       this.activeShop = 0;
       if (this.shops.length <= 0) {
-        this.shops = [{ name: 'Default', items: [] }];
+        this.shops = [{ name: "Default", items: [] }];
       }
     },
     getShopIndex(shopName: string): number {
-      return this.shops.map((shop) => shop.name).indexOf(shopName);
+      return this.shops.map(shop => shop.name).indexOf(shopName);
     },
     updateShop(shopName: string, newItems: min_item[]) {
       const shopIndex = this.getShopIndex(shopName);
@@ -89,21 +92,21 @@ export const itemsStore = defineStore('items', {
     },
     getFormattedPrice(price: number, game: games) {
       // Starfinder
-      if (game === 'sf') {
-        return price / 10 + ' credits';
+      if (game === "sf") {
+        return price / 10 + " credits";
       }
 
       // Pathfinder
       if (price < 10) {
-        return price + ' cp';
+        return price + " cp";
       } else if (price < 100) {
         price = price / 10;
         if (!Number.isInteger(price)) {
           const decimal = (price - Math.floor(price)).toFixed(1);
           const copper = Number.parseFloat(decimal) * 10;
-          return Math.trunc(price) + ' sp, ' + copper + ' cp';
+          return Math.trunc(price) + " sp, " + copper + " cp";
         }
-        return price + ' sp';
+        return price + " sp";
       } else if (price >= 100) {
         price = price / 100;
         if (!Number.isInteger(price)) {
@@ -114,31 +117,38 @@ export const itemsStore = defineStore('items', {
             decimal = (silver - Math.floor(silver)).toFixed(1);
             const copper = Number.parseFloat(decimal) * 10;
             if (Math.trunc(silver) === 0) {
-              return Math.trunc(price) + ' gp, ' + copper + ' cp';
+              return Math.trunc(price) + " gp, " + copper + " cp";
             } else {
-              return Math.trunc(price) + ' gp, ' + Math.trunc(silver) + ' sp, ' + copper + ' cp';
+              return (
+                Math.trunc(price) +
+                " gp, " +
+                Math.trunc(silver) +
+                " sp, " +
+                copper +
+                " cp"
+              );
             }
           }
-          return Math.trunc(price) + ' gp, ' + silver / 10 + ' sp';
+          return Math.trunc(price) + " gp, " + silver / 10 + " sp";
         }
-        return price + ' gp';
+        return price + " gp";
       }
     },
     getFormattedBulk(bulk: number) {
       switch (bulk) {
         case 0.1:
-          return 'L';
+          return "L";
         case 0:
-          return '—';
+          return "—";
         default:
           return bulk;
       }
     },
     getFormattedUsage(usage: string) {
-      usage = usage.replaceAll('-', ' ');
+      usage = usage.replaceAll("-", " ");
       const worn = new RegExp(/(worn)([a-z]+)/).exec(usage);
       if (worn) {
-        usage = usage.replace(worn[0], worn[1] + ' ' + worn[2]);
+        usage = usage.replace(worn[0], worn[1] + " " + worn[2]);
       }
       return usage;
     }

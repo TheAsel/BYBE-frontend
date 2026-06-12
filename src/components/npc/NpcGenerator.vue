@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { biEraser } from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { debounce } from 'lodash-es';
-import { useQuasar } from 'quasar';
-import { onMounted, ref } from 'vue';
+import { biEraser } from "@quasar/extras/bootstrap-icons";
+import { matPriorityHigh } from "@quasar/extras/material-icons";
+import { debounce } from "lodash-es";
+import { useQuasar } from "quasar";
+import { onMounted, ref } from "vue";
 
-import { npcGenerator, requestAncestries, requestParameters } from 'src/api/npc-api-calls';
-import { npcStore } from 'src/stores/npc';
-import { npcParametersStore } from 'src/stores/npcParameters';
-import { settingsStore } from 'src/stores/settings';
+import {
+  npcGenerator,
+  requestAncestries,
+  requestParameters
+} from "@/api/npc-api-calls";
+import { npcStore } from "@/stores/npc";
+import { npcParametersStore } from "@/stores/npcParameters";
+import { settingsStore } from "@/stores/settings";
 
 const $q = useQuasar();
 
@@ -42,27 +46,35 @@ const jobFilter = ref<string[]>(npcParameters.npcParameters.jobs);
 
 onMounted(async () => {
   try {
-    const [gendersRequest, ancestriesRequest, classesRequest, jobsRequest, culturesRequest] =
-      await Promise.all([
-        requestParameters(settings.game, 'genders'),
-        requestAncestries(settings.game),
-        requestParameters(settings.game, 'classes'),
-        requestParameters(settings.game, 'jobs'),
-        settings.game === 'pf' ? requestParameters('pf', 'cultures') : Promise.resolve(null)
-      ]);
+    const [
+      gendersRequest,
+      ancestriesRequest,
+      classesRequest,
+      jobsRequest,
+      culturesRequest
+    ] = await Promise.all([
+      requestParameters(settings.game, "genders"),
+      requestAncestries(settings.game),
+      requestParameters(settings.game, "classes"),
+      requestParameters(settings.game, "jobs"),
+      settings.game === "pf"
+        ? requestParameters("pf", "cultures")
+        : Promise.resolve(null)
+    ]);
 
-    if (!gendersRequest) throw new Error('Error fetching genders');
-    if (!ancestriesRequest) throw new Error('Error fetching ancestries');
-    if (!classesRequest) throw new Error('Error fetching classes');
-    if (!jobsRequest) throw new Error('Error fetching jobs');
-    if (settings.game === 'pf' && !culturesRequest) throw new Error('Error fetching cultures');
+    if (!gendersRequest) throw new Error("Error fetching genders");
+    if (!ancestriesRequest) throw new Error("Error fetching ancestries");
+    if (!classesRequest) throw new Error("Error fetching classes");
+    if (!jobsRequest) throw new Error("Error fetching jobs");
+    if (settings.game === "pf" && !culturesRequest)
+      throw new Error("Error fetching cultures");
 
     npcParameters.updateGenders(gendersRequest);
     genderFilter.value = npcParameters.npcParameters.genders;
 
     npcParameters.updateValidGenders(ancestriesRequest);
     npcParameters.updateAncestries(
-      ancestriesRequest.map((valid_genders) => valid_genders.ancestry).sort()
+      ancestriesRequest.map(valid_genders => valid_genders.ancestry).sort()
     );
     ancestryFilter.value = npcParameters.npcParameters.ancestries;
 
@@ -80,8 +92,8 @@ onMounted(async () => {
     console.error(error);
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Error fetching filters',
+      type: "warning",
+      message: "Error fetching filters",
       icon: matPriorityHigh
     });
   }
@@ -108,16 +120,16 @@ const generateNpc = debounce(async function () {
   };
 
   if (parameters.value.genders && parameters.value.genders.length > 0) {
-    const tmpGenders = parameters.value.genders.map((_gender) => {
-      return _gender.replaceAll(' ', '');
+    const tmpGenders = parameters.value.genders.map(_gender => {
+      return _gender.replaceAll(" ", "");
     });
     body.gender_filter = tmpGenders;
   }
 
-  if (settings.game === 'sf') {
+  if (settings.game === "sf") {
     if (parameters.value.ancestries && parameters.value.ancestries.length > 0) {
-      const tmpAncestries = parameters.value.ancestries.map((_ancestry) => {
-        return _ancestry.replaceAll(' ', '');
+      const tmpAncestries = parameters.value.ancestries.map(_ancestry => {
+        return _ancestry.replaceAll(" ", "");
       });
       body.name_origin_filter = { FromAncestry: tmpAncestries };
     } else {
@@ -129,8 +141,8 @@ const generateNpc = debounce(async function () {
       parameters.value.ancestries &&
       parameters.value.ancestries.length > 0
     ) {
-      const tmpAncestries = parameters.value.ancestries.map((_ancestry) => {
-        return _ancestry.replaceAll(' ', '');
+      const tmpAncestries = parameters.value.ancestries.map(_ancestry => {
+        return _ancestry.replaceAll(" ", "");
       });
       body.name_origin_filter = { FromAncestry: tmpAncestries };
     } else if (!npcs.npcs[npcs.activeNpc]!.culture) {
@@ -142,8 +154,8 @@ const generateNpc = debounce(async function () {
       parameters.value.cultures &&
       parameters.value.cultures.length > 0
     ) {
-      const tmpCultures = parameters.value.cultures.map((_culture) => {
-        return _culture.replaceAll(' ', '');
+      const tmpCultures = parameters.value.cultures.map(_culture => {
+        return _culture.replaceAll(" ", "");
       });
       body.name_origin_filter = { FromCulture: tmpCultures };
     } else if (npcs.npcs[npcs.activeNpc]!.culture) {
@@ -152,15 +164,15 @@ const generateNpc = debounce(async function () {
   }
 
   if (parameters.value.classes && parameters.value.classes.length > 0) {
-    const tmpClasses = parameters.value.classes.map((_class) => {
-      return _class.replaceAll(' ', '');
+    const tmpClasses = parameters.value.classes.map(_class => {
+      return _class.replaceAll(" ", "");
     });
     body.class_filter = tmpClasses;
   }
 
   if (parameters.value.jobs && parameters.value.jobs.length > 0) {
-    const tmpJobs = parameters.value.jobs.map((_job) => {
-      return _job.replaceAll(' ', '');
+    const tmpJobs = parameters.value.jobs.map(_job => {
+      return _job.replaceAll(" ", "");
     });
     body.job_filter = tmpJobs;
   }
@@ -173,7 +185,7 @@ const generateNpc = debounce(async function () {
   try {
     const randomNpc = await npcGenerator(settings.game, body);
     if (randomNpc === undefined) {
-      throw new TypeError('Error generating random npc');
+      throw new TypeError("Error generating random npc");
     }
     if (!npcs.locks.name) {
       npcs.npcs[npcs.activeNpc]!.npc.name = randomNpc.name;
@@ -183,23 +195,32 @@ const generateNpc = debounce(async function () {
     }
     // regex: adds spaces between words
     if (!npcs.locks.gender) {
-      randomNpc.gender = randomNpc.gender!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+      randomNpc.gender = randomNpc.gender!.replaceAll(
+        /([a-z])([A-Z])/g,
+        "$1 $2"
+      );
       npcs.npcs[npcs.activeNpc]!.npc.gender = randomNpc.gender;
     }
     if (!npcs.locks.ancestry) {
-      randomNpc.ancestry = randomNpc.ancestry!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+      randomNpc.ancestry = randomNpc.ancestry!.replaceAll(
+        /([a-z])([A-Z])/g,
+        "$1 $2"
+      );
       npcs.npcs[npcs.activeNpc]!.npc.ancestry = randomNpc.ancestry;
     }
-    if (settings.game === 'pf' && !npcs.locks.culture) {
-      randomNpc.culture = randomNpc.culture!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+    if (settings.game === "pf" && !npcs.locks.culture) {
+      randomNpc.culture = randomNpc.culture!.replaceAll(
+        /([a-z])([A-Z])/g,
+        "$1 $2"
+      );
       npcs.npcs[npcs.activeNpc]!.npc.culture = randomNpc.culture;
     }
     if (!npcs.locks.class) {
-      randomNpc.class = randomNpc.class!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+      randomNpc.class = randomNpc.class!.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
       npcs.npcs[npcs.activeNpc]!.npc.class = randomNpc.class;
     }
     if (!npcs.locks.job) {
-      randomNpc.job = randomNpc.job!.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+      randomNpc.job = randomNpc.job!.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
       npcs.npcs[npcs.activeNpc]!.npc.job = randomNpc.job;
     }
     if (!npcs.locks.level) {
@@ -209,8 +230,8 @@ const generateNpc = debounce(async function () {
     console.error(error);
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Error generating random npc',
+      type: "warning",
+      message: "Error generating random npc",
       icon: matPriorityHigh
     });
   }
@@ -231,7 +252,7 @@ const resetParameters = () => {
 const filterGendersFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    npcParameters.npcParameters.genders = genderFilter.value.filter((v) =>
+    npcParameters.npcParameters.genders = genderFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -240,7 +261,7 @@ const filterGendersFn = (val: string, update: (fn: () => void) => void) => {
 const filterAncestriesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    npcParameters.npcParameters.ancestries = ancestryFilter.value.filter((v) =>
+    npcParameters.npcParameters.ancestries = ancestryFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -249,7 +270,7 @@ const filterAncestriesFn = (val: string, update: (fn: () => void) => void) => {
 const filterCulturesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    npcParameters.npcParameters.cultures = culturesFilter.value.filter((v) =>
+    npcParameters.npcParameters.cultures = culturesFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -258,7 +279,7 @@ const filterCulturesFn = (val: string, update: (fn: () => void) => void) => {
 const filterClassesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    npcParameters.npcParameters.classes = classFilter.value.filter((v) =>
+    npcParameters.npcParameters.classes = classFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -267,7 +288,7 @@ const filterClassesFn = (val: string, update: (fn: () => void) => void) => {
 const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    npcParameters.npcParameters.jobs = jobFilter.value.filter((v) =>
+    npcParameters.npcParameters.jobs = jobFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -288,7 +309,9 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
       >
         <div class="tw:flex tw:flex-wrap tw:mx-4 tw:my-0.5">
           <div class="tw:flex tw:shrink">
-            <span class="text-h6 tw:my-auto font-bold tw:text-gray-800 tw:dark:text-gray-200">
+            <span
+              class="text-h6 tw:my-auto font-bold tw:text-gray-800 tw:dark:text-gray-200"
+            >
               NPC Generator
             </span>
           </div>
@@ -336,7 +359,9 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
 
             <div class="tw:flex tw:flex-wrap tw:justify-center tw:gap-2">
               <q-select
-                v-if="npcs.npcs[npcs.activeNpc]!.culture && settings.game === 'pf'"
+                v-if="
+                  npcs.npcs[npcs.activeNpc]!.culture && settings.game === 'pf'
+                "
                 label="Cultures"
                 v-model="parameters.cultures"
                 class="tw:grow tw:max-w-full"
@@ -402,7 +427,9 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
               @filter="filterJobsFn"
             />
             <div class="tw:flex tw:flex-col">
-              <span class="tw:text-gray-800 tw:dark:text-gray-200"> Level range: </span>
+              <span class="tw:text-gray-800 tw:dark:text-gray-200">
+                Level range:
+              </span>
               <q-range
                 v-model="parameters.level"
                 class="tw:mb-2"
@@ -416,7 +443,11 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
                 :right-label-value="'Max: ' + parameters.level.max"
               />
             </div>
-            <q-checkbox class="tw:mx-auto" v-model="nickname" label="Nickname" />
+            <q-checkbox
+              class="tw:mx-auto"
+              v-model="nickname"
+              label="Nickname"
+            />
           </div>
         </div>
       </q-page-container>

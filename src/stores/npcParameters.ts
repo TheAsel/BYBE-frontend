@@ -1,12 +1,12 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-import type { valid_genders } from 'src/types/npcs';
+import type { valid_genders } from "@/types/npcs";
 
 function splitPascalCase(input: string): string {
-  return input.replaceAll(/([a-z])([A-Z])/g, '$1 $2');
+  return input.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
 }
 
-export const npcParametersStore = defineStore('npcparameters', {
+export const npcParametersStore = defineStore("npcparameters", {
   state: () => ({
     npcParameters: {
       genders: [] as string[],
@@ -34,9 +34,9 @@ export const npcParametersStore = defineStore('npcparameters', {
       this.npcParameters.classes = newClasses.map(splitPascalCase);
     },
     updateJobs(newJobs: string[]) {
-      const ai = newJobs.indexOf('AIOperator');
+      const ai = newJobs.indexOf("AIOperator");
       if (ai !== -1) {
-        newJobs[ai] = 'AI Operator';
+        newJobs[ai] = "AI Operator";
       }
       this.npcParameters.jobs = newJobs.map(splitPascalCase);
     }

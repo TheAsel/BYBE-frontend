@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { matPrint, matPriorityHigh } from '@quasar/extras/material-icons';
-import { useHead } from '@unhead/vue';
-import { isNull } from 'lodash-es';
-import { useQuasar } from 'quasar';
-import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { matPrint, matPriorityHigh } from "@quasar/extras/material-icons";
+import { useHead } from "@unhead/vue";
+import { isNull } from "lodash-es";
+import { useQuasar } from "quasar";
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-import { requestHazardId } from 'src/api/encounter-api-calls';
-import EncounterSheet from 'src/components/encounter/EncounterSheet.vue';
-import { encounterStore } from 'src/stores/encounter';
-import { settingsStore } from 'src/stores/settings';
+import { requestHazardId } from "@/api/encounter-api-calls";
+import EncounterSheet from "@/components/encounter/EncounterSheet.vue";
+import { encounterStore } from "@/stores/encounter";
+import { settingsStore } from "@/stores/settings";
 
-import type { hazard } from 'src/types/hazard';
+import type { hazard } from "@/types/hazard";
 
-const title = ref('Hazard Sheet - BYBE');
+const title = ref("Hazard Sheet - BYBE");
 
 useHead({
   title: title,
   link: [
     {
-      rel: 'canonical',
-      href: 'https://bybe.app/hazard'
+      rel: "canonical",
+      href: "https://bybe.app/hazard"
     }
   ]
 });
@@ -38,27 +38,27 @@ try {
   if (hazardId !== undefined && !Number.isNaN(hazardId)) {
     hazardData = await requestHazardId(settings.game, hazardId);
     if (isNull(hazardData) || hazardData === undefined) {
-      console.error('Missing hazard ID');
+      console.error("Missing hazard ID");
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Missing hazard ID',
+        type: "warning",
+        message: "Missing hazard ID",
         icon: matPriorityHigh
       });
-      await router.push({ name: 'encounter', query: { game: settings.game } });
+      await router.push({ name: "encounter", query: { game: settings.game } });
     } else {
-      title.value = hazardData?.core_hazard.essential.name + ' - BYBE';
+      title.value = hazardData?.core_hazard.essential.name + " - BYBE";
       encounters.setSelectedHazard(hazardData);
     }
   } else {
-    console.error('Invalid hazard ID');
+    console.error("Invalid hazard ID");
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Invalid hazard ID',
+      type: "warning",
+      message: "Invalid hazard ID",
       icon: matPriorityHigh
     });
-    await router.push({ name: 'encounter', query: { game: settings.game } });
+    await router.push({ name: "encounter", query: { game: settings.game } });
   }
 } catch (error) {
   console.error(error);
@@ -70,7 +70,9 @@ const printPage = () => {
 </script>
 
 <template>
-  <EncounterSheet class="tw:mx-auto encounter-page q-pa-md tw:w-full tw:md:w-228" />
+  <EncounterSheet
+    class="tw:mx-auto encounter-page q-pa-md tw:w-full tw:md:w-228"
+  />
   <q-page-sticky
     position="bottom-right"
     :offset="[18, 18]"

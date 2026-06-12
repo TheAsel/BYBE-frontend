@@ -1,21 +1,21 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-import type { npc, npc_list } from 'src/types/npcs';
+import type { npc, npc_list } from "@/types/npcs";
 
-export const npcStore = defineStore('npc', {
+export const npcStore = defineStore("npc", {
   state: () => ({
     npcs: [
       {
-        name: 'Default',
+        name: "Default",
         npc: {
           level: -1,
-          gender: '',
-          ancestry: '',
-          culture: '',
-          class: '',
-          job: '',
-          name: '',
-          custom_fields: [{ name: '', body: '' }]
+          gender: "",
+          ancestry: "",
+          culture: "",
+          class: "",
+          job: "",
+          name: "",
+          custom_fields: [{ name: "", body: "" }]
         },
         culture: false
       }
@@ -40,21 +40,21 @@ export const npcStore = defineStore('npc', {
     clearNpc() {
       const tmpNpc: npc = {
         level: -1,
-        gender: '',
-        ancestry: '',
-        culture: '',
-        class: '',
-        job: '',
-        name: '',
-        nickname: '',
-        languages: '',
-        description: '',
-        personality: '',
-        quirk: '',
-        relationships: '',
-        ideology: '',
-        custom_fields: [{ name: '', body: '' }],
-        game: 'pf'
+        gender: "",
+        ancestry: "",
+        culture: "",
+        class: "",
+        job: "",
+        name: "",
+        nickname: "",
+        languages: "",
+        description: "",
+        personality: "",
+        quirk: "",
+        relationships: "",
+        ideology: "",
+        custom_fields: [{ name: "", body: "" }],
+        game: "pf"
       };
       this.npcs[this.activeNpc]!.npc = tmpNpc;
     },
@@ -70,21 +70,21 @@ export const npcStore = defineStore('npc', {
         name: npcName,
         npc: {
           level: -1,
-          gender: '',
-          ancestry: '',
-          culture: '',
-          class: '',
-          job: '',
-          name: '',
-          nickname: '',
-          languages: '',
-          description: '',
-          personality: '',
-          quirk: '',
-          relationships: '',
-          ideology: '',
-          custom_fields: [{ name: '', body: '' }],
-          game: 'pf'
+          gender: "",
+          ancestry: "",
+          culture: "",
+          class: "",
+          job: "",
+          name: "",
+          nickname: "",
+          languages: "",
+          description: "",
+          personality: "",
+          quirk: "",
+          relationships: "",
+          ideology: "",
+          custom_fields: [{ name: "", body: "" }],
+          game: "pf"
         },
         culture: false
       });
@@ -96,24 +96,24 @@ export const npcStore = defineStore('npc', {
       if (this.npcs.length <= 0) {
         this.npcs = [
           {
-            name: 'Default',
+            name: "Default",
             npc: {
               level: -1,
-              gender: '',
-              ancestry: '',
-              culture: '',
-              class: '',
-              job: '',
-              name: '',
-              nickname: '',
-              languages: '',
-              description: '',
-              personality: '',
-              quirk: '',
-              relationships: '',
-              ideology: '',
-              custom_fields: [{ name: '', body: '' }],
-              game: 'pf'
+              gender: "",
+              ancestry: "",
+              culture: "",
+              class: "",
+              job: "",
+              name: "",
+              nickname: "",
+              languages: "",
+              description: "",
+              personality: "",
+              quirk: "",
+              relationships: "",
+              ideology: "",
+              custom_fields: [{ name: "", body: "" }],
+              game: "pf"
             },
             culture: false
           }
@@ -121,7 +121,7 @@ export const npcStore = defineStore('npc', {
       }
     },
     getNpcIndex(npcName: string): number {
-      return this.npcs.map((npc) => npc.name).indexOf(npcName);
+      return this.npcs.map(npc => npc.name).indexOf(npcName);
     },
     updateNpc(npcName: string, newNpc: npc) {
       const npcIndex = this.getNpcIndex(npcName);

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ArmorSheet from 'src/components/shop/ShopSheet/ArmorSheet.vue';
-import ItemSheet from 'src/components/shop/ShopSheet/ItemSheet.vue';
-import ShieldSheet from 'src/components/shop/ShopSheet/ShieldSheet.vue';
-import WeaponSheet from 'src/components/shop/ShopSheet/WeaponSheet.vue';
-import { itemsStore } from 'src/stores/items';
+import ArmorSheet from "@/components/shop/ShopSheet/ArmorSheet.vue";
+import ItemSheet from "@/components/shop/ShopSheet/ItemSheet.vue";
+import ShieldSheet from "@/components/shop/ShopSheet/ShieldSheet.vue";
+import WeaponSheet from "@/components/shop/ShopSheet/WeaponSheet.vue";
+import { itemsStore } from "@/stores/items";
 
 const items = itemsStore();
 </script>
@@ -18,15 +18,21 @@ const items = itemsStore();
           v-if="items.selectedItem && items.selectedItem.core_item"
           class="q-gutter-y-xs tw:p-4 show-print"
         >
-          <ArmorSheet v-if="items.selectedItem.core_item.item_type === 'Armor'" />
+          <ArmorSheet
+            v-if="items.selectedItem.core_item.item_type === 'Armor'"
+          />
           <ItemSheet
             v-if="
               items.selectedItem.core_item.item_type === 'Consumable' ||
               items.selectedItem.core_item.item_type === 'Equipment'
             "
           />
-          <ShieldSheet v-if="items.selectedItem.core_item.item_type === 'Shield'" />
-          <WeaponSheet v-if="items.selectedItem.core_item.item_type === 'Weapon'" />
+          <ShieldSheet
+            v-if="items.selectedItem.core_item.item_type === 'Shield'"
+          />
+          <WeaponSheet
+            v-if="items.selectedItem.core_item.item_type === 'Weapon'"
+          />
         </div>
         <div v-else class="tw:text-center tw:text-lg tw:pt-[38vh]">
           Click on an item to display its description
@@ -38,7 +44,7 @@ const items = itemsStore();
 
 <style>
 .action-glyph {
-  font-family: 'Pathfinder2eActions', sans-serif;
+  font-family: "Pathfinder2eActions", sans-serif;
   font-size: 24px;
   line-height: calc(2 / 1.5);
 }
@@ -46,7 +52,7 @@ const items = itemsStore();
 
 <style lang="scss">
 .item-sheet {
-  font-family: 'Good Pro', sans-serif;
+  font-family: "Good Pro", sans-serif;
 }
 
 .item-page {

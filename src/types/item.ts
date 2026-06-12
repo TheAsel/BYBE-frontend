@@ -1,4 +1,4 @@
-import type { games, rarities, sizes } from 'src/types/filters';
+import type { games, rarities, sizes } from "@/types/filters";
 
 export type item = {
   game: games;
@@ -27,7 +27,7 @@ export type item = {
     price: number;
     usage: string | null;
     group: string | null;
-    item_type: 'Armor' | 'Consumable' | 'Equipment' | 'Weapon' | 'Shield';
+    item_type: "Armor" | "Consumable" | "Equipment" | "Weapon" | "Shield";
     material_grade: string | null;
     material_type: string | null;
     number_of_uses: number | null;
@@ -63,7 +63,7 @@ export type item = {
     property_runes: string[];
     range: number;
     reload: string;
-    weapon_type: 'Melee' | 'Ranged' | 'Generic';
+    weapon_type: "Melee" | "Ranged" | "Generic";
     splash_dmg: number;
   };
 };

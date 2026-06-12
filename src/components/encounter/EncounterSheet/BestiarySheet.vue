@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { biBoxArrowUpRight, biXLg } from '@quasar/extras/bootstrap-icons';
-import { upperFirst } from 'lodash-es';
-import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { biBoxArrowUpRight, biXLg } from "@quasar/extras/bootstrap-icons";
+import { upperFirst } from "lodash-es";
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-import { encounterStore } from 'src/stores/encounter';
-import { settingsStore } from 'src/stores/settings';
+import { encounterStore } from "@/stores/encounter";
+import { settingsStore } from "@/stores/settings";
 import {
   actionTraitsString,
   addPlus,
@@ -13,9 +13,9 @@ import {
   getGameFontSize,
   openSheet,
   pfActionSymbol
-} from 'src/utils/sheet';
+} from "@/utils/sheet";
 
-import type { variants } from 'src/types/filters';
+import type { variants } from "@/types/filters";
 
 const route = useRoute();
 const router = useRouter();
@@ -23,28 +23,32 @@ const encounter = encounterStore();
 const settings = settingsStore();
 
 const changeVariant = (variant: variants) => {
-  if (encounter.selectedCreature?.variant_data?.variant === 'Base') {
+  if (encounter.selectedCreature?.variant_data?.variant === "Base") {
     const routeData = router.resolve({
-      name: 'bestiary',
-      query: { game: settings.game, id: encounter.selectedCreature?.core_data.essential.id }
+      name: "bestiary",
+      query: {
+        game: settings.game,
+        id: encounter.selectedCreature?.core_data.essential.id
+      }
     });
-    globalThis.open(routeData.href, '_self');
+    globalThis.open(routeData.href, "_self");
   } else {
     const routeData = router.resolve({
-      name: 'bestiary',
+      name: "bestiary",
       query: {
         game: settings.game,
         id: encounter.selectedCreature?.core_data.essential.id,
         variant: variant.toLowerCase()
       }
     });
-    globalThis.open(routeData.href, '_self');
+    globalThis.open(routeData.href, "_self");
   }
 };
 
 const variantStyle = (value: string | number | undefined) => {
-  if (value && encounter.selectedCreature?.variant_data?.variant !== 'Base') {
-    const valueStr = '<span class="tw:text-red-600"><b>' + value.toString() + '</b></span>';
+  if (value && encounter.selectedCreature?.variant_data?.variant !== "Base") {
+    const valueStr =
+      '<span class="tw:text-red-600"><b>' + value.toString() + "</b></span>";
     return valueStr;
   }
   return value;
@@ -52,54 +56,59 @@ const variantStyle = (value: string | number | undefined) => {
 
 const cleanDescription = (description: string) => {
   const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
-  return description.replaceAll(cleanRegex, '');
+  return description.replaceAll(cleanRegex, "");
 };
 
 const perceptionString = computed(() => {
   const perception = encounter.selectedCreature?.extra_data?.perception;
   const senses = encounter.selectedCreature?.extra_data?.senses;
-  const spells = encounter.selectedCreature?.spellcaster_data?.spellcaster_entries
-    .flatMap((entry) => Object.values(entry.spells))
-    .flatMap((spell) => spell.name);
-  let finalString = '';
+  const spells =
+    encounter.selectedCreature?.spellcaster_data?.spellcaster_entries
+      .flatMap(entry => Object.values(entry.spells))
+      .flatMap(spell => spell.name);
+  let finalString = "";
   if (perception !== undefined) {
-    finalString += '<strong>Perception&nbsp;</strong>' + variantStyle(addPlus(perception)) + '; ';
+    finalString +=
+      "<strong>Perception&nbsp;</strong>" +
+      variantStyle(addPlus(perception)) +
+      "; ";
   }
   if (senses !== undefined && senses.length > 0) {
     for (const sense of senses) {
       let found = false;
-      for (const action of encounter.selectedCreature?.extra_data?.actions ?? []) {
+      for (const action of encounter.selectedCreature?.extra_data?.actions ??
+        []) {
         if (action.core_action.slug === sense.name) {
-          finalString += action.core_action.name.toLowerCase() + ', ';
+          finalString += action.core_action.name.toLowerCase() + ", ";
           found = true;
         }
       }
       if (!found) {
         finalString += sense.name;
         if (sense.acuity) {
-          finalString += ' ' + '(' + sense.acuity + ')';
+          finalString += " " + "(" + sense.acuity + ")";
         }
         if (sense.range) {
-          finalString += ' ' + sense.range + ' feet';
+          finalString += " " + sense.range + " feet";
         }
-        finalString += ', ';
+        finalString += ", ";
       }
     }
     if (
       spells !== undefined &&
       spells.length > 0 &&
-      senses.every((sense) => {
-        return sense.name !== 'truesight';
+      senses.every(sense => {
+        return sense.name !== "truesight";
       })
     ) {
       for (const spell of spells) {
-        if (spell === 'True Seeing (Constant)') {
-          finalString += 'truesight' + ', ';
+        if (spell === "True Seeing (Constant)") {
+          finalString += "truesight" + ", ";
         }
       }
     }
     if (!encounter.selectedCreature!.extra_data!.has_vision) {
-      finalString += 'no vision' + ', ';
+      finalString += "no vision" + ", ";
     }
     if (encounter.selectedCreature?.extra_data?.perception_detail) {
       finalString += encounter.selectedCreature?.extra_data?.perception_detail;
@@ -114,15 +123,15 @@ const perceptionString = computed(() => {
 
 const languageString = computed(() => {
   const languages = encounter.selectedCreature?.extra_data?.languages;
-  let finalString = '';
+  let finalString = "";
   if (languages !== undefined && languages.length > 0) {
-    finalString += '<strong>Languages&nbsp;</strong>';
+    finalString += "<strong>Languages&nbsp;</strong>";
     for (const language of languages) {
-      finalString += upperFirst(language) + ', ';
+      finalString += upperFirst(language) + ", ";
     }
   }
   finalString = finalString.substring(0, finalString.length - 2);
-  finalString += '; ';
+  finalString += "; ";
   if (encounter.selectedCreature?.extra_data?.language_detail) {
     finalString += encounter.selectedCreature?.extra_data?.language_detail;
   } else {
@@ -133,11 +142,12 @@ const languageString = computed(() => {
 
 const skillString = computed(() => {
   const skills = encounter.selectedCreature?.extra_data?.skills;
-  let finalString = '';
+  let finalString = "";
   if (skills !== undefined && skills.length > 0) {
-    finalString += '<strong>Skills&nbsp;</strong>';
+    finalString += "<strong>Skills&nbsp;</strong>";
     for (const skill of skills) {
-      finalString += skill.name + ' ' + variantStyle(addPlus(skill.modifier)) + ', ';
+      finalString +=
+        skill.name + " " + variantStyle(addPlus(skill.modifier)) + ", ";
     }
   }
   return finalString.substring(0, finalString.length - 2);
@@ -147,49 +157,53 @@ const itemString = computed(() => {
   const weapons = encounter.selectedCreature?.combat_data?.weapons;
   const items = encounter.selectedCreature?.extra_data?.items;
   const armors = encounter.selectedCreature?.combat_data?.armors;
-  let finalString = '';
-  finalString += '<strong>Items&nbsp;</strong>';
+  let finalString = "";
+  finalString += "<strong>Items&nbsp;</strong>";
   const droppedItems: string[] = [];
   if (weapons !== undefined && weapons.length > 0) {
     for (const weapon of weapons) {
-      if (weapon.weapon_data && weapon.weapon_data.weapon_type === 'Generic') {
-        let weaponString = '';
+      if (weapon.weapon_data && weapon.weapon_data.weapon_type === "Generic") {
+        let weaponString = "";
         if (
           weapon.weapon_data.n_of_potency_runes > 0 ||
           weapon.weapon_data.n_of_striking_runes > 0 ||
           weapon.weapon_data.property_runes.length > 0
         ) {
           if (weapon.weapon_data.n_of_potency_runes > 0) {
-            weaponString += addPlus(weapon.weapon_data.n_of_potency_runes) + ' ';
+            weaponString +=
+              addPlus(weapon.weapon_data.n_of_potency_runes) + " ";
           }
           switch (weapon.weapon_data.n_of_striking_runes) {
             case 1:
-              weaponString += 'striking ';
+              weaponString += "striking ";
               break;
             case 2:
-              weaponString += 'greater striking ';
+              weaponString += "greater striking ";
               break;
             case 3:
-              weaponString += 'major striking ';
+              weaponString += "major striking ";
               break;
             default:
               break;
           }
           if (weapon.weapon_data.property_runes.length > 0) {
             for (const rune of weapon.weapon_data.property_runes) {
-              weaponString += rune + ' ';
+              weaponString += rune + " ";
             }
           }
           if (weapon.item_core.material_type) {
-            weaponString += weapon.item_core.material_type + ' ';
+            weaponString += weapon.item_core.material_type + " ";
           }
           weaponString += weapon.item_core.name.toLowerCase();
         } else if (weapon.item_core.quantity === 1) {
           weaponString += weapon.item_core.name.toLowerCase();
         } else if (weapon.item_core.quantity > 1) {
-          weaponString += weapon.item_core.quantity + ' ' + weapon.item_core.name.toLowerCase();
+          weaponString +=
+            weapon.item_core.quantity +
+            " " +
+            weapon.item_core.name.toLowerCase();
         }
-        if (weaponString !== '') {
+        if (weaponString !== "") {
           droppedItems.push(weaponString);
         }
       }
@@ -197,14 +211,14 @@ const itemString = computed(() => {
   }
   if (items !== undefined && items.length > 0) {
     for (const item of items) {
-      if (item.item_type === 'Consumable' || item.item_type === 'Equipment') {
-        let itemString = '';
+      if (item.item_type === "Consumable" || item.item_type === "Equipment") {
+        let itemString = "";
         if (item.quantity === 1) {
           itemString += item.name.toLowerCase();
         } else if (item.quantity > 1) {
-          itemString += item.quantity + ' ' + item.name.toLowerCase();
+          itemString += item.quantity + " " + item.name.toLowerCase();
         }
-        if (itemString !== '') {
+        if (itemString !== "") {
           droppedItems.push(itemString);
         }
       }
@@ -212,7 +226,7 @@ const itemString = computed(() => {
   }
   if (armors !== undefined && armors.length > 0) {
     for (const armor of armors) {
-      let armorString = '';
+      let armorString = "";
       if (armor.armor_data) {
         if (
           armor.armor_data.n_of_potency_runes > 0 ||
@@ -220,43 +234,43 @@ const itemString = computed(() => {
           armor.armor_data.property_runes.length > 0
         ) {
           if (armor.armor_data.n_of_potency_runes > 0) {
-            armorString += addPlus(armor.armor_data.n_of_potency_runes) + ' ';
+            armorString += addPlus(armor.armor_data.n_of_potency_runes) + " ";
           }
           switch (armor.armor_data.n_of_resilient_runes) {
             case 1:
-              armorString += 'resilient ';
+              armorString += "resilient ";
               break;
             case 2:
-              armorString += 'greater resilient ';
+              armorString += "greater resilient ";
               break;
             case 3:
-              armorString += 'major resilient ';
+              armorString += "major resilient ";
               break;
             default:
               break;
           }
           if (armor.armor_data.property_runes.length > 0) {
             for (const rune of armor.armor_data.property_runes) {
-              armorString += rune + ' ';
+              armorString += rune + " ";
             }
           }
           if (armor.item_core.material_type) {
-            armorString += armor.item_core.material_type + ' ';
+            armorString += armor.item_core.material_type + " ";
           }
         }
       }
       armorString += armor.item_core.name.toLowerCase();
 
-      if (armorString !== '') {
+      if (armorString !== "") {
         droppedItems.push(armorString);
       }
     }
   }
   for (const dropped of droppedItems) {
-    finalString += dropped + ', ';
+    finalString += dropped + ", ";
   }
   if (droppedItems.length === 0) {
-    return '';
+    return "";
   } else {
     return finalString.substring(0, finalString.length - 2);
   }
@@ -264,41 +278,50 @@ const itemString = computed(() => {
 
 const defenceString = computed(() => {
   const actions = encounter.selectedCreature?.extra_data?.actions;
-  let finalString = '';
+  let finalString = "";
   if (encounter.selectedCreature?.combat_data?.ac) {
     finalString +=
-      '<strong>AC&nbsp;</strong>' + variantStyle(encounter.selectedCreature?.combat_data?.ac);
+      "<strong>AC&nbsp;</strong>" +
+      variantStyle(encounter.selectedCreature?.combat_data?.ac);
     if (encounter.selectedCreature?.extra_data?.ac_detail) {
-      finalString += ' ' + encounter.selectedCreature?.extra_data?.ac_detail;
+      finalString += " " + encounter.selectedCreature?.extra_data?.ac_detail;
     }
-    finalString += ';&nbsp;';
+    finalString += ";&nbsp;";
   }
   if (encounter.selectedCreature?.combat_data?.saving_throws.fortitude) {
     finalString +=
-      '<strong>Fort&nbsp;</strong>' +
-      variantStyle(addPlus(encounter.selectedCreature?.combat_data?.saving_throws.fortitude)) +
-      ';&nbsp;';
+      "<strong>Fort&nbsp;</strong>" +
+      variantStyle(
+        addPlus(
+          encounter.selectedCreature?.combat_data?.saving_throws.fortitude
+        )
+      ) +
+      ";&nbsp;";
   }
   if (encounter.selectedCreature?.combat_data?.saving_throws.reflex) {
     finalString +=
-      '<strong>Ref&nbsp;</strong>' +
-      variantStyle(addPlus(encounter.selectedCreature?.combat_data?.saving_throws.reflex)) +
-      ';&nbsp;';
+      "<strong>Ref&nbsp;</strong>" +
+      variantStyle(
+        addPlus(encounter.selectedCreature?.combat_data?.saving_throws.reflex)
+      ) +
+      ";&nbsp;";
   }
   if (encounter.selectedCreature?.combat_data?.saving_throws.will) {
     finalString +=
-      '<strong>Will&nbsp;</strong>' +
-      variantStyle(addPlus(encounter.selectedCreature?.combat_data?.saving_throws.will));
+      "<strong>Will&nbsp;</strong>" +
+      variantStyle(
+        addPlus(encounter.selectedCreature?.combat_data?.saving_throws.will)
+      );
   }
   if (actions !== undefined && actions.length > 0) {
-    finalString += '; ';
+    finalString += "; ";
     for (const action of actions) {
       if (
-        action.core_action.action_type === 'passive' &&
-        action.core_action.category === 'defensive' &&
-        action.core_action.description === ''
+        action.core_action.action_type === "passive" &&
+        action.core_action.category === "defensive" &&
+        action.core_action.description === ""
       ) {
-        finalString += action.core_action.name.toLowerCase() + ', ';
+        finalString += action.core_action.name.toLowerCase() + ", ";
       }
     }
     finalString = finalString.substring(0, finalString.length - 2);
@@ -309,10 +332,10 @@ const defenceString = computed(() => {
 const immunityString = () => {
   const immunities = encounter.selectedCreature?.combat_data?.immunities;
   immunities?.sort();
-  let finalString = '';
+  let finalString = "";
   if (immunities !== undefined && immunities.length > 0) {
     for (const immunity of immunities) {
-      finalString += immunity.toLowerCase().replaceAll('-', ' ') + ', ';
+      finalString += immunity.toLowerCase().replaceAll("-", " ") + ", ";
     }
   }
   return finalString.substring(0, finalString.length - 2);
@@ -321,40 +344,53 @@ const immunityString = () => {
 const resistanceString = () => {
   const resistances = encounter.selectedCreature?.combat_data?.resistances;
   resistances?.sort();
-  let finalString = '';
+  let finalString = "";
 
   if (resistances !== undefined && resistances.length > 0) {
     for (const resistance of resistances) {
       finalString +=
-        `${resistance.core.name.replaceAll('-', ' ')}` + ' ' + `${resistance.core.value}` + ', ';
+        `${resistance.core.name.replaceAll("-", " ")}` +
+        " " +
+        `${resistance.core.value}` +
+        ", ";
 
       if (
-        (resistance.exception_vs !== undefined && resistance.exception_vs.length > 0) ||
+        (resistance.exception_vs !== undefined &&
+          resistance.exception_vs.length > 0) ||
         (resistance.double_vs !== undefined && resistance.double_vs.length > 0)
       ) {
-        if (resistance.exception_vs !== undefined && resistance.exception_vs.length > 0) {
+        if (
+          resistance.exception_vs !== undefined &&
+          resistance.exception_vs.length > 0
+        ) {
           finalString = finalString.substring(0, finalString.length - 2);
-          finalString += ' (except ';
+          finalString += " (except ";
           for (const exception of resistance.exception_vs) {
-            finalString += exception.replaceAll('-', ' ') + ', ';
+            finalString += exception.replaceAll("-", " ") + ", ";
           }
-          finalString += '';
+          finalString += "";
           finalString = finalString.substring(0, finalString.length - 2);
         }
 
-        if (resistance.double_vs !== undefined && resistance.double_vs.length > 0) {
-          if (resistance.exception_vs !== undefined && resistance.exception_vs.length > 0) {
-            finalString += ';';
+        if (
+          resistance.double_vs !== undefined &&
+          resistance.double_vs.length > 0
+        ) {
+          if (
+            resistance.exception_vs !== undefined &&
+            resistance.exception_vs.length > 0
+          ) {
+            finalString += ";";
           }
-          finalString += ' double resistance against ';
+          finalString += " double resistance against ";
           for (const double of resistance.double_vs) {
-            finalString += double.replaceAll('-', ' ') + ', ';
+            finalString += double.replaceAll("-", " ") + ", ";
           }
-          finalString += '';
+          finalString += "";
           finalString = finalString.substring(0, finalString.length - 2);
         }
 
-        finalString += ')  ';
+        finalString += ")  ";
       }
     }
   }
@@ -365,14 +401,14 @@ const weaknessString = () => {
   const weaknesses = encounter.selectedCreature?.combat_data?.weaknesses;
   const weakKeys = Object.keys(weaknesses!);
   weakKeys.sort();
-  let finalString = '';
+  let finalString = "";
   if (weakKeys.length > 0) {
     for (const weakness of weakKeys) {
       finalString +=
-        `${weakness.replaceAll('-', ' ')}` +
-        ' ' +
+        `${weakness.replaceAll("-", " ")}` +
+        " " +
         `${encounter.selectedCreature?.combat_data?.weaknesses[weakness]}` +
-        ', ';
+        ", ";
     }
   }
   return finalString.substring(0, finalString.length - 2);
@@ -381,32 +417,34 @@ const weaknessString = () => {
 const healthString = computed(() => {
   const hp = encounter.selectedCreature?.core_data.essential.hp;
   const hpDetail = encounter.selectedCreature?.extra_data?.hp_detail;
-  let finalString = '';
+  let finalString = "";
   if (hp !== undefined) {
     finalString +=
-      '<strong>HP&nbsp;</strong>' +
+      "<strong>HP&nbsp;</strong>" +
       variantStyle(encounter.selectedCreature?.core_data.essential.hp);
     if (hpDetail) {
-      finalString += ', ' + hpDetail;
+      finalString += ", " + hpDetail;
     }
   }
   if (
     encounter.selectedCreature?.combat_data?.immunities !== undefined &&
     encounter.selectedCreature?.combat_data?.immunities.length > 0
   ) {
-    finalString += ';<br><strong>Immunities</strong>&nbsp;' + immunityString();
+    finalString += ";<br><strong>Immunities</strong>&nbsp;" + immunityString();
   }
   if (
     encounter.selectedCreature?.combat_data?.resistances !== undefined &&
     Object.keys(encounter.selectedCreature?.combat_data?.resistances).length > 0
   ) {
-    finalString += ';<br><strong>Resistances</strong>&nbsp;' + resistanceString();
+    finalString +=
+      ";<br><strong>Resistances</strong>&nbsp;" + resistanceString();
   }
   if (
     encounter.selectedCreature?.combat_data?.weaknesses !== undefined &&
     Object.keys(encounter.selectedCreature?.combat_data?.weaknesses).length > 0
   ) {
-    finalString += ';<br><strong>Weaknesess</strong>&nbsp;' + weaknessString() + ';';
+    finalString +=
+      ";<br><strong>Weaknesess</strong>&nbsp;" + weaknessString() + ";";
   }
   return finalString;
 });
@@ -414,16 +452,23 @@ const healthString = computed(() => {
 const speedString = computed(() => {
   const speeds = encounter.selectedCreature?.extra_data?.speeds;
   const speedKeys = Object.keys(speeds!);
-  let finalString = '';
+  let finalString = "";
   if (speedKeys.length > 0) {
     for (const speed of speedKeys) {
-      if (`${speed}` === 'Base') {
-        if (`${encounter.selectedCreature?.extra_data?.speeds[speed]}` !== '0') {
-          finalString += `${encounter.selectedCreature?.extra_data?.speeds[speed]}` + ' feet, ';
+      if (`${speed}` === "Base") {
+        if (
+          `${encounter.selectedCreature?.extra_data?.speeds[speed]}` !== "0"
+        ) {
+          finalString +=
+            `${encounter.selectedCreature?.extra_data?.speeds[speed]}` +
+            " feet, ";
         }
       } else {
         finalString +=
-          `${speed}` + ' ' + `${encounter.selectedCreature?.extra_data?.speeds[speed]}` + ' feet, ';
+          `${speed}` +
+          " " +
+          `${encounter.selectedCreature?.extra_data?.speeds[speed]}` +
+          " feet, ";
       }
     }
   }
@@ -434,58 +479,68 @@ const ordinalSuffix = (n: number) => {
   const j = n % 10,
     k = n % 100;
   if (j === 1 && k !== 11) {
-    return n + 'st';
+    return n + "st";
   }
   if (j === 2 && k !== 12) {
-    return n + 'nd';
+    return n + "nd";
   }
   if (j === 3 && k !== 13) {
-    return n + 'rd';
+    return n + "rd";
   }
-  return n + 'th';
+  return n + "th";
 };
 
 const spellString = computed(() => {
   const finalStrings: string[] = [];
-  for (const entry of encounter.selectedCreature?.spellcaster_data?.spellcaster_entries ?? []) {
-    let finalString = '';
-    const spellLevels: boolean[] = new Array(11).fill(false);
-    finalString += '<strong>' + entry.spellcaster_data.spellcasting_name + '</strong>';
+  for (const entry of encounter.selectedCreature?.spellcaster_data
+    ?.spellcaster_entries ?? []) {
+    let finalString = "";
+    const spellLevels: boolean[] = Array.from<boolean>({ length: 11 }).fill(
+      false
+    );
+    finalString +=
+      "<strong>" + entry.spellcaster_data.spellcasting_name + "</strong>";
     if (entry.spellcaster_data.spellcasting_dc_mod !== 0) {
-      finalString += '&nbsp;DC ' + variantStyle(entry.spellcaster_data.spellcasting_dc_mod);
+      finalString +=
+        "&nbsp;DC " + variantStyle(entry.spellcaster_data.spellcasting_dc_mod);
     }
-    if (encounter.selectedCreature?.variant_data?.variant === 'Elite') {
-      finalString += ' (' + variantStyle('+4 dmg') + ')';
+    if (encounter.selectedCreature?.variant_data?.variant === "Elite") {
+      finalString += " (" + variantStyle("+4 dmg") + ")";
     }
-    if (encounter.selectedCreature?.variant_data?.variant === 'Weak') {
-      finalString += ' (' + variantStyle('-4 dmg') + ')';
+    if (encounter.selectedCreature?.variant_data?.variant === "Weak") {
+      finalString += " (" + variantStyle("-4 dmg") + ")";
     }
     if (entry.spellcaster_data.spellcasting_atk_mod !== 0) {
       finalString +=
-        ', attack ' + variantStyle(addPlus(entry.spellcaster_data.spellcasting_atk_mod));
+        ", attack " +
+        variantStyle(addPlus(entry.spellcaster_data.spellcasting_atk_mod));
     }
     if (
       (encounter.selectedCreature?.core_data.essential.focus_points ?? 0) > 0 &&
-      entry.spellcaster_data.type_of_spellcaster === 'focus'
+      entry.spellcaster_data.type_of_spellcaster === "focus"
     ) {
-      finalString += ',&nbsp;' + encounter.selectedCreature?.core_data.essential.focus_points;
+      finalString +=
+        ",&nbsp;" +
+        encounter.selectedCreature?.core_data.essential.focus_points;
 
-      if ((encounter.selectedCreature?.core_data.essential.focus_points ?? 0) > 1) {
-        finalString += ' Focus Points';
+      if (
+        (encounter.selectedCreature?.core_data.essential.focus_points ?? 0) > 1
+      ) {
+        finalString += " Focus Points";
       } else {
-        finalString += ' Focus Point';
+        finalString += " Focus Point";
       }
     }
-    finalString += '; ';
+    finalString += "; ";
     entry.spells.sort((a, b) => b.slot - a.slot);
-    if (entry.spellcaster_data.type_of_spellcaster === 'focus') {
+    if (entry.spellcaster_data.type_of_spellcaster === "focus") {
       finalString = finalString.substring(0, finalString.length - 2);
       finalString +=
-        ';&nbsp;<strong>' +
+        ";&nbsp;<strong>" +
         ordinalSuffix(entry.spellcaster_data.heighten_level) +
-        '</strong>&nbsp;';
+        "</strong>&nbsp;";
       for (const spell of entry.spells) {
-        finalString += spell.name.toLowerCase() + ', ';
+        finalString += spell.name.toLowerCase() + ", ";
       }
     } else {
       for (const spell of entry.spells) {
@@ -493,19 +548,22 @@ const spellString = computed(() => {
           spellLevels[0] = true;
           finalString = finalString.substring(0, finalString.length - 2);
           finalString +=
-            ';&nbsp;<strong>Cantrips (' +
+            ";&nbsp;<strong>Cantrips (" +
             ordinalSuffix(entry.spellcaster_data.heighten_level) +
-            ')</strong>&nbsp;';
+            ")</strong>&nbsp;";
         } else if (!spellLevels[spell.slot]) {
           spellLevels[spell.slot] = true;
           finalString = finalString.substring(0, finalString.length - 2);
-          finalString += ';&nbsp;<strong>' + ordinalSuffix(spell.slot) + '</strong>&nbsp;';
+          finalString +=
+            ";&nbsp;<strong>" + ordinalSuffix(spell.slot) + "</strong>&nbsp;";
         }
-        finalString += spell.name.toLowerCase() + ', ';
+        finalString += spell.name.toLowerCase() + ", ";
       }
     }
 
-    finalStrings.push(finalString.substring(0, finalString.length - 2) + '<br>');
+    finalStrings.push(
+      finalString.substring(0, finalString.length - 2) + "<br>"
+    );
   }
   return finalStrings;
 });
@@ -550,7 +608,8 @@ const spellString = computed(() => {
     </div>
     <a
       v-if="
-        encounter.selectedCreature && encounter.selectedCreature?.core_data.derived.archive_link
+        encounter.selectedCreature &&
+        encounter.selectedCreature?.core_data.derived.archive_link
       "
       class="tw:my-auto"
       :href="
@@ -569,8 +628,14 @@ const spellString = computed(() => {
           ' tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400'
         "
       >
-        <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
-        <span v-else-if="encounter.selectedCreature?.variant_data?.variant === 'Elite'"
+        <span
+          v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'"
+          >Weak
+        </span>
+        <span
+          v-else-if="
+            encounter.selectedCreature?.variant_data?.variant === 'Elite'
+          "
           >Elite
         </span>
         {{ encounter.selectedCreature?.core_data.essential.name }}
@@ -585,7 +650,9 @@ const spellString = computed(() => {
       class="tw:my-auto"
       :href="
         'https://2e.aonsrd.com/search?q=' +
-        encodeURIComponent(encounter.selectedCreature?.core_data.essential.name) +
+        encodeURIComponent(
+          encounter.selectedCreature?.core_data.essential.name
+        ) +
         ' type%3A(creature)&type=eqs'
       "
       target="_blank"
@@ -597,8 +664,14 @@ const spellString = computed(() => {
           ' tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400'
         "
       >
-        <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
-        <span v-else-if="encounter.selectedCreature?.variant_data?.variant === 'Elite'"
+        <span
+          v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'"
+          >Weak
+        </span>
+        <span
+          v-else-if="
+            encounter.selectedCreature?.variant_data?.variant === 'Elite'
+          "
           >Elite
         </span>
         {{ encounter.selectedCreature!.core_data.essential.name }}
@@ -611,8 +684,15 @@ const spellString = computed(() => {
         ' tw:mr-4 tw:leading-8 tw:my-auto'
       "
     >
-      <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'">Weak </span>
-      <span v-else-if="encounter.selectedCreature?.variant_data?.variant === 'Elite'">Elite </span>
+      <span v-if="encounter.selectedCreature?.variant_data?.variant === 'Weak'"
+        >Weak
+      </span>
+      <span
+        v-else-if="
+          encounter.selectedCreature?.variant_data?.variant === 'Elite'
+        "
+        >Elite
+      </span>
       {{ encounter.selectedCreature!.core_data.essential.name }}
     </h1>
     <q-space />
@@ -624,13 +704,16 @@ const spellString = computed(() => {
       borderless
       dense
       options-dense
-      @update:model-value="changeVariant(encounter.selectedCreature?.variant_data?.variant!)"
+      @update:model-value="
+        changeVariant(encounter.selectedCreature?.variant_data?.variant!)
+      "
     />
     <div class="tw:my-1">
       {{ encounter.selectedCreature?.core_data.essential.cr_type }}
       <span
         :class="{
-          'tw:text-red-600': encounter.selectedCreature?.variant_data?.variant !== 'Base'
+          'tw:text-red-600':
+            encounter.selectedCreature?.variant_data?.variant !== 'Base'
         }"
         >{{ encounter.selectedCreature?.variant_data?.level }}</span
       >
@@ -650,31 +733,45 @@ const spellString = computed(() => {
     </div>
   </div>
   <q-separator class="tw:my-2!" style="height: 2px" />
-  <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
+  <hr
+    class="only-print"
+    style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+  />
   <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white">
     <div
-      v-if="encounter.selectedCreature?.core_data.essential.rarity === 'Uncommon'"
+      v-if="
+        encounter.selectedCreature?.core_data.essential.rarity === 'Uncommon'
+      "
       class="tw:bg-[#c45500] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
       {{ encounter.selectedCreature?.core_data.essential.rarity.toUpperCase() }}
     </div>
     <div
-      v-else-if="encounter.selectedCreature?.core_data.essential.rarity === 'Rare'"
+      v-else-if="
+        encounter.selectedCreature?.core_data.essential.rarity === 'Rare'
+      "
       class="tw:bg-[#0c1466] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
       {{ encounter.selectedCreature?.core_data.essential.rarity.toUpperCase() }}
     </div>
     <div
-      v-else-if="encounter.selectedCreature?.core_data.essential.rarity === 'Unique'"
+      v-else-if="
+        encounter.selectedCreature?.core_data.essential.rarity === 'Unique'
+      "
       class="tw:bg-[#800080] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
       {{ encounter.selectedCreature?.core_data.essential.rarity.toUpperCase() }}
     </div>
     <div
-      v-if="encounter.selectedCreature?.core_data.essential.alignment !== 'No Alignment'"
+      v-if="
+        encounter.selectedCreature?.core_data.essential.alignment !==
+        'No Alignment'
+      "
       class="tw:bg-[#4287f5] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounter.selectedCreature?.core_data.essential.alignment.toUpperCase() }}
+      {{
+        encounter.selectedCreature?.core_data.essential.alignment.toUpperCase()
+      }}
     </div>
     <div class="tw:bg-[#478c42] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1">
       {{ encounter.selectedCreature?.core_data.essential.size.toUpperCase() }}
@@ -696,18 +793,25 @@ const spellString = computed(() => {
       <a
         :href="
           'https://store.paizo.com/search.php?search_query=' +
-          encodeURIComponent(encounter.selectedCreature?.core_data.essential.source) +
+          encodeURIComponent(
+            encounter.selectedCreature?.core_data.essential.source
+          ) +
           '&section=product'
         "
         target="_blank"
         rel="noopener"
       >
-        <i class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400">
+        <i
+          class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
+        >
           {{ encounter.selectedCreature?.core_data.essential.source }}
         </i>
       </a>
     </div>
-    <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="perceptionString"></div>
+    <div
+      class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      v-html="perceptionString"
+    ></div>
     <div
       v-if="
         encounter.selectedCreature?.extra_data?.languages !== undefined &&
@@ -726,29 +830,59 @@ const spellString = computed(() => {
     ></div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <strong>Str</strong>
-      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.strength) }},
+      {{
+        addPlus(
+          encounter.selectedCreature?.extra_data?.ability_scores.strength
+        )
+      }},
       <strong>Dex</strong>
-      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.dexterity) }},
+      {{
+        addPlus(
+          encounter.selectedCreature?.extra_data?.ability_scores.dexterity
+        )
+      }},
       <strong>Con</strong>
-      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.constitution) }},
+      {{
+        addPlus(
+          encounter.selectedCreature?.extra_data?.ability_scores.constitution
+        )
+      }},
       <strong>Int</strong>
-      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.intelligence) }},
+      {{
+        addPlus(
+          encounter.selectedCreature?.extra_data?.ability_scores.intelligence
+        )
+      }},
       <strong>Wis</strong>
-      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.wisdom) }},
+      {{
+        addPlus(encounter.selectedCreature?.extra_data?.ability_scores.wisdom)
+      }},
       <strong>Cha</strong>
-      {{ addPlus(encounter.selectedCreature?.extra_data?.ability_scores.charisma) }}
+      {{
+        addPlus(encounter.selectedCreature?.extra_data?.ability_scores.charisma)
+      }}
     </div>
     <template
       v-for="item in encounter.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
       <div
-        v-if="item.core_action.category === 'interaction' && item.core_action.slug === null"
+        v-if="
+          item.core_action.category === 'interaction' &&
+          item.core_action.slug === null
+        "
         class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       >
-        <strong>{{ item.core_action.name + ' ' }}</strong>
-        <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
-          >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
+        <strong>{{ item.core_action.name + " " }}</strong>
+        <span
+          style="font-family: Pathfinder2eActions, sans-serif"
+          class="tw:text-2xl"
+          >{{
+            pfActionSymbol(
+              item.core_action.n_of_actions,
+              item.core_action.action_type
+            )
+          }}
         </span>
         <span v-if="item.traits !== undefined && item.traits.length > 0">
           {{ actionTraitsString(item.traits) }}
@@ -767,10 +901,19 @@ const spellString = computed(() => {
     ></div>
   </div>
   <q-separator class="tw:my-2!" style="height: 2px" />
-  <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
+  <hr
+    class="only-print"
+    style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+  />
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
-    <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="defenceString"></div>
-    <div class="tw:text-base tw:text-gray-800 tw:dark:text-white" v-html="healthString"></div>
+    <div
+      class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      v-html="defenceString"
+    ></div>
+    <div
+      class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      v-html="healthString"
+    ></div>
     <template
       v-for="item in encounter.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
@@ -785,9 +928,16 @@ const spellString = computed(() => {
         "
         class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       >
-        <strong>{{ item.core_action.name + ' ' }}</strong>
-        <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
-          >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
+        <strong>{{ item.core_action.name + " " }}</strong>
+        <span
+          style="font-family: Pathfinder2eActions, sans-serif"
+          class="tw:text-2xl"
+          >{{
+            pfActionSymbol(
+              item.core_action.n_of_actions,
+              item.core_action.action_type
+            )
+          }}
         </span>
         <span v-if="item.traits !== undefined && item.traits.length > 0">
           {{ actionTraitsString(item.traits) }}
@@ -797,7 +947,10 @@ const spellString = computed(() => {
     </template>
   </div>
   <q-separator class="tw:my-2!" style="height: 2px" />
-  <hr class="only-print" style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px" />
+  <hr
+    class="only-print"
+    style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
+  />
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
     <div
       v-if="
@@ -819,9 +972,15 @@ const spellString = computed(() => {
         class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       >
         <strong v-if="item.weapon_data?.weapon_type === 'Melee'">Melee </strong>
-        <strong v-if="item.weapon_data?.weapon_type === 'Ranged'">Ranged </strong>
-        <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl">1</span>
-        <i>{{ ' ' + item.item_core.name.toLowerCase() + ' ' }} </i>
+        <strong v-if="item.weapon_data?.weapon_type === 'Ranged'"
+          >Ranged
+        </strong>
+        <span
+          style="font-family: Pathfinder2eActions, sans-serif"
+          class="tw:text-2xl"
+          >1</span
+        >
+        <i>{{ " " + item.item_core.name.toLowerCase() + " " }} </i>
         <span
           :class="{
             'tw:text-red-600 tw:font-bold':
@@ -840,10 +999,13 @@ const spellString = computed(() => {
           </span>
         </span>
         <span v-if="item.item_core.traits.length !== 0">
-          ({{ item.item_core.traits.sort().join(', ').replaceAll('-', ' ') }}),
+          ({{ item.item_core.traits.sort().join(", ").replaceAll("-", " ") }}),
         </span>
         <strong>Damage </strong>
-        <span v-for="(weapon, index) in item.weapon_data?.damage_data" :key="index">
+        <span
+          v-for="(weapon, index) in item.weapon_data?.damage_data"
+          :key="index"
+        >
           <span v-if="weapon.dice">
             {{ weapon.dice.n_of_dices }}d{{ weapon.dice.dice_size
             }}<span
@@ -868,7 +1030,10 @@ const spellString = computed(() => {
       </div>
     </template>
     <template v-for="entity in spellString" :key="entity">
-      <div v-html="entity" class="tw:text-base tw:text-gray-800 tw:dark:text-white" />
+      <div
+        v-html="entity"
+        class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      />
     </template>
     <template
       v-for="item in encounter.selectedCreature?.extra_data?.actions"
@@ -878,9 +1043,16 @@ const spellString = computed(() => {
         v-if="item.core_action.category === 'offensive'"
         class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       >
-        <strong>{{ item.core_action.name + ' ' }}</strong>
-        <span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl"
-          >{{ pfActionSymbol(item.core_action.n_of_actions, item.core_action.action_type) }}
+        <strong>{{ item.core_action.name + " " }}</strong>
+        <span
+          style="font-family: Pathfinder2eActions, sans-serif"
+          class="tw:text-2xl"
+          >{{
+            pfActionSymbol(
+              item.core_action.n_of_actions,
+              item.core_action.action_type
+            )
+          }}
         </span>
         <span v-if="item.traits !== undefined && item.traits.length > 0">
           {{ actionTraitsString(item.traits) }}
@@ -893,7 +1065,7 @@ const spellString = computed(() => {
 
 <style>
 .action-glyph {
-  font-family: 'Pathfinder2eActions', sans-serif;
+  font-family: "Pathfinder2eActions", sans-serif;
   font-size: 24px;
   line-height: calc(2 / 1.5);
 }
@@ -901,7 +1073,7 @@ const spellString = computed(() => {
 
 <style scoped>
 .creature-sheet {
-  font-family: 'Good Pro', sans-serif;
+  font-family: "Good Pro", sans-serif;
 }
 
 .q-select:deep(.q-field__native) > span {

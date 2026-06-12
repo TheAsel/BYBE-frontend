@@ -1,4 +1,4 @@
-import type { creature } from 'src/types/creature';
+import type { creature } from "@/types/creature";
 import type {
   alignments,
   challenges,
@@ -8,8 +8,8 @@ import type {
   roles,
   sizes,
   variants
-} from 'src/types/filters';
-import type { hazard } from 'src/types/hazard';
+} from "@/types/filters";
+import type { hazard } from "@/types/hazard";
 
 export type encounter = {
   experience: number;
@@ -22,7 +22,7 @@ export type encounter = {
     Extreme: number;
     Impossible: number;
   };
-  color?: 'lime' | 'green' | 'amber' | 'orange' | 'red' | 'purple-10';
+  color?: "lime" | "green" | "amber" | "orange" | "red" | "purple-10";
 };
 
 export type encounter_data = {
@@ -113,13 +113,13 @@ export type encounter_info = {
 };
 
 export type adventure_groups =
-  | 'BossAndLackeys'
-  | 'BossAndLieutenant'
-  | 'EliteEnemies'
-  | 'LieutenantAndLackeys'
-  | 'MatedPair'
-  | 'Troop'
-  | 'MookSquad';
+  | "BossAndLackeys"
+  | "BossAndLieutenant"
+  | "EliteEnemies"
+  | "LieutenantAndLackeys"
+  | "MatedPair"
+  | "Troop"
+  | "MookSquad";
 
 export type shareable_encounter = {
   encounter_name: string;

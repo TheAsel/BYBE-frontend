@@ -1,9 +1,13 @@
-import { capitalize } from 'lodash-es';
-import { defineStore } from 'pinia';
+import { capitalize } from "lodash-es";
+import { defineStore } from "pinia";
 
-import type { bestiary_ranges, hazard_ranges, shop_ranges } from 'src/types/filters';
+import type {
+  bestiary_ranges,
+  hazard_ranges,
+  shop_ranges
+} from "@/types/filters";
 
-export const filtersStore = defineStore('filters', {
+export const filtersStore = defineStore("filters", {
   state: () => ({
     creatureFilters: {
       traits: [] as string[],
@@ -32,7 +36,7 @@ export const filtersStore = defineStore('filters', {
   }),
   actions: {
     updateTraits(newTraits: string[]) {
-      this.creatureFilters.traits = newTraits.map((trait) => {
+      this.creatureFilters.traits = newTraits.map(trait => {
         return capitalize(trait);
       });
     },
@@ -59,7 +63,7 @@ export const filtersStore = defineStore('filters', {
       this.creatureFilters.creature_roles = newRoles;
     },
     updateHazardTraits(newTraits: string[]) {
-      this.hazardFilters.traits = newTraits.map((trait) => {
+      this.hazardFilters.traits = newTraits.map(trait => {
         return capitalize(trait);
       });
     },
@@ -77,12 +81,12 @@ export const filtersStore = defineStore('filters', {
       this.itemFilters.sources = newSources;
     },
     updateItemTraits(newTraits: string[]) {
-      this.itemFilters.traits = newTraits.map((trait) => ({
+      this.itemFilters.traits = newTraits.map(trait => ({
         label: trait
-          .split('-')
-          .map((str) => capitalize(str))
-          .join(' ')
-          .replace('Additive', 'Additive '),
+          .split("-")
+          .map(str => capitalize(str))
+          .join(" ")
+          .replace("Additive", "Additive "),
         value: trait
       }));
     }

@@ -6,17 +6,17 @@ import {
   biPencil,
   biPersonVcard,
   biShop
-} from '@quasar/extras/bootstrap-icons';
-import { useHead } from '@unhead/vue';
+} from "@quasar/extras/bootstrap-icons";
+import { useHead } from "@unhead/vue";
 
-import { settingsStore } from 'src/stores/settings';
+import { settingsStore } from "@/stores/settings";
 
 useHead({
-  title: 'BYBE - Pathfinder & Starfinder 2e GM Tools',
+  title: "BYBE - Pathfinder & Starfinder 2e GM Tools",
   link: [
     {
-      rel: 'canonical',
-      href: 'https://bybe.app'
+      rel: "canonical",
+      href: "https://bybe.app"
     }
   ]
 });
@@ -25,38 +25,40 @@ const settings = settingsStore();
 
 const cards = [
   {
-    name: 'Encounter Builder',
-    to: '/encounter',
-    description: 'Balance or randomly create combat encounters.',
-    subtext: 'Try it out',
+    name: "Encounter Builder",
+    to: "/encounter",
+    description: "Balance or randomly create combat encounters.",
+    subtext: "Try it out",
     icon: biCalculator
   },
   {
-    name: 'Shop Generator',
-    to: '/shop',
-    description: 'Create various types of shops of a specific level.',
-    subtext: 'Try it out',
+    name: "Shop Generator",
+    to: "/shop",
+    description: "Create various types of shops of a specific level.",
+    subtext: "Try it out",
     icon: biShop
   },
   {
-    name: 'NPC Generator',
-    to: '/npc',
-    description: "Quickly generate an NPC's name, ancestry, background and quirks.",
-    subtext: 'Try it out',
+    name: "NPC Generator",
+    to: "/npc",
+    description:
+      "Quickly generate an NPC's name, ancestry, background and quirks.",
+    subtext: "Try it out",
     icon: biPersonVcard
   },
   {
-    name: 'Creature Generator',
-    to: '/creature',
-    description: 'Create custom creatures with the help of custom generation.',
-    subtext: 'Work in progress...',
+    name: "Creature Generator",
+    to: "/creature",
+    description: "Create custom creatures with the help of custom generation.",
+    subtext: "Work in progress...",
     icon: biPencil
   },
   {
-    name: 'City Planner',
-    to: '/city',
-    description: 'Combine what you created with the other tools to plan an entire city.',
-    subtext: 'Work in progress...',
+    name: "City Planner",
+    to: "/city",
+    description:
+      "Combine what you created with the other tools to plan an entire city.",
+    subtext: "Work in progress...",
     icon: biHouses
   }
 ];
@@ -64,14 +66,17 @@ const cards = [
 
 <template>
   <div
-    class="tw:overflow-auto tw:h-full tw:max-w-7xl tw:px-4 tw:pb-10 tw:sm:px-6 tw:lg:px-8 tw:py-4 tw:pt-0 tw:2xl:py-14 tw:mx-auto"
+    class="tw:place-content-center tw:overflow-auto tw:h-full tw:max-w-7xl tw:px-4 tw:sm:px-6 tw:lg:px-8 tw:py-4 tw:pt-0 tw:2xl:py-14 tw:mx-auto"
   >
     <div
-      class="tw:max-w-3xl tw:mx-auto tw:text-center tw:my-4 tw:mb-4 tw:2xl:mb-14 tw:drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
+      class="tw:max-w-3xl tw:mx-auto tw:text-center tw:my-4 tw:2xl:mb-14 tw:drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
     >
-      <h1 class="tw:block tw:text-white tw:text-4xl! tw:font-bold!">Welcome to BYBE</h1>
+      <h1 class="tw:block tw:text-white tw:text-4xl! tw:font-bold!">
+        Welcome to BYBE
+      </h1>
       <h2 class="tw:mt-3 text-h6 tw:text-gray-200">
-        BYBE provides tools to help Pathfinder 2e and Starfinder 2e Game Masters.
+        BYBE provides tools to help Pathfinder 2e and Starfinder 2e Game
+        Masters.
       </h2>
     </div>
     <div class="tw:grid tw:sm:grid-cols-2 tw:lg:grid-cols-3 tw:gap-6">
@@ -91,7 +96,9 @@ const cards = [
 
         <div class="tw:drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
           <div>
-            <h3 class="tw:text-sm! tw:mt-3! tw:block tw:font-bold! tw:text-white">
+            <h3
+              class="tw:text-sm! tw:mt-3! tw:block tw:font-bold! tw:text-white"
+            >
               {{ item.name }}
             </h3>
             <p class="tw:text-gray-300 tw:mt-3!">

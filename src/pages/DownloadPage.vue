@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import { fabApple, fabLinux, fabWindows } from '@quasar/extras/fontawesome-v7';
-import { matDownload } from '@quasar/extras/material-icons';
-import { useHead } from '@unhead/vue';
-import { onMounted, ref } from 'vue';
+import { fabApple, fabLinux, fabWindows } from "@quasar/extras/fontawesome-v7";
+import { matDownload } from "@quasar/extras/material-icons";
+import { useHead } from "@unhead/vue";
+import { onMounted, ref } from "vue";
 
-import { requestRepoInfo } from 'src/api/github-api';
+import { requestRepoInfo } from "@/api/github-api";
 
 useHead({
-  title: 'Download - BYBE',
+  title: "Download - BYBE",
   link: [
     {
-      rel: 'canonical',
-      href: 'https://bybe.app/download'
+      rel: "canonical",
+      href: "https://bybe.app/download"
     }
   ]
 });
 
-const tab = ref('windows');
+const tab = ref("windows");
 
-if (navigator.userAgent.includes('Windows')) {
-  tab.value = 'windows';
-} else if (navigator.userAgent.includes('Linux')) {
-  tab.value = 'linux';
-} else if (navigator.userAgent.includes('Mac')) {
-  tab.value = 'macos';
+if (navigator.userAgent.includes("Windows")) {
+  tab.value = "windows";
+} else if (navigator.userAgent.includes("Linux")) {
+  tab.value = "linux";
+} else if (navigator.userAgent.includes("Mac")) {
+  tab.value = "macos";
 }
 
-const latestVersion = ref('unknown');
-const latestTag = ref('unknown');
+const latestVersion = ref("unknown");
+const latestTag = ref("unknown");
 
 onMounted(async () => {
   try {
-    const repoInfo = await requestRepoInfo('RakuJa/BYBE-Portable');
+    const repoInfo = await requestRepoInfo("RakuJa/BYBE-Portable");
     if (repoInfo) {
       latestVersion.value = repoInfo.name.substring(1);
       latestTag.value = repoInfo.tag_name;
     } else {
-      throw new Error('Error fetching repository info');
+      throw new Error("Error fetching repository info");
     }
   } catch (error) {
     console.error(error);
@@ -65,10 +65,16 @@ onMounted(async () => {
         <div
           class="tw:h-full tw:place-content-center tw:text-left tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700"
         >
-          <q-tab-panels v-model="tab" animated class="tw:bg-white/0 tw:rounded-xl">
+          <q-tab-panels
+            v-model="tab"
+            animated
+            class="tw:bg-white/0 tw:rounded-xl"
+          >
             <q-tab-panel name="windows">
               <div class="row items-center justify-evenly">
-                <div class="tw:text-center tw:py-10 tw:px-4 tw:sm:px-6 tw:lg:px-8">
+                <div
+                  class="tw:text-center tw:py-10 tw:px-4 tw:sm:px-6 tw:lg:px-8"
+                >
                   <h1
                     class="tw:block tw:text-4xl! tw:font-bold! tw:text-gray-800 tw:dark:text-neutral-200 tw:sm:text-4xl"
                   >
@@ -98,7 +104,9 @@ onMounted(async () => {
             </q-tab-panel>
             <q-tab-panel name="macos">
               <div class="row items-center justify-evenly">
-                <div class="tw:text-center tw:py-10 tw:px-4 tw:sm:px-6 tw:lg:px-8">
+                <div
+                  class="tw:text-center tw:py-10 tw:px-4 tw:sm:px-6 tw:lg:px-8"
+                >
                   <h1
                     class="tw:block tw:text-4xl! tw:font-bold! tw:text-gray-800 tw:dark:text-neutral-200 tw:sm:text-4xl"
                   >
@@ -159,7 +167,9 @@ onMounted(async () => {
             </q-tab-panel>
             <q-tab-panel name="linux">
               <div class="row items-center justify-evenly">
-                <div class="tw:text-center tw:py-10 tw:px-4 tw:sm:px-6 tw:lg:px-8">
+                <div
+                  class="tw:text-center tw:py-10 tw:px-4 tw:sm:px-6 tw:lg:px-8"
+                >
                   <h1
                     class="tw:block tw:text-4xl! tw:font-bold! tw:text-gray-800 tw:dark:text-neutral-200 tw:sm:text-4xl"
                   >

@@ -11,35 +11,35 @@ import {
   biFullscreen,
   biFullscreenExit,
   biPlusLg
-} from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh, matWarning } from '@quasar/extras/material-icons';
+} from "@quasar/extras/bootstrap-icons";
+import { matPriorityHigh, matWarning } from "@quasar/extras/material-icons";
 import {
   mdiFoodDrumstick,
   mdiRing,
   mdiShield,
   mdiSword,
   mdiTshirtCrew
-} from '@quasar/extras/mdi-v7';
-import { capitalize, debounce } from 'lodash-es';
-import { useQuasar } from 'quasar';
-import { onMounted, onUnmounted, ref, toRaw, watch } from 'vue';
-import { useRouter } from 'vue-router';
+} from "@quasar/extras/mdi-v7";
+import { capitalize, debounce } from "lodash-es";
+import { useQuasar } from "quasar";
+import { onMounted, onUnmounted, ref, toRaw, watch } from "vue";
+import { useRouter } from "vue-router";
 
 import {
   requestFilters,
   requestItems,
   requestShopRanges,
   requestTemplates
-} from 'src/api/shop-api-calls';
-import ShopBuilder from 'src/components/shop/ShopTable/ShopBuilder.vue';
-import { filtersStore } from 'src/stores/filters';
-import { itemsStore } from 'src/stores/items';
-import { settingsStore } from 'src/stores/settings';
-import { templateStore } from 'src/stores/template';
+} from "@/api/shop-api-calls";
+import ShopBuilder from "@/components/shop/ShopTable/ShopBuilder.vue";
+import { filtersStore } from "@/stores/filters";
+import { itemsStore } from "@/stores/items";
+import { settingsStore } from "@/stores/settings";
+import { templateStore } from "@/stores/template";
 
-import type { QTableProps } from 'quasar';
-import type { item_columns, item_filters, rarities } from 'src/types/filters';
-import type { item, min_item } from 'src/types/item';
+import type { QTableProps } from "quasar";
+import type { item_columns, item_filters, rarities } from "@/types/filters";
+import type { item, min_item } from "@/types/item";
 
 const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
 
@@ -52,12 +52,14 @@ const shopBuilderRef = ref();
 const router = useRouter();
 
 const currentAon = ref(
-  settings.game === 'sf' ? 'https://2e.aonsrd.com/search' : 'https://2e.aonprd.com/Search.aspx'
+  settings.game === "sf"
+    ? "https://2e.aonsrd.com/search"
+    : "https://2e.aonprd.com/Search.aspx"
 );
 
 watch(
   () => filters.shopRanges,
-  (ranges) => {
+  ranges => {
     activeFilters.value.level_filter = {
       min: ranges.min_level,
       max: ranges.max_level
@@ -71,7 +73,7 @@ const selected = ref<item[]>([]);
 const rows = ref<item[]>([]);
 const loading = ref(true);
 const pagination = ref({
-  sortBy: 'name',
+  sortBy: "name",
   descending: false,
   page: 1,
   rowsPerPage: 100,
@@ -85,92 +87,97 @@ const activeFilters = ref<{
   type_filter: string[];
   source_filter: string[];
   sort_by: item_columns;
-  order_by: 'ascending' | 'descending';
+  order_by: "ascending" | "descending";
 }>({
-  name_filter: '',
-  level_filter: { min: filters.shopRanges.min_level, max: filters.shopRanges.max_level },
+  name_filter: "",
+  level_filter: {
+    min: filters.shopRanges.min_level,
+    max: filters.shopRanges.max_level
+  },
   trait_filter: [],
   rarity_filter: [],
   type_filter: [],
   source_filter: [],
-  sort_by: 'name',
-  order_by: 'ascending'
+  sort_by: "name",
+  order_by: "ascending"
 });
 const fullscreen = ref(false);
-const tableOpacity = ref('');
+const tableOpacity = ref("");
 
 const sourceFilter = ref<string[]>(filters.itemFilters.sources);
-const traitFilter = ref<{ label: string; value: string }[]>(filters.itemFilters.traits);
+const traitFilter = ref<{ label: string; value: string }[]>(
+  filters.itemFilters.traits
+);
 
 const columns: {
   name: item_columns;
   label: string;
   field: (row: item) => string | number | string[];
   required?: boolean;
-  align?: 'left' | 'right' | 'center';
+  align?: "left" | "right" | "center";
   sortable?: boolean;
   style?: string;
 }[] = [
   {
-    name: 'source',
-    label: 'Source',
-    field: (row) => row.core_item.source,
+    name: "source",
+    label: "Source",
+    field: row => row.core_item.source,
     required: false,
-    align: 'center',
+    align: "center",
     sortable: true,
-    style: 'min-width: 120px; max-width: 120px;'
+    style: "min-width: 120px; max-width: 120px;"
   },
   {
-    name: 'name',
-    label: 'Name',
-    field: (row) => row.core_item.name,
+    name: "name",
+    label: "Name",
+    field: row => row.core_item.name,
     required: true,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 215px;'
+    style: "min-width: 215px;"
   },
   {
-    name: 'level',
-    label: 'Level',
-    field: (row) => row.core_item.level,
+    name: "level",
+    label: "Level",
+    field: row => row.core_item.level,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 80px;'
+    style: "min-width: 80px;"
   },
   {
-    name: 'trait',
-    label: 'Traits',
-    field: (row) => row.core_item.traits,
+    name: "trait",
+    label: "Traits",
+    field: row => row.core_item.traits,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 110px; max-width: 180px;'
+    style: "min-width: 110px; max-width: 180px;"
   },
   {
-    name: 'rarity',
-    label: 'Rarity',
-    field: (row) => row.core_item.rarity,
+    name: "rarity",
+    label: "Rarity",
+    field: row => row.core_item.rarity,
     required: false,
-    align: 'left',
+    align: "left",
     sortable: true,
-    style: 'min-width: 100px; max-width: 180px;'
+    style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: 'type',
-    label: 'Type',
-    field: (row) => row.core_item.item_type,
+    name: "type",
+    label: "Type",
+    field: row => row.core_item.item_type,
     required: false,
-    align: 'center',
+    align: "center",
     sortable: true,
-    style: 'min-width: 100px; max-width: 180px;'
+    style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: 'id',
-    label: 'Cart',
-    field: (row) => row.core_item.id,
+    name: "id",
+    label: "Cart",
+    field: row => row.core_item.id,
     required: false,
-    align: 'center',
+    align: "center",
     sortable: false
   }
 ];
@@ -178,17 +185,20 @@ const columns: {
 // Waits for the table pagination to load
 let resolveWhenLoaded: (() => void) | null = null;
 const waitForPageLoad = () =>
-  new Promise<void>((resolve) => {
+  new Promise<void>(resolve => {
     resolveWhenLoaded = resolve;
   });
 
-const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: number) {
+const fetchFromServer = debounce(async function (
+  startRow: number,
+  rowsPerPage: number
+) {
   const body: item_filters = {
     min_level_filter: activeFilters.value.level_filter.min,
     max_level_filter: activeFilters.value.level_filter.max,
     game_system_version: settings.game_version
   };
-  if (activeFilters.value.name_filter !== '') {
+  if (activeFilters.value.name_filter !== "") {
     body.name_filter = activeFilters.value.name_filter;
   }
   if (
@@ -235,20 +245,22 @@ const fetchFromServer = debounce(async function (startRow: number, rowsPerPage: 
       resolveWhenLoaded?.();
       resolveWhenLoaded = null;
     } else {
-      throw new Error('Error loading items');
+      throw new Error("Error loading items");
     }
   } catch (error) {
     console.error(error);
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Error loading the items',
+      type: "warning",
+      message: "Error loading the items",
       icon: matPriorityHigh
     });
   }
 }, 300);
 
-async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
+async function onRequest(
+  props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
+) {
   const { page, rowsPerPage } = props.pagination;
 
   loading.value = true;
@@ -263,48 +275,56 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
 const resetFilters = () => {
   activeFilters.value = {
-    name_filter: '',
-    level_filter: { min: filters.shopRanges.min_level, max: filters.shopRanges.max_level },
+    name_filter: "",
+    level_filter: {
+      min: filters.shopRanges.min_level,
+      max: filters.shopRanges.max_level
+    },
     trait_filter: [],
     rarity_filter: [],
     type_filter: [],
     source_filter: [],
-    sort_by: 'name',
-    order_by: 'ascending'
+    sort_by: "name",
+    order_by: "ascending"
   };
 };
 
-const visibleColumns = ref(['name', 'level', 'type', 'rarity']);
+const visibleColumns = ref(["name", "level", "type", "rarity"]);
 
 const sort = (col: item_columns) => {
   if (activeFilters.value.sort_by === col) {
-    if (activeFilters.value.order_by === 'ascending') {
-      activeFilters.value.order_by = 'descending';
+    if (activeFilters.value.order_by === "ascending") {
+      activeFilters.value.order_by = "descending";
     } else {
-      activeFilters.value.order_by = 'ascending';
+      activeFilters.value.order_by = "ascending";
     }
   } else {
-    activeFilters.value.order_by = 'ascending';
+    activeFilters.value.order_by = "ascending";
     activeFilters.value.sort_by = col;
   }
 };
 
 const openShopSheet = (id: number) => {
-  const routeData = router.resolve({ name: 'item', query: { game: settings.game, id: id } });
-  if (process.env.IS_APP === 'true') {
-    globalThis.open(routeData.href, '_self');
+  const routeData = router.resolve({
+    name: "item",
+    query: { game: settings.game, id: id }
+  });
+  if (import.meta.env.IS_APP === true) {
+    globalThis.open(routeData.href, "_self");
   } else {
-    globalThis.open(routeData.href, '_blank');
+    globalThis.open(routeData.href, "_blank");
   }
 };
 
 const addItem = debounce(function (item: item) {
   const aon_link =
-    settings.game === 'sf'
-      ? 'https://2e.aonsrd.com/search?q=' + encodeURIComponent(item.core_item.name) + '&type=eqs'
-      : 'https://2e.aonprd.com/Search.aspx?q=' +
+    settings.game === "sf"
+      ? "https://2e.aonsrd.com/search?q=" +
         encodeURIComponent(item.core_item.name) +
-        '&type=eqs';
+        "&type=eqs"
+      : "https://2e.aonprd.com/Search.aspx?q=" +
+        encodeURIComponent(item.core_item.name) +
+        "&type=eqs";
   const min_item: min_item = {
     game: item.game,
     id: item.core_item.id,
@@ -341,15 +361,15 @@ async function onTableKey(evt: KeyboardEvent) {
   if (
     navigationActive.value !== true ||
     ![
-      'Enter',
-      'PageUp',
-      'PageDown',
-      'Home',
-      'End',
-      'ArrowLeft',
-      'ArrowUp',
-      'ArrowRight',
-      'ArrowDown'
+      "Enter",
+      "PageUp",
+      "PageDown",
+      "Home",
+      "End",
+      "ArrowLeft",
+      "ArrowUp",
+      "ArrowRight",
+      "ArrowDown"
     ].includes(evt.key) ||
     itemTable.value === null ||
     loading.value === true
@@ -366,21 +386,25 @@ async function onTableKey(evt: KeyboardEvent) {
   }
 
   const currentIndex =
-    selected.value.length > 0 ? computedRows.indexOf(toRaw(selected.value[0])) : -1;
+    selected.value.length > 0
+      ? computedRows.indexOf(toRaw(selected.value[0]))
+      : -1;
   const currentPage = pagination.value.page;
   const rowsPerPage =
-    pagination.value.rowsPerPage === 0 ? computedRowsNumber : pagination.value.rowsPerPage;
+    pagination.value.rowsPerPage === 0
+      ? computedRowsNumber
+      : pagination.value.rowsPerPage;
   const lastIndex = computedRows.length - 1;
   const lastPage = Math.ceil(computedRowsNumber / rowsPerPage);
 
   let index = currentIndex;
 
   switch (evt.key) {
-    case 'Enter': {
+    case "Enter": {
       addItem(items.selectedItem!);
       break;
     }
-    case 'PageUp': {
+    case "PageUp": {
       index = 0;
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
@@ -388,7 +412,7 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.scrollTo(index);
       break;
     }
-    case 'PageDown': {
+    case "PageDown": {
       index = rowsPerPage - 1;
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
@@ -396,7 +420,7 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.scrollTo(index);
       break;
     }
-    case 'Home': {
+    case "Home": {
       index = 0;
       const promise = waitForPageLoad();
       itemTable.value.firstPage();
@@ -408,7 +432,7 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.scrollTo(index);
       break;
     }
-    case 'End': {
+    case "End": {
       index = rowsPerPage - 1;
       const promise = waitForPageLoad();
       itemTable.value.lastPage();
@@ -420,7 +444,7 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.scrollTo(index - 1);
       break;
     }
-    case 'ArrowLeft': {
+    case "ArrowLeft": {
       const page = currentPage <= 1 ? lastPage : currentPage - 1;
       index = 0;
       const promise = waitForPageLoad();
@@ -437,7 +461,7 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.scrollTo(index);
       break;
     }
-    case 'ArrowUp': {
+    case "ArrowUp": {
       if (currentIndex > 0) {
         index = currentIndex - 1;
         const { computedRows } = itemTable.value;
@@ -447,7 +471,7 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.scrollTo(index - 1);
       break;
     }
-    case 'ArrowRight': {
+    case "ArrowRight": {
       const page = currentPage >= lastPage ? 1 : currentPage + 1;
       index = 0;
       const promise = waitForPageLoad();
@@ -464,7 +488,7 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.scrollTo(index);
       break;
     }
-    case 'ArrowDown': {
+    case "ArrowDown": {
       if (currentIndex < lastIndex) {
         index = currentIndex + 1;
         const { computedRows } = itemTable.value;
@@ -482,7 +506,7 @@ function onGlobalKey(evt: KeyboardEvent) {
   if (isTextInput(evt.target)) {
     return;
   }
-  if (evt.key.toLowerCase() === 'b') {
+  if (evt.key.toLowerCase() === "b") {
     if (evt.ctrlKey || evt.metaKey) {
       evt.preventDefault();
       props.toggleSheetView!();
@@ -491,26 +515,26 @@ function onGlobalKey(evt: KeyboardEvent) {
 }
 
 onMounted(() => {
-  globalThis.addEventListener('keydown', onGlobalKey);
+  globalThis.addEventListener("keydown", onGlobalKey);
 });
 
 onUnmounted(() => {
-  globalThis.removeEventListener('keydown', onGlobalKey);
+  globalThis.removeEventListener("keydown", onGlobalKey);
 });
 
 const toggleFullscreen = () => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
-    tableOpacity.value = 'opacity: 1';
+    tableOpacity.value = "opacity: 1";
   } else {
-    tableOpacity.value = '';
+    tableOpacity.value = "";
   }
 };
 
 const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.itemFilters.sources = sourceFilter.value.filter((v) =>
+    filters.itemFilters.sources = sourceFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -519,7 +543,7 @@ const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
 const filterTraitsFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.itemFilters.traits = traitFilter.value.filter((v) =>
+    filters.itemFilters.traits = traitFilter.value.filter(v =>
       v.label.toLowerCase().includes(filter)
     );
   });
@@ -527,18 +551,19 @@ const filterTraitsFn = (val: string, update: (fn: () => void) => void) => {
 
 onMounted(async () => {
   try {
-    const [sourcesRequest, traitsRequest, templatesRequest, shopRangesRequest] = await Promise.all([
-      requestFilters(settings.game, 'sources'),
-      requestFilters(settings.game, 'traits'),
-      requestTemplates(settings.game),
-      requestShopRanges(settings.game),
-      fetchFromServer(0, 100)
-    ]);
+    const [sourcesRequest, traitsRequest, templatesRequest, shopRangesRequest] =
+      await Promise.all([
+        requestFilters(settings.game, "sources"),
+        requestFilters(settings.game, "traits"),
+        requestTemplates(settings.game),
+        requestShopRanges(settings.game),
+        fetchFromServer(0, 100)
+      ]);
 
-    if (!sourcesRequest) throw new Error('Error fetching sources');
-    if (!traitsRequest) throw new Error('Error fetching traits');
-    if (!templatesRequest) throw new Error('Error fetching templates');
-    if (!shopRangesRequest) throw new Error('Error fetching shop ranges');
+    if (!sourcesRequest) throw new Error("Error fetching sources");
+    if (!traitsRequest) throw new Error("Error fetching traits");
+    if (!templatesRequest) throw new Error("Error fetching templates");
+    if (!shopRangesRequest) throw new Error("Error fetching shop ranges");
 
     filters.updateItemSources(sourcesRequest);
     sourceFilter.value = filters.itemFilters.sources;
@@ -553,8 +578,8 @@ onMounted(async () => {
     console.error(error);
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Error fetching activeFilters',
+      type: "warning",
+      message: "Error fetching activeFilters",
       icon: matPriorityHigh
     });
   }
@@ -605,7 +630,10 @@ onMounted(async () => {
     >
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
-          <q-spinner-gears class="tw:mx-auto tw:text-black tw:dark:text-white" size="5em" />
+          <q-spinner-gears
+            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            size="5em"
+          />
         </q-inner-loading>
       </template>
       <template #top>
@@ -656,7 +684,12 @@ onMounted(async () => {
               </q-btn>
             </span>
             <q-btn-group push>
-              <q-btn v-if="loading" id="shepherd-1" push label="Generator Settings" />
+              <q-btn
+                v-if="loading"
+                id="shepherd-1"
+                push
+                label="Generator Settings"
+              />
               <ShopBuilder v-else ref="shopBuilderRef" />
               <q-separator vertical />
               <q-btn
@@ -832,7 +865,8 @@ onMounted(async () => {
                 stack-label
               >
                 <template #control>
-                  {{ activeFilters.level_filter.min }} to {{ activeFilters.level_filter.max }}
+                  {{ activeFilters.level_filter.min }} to
+                  {{ activeFilters.level_filter.max }}
                 </template>
                 <q-popup-proxy>
                   <q-banner rounded>
@@ -920,7 +954,9 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])"
+                :options="
+                  Object.freeze(['Common', 'Uncommon', 'Rare', 'Unique'])
+                "
                 :label="columns[4]!.label"
                 :style="columns[4]!.style"
               />
@@ -953,7 +989,15 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(['Armor', 'Consumable', 'Equipment', 'Shield', 'Weapon'])"
+                :options="
+                  Object.freeze([
+                    'Armor',
+                    'Consumable',
+                    'Equipment',
+                    'Shield',
+                    'Weapon'
+                  ])
+                "
                 :label="columns[5]!.label"
                 :style="columns[5]!.style"
               />
@@ -1042,7 +1086,12 @@ onMounted(async () => {
             />
             <a
               v-if="settings.is_aon_links_on"
-              :href="currentAon + '?q=' + encodeURIComponent(name.row.core_item.name) + '&type=eqs'"
+              :href="
+                currentAon +
+                '?q=' +
+                encodeURIComponent(name.row.core_item.name) +
+                '&type=eqs'
+              "
               target="_blank"
               rel="noopener"
               class="tw:inline tw:align-middle"
@@ -1052,7 +1101,9 @@ onMounted(async () => {
                 >{{ name.row.core_item.name }}</span
               >
             </a>
-            <span v-else class="tw:align-middle">{{ name.row.core_item.name }}</span>
+            <span v-else class="tw:align-middle">{{
+              name.row.core_item.name
+            }}</span>
             <q-chip
               v-if="settings.game === 'pf' && settings.game_version === 'Any'"
               dense
@@ -1074,11 +1125,11 @@ onMounted(async () => {
               trait.row.core_item.traits
                 .map((trait: string) => {
                   return trait
-                    .split('-')
-                    .map((str) => capitalize(str))
-                    .join(' ');
+                    .split("-")
+                    .map(str => capitalize(str))
+                    .join(" ");
                 })
-                .join(', ')
+                .join(", ")
             }}
           </span>
         </q-td>
@@ -1127,7 +1178,12 @@ onMounted(async () => {
               Equipment
             </q-tooltip>
           </q-icon>
-          <q-icon v-if="type.row.core_item.item_type === 'Shield'" :name="mdiShield" size="sm" left>
+          <q-icon
+            v-if="type.row.core_item.item_type === 'Shield'"
+            :name="mdiShield"
+            size="sm"
+            left
+          >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"
@@ -1136,7 +1192,12 @@ onMounted(async () => {
               Shield
             </q-tooltip>
           </q-icon>
-          <q-icon v-if="type.row.core_item.item_type === 'Weapon'" :name="mdiSword" size="sm" left>
+          <q-icon
+            v-if="type.row.core_item.item_type === 'Weapon'"
+            :name="mdiSword"
+            size="sm"
+            left
+          >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
               anchor="top middle"

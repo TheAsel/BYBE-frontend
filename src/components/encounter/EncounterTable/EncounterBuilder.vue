@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { biQuestionCircle, biXLg } from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { debounce } from 'lodash-es';
-import { useQuasar } from 'quasar';
-import { ref, watch } from 'vue';
+import { biQuestionCircle, biXLg } from "@quasar/extras/bootstrap-icons";
+import { matPriorityHigh } from "@quasar/extras/material-icons";
+import { debounce } from "lodash-es";
+import { useQuasar } from "quasar";
+import { ref, watch } from "vue";
 
-import { encounterGenerator } from 'src/api/encounter-api-calls';
-import { encounterStore } from 'src/stores/encounter';
-import { filtersStore } from 'src/stores/filters';
-import { partyStore } from 'src/stores/party';
-import { settingsStore } from 'src/stores/settings';
+import { encounterGenerator } from "@/api/encounter-api-calls";
+import { encounterStore } from "@/stores/encounter";
+import { filtersStore } from "@/stores/filters";
+import { partyStore } from "@/stores/party";
+import { settingsStore } from "@/stores/settings";
 
-import type { adventure_groups, encounter_data, min_creature_hazard } from 'src/types/encounter';
+import type {
+  adventure_groups,
+  encounter_data,
+  min_creature_hazard
+} from "@/types/encounter";
 import type {
   alignments,
   challenges,
@@ -19,7 +23,7 @@ import type {
   rarities,
   roles,
   sizes
-} from 'src/types/filters';
+} from "@/types/filters";
 
 const $q = useQuasar();
 
@@ -29,18 +33,18 @@ const filters = filtersStore();
 const encounter = encounterStore();
 
 const dialog = ref(false);
-const tab = ref('General');
+const tab = ref("General");
 
-const currentAon = ref(settings.game === 'sf' ? 'aonsrd' : 'aonprd');
+const currentAon = ref(settings.game === "sf" ? "aonsrd" : "aonprd");
 const currentRules = ref(
-  settings.game === 'sf'
-    ? 'https://2e.aonsrd.com/rules/791-encounter-design'
-    : 'https://2e.aonprd.com/Rules.aspx?ID=2717'
+  settings.game === "sf"
+    ? "https://2e.aonsrd.com/rules/791-encounter-design"
+    : "https://2e.aonprd.com/Rules.aspx?ID=2717"
 );
 
 watch(
   () => filters.hazardRanges,
-  (ranges) => {
+  ranges => {
     hazardStealth.value = {
       min: ranges.min_stealth,
       max: ranges.max_stealth
@@ -81,38 +85,38 @@ const hazard_number = ref({ min: 1, max: 20 });
 const challenge = ref<challenges>();
 const adventure_group_toggle = ref(false);
 const adventure_group = ref<{ label: string; value: adventure_groups }>({
-  label: 'Boss and Lackeys',
-  value: 'BossAndLackeys'
+  label: "Boss and Lackeys",
+  value: "BossAndLackeys"
 });
 
 const adventureGroupSelect = [
   {
-    label: 'Boss and Lackeys',
-    value: 'BossAndLackeys'
+    label: "Boss and Lackeys",
+    value: "BossAndLackeys"
   },
   {
-    label: 'Boss and Lieutenant',
-    value: 'BossAndLieutenant'
+    label: "Boss and Lieutenant",
+    value: "BossAndLieutenant"
   },
   {
-    label: 'Elite Enemies',
-    value: 'EliteEnemies'
+    label: "Elite Enemies",
+    value: "EliteEnemies"
   },
   {
-    label: 'Lieutenant and Lackeys',
-    value: 'LieutenantAndLackeys'
+    label: "Lieutenant and Lackeys",
+    value: "LieutenantAndLackeys"
   },
   {
-    label: 'Mated Pair',
-    value: 'MatedPair'
+    label: "Mated Pair",
+    value: "MatedPair"
   },
   {
-    label: 'Troop',
-    value: 'Troop'
+    label: "Troop",
+    value: "Troop"
   },
   {
-    label: 'Mook Squad',
-    value: 'MookSquad'
+    label: "Mook Squad",
+    value: "MookSquad"
   }
 ];
 
@@ -224,11 +228,14 @@ const generateEncounter = debounce(async function () {
   try {
     const randomEncounter = await encounterGenerator(settings.game, body);
     if (randomEncounter === undefined) {
-      throw new TypeError('Error generating random encounter');
+      throw new TypeError("Error generating random encounter");
     }
     if (randomEncounter.count > 0 && randomEncounter.results) {
       encounter.clearEncounter();
-      if (randomEncounter.results.creatures && randomEncounter.results.creatures.length > 0) {
+      if (
+        randomEncounter.results.creatures &&
+        randomEncounter.results.creatures.length > 0
+      ) {
         for (const creature of randomEncounter.results.creatures) {
           const min_creature: min_creature_hazard = {
             game: creature.game,
@@ -242,17 +249,20 @@ const generateEncounter = debounce(async function () {
           encounter.addToEncounter(min_creature);
         }
       }
-      if (randomEncounter.results.hazards && randomEncounter.results.hazards.length > 0) {
+      if (
+        randomEncounter.results.hazards &&
+        randomEncounter.results.hazards.length > 0
+      ) {
         for (const hazard of randomEncounter.results.hazards) {
           const min_hazard: min_creature_hazard = {
             game: hazard.game,
             id: hazard.core_hazard.essential.id,
             archive_link:
-              'https://2e.' +
+              "https://2e." +
               currentAon.value +
-              '.com/search?q=' +
+              ".com/search?q=" +
               encodeURIComponent(hazard.core_hazard.essential.name) +
-              ' type%3A(hazard)&type=eqs',
+              " type%3A(hazard)&type=eqs",
             name: hazard.core_hazard.essential.name,
             level: hazard.core_hazard.essential.level,
             is_hazard: true,
@@ -264,8 +274,8 @@ const generateEncounter = debounce(async function () {
     } else {
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'No encounter could be generated from the current filters',
+        type: "warning",
+        message: "No encounter could be generated from the current filters",
         icon: matPriorityHigh
       });
     }
@@ -273,8 +283,8 @@ const generateEncounter = debounce(async function () {
     console.error(error);
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Error generating the encounter',
+      type: "warning",
+      message: "Error generating the encounter",
       icon: matPriorityHigh
     });
   }
@@ -308,10 +318,13 @@ const saveChanges = () => {
   hazardStealth.value = tmpFilters.value.hazards.stealth;
 };
 
-const filterCreatureTraitsFn = (val: string, update: (fn: () => void) => void) => {
+const filterCreatureTraitsFn = (
+  val: string,
+  update: (fn: () => void) => void
+) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.traits = creatureTraitsOptions.value.filter((v) =>
+    filters.creatureFilters.traits = creatureTraitsOptions.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -320,34 +333,43 @@ const filterCreatureTraitsFn = (val: string, update: (fn: () => void) => void) =
 const filterFamiliesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.families = familiesOptions.filter((v) =>
+    filters.creatureFilters.families = familiesOptions.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
 };
 
-const filterCreatureSourcesFn = (val: string, update: (fn: () => void) => void) => {
+const filterCreatureSourcesFn = (
+  val: string,
+  update: (fn: () => void) => void
+) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.sources = creatureSourcesOptions.value.filter((v) =>
+    filters.creatureFilters.sources = creatureSourcesOptions.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
 };
 
-const filterHazardTraitsFn = (val: string, update: (fn: () => void) => void) => {
+const filterHazardTraitsFn = (
+  val: string,
+  update: (fn: () => void) => void
+) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.hazardFilters.traits = hazardTraitsOptions.value.filter((v) =>
+    filters.hazardFilters.traits = hazardTraitsOptions.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
 };
 
-const filterHazardSourcesFn = (val: string, update: (fn: () => void) => void) => {
+const filterHazardSourcesFn = (
+  val: string,
+  update: (fn: () => void) => void
+) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.hazardFilters.sources = hazardSourcesOptions.value.filter((v) =>
+    filters.hazardFilters.sources = hazardSourcesOptions.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -357,7 +379,12 @@ defineExpose({ generateEncounter });
 </script>
 
 <template>
-  <q-btn id="shepherd-2" push label="Generator Settings" @click="restoreSettings" />
+  <q-btn
+    id="shepherd-2"
+    push
+    label="Generator Settings"
+    @click="restoreSettings"
+  />
   <q-dialog v-model="dialog" aria-label="Generator Settings">
     <q-card flat bordered>
       <q-card-section class="row items-center tw:flex">
@@ -433,15 +460,19 @@ defineExpose({ generateEncounter });
                 >
                   <strong>Boss and Lackeys (120 XP)</strong>
                   <br />
-                  One creature of party level +2,<br />four creatures of party level -4
+                  One creature of party level +2,<br />four creatures of party
+                  level -4
                 </p>
                 <p
-                  v-if="tmpFilters.adventure_group.value === 'BossAndLieutenant'"
+                  v-if="
+                    tmpFilters.adventure_group.value === 'BossAndLieutenant'
+                  "
                   class="tw:mb-0! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Boss and Lieutenant (120 XP)</strong>
                   <br />
-                  One creature of party level +2,<br />one creature of party level
+                  One creature of party level +2,<br />one creature of party
+                  level
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'EliteEnemies'"
@@ -452,12 +483,15 @@ defineExpose({ generateEncounter });
                   Three creatures of party level
                 </p>
                 <p
-                  v-if="tmpFilters.adventure_group.value === 'LieutenantAndLackeys'"
+                  v-if="
+                    tmpFilters.adventure_group.value === 'LieutenantAndLackeys'
+                  "
                   class="tw:mb-0! text-center text-center tw:bg-gray-200! tw:text-black! tw:dark:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                 >
                   <strong>Lieutenant and Lackeys (80 XP)</strong>
                   <br />
-                  One creature of party level,<br />four creatures of party level -4
+                  One creature of party level,<br />four creatures of party
+                  level -4
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'MatedPair'"
@@ -473,7 +507,8 @@ defineExpose({ generateEncounter });
                 >
                   <strong>Troop (80 XP)</strong>
                   <br />
-                  One creature of party level,<br />two creatures of party level -2
+                  One creature of party level,<br />two creatures of party level
+                  -2
                 </p>
                 <p
                   v-if="tmpFilters.adventure_group.value === 'MookSquad'"
@@ -486,7 +521,9 @@ defineExpose({ generateEncounter });
               </div>
               <span v-else>
                 <div class="tw:pb-7">
-                  <q-badge outline class="tw:text-sm!"> Number of creatures: </q-badge>
+                  <q-badge outline class="tw:text-sm!">
+                    Number of creatures:
+                  </q-badge>
 
                   <q-range
                     v-model="tmpFilters.creatures.number"
@@ -494,8 +531,12 @@ defineExpose({ generateEncounter });
                     :min="1"
                     :max="20"
                     markers
-                    :left-label-value="'Min: ' + tmpFilters.creatures.number.min"
-                    :right-label-value="'Max: ' + tmpFilters.creatures.number.max"
+                    :left-label-value="
+                      'Min: ' + tmpFilters.creatures.number.min
+                    "
+                    :right-label-value="
+                      'Max: ' + tmpFilters.creatures.number.max
+                    "
                     class="tw:px-3 tw:pt-1"
                     aria-label="Creature numbers"
                     role="menuitem"
@@ -504,7 +545,9 @@ defineExpose({ generateEncounter });
                 </div>
 
                 <div class="tw:pb-7">
-                  <q-badge outline class="tw:text-sm!"> Number of hazards: </q-badge>
+                  <q-badge outline class="tw:text-sm!">
+                    Number of hazards:
+                  </q-badge>
 
                   <q-range
                     v-model="tmpFilters.hazards.number"

@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { biDashLg, biPlusLg, biTrash, biXLg } from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
-import { useQuasar } from 'quasar';
-import { ref } from 'vue';
+import {
+  biDashLg,
+  biPlusLg,
+  biTrash,
+  biXLg
+} from "@quasar/extras/bootstrap-icons";
+import { matPriorityHigh } from "@quasar/extras/material-icons";
+import { useQuasar } from "quasar";
+import { ref } from "vue";
 
-import { partyStore } from 'src/stores/party';
+import { partyStore } from "@/stores/party";
 
-import type { party } from 'src/types/party';
+import type { party } from "@/types/party";
 
 const $q = useQuasar();
 
@@ -25,7 +30,7 @@ if (party.parties[party.activeParty]!.advanced === undefined) {
     };
   }
   party.updateParties(legacyParties);
-  localStorage.setItem('parties', JSON.stringify(party.parties));
+  localStorage.setItem("parties", JSON.stringify(party.parties));
 }
 
 const tmpParty = ref<party>({
@@ -35,14 +40,14 @@ const tmpParty = ref<party>({
   advanced: party.parties[party.activeParty]!.advanced,
   members: [...party.parties[party.activeParty]!.members]
 });
-const parties = ref(party.parties.map((party) => party.name));
+const parties = ref(party.parties.map(party => party.name));
 const selectedParty = ref(party.parties[party.activeParty]!.name);
 
 const dialog = ref(false);
 
 const newPartyDialog = ref(false);
 const partyNameInput = ref();
-const newPartyName = ref('');
+const newPartyName = ref("");
 
 const removePartyDialog = ref(false);
 
@@ -59,7 +64,7 @@ const restoreParty = () => {
 
 const validateLevel = (index: number) => {
   const value = tmpParty.value.members[index];
-  if (typeof value !== 'number' || value < 1 || value === 0) {
+  if (typeof value !== "number" || value < 1 || value === 0) {
     tmpParty.value.members[index] = 1;
   } else if (value > 20) {
     tmpParty.value.members[index] = 20;
@@ -69,7 +74,7 @@ const validateLevel = (index: number) => {
 
 const validateSimpleParty = () => {
   if (
-    typeof tmpParty.value.size !== 'number' ||
+    typeof tmpParty.value.size !== "number" ||
     tmpParty.value.size < 1 ||
     tmpParty.value.size === 0
   ) {
@@ -80,7 +85,7 @@ const validateSimpleParty = () => {
   tmpParty.value.size = Math.round(tmpParty.value.size);
 
   if (
-    typeof tmpParty.value.level !== 'number' ||
+    typeof tmpParty.value.level !== "number" ||
     tmpParty.value.level < 1 ||
     tmpParty.value.level === 0
   ) {
@@ -90,17 +95,23 @@ const validateSimpleParty = () => {
   }
   tmpParty.value.level = Math.round(tmpParty.value.level);
 
-  tmpParty.value.members = new Array(tmpParty.value.size).fill(tmpParty.value.level);
+  tmpParty.value.members = Array.from<number>({
+    length: tmpParty.value.size
+  }).fill(tmpParty.value.level);
 };
 
 const updateAdvanced = () => {
   if (tmpParty.value.advanced) {
     if (tmpParty.value.size && tmpParty.value.level) {
-      tmpParty.value.members = new Array(tmpParty.value.size).fill(tmpParty.value.level);
+      tmpParty.value.members = Array.from<number>({
+        length: tmpParty.value.size
+      }).fill(tmpParty.value.level);
     } else {
       tmpParty.value.members = [1, 1, 1, 1];
     }
-  } else if (tmpParty.value.members.every((member, _, arr) => member === arr[0])) {
+  } else if (
+    tmpParty.value.members.every((member, _, arr) => member === arr[0])
+  ) {
     tmpParty.value.size = tmpParty.value.members.length;
     tmpParty.value.level = tmpParty.value.members[0];
   } else {
@@ -113,8 +124,8 @@ const addPlayer = () => {
   if (tmpParty.value.members.length >= 20) {
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Maximum player number reached',
+      type: "warning",
+      message: "Maximum player number reached",
       icon: matPriorityHigh
     });
     return;
@@ -131,7 +142,7 @@ const removePlayer = (index: number) => {
 const closeDialog = () => {
   newPartyDialog.value = false;
   removePartyDialog.value = false;
-  newPartyName.value = '';
+  newPartyName.value = "";
 };
 
 const addParty = () => {
@@ -139,7 +150,7 @@ const addParty = () => {
   if (!partyNameInput.value.hasError) {
     party.addParty(newPartyName.value);
     selectedParty.value = newPartyName.value;
-    parties.value = party.parties.map((party) => party.name);
+    parties.value = party.parties.map(party => party.name);
     tmpParty.value = {
       name: party.parties[party.activeParty]!.name,
       size: party.parties[party.activeParty]!.size,
@@ -148,7 +159,7 @@ const addParty = () => {
       members: [...party.parties[party.activeParty]!.members]
     };
     saveChanges();
-    newPartyName.value = '';
+    newPartyName.value = "";
     newPartyDialog.value = false;
   }
 };
@@ -156,7 +167,7 @@ const addParty = () => {
 const removeParty = () => {
   party.removeParty();
   selectedParty.value = party.parties[party.activeParty]!.name;
-  parties.value = party.parties.map((party) => party.name);
+  parties.value = party.parties.map(party => party.name);
   tmpParty.value = {
     name: party.parties[party.activeParty]!.name,
     size: party.parties[party.activeParty]!.size,
@@ -183,11 +194,15 @@ const saveChanges = () => {
   if (tmpParty.value.advanced) {
     tmpParty.value.size = tmpParty.value.members.length;
     tmpParty.value.level = tmpParty.value.members[0];
+  } else if (tmpParty.value.size && tmpParty.value.level) {
+    tmpParty.value.members = Array.from<number>({
+      length: tmpParty.value.size
+    }).fill(tmpParty.value.level);
   } else {
-    tmpParty.value.members = new Array(tmpParty.value.size).fill(tmpParty.value.level);
+    tmpParty.value.members = [1, 1, 1, 1];
   }
   party.updateParty(tmpParty.value);
-  localStorage.setItem('parties', JSON.stringify(party.parties));
+  localStorage.setItem("parties", JSON.stringify(party.parties));
 };
 </script>
 
@@ -261,8 +276,9 @@ const saveChanges = () => {
                   :rules="[
                     (val: string) => !!val || 'Field is required',
                     (val: string) =>
-                      !parties.some((name) => name.toLowerCase() === val.toLowerCase()) ||
-                      'This party already exists'
+                      !parties.some(
+                        name => name.toLowerCase() === val.toLowerCase()
+                      ) || 'This party already exists'
                   ]"
                   @keyup.enter="addParty"
                 />
@@ -342,9 +358,17 @@ const saveChanges = () => {
 
       <q-separator />
 
-      <q-card-section v-if="tmpParty.advanced" style="max-height: 60vh" class="scroll">
+      <q-card-section
+        v-if="tmpParty.advanced"
+        style="max-height: 60vh"
+        class="scroll"
+      >
         <div class="tw:space-y-4">
-          <div v-for="(_, index) in tmpParty.members" :key="index" class="row no-wrap items-center">
+          <div
+            v-for="(_, index) in tmpParty.members"
+            :key="index"
+            class="row no-wrap items-center"
+          >
             <div class="col-grow">
               <q-input
                 v-model.number="tmpParty.members[index]"
@@ -387,7 +411,9 @@ const saveChanges = () => {
 
       <q-card-section v-else class="tw:space-y-3">
         <div class="tw:grid tw:grid-cols-2 tw:gap-4">
-          <q-badge outline class="tw:text-sm! tw:justify-end"> Party size: </q-badge>
+          <q-badge outline class="tw:text-sm! tw:justify-end">
+            Party size:
+          </q-badge>
           <q-input
             v-model.number="tmpParty.size"
             dense
@@ -399,7 +425,9 @@ const saveChanges = () => {
             label="Size"
             @update:model-value="validateSimpleParty()"
           />
-          <q-badge outline class="tw:text-sm! tw:justify-end"> Party level: </q-badge>
+          <q-badge outline class="tw:text-sm! tw:justify-end">
+            Party level:
+          </q-badge>
           <q-input
             v-model.number="tmpParty.level"
             dense
@@ -436,7 +464,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type='number'] {
+input[type="number"] {
   appearance: textfield;
 }
 </style>

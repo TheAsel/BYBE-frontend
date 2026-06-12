@@ -10,6 +10,7 @@ RUN bun install --ignore-scripts && bun run build
 FROM nginxinc/nginx-unprivileged:1.31.1-alpine AS deploy-stage
 COPY --from=build-stage /bybe/dist/spa /usr/share/nginx/html
 COPY --from=build-stage /bybe/nginx.conf /etc/nginx/nginx.conf
+COPY --from=build-stage /bybe/nginx_headers.conf /etc/nginx/nginx_headers.conf
 EXPOSE 8080
 USER nginx
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,17 +1,23 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-import type { party } from 'src/types/party';
+import type { party } from "@/types/party";
 
-export const partyStore = defineStore('party', {
+export const partyStore = defineStore("party", {
   state: () => ({
     parties: [
-      { name: 'Default', size: 4, level: 1, advanced: false, members: [1, 1, 1, 1] }
+      {
+        name: "Default",
+        size: 4,
+        level: 1,
+        advanced: false,
+        members: [1, 1, 1, 1]
+      }
     ] as party[],
     activeParty: 0
   }),
   actions: {
     getPartyIndex(partyName: string): number {
-      return this.parties.map((party) => party.name).indexOf(partyName);
+      return this.parties.map(party => party.name).indexOf(partyName);
     },
     updateParty(newParty: party) {
       const partyIndex = this.getPartyIndex(newParty.name);
@@ -44,7 +50,13 @@ export const partyStore = defineStore('party', {
       this.activeParty = 0;
       if (this.parties.length <= 0) {
         this.parties = [
-          { name: 'Default', size: 4, level: 1, advanced: false, members: [1, 1, 1, 1] }
+          {
+            name: "Default",
+            size: 4,
+            level: 1,
+            advanced: false,
+            members: [1, 1, 1, 1]
+          }
         ];
       }
     }

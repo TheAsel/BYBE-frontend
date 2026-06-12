@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { biBoxArrowUpRight } from '@quasar/extras/bootstrap-icons';
-import { useRouter } from 'vue-router';
+import { biBoxArrowUpRight } from "@quasar/extras/bootstrap-icons";
+import { useRouter } from "vue-router";
 
-import { npcStore } from 'src/stores/npc';
-import { settingsStore } from 'src/stores/settings';
-import { getGameFont, getGameFontSize, openSheet } from 'src/utils/sheet';
+import { npcStore } from "@/stores/npc";
+import { settingsStore } from "@/stores/settings";
+import { getGameFont, getGameFontSize, openSheet } from "@/utils/sheet";
 
 const router = useRouter();
 
@@ -38,7 +38,9 @@ const settings = settingsStore();
                 padding="sm"
                 class="tw:mr-1! only-screen character-page-element"
                 aria-label="Open NPC sheet"
-                @click="openSheet(router, 'character', settings.game, npcs.activeNpc)"
+                @click="
+                  openSheet(router, 'character', settings.game, npcs.activeNpc)
+                "
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -49,23 +51,38 @@ const settings = settingsStore();
                 </q-tooltip>
               </q-btn>
             </div>
-            <h1 :class="getGameFontSize(settings.game) + ' tw:mr-4 tw:leading-8 tw:my-auto'">
-              <span v-if="npcs.npcs[npcs.activeNpc]!.npc.name" class="tw:leading-8 tw:my-auto">
+            <h1
+              :class="
+                getGameFontSize(settings.game) +
+                ' tw:mr-4 tw:leading-8 tw:my-auto'
+              "
+            >
+              <span
+                v-if="npcs.npcs[npcs.activeNpc]!.npc.name"
+                class="tw:leading-8 tw:my-auto"
+              >
                 {{ npcs.npcs[npcs.activeNpc]!.npc.name }}
               </span>
-              <span v-if="npcs.npcs[npcs.activeNpc]!.npc.nickname" class="tw:leading-8 tw:my-auto">
+              <span
+                v-if="npcs.npcs[npcs.activeNpc]!.npc.nickname"
+                class="tw:leading-8 tw:my-auto"
+              >
                 {{ '&nbsp;"' + npcs.npcs[npcs.activeNpc]!.npc.nickname + '"' }}
               </span>
             </h1>
             <q-space />
-            <div class="tw:ml-4 tw:my-1">NPC {{ npcs.npcs[npcs.activeNpc]!.npc.level }}</div>
+            <div class="tw:ml-4 tw:my-1"
+              >NPC {{ npcs.npcs[npcs.activeNpc]!.npc.level }}</div
+            >
           </div>
           <q-separator class="tw:my-2!" style="height: 2px" />
           <hr
             class="only-print"
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
-          <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white">
+          <div
+            class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white"
+          >
             <div
               v-if="npcs.npcs[npcs.activeNpc]!.npc.gender"
               class="tw:bg-[#6d5f9d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
@@ -74,7 +91,8 @@ const settings = settingsStore();
             </div>
             <div
               v-if="
-                (!npcs.npcs[npcs.activeNpc]!.culture || settings.game === 'sf') &&
+                (!npcs.npcs[npcs.activeNpc]!.culture ||
+                  settings.game === 'sf') &&
                 npcs.npcs[npcs.activeNpc]!.npc.ancestry
               "
               class="tw:bg-[#28765d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
@@ -120,7 +138,8 @@ const settings = settingsStore();
           </div>
           <q-separator
             v-if="
-              (npcs.npcs[npcs.activeNpc]!.npc.languages || npcs.npcs[npcs.activeNpc]!.npc.quirk) &&
+              (npcs.npcs[npcs.activeNpc]!.npc.languages ||
+                npcs.npcs[npcs.activeNpc]!.npc.quirk) &&
               (npcs.npcs[npcs.activeNpc]!.npc.description ||
                 npcs.npcs[npcs.activeNpc]!.npc.personality ||
                 npcs.npcs[npcs.activeNpc]!.npc.relationships ||
@@ -171,8 +190,12 @@ const settings = settingsStore();
                 npcs.npcs[npcs.activeNpc]!.npc.personality ||
                 npcs.npcs[npcs.activeNpc]!.npc.relationships ||
                 npcs.npcs[npcs.activeNpc]!.npc.ideology) &&
-              (npcs.npcs[npcs.activeNpc]!.npc.custom_fields.some((item) => item.name) ||
-                npcs.npcs[npcs.activeNpc]!.npc.custom_fields.some((item) => item.body))
+              (npcs.npcs[npcs.activeNpc]!.npc.custom_fields.some(
+                item => item.name
+              ) ||
+                npcs.npcs[npcs.activeNpc]!.npc.custom_fields.some(
+                  item => item.body
+                ))
             "
             class="tw:my-2!"
             style="height: 2px"
@@ -182,8 +205,15 @@ const settings = settingsStore();
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
           <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
-            <div v-for="(item, index) in npcs.npcs[npcs.activeNpc]!.npc.custom_fields" :key="index">
-              <div v-if="item" class="tw:text-base tw:text-gray-800 tw:dark:text-white">
+            <div
+              v-for="(item, index) in npcs.npcs[npcs.activeNpc]!.npc
+                .custom_fields"
+              :key="index"
+            >
+              <div
+                v-if="item"
+                class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+              >
                 <strong>{{ item.name }} </strong>
                 {{ item.body }}
               </div>
@@ -197,7 +227,7 @@ const settings = settingsStore();
 
 <style lang="scss">
 .npc-sheet {
-  font-family: 'Good Pro', sans-serif;
+  font-family: "Good Pro", sans-serif;
 }
 
 .character-page {

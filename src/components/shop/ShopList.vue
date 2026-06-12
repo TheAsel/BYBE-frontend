@@ -7,29 +7,33 @@ import {
   biShare,
   biTrash,
   biXLg
-} from '@quasar/extras/bootstrap-icons';
-import { matPriorityHigh } from '@quasar/extras/material-icons';
+} from "@quasar/extras/bootstrap-icons";
+import { matPriorityHigh } from "@quasar/extras/material-icons";
 import {
   mdiFoodDrumstick,
   mdiRing,
   mdiShield,
   mdiSword,
   mdiTshirtCrew
-} from '@quasar/extras/mdi-v7';
-import { debounce, isNull } from 'lodash-es';
-import { copyToClipboard, useQuasar } from 'quasar';
-import { ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+} from "@quasar/extras/mdi-v7";
+import { debounce, isNull } from "lodash-es";
+import { copyToClipboard, useQuasar } from "quasar";
+import { ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-import { decodeShopLink, generateShopLink, requestItemId } from 'src/api/shop-api-calls';
-import { itemsStore } from 'src/stores/items';
-import { settingsStore } from 'src/stores/settings';
+import {
+  decodeShopLink,
+  generateShopLink,
+  requestItemId
+} from "@/api/shop-api-calls";
+import { itemsStore } from "@/stores/items";
+import { settingsStore } from "@/stores/settings";
 
-import type { games } from 'src/types/filters';
-import type { min_item } from 'src/types/item';
-import type { shareable_shop, shop_list } from 'src/types/shop';
+import type { games } from "@/types/filters";
+import type { min_item } from "@/types/item";
+import type { shareable_shop, shop_list } from "@/types/shop";
 
-const isApp = process.env.IS_APP === 'true';
+const isApp = import.meta.env.IS_APP;
 
 const route = useRoute();
 const router = useRouter();
@@ -40,25 +44,25 @@ const items = itemsStore();
 
 const importShopDialog = ref(false);
 const importNameInput = ref();
-const importShopName = ref('');
+const importShopName = ref("");
 const importShopData = ref<shareable_shop>();
 
 const shareDialog = ref(false);
-const shareUrl = ref('');
+const shareUrl = ref("");
 const isGenerating = ref(false);
 
 const newShopDialog = ref(false);
 const shopNameInput = ref();
-const newShopName = ref('');
+const newShopName = ref("");
 
 const renameShopDialog = ref(false);
 const shopRenameInput = ref();
-const newShopRename = ref('');
+const newShopRename = ref("");
 
 const removeShopDialog = ref(false);
 
 const tmpShop = ref<shop_list>(items.shops[items.activeShop]!);
-const shops = ref<string[]>(items.shops.map((shop) => shop.name));
+const shops = ref<string[]>(items.shops.map(shop => shop.name));
 
 tmpShop.value = {
   name: items.shops[items.activeShop]!.name,
@@ -76,20 +80,21 @@ watch(items, () => {
 
 // read the "share" query and decode it
 const shareQuery =
-  String(route.query.share) === 'undefined' || String(route.query.share) === 'null'
-    ? ''
+  String(route.query.share) === "undefined" ||
+  String(route.query.share) === "null"
+    ? ""
     : String(route.query.share);
 const encodedData = ref(shareQuery);
 
 const decodeData = async () => {
-  if (encodedData.value !== '') {
+  if (encodedData.value !== "") {
     isGenerating.value = true;
     importShopDialog.value = true;
     try {
       const decodedData = await decodeShopLink(encodedData.value);
       if (decodedData === undefined) {
         importShopDialog.value = false;
-        throw new TypeError('Error importing shop');
+        throw new TypeError("Error importing shop");
       }
       importShopData.value = decodedData;
       importShopName.value = decodedData.shop_name;
@@ -98,8 +103,8 @@ const decodeData = async () => {
       console.error(error);
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Error importing shop',
+        type: "warning",
+        message: "Error importing shop",
         icon: matPriorityHigh
       });
     }
@@ -109,7 +114,7 @@ const decodeData = async () => {
 await decodeData();
 
 // clean and check the link for manual app import
-const sharedLink = ref('');
+const sharedLink = ref("");
 const cleanLink = async () => {
   try {
     const parsedUrl = new URL(sharedLink.value);
@@ -118,22 +123,22 @@ const cleanLink = async () => {
       closeDialog();
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Invalid page for this link',
+        type: "warning",
+        message: "Invalid page for this link",
         icon: matPriorityHigh
       });
-      throw new Error('Invalid page for this link');
+      throw new Error("Invalid page for this link");
     }
-    const share = parsedUrl.searchParams.get('share');
-    if (share === null || share === '') {
+    const share = parsedUrl.searchParams.get("share");
+    if (share === null || share === "") {
       closeDialog();
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Missing share hash',
+        type: "warning",
+        message: "Missing share hash",
         icon: matPriorityHigh
       });
-      throw new TypeError('Missing share code');
+      throw new TypeError("Missing share code");
     }
     encodedData.value = share;
     closeDialog();
@@ -157,17 +162,17 @@ const openShare = async () => {
   const body: shareable_shop = {
     shop_name: items.shops[items.activeShop]?.name
       ? items.shops[items.activeShop]!.name
-      : 'Default',
+      : "Default",
     items_data: []
   };
 
   for (const item of shopList) {
-    if (item.game !== 'pf' && item.game !== 'sf') {
+    if (item.game !== "pf" && item.game !== "sf") {
       shareDialog.value = false;
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'This legacy list cannot be shared',
+        type: "warning",
+        message: "This legacy list cannot be shared",
         icon: matPriorityHigh
       });
       return;
@@ -185,14 +190,18 @@ const openShare = async () => {
 
   try {
     const shareableLink = await generateShopLink(body);
-    if (typeof shareableLink === 'string') {
-      shareUrl.value = 'https://bybe.app/shop?game=' + settings.game + '&share=' + shareableLink;
+    if (typeof shareableLink === "string") {
+      shareUrl.value =
+        "https://bybe.app/shop?game=" +
+        settings.game +
+        "&share=" +
+        shareableLink;
     } else {
       shareDialog.value = false;
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Error generating shared link',
+        type: "warning",
+        message: "Error generating shared link",
         icon: matPriorityHigh
       });
     }
@@ -201,8 +210,8 @@ const openShare = async () => {
     console.error(error);
     $q.notify({
       progress: true,
-      type: 'warning',
-      message: 'Error generating shared link',
+      type: "warning",
+      message: "Error generating shared link",
       icon: matPriorityHigh
     });
   }
@@ -222,13 +231,13 @@ const importShop = async () => {
             game: item.game,
             id: item.id,
             archive_link:
-              item.game === 'sf'
-                ? 'https://2e.aonsrd.com/search?q=' +
+              item.game === "sf"
+                ? "https://2e.aonsrd.com/search?q=" +
                   encodeURIComponent(fetchedItemData.core_item.name) +
-                  '&type=eqs'
-                : 'https://2e.aonprd.com/Search.aspx?q=' +
+                  "&type=eqs"
+                : "https://2e.aonprd.com/Search.aspx?q=" +
                   encodeURIComponent(fetchedItemData.core_item.name) +
-                  '&type=eqs',
+                  "&type=eqs",
             name: fetchedItemData.core_item.name,
             level: fetchedItemData.core_item.level,
             type: fetchedItemData.core_item.item_type,
@@ -241,14 +250,14 @@ const importShop = async () => {
       }
     }
     items.addShop(importShopName.value);
-    shops.value = items.shops.map((shop) => shop.name);
+    shops.value = items.shops.map(shop => shop.name);
     items.updateShop(importShopName.value, tmp_items);
     tmpShop.value = {
       name: items.shops[items.activeShop]!.name,
       items: [...items.shops[items.activeShop]!.items]
     };
     saveChanges();
-    importShopName.value = '';
+    importShopName.value = "";
     importShopDialog.value = false;
   }
 };
@@ -259,22 +268,22 @@ const closeDialog = () => {
   newShopDialog.value = false;
   renameShopDialog.value = false;
   removeShopDialog.value = false;
-  importShopName.value = '';
-  newShopName.value = '';
-  newShopRename.value = '';
+  importShopName.value = "";
+  newShopName.value = "";
+  newShopRename.value = "";
 };
 
 const addShop = () => {
   shopNameInput.value.validate();
   if (!shopNameInput.value.hasError) {
     items.addShop(newShopName.value);
-    shops.value = items.shops.map((shop) => shop.name);
+    shops.value = items.shops.map(shop => shop.name);
     tmpShop.value = {
       name: items.shops[items.activeShop]!.name,
       items: [...items.shops[items.activeShop]!.items]
     };
     saveChanges();
-    newShopName.value = '';
+    newShopName.value = "";
     newShopDialog.value = false;
   }
 };
@@ -283,20 +292,20 @@ const renameShop = () => {
   shopRenameInput.value.validate();
   if (!shopRenameInput.value.hasError) {
     items.shops[items.activeShop]!.name = newShopRename.value;
-    shops.value = items.shops.map((shop) => shop.name);
+    shops.value = items.shops.map(shop => shop.name);
     tmpShop.value = {
       name: items.shops[items.activeShop]!.name,
       items: [...items.shops[items.activeShop]!.items]
     };
     saveChanges();
-    newShopRename.value = '';
+    newShopRename.value = "";
     renameShopDialog.value = false;
   }
 };
 
 const removeShop = () => {
   items.removeShop();
-  shops.value = items.shops.map((shop) => shop.name);
+  shops.value = items.shops.map(shop => shop.name);
   tmpShop.value = {
     name: items.shops[items.activeShop]!.name,
     items: [...items.shops[items.activeShop]!.items]
@@ -315,21 +324,21 @@ const changeActiveShop = (selected: string) => {
 
 const saveChanges = () => {
   items.updateShop(tmpShop.value.name, tmpShop.value.items);
-  localStorage.setItem('shops', JSON.stringify(items.shops));
+  localStorage.setItem("shops", JSON.stringify(items.shops));
 };
 
 const showItem = debounce(async function (item: min_item) {
   try {
     const itemData = await requestItemId(item.game, item.id);
     if (isNull(itemData) || itemData === undefined) {
-      console.error('Missing item ID');
+      console.error("Missing item ID");
       $q.notify({
         progress: true,
-        type: 'warning',
-        message: 'Missing item ID',
+        type: "warning",
+        message: "Missing item ID",
         icon: matPriorityHigh
       });
-      await router.push({ name: 'shop', query: { game: item.game } });
+      await router.push({ name: "shop", query: { game: item.game } });
     } else {
       items.setSelectedItem(itemData);
     }
@@ -363,7 +372,7 @@ const showItem = debounce(async function (item: min_item) {
             :rules="[
               (val: string) => !!val || 'Field is required',
               (val: string) =>
-                !shops.some((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !shops.some(name => name.toLowerCase() === val.toLowerCase()) ||
                 'This shop already exists'
             ]"
             @keyup.enter="importShop"
@@ -389,7 +398,11 @@ const showItem = debounce(async function (item: min_item) {
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="shareDialog" aria-label="Share dialog" @escape-key="closeDialog">
+    <q-dialog
+      v-model="shareDialog"
+      aria-label="Share dialog"
+      @escape-key="closeDialog"
+    >
       <q-card flat bordered style="min-height: 210px; width: 320px">
         <q-card-section>
           <div class="row">
@@ -422,7 +435,10 @@ const showItem = debounce(async function (item: min_item) {
               <q-btn label="Import" @click="cleanLink" />
             </div>
           </q-card-section>
-          <q-separator inset class="tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-700!" />
+          <q-separator
+            inset
+            class="tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-700!"
+          />
         </div>
         <div v-if="!isGenerating">
           <q-card-section class="tw:wrap-normal tw:py-1!">
@@ -430,7 +446,11 @@ const showItem = debounce(async function (item: min_item) {
           </q-card-section>
           <q-card-section>
             <div class="row tw:gap-4">
-              <q-field class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!" outlined dense>
+              <q-field
+                class="tw:w-48 tw:text-gray-800! tw:dark:text-gray-200!"
+                outlined
+                dense
+              >
                 <template v-slot:control>
                   <div class="tw:text-nowrap tw:overflow-x-scroll tw:py-4!">
                     {{ shareUrl }}
@@ -450,7 +470,11 @@ const showItem = debounce(async function (item: min_item) {
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="newShopDialog" aria-label="New shop dialog" @escape-key="closeDialog">
+    <q-dialog
+      v-model="newShopDialog"
+      aria-label="New shop dialog"
+      @escape-key="closeDialog"
+    >
       <q-card flat bordered>
         <q-card-section>
           <div class="text-h6">New shop name</div>
@@ -468,7 +492,7 @@ const showItem = debounce(async function (item: min_item) {
             :rules="[
               (val: string) => !!val || 'Field is required',
               (val: string) =>
-                !shops.some((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !shops.some(name => name.toLowerCase() === val.toLowerCase()) ||
                 'This shop already exists'
             ]"
             @keyup.enter="addShop"
@@ -494,7 +518,11 @@ const showItem = debounce(async function (item: min_item) {
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="renameShopDialog" aria-label="New shop dialog" @escape-key="closeDialog">
+    <q-dialog
+      v-model="renameShopDialog"
+      aria-label="New shop dialog"
+      @escape-key="closeDialog"
+    >
       <q-card flat bordered>
         <q-card-section>
           <div class="text-h6">Rename shop</div>
@@ -512,7 +540,7 @@ const showItem = debounce(async function (item: min_item) {
             :rules="[
               (val: string) => !!val || 'Field is required',
               (val: string) =>
-                !shops.some((name) => name.toLowerCase() === val.toLowerCase()) ||
+                !shops.some(name => name.toLowerCase() === val.toLowerCase()) ||
                 'This shop already exists'
             ]"
             @keyup.enter="renameShop"
@@ -538,7 +566,11 @@ const showItem = debounce(async function (item: min_item) {
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="removeShopDialog" aria-label="Remove shop dialog" @escape-key="closeDialog">
+    <q-dialog
+      v-model="removeShopDialog"
+      aria-label="Remove shop dialog"
+      @escape-key="closeDialog"
+    >
       <q-card flat bordered>
         <q-card-section>
           <div class="text-h6">Remove this shop?</div>
@@ -572,7 +604,9 @@ const showItem = debounce(async function (item: min_item) {
         bordered
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2">
+        <div
+          class="tw:flex tw:flex-wrap tw:justify-center! tw:mx-4 tw:my-1.5 tw:gap-2"
+        >
           <q-btn
             id="shepherd-5"
             class="tw:grow"
@@ -651,12 +685,17 @@ const showItem = debounce(async function (item: min_item) {
             label="Shops"
             @update:model-value="changeActiveShop(tmpShop.name)"
           />
-          <q-btn flat dense aria-label="Clear shop" @click="items.clearShop">CLEAR</q-btn>
+          <q-btn flat dense aria-label="Clear shop" @click="items.clearShop"
+            >CLEAR</q-btn
+          >
         </div>
       </q-header>
       <q-page-container v-if="items.generating === false">
         <q-page class="tw:min-h-auto!">
-          <div v-for="(item, index) in items.shops[items.activeShop]!.items" :key="index">
+          <div
+            v-for="(item, index) in items.shops[items.activeShop]!.items"
+            :key="index"
+          >
             <div class="tw:flex">
               <div class="tw:flex-none tw:w-12 tw:my-auto tw:mx-1">
                 <q-btn
@@ -682,7 +721,10 @@ const showItem = debounce(async function (item: min_item) {
                 class="tw:flex tw:flex-wrap tw:flex-row tw:grow cursor-pointer"
                 @click="showItem(item)"
               >
-                <div class="tw:grow tw:my-auto tw:mx-1" style="min-width: 100px">
+                <div
+                  class="tw:grow tw:my-auto tw:mx-1"
+                  style="min-width: 100px"
+                >
                   <q-chip
                     v-if="item.type === 'Armor'"
                     text-color="white"
@@ -691,7 +733,11 @@ const showItem = debounce(async function (item: min_item) {
                     class="tw:p-1! tw:invisible"
                     aria-label="Armor item type"
                   >
-                    <q-avatar class="tw:visible" :icon="mdiTshirtCrew" color="blue">
+                    <q-avatar
+                      class="tw:visible"
+                      :icon="mdiTshirtCrew"
+                      color="blue"
+                    >
                       <q-tooltip
                         class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                         anchor="top middle"
@@ -709,7 +755,11 @@ const showItem = debounce(async function (item: min_item) {
                     class="tw:p-1! tw:invisible"
                     aria-label="Consumable item type"
                   >
-                    <q-avatar class="tw:visible" :icon="mdiFoodDrumstick" color="orange">
+                    <q-avatar
+                      class="tw:visible"
+                      :icon="mdiFoodDrumstick"
+                      color="orange"
+                    >
                       <q-tooltip
                         class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                         anchor="top middle"
@@ -745,7 +795,11 @@ const showItem = debounce(async function (item: min_item) {
                     class="tw:p-1! tw:invisible"
                     aria-label="Shield item type"
                   >
-                    <q-avatar class="tw:visible" :icon="mdiShield" color="purple">
+                    <q-avatar
+                      class="tw:visible"
+                      :icon="mdiShield"
+                      color="purple"
+                    >
                       <q-tooltip
                         class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                         anchor="top middle"
@@ -791,7 +845,12 @@ const showItem = debounce(async function (item: min_item) {
                   </span>
                 </div>
                 <div class="tw:shrink tw:text-nowrap tw:my-auto tw:mx-1">
-                  {{ items.getFormattedPrice(item.price * item.quantity!, settings.game) }}
+                  {{
+                    items.getFormattedPrice(
+                      item.price * item.quantity!,
+                      settings.game
+                    )
+                  }}
                 </div>
               </div>
               <div class="tw:flex-none tw:my-auto tw:ml-1 tw:mr-3">
@@ -814,7 +873,10 @@ const showItem = debounce(async function (item: min_item) {
       </q-page-container>
       <q-page-container v-else class="tw:flex" style="height: 78vh">
         <div class="tw:m-auto">
-          <q-spinner-gears class="tw:mx-auto tw:text-black tw:dark:text-white" size="5em" />
+          <q-spinner-gears
+            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            size="5em"
+          />
         </div>
       </q-page-container>
       <q-footer
@@ -822,8 +884,11 @@ const showItem = debounce(async function (item: min_item) {
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
         <div class="tw:flex tw:mx-4">
-          <div class="text-subtitle1 font-bold tw:whitespace-nowrap tw:py-2.5 tw:pr-4">
-            Total cost: {{ items.getFormattedPrice(items.getTotalCost, settings.game) }}
+          <div
+            class="text-subtitle1 font-bold tw:whitespace-nowrap tw:py-2.5 tw:pr-4"
+          >
+            Total cost:
+            {{ items.getFormattedPrice(items.getTotalCost, settings.game) }}
           </div>
         </div>
       </q-footer>

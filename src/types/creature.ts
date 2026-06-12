@@ -1,5 +1,12 @@
-import type { alignments, games, rarities, roles, sizes, variants } from 'src/types/filters';
-import type { item } from 'src/types/item';
+import type {
+  alignments,
+  games,
+  rarities,
+  roles,
+  sizes,
+  variants
+} from "@/types/filters";
+import type { item } from "@/types/item";
 
 interface KeyValue {
   [key: string]: number;
@@ -11,8 +18,8 @@ export type creature = {
     ac: number;
     armors: [
       {
-        item_core: item['core_item'];
-        armor_data: item['armor_data'];
+        item_core: item["core_item"];
+        armor_data: item["armor_data"];
       }
     ];
     immunities: string[];
@@ -38,8 +45,8 @@ export type creature = {
     };
     weapons: [
       {
-        item_core: item['core_item'];
-        weapon_data: item['weapon_data'];
+        item_core: item["core_item"];
+        weapon_data: item["weapon_data"];
       }
     ];
   };
@@ -111,7 +118,7 @@ export type creature = {
     ];
     has_vision: boolean;
     hp_detail: string;
-    items: [item['core_item']];
+    items: [item["core_item"]];
     language_detail: string;
     languages: string[];
     perception: number;

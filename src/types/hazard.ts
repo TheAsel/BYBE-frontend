@@ -1,4 +1,4 @@
-import type { complexities, games, rarities, sizes } from 'src/types/filters';
+import type { complexities, games, rarities, sizes } from "@/types/filters";
 
 export type hazard = {
   game: games;
