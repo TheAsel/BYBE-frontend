@@ -132,7 +132,7 @@ const unhide = debounce(function () {
     >
       <div class="tw:flex tw:items-center tw:justify-between">
         <router-link
-          v-if="currentPath === '/' || currentPath === '/download'"
+          v-if="currentPath === '/download'"
           class="tw:my-2.5 text-h5 tw:flex tw:flex-nowrap tw:dark:text-white"
           to="/"
         >

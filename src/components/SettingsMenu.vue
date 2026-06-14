@@ -494,17 +494,17 @@ const downloadData = () => {
                 @update:model-value="toggleGameVersion"
               />
               <q-toggle
-                v-model="hideSupport"
-                label="Hide support button"
-                aria-label="Toggle support button visibility"
-                @update:model-value="toggleSupport"
-              />
-              <q-toggle
                 v-model="all_experimentals"
                 class="tw:w-52 tw:text-wrap"
                 label="Enable all experimental features"
                 aria-label="Toggle all experimental features"
                 @update:model-value="toggleAllExperimental"
+              />
+              <q-toggle
+                v-model="hideSupport"
+                label="Hide support button"
+                aria-label="Toggle support button visibility"
+                @update:model-value="toggleSupport"
               />
             </div>
           </q-card-actions>
