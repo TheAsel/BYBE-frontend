@@ -36,6 +36,7 @@ import { filtersStore } from "@/stores/filters";
 import { itemsStore } from "@/stores/items";
 import { settingsStore } from "@/stores/settings";
 import { templateStore } from "@/stores/template";
+import { openSheet } from "@/utils/sheet";
 
 import type { QTableProps } from "quasar";
 import type { item_columns, item_filters, rarities } from "@/types/filters";
@@ -301,18 +302,6 @@ const sort = (col: item_columns) => {
   } else {
     activeFilters.value.order_by = "ascending";
     activeFilters.value.sort_by = col;
-  }
-};
-
-const openShopSheet = (id: number) => {
-  const routeData = router.resolve({
-    name: "item",
-    query: { game: settings.game, id: id }
-  });
-  if (import.meta.env.IS_APP === true) {
-    globalThis.open(routeData.href, "_self");
-  } else {
-    globalThis.open(routeData.href, "_blank");
   }
 };
 
@@ -1031,7 +1020,14 @@ onMounted(async () => {
           size="sm"
           aria-label="Open item sheet"
           target="_blank"
-          @click="openShopSheet(selectedItem.row.core_item.id)"
+          @click="
+            openSheet(
+              router,
+              'item',
+              settings.game,
+              selectedItem.row.core_item.id
+            )
+          "
         >
           <q-tooltip
             class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"

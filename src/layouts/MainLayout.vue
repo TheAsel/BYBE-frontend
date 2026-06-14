@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { openUrl } from "@tauri-apps/plugin-opener";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 
@@ -59,6 +60,19 @@ try {
   }
 } catch (error) {
   console.error(error);
+}
+
+// Open external links in default browser on portable
+if (import.meta.env.IS_APP) {
+  document.addEventListener("click", async e => {
+    const target = e.target;
+    if (!(target instanceof HTMLElement)) return;
+    const link = target.closest('a[target="_blank"]');
+    if (!(link instanceof HTMLAnchorElement)) return;
+    if (!link.href.startsWith("http")) return;
+    e.preventDefault();
+    await openUrl(link.href);
+  });
 }
 </script>
 

@@ -39,6 +39,7 @@ import PartyBuilder from "@/components/encounter/EncounterTable/PartyBuilder.vue
 import { encounterStore } from "@/stores/encounter";
 import { filtersStore } from "@/stores/filters";
 import { settingsStore } from "@/stores/settings";
+import { openSheet } from "@/utils/sheet";
 
 import type { QTableProps } from "quasar";
 import type { creature } from "@/types/creature";
@@ -887,30 +888,6 @@ const sortHazards = (col: hazard_columns) => {
   } else {
     hazardFilters.value.order_by = "ascending";
     hazardFilters.value.sort_by = col;
-  }
-};
-
-const openCreatureSheet = (id: number) => {
-  const routeData = router.resolve({
-    name: "bestiary",
-    query: { game: settings.game, id: id }
-  });
-  if (import.meta.env.IS_APP === true) {
-    globalThis.open(routeData.href, "_self");
-  } else {
-    globalThis.open(routeData.href, "_blank");
-  }
-};
-
-const openHazardSheet = (id: number) => {
-  const routeData = router.resolve({
-    name: "hazard",
-    query: { game: settings.game, id: id }
-  });
-  if (import.meta.env.IS_APP === true) {
-    globalThis.open(routeData.href, "_self");
-  } else {
-    globalThis.open(routeData.href, "_blank");
   }
 };
 
@@ -2129,7 +2106,12 @@ onMounted(async () => {
           aria-label="Open item sheet"
           target="_blank"
           @click="
-            openCreatureSheet(selectedCreature.row.core_data.essential.id)
+            openSheet(
+              router,
+              'bestiary',
+              settings.game,
+              selectedCreature.row.core_data.essential.id
+            )
           "
         >
           <q-tooltip
@@ -3247,7 +3229,14 @@ onMounted(async () => {
           size="sm"
           aria-label="Open item sheet"
           target="_blank"
-          @click="openHazardSheet(selectedHazard.row.core_hazard.essential.id)"
+          @click="
+            openSheet(
+              router,
+              'hazard',
+              settings.game,
+              selectedHazard.row.core_hazard.essential.id
+            )
+          "
         >
           <q-tooltip
             class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"

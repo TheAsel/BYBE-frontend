@@ -417,7 +417,6 @@ const downloadData = () => {
     padding="sm"
     class="tw:sm:mr-2 tw:text-gray-800! tw:dark:text-gray-200!"
     :icon="biGear"
-    target="_blank"
     aria-label="Open settings"
     @click="settingsDialog = true"
   />
