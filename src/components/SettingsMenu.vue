@@ -524,7 +524,7 @@ const downloadData = () => {
               round
               size="sm"
               :icon="biQuestionCircle"
-              href="https://2e.aonprd.com/Rules.aspx?ID=2762"
+              href="https://2e.aonprd.com/rules?id=2762"
               target="_blank"
               rel="noopener"
               aria-label="Link to explanation for proficiency without level"

@@ -10,6 +10,7 @@ import { encounterStore } from "@/stores/encounter";
 import { filtersStore } from "@/stores/filters";
 import { partyStore } from "@/stores/party";
 import { settingsStore } from "@/stores/settings";
+import { getGameAonLink } from "@/utils/sheet";
 
 import type {
   adventure_groups,
@@ -35,11 +36,10 @@ const encounter = encounterStore();
 const dialog = ref(false);
 const tab = ref("General");
 
-const currentAon = ref(settings.game === "sf" ? "aonsrd" : "aonprd");
 const currentRules = ref(
   settings.game === "sf"
     ? "https://2e.aonsrd.com/rules/791-encounter-design"
-    : "https://2e.aonprd.com/Rules.aspx?ID=2717"
+    : "https://2e.aonprd.com/rules?id=2717"
 );
 
 watch(
@@ -259,7 +259,7 @@ const generateEncounter = debounce(async function () {
             id: hazard.core_hazard.essential.id,
             archive_link:
               "https://2e." +
-              currentAon.value +
+              getGameAonLink(hazard.game) +
               ".com/search?q=" +
               encodeURIComponent(hazard.core_hazard.essential.name) +
               " type%3A(hazard)&type=eqs",

@@ -67,13 +67,16 @@ const tmpCloakFull: item = {
     source: "Pathfinder GM Core",
     rarity: "Common",
     size: "Medium",
-    traits: ["invested", "occult"]
+    traits: [
+      { name: "invested", description: "" },
+      { name: "occult", description: "" }
+    ]
   }
 };
 const tmpCloak: min_item = {
   game: "pf",
   id: 3511,
-  archive_link: "https://2e.aonprd.com/Equipment.aspx?ID=3069",
+  archive_link: "https://2e.aonprd.com/equipment?id=3069",
   name: "Cloak of Illusions",
   level: 7,
   type: "Equipment",
@@ -83,7 +86,7 @@ const tmpCloak: min_item = {
 const tmpPotion: min_item = {
   game: "pf",
   id: 2967,
-  archive_link: "https://2e.aonprd.com/Equipment.aspx?ID=2943",
+  archive_link: "https://2e.aonprd.com/equipment?id=2943",
   name: "Healing Potion (Moderate)",
   level: 6,
   type: "Consumable",
@@ -118,7 +121,7 @@ const tmpLaserRifleFull: item = {
     source: "Starfinder Player Core",
     rarity: "Common",
     size: "Medium",
-    traits: ["tech"]
+    traits: [{ name: "tech", description: "" }]
   }
 };
 const tmpLaserRifle: min_item = {

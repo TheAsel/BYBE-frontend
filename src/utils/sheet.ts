@@ -1,15 +1,16 @@
-import type { games } from "@/types/filters";
+import type { games, variants } from "@/types/filters";
 import type { _RouterClassic } from "vue-router";
 
 export function openSheet(
   router: _RouterClassic,
   page: "bestiary" | "hazard" | "item" | "character",
   game: games,
-  id: number
+  id: number,
+  variant?: variants
 ) {
   const routeData = router.resolve({
     name: page,
-    query: { game: game, id: id }
+    query: { game: game, id: id, variant: variant?.toLowerCase() }
   });
   if (import.meta.env.IS_APP === true) {
     globalThis.open(routeData.href, "_self");
@@ -24,6 +25,10 @@ export function getGameFont(game: games) {
 
 export function getGameFontSize(game: games) {
   return game === "sf" ? "tw:text-2xl!" : "tw:text-3xl!";
+}
+
+export function getGameAonLink(game: games) {
+  return game === "sf" ? "aonsrd" : "aonprd";
 }
 
 export function addPlus(value: number | undefined) {
@@ -56,7 +61,19 @@ export function cleanDescription(description: string) {
 
   let finalString = cleanSymbols(description);
 
-  finalString = finalString.replaceAll("<p>", '<p class="tw:my-0!">');
+  finalString = finalString.replaceAll(
+    "<p><strong>",
+    '<p class="tw:my-0!"><strong>'
+  );
+
+  finalString = finalString.replaceAll("<p>", "<span>");
+  finalString = finalString.replaceAll(
+    "</p>",
+    '</span><br style="display: block; margin-top: 0px;"/>'
+  );
+
+  finalString = finalString.replaceAll("<h2>", "<br /><h5><strong>");
+  finalString = finalString.replaceAll("</h2>", "</strong></h5>");
 
   finalString = finalString.replaceAll(
     "<hr />",
@@ -65,7 +82,7 @@ export function cleanDescription(description: string) {
 
   finalString = finalString.replaceAll(
     "\n",
-    '<br style="display: block; margin-top: 0px;">'
+    '<br style="display: block; margin-top: 0px;"/>'
   );
 
   return finalString.replaceAll(cleanRegex, "");
@@ -81,17 +98,4 @@ export function pfActionSymbol(num: number | null, action: string) {
   if (action === "reaction") {
     return 5;
   }
-}
-
-export function actionTraitsString(traits: string[]) {
-  let finalString = "";
-  if (traits !== undefined && traits.length > 0) {
-    finalString += " (";
-    for (const trait of traits) {
-      finalString += trait.toLowerCase().replaceAll("-", " ") + ", ";
-    }
-    finalString = finalString.substring(0, finalString.length - 2);
-    finalString += ")";
-  }
-  return finalString;
 }

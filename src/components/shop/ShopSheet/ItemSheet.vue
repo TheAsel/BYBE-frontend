@@ -6,6 +6,7 @@ import { itemsStore } from "@/stores/items";
 import { settingsStore } from "@/stores/settings";
 import {
   cleanDescription,
+  getGameAonLink,
   getGameFont,
   getGameFontSize,
   openSheet
@@ -58,13 +59,11 @@ const items = itemsStore();
       v-if="settings.is_aon_links_on"
       class="tw:my-auto"
       :href="
-        items.selectedItem!.game === 'pf'
-          ? 'https://2e.aonprd.com/Search.aspx?q=' +
-            encodeURIComponent(items.selectedItem!.core_item.name) +
-            '&type=eqs'
-          : 'https://2e.aonsrd.com/search?q=' +
-            encodeURIComponent(items.selectedItem!.core_item.name) +
-            '&type=eqs'
+        'https://2e.' +
+        getGameAonLink(items.selectedItem!.game) +
+        '.com/search?q=' +
+        encodeURIComponent(items.selectedItem!.core_item.name) +
+        '&type=eqs'
       "
       target="_blank"
       rel="noopener"
@@ -129,12 +128,36 @@ const items = itemsStore();
     </div>
     <div
       v-for="item in items.selectedItem!.core_item.traits"
-      :key="item"
+      :key="item.name"
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{
-        item.toUpperCase().replaceAll("-", " ").replace("ADDITIVE", "ADDITIVE ")
-      }}
+      <span
+        v-if="item.description !== null"
+        class="tw:decoration-2 tw:hover:underline"
+        >{{ item.name.toUpperCase().replaceAll("-", " ")
+        }}<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>{{
+            item.name
+              .toUpperCase()
+              .replaceAll("-", " ")
+              .replace("ADDITIVE", "ADDITIVE ")
+          }}</strong>
+          <hr class="tw:my-1!" />
+          <span v-html="cleanDescription(item.description)" /> </q-tooltip
+      ></span>
+      <span v-else>{{
+        item.name
+          .toUpperCase()
+          .replaceAll("-", " ")
+          .replace("ADDITIVE", "ADDITIVE ")
+      }}</span>
     </div>
   </div>
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">

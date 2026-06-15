@@ -28,6 +28,7 @@ import {
 } from "@/api/shop-api-calls";
 import { itemsStore } from "@/stores/items";
 import { settingsStore } from "@/stores/settings";
+import { getGameAonLink, openSheet } from "@/utils/sheet";
 
 import type { games } from "@/types/filters";
 import type { min_item } from "@/types/item";
@@ -231,13 +232,11 @@ const importShop = async () => {
             game: item.game,
             id: item.id,
             archive_link:
-              item.game === "sf"
-                ? "https://2e.aonsrd.com/search?q=" +
-                  encodeURIComponent(fetchedItemData.core_item.name) +
-                  "&type=eqs"
-                : "https://2e.aonprd.com/Search.aspx?q=" +
-                  encodeURIComponent(fetchedItemData.core_item.name) +
-                  "&type=eqs",
+              "https://2e." +
+              getGameAonLink(item.game) +
+              ".com/search?q=" +
+              encodeURIComponent(fetchedItemData.core_item.name) +
+              "&type=eqs",
             name: fetchedItemData.core_item.name,
             level: fetchedItemData.core_item.level,
             type: fetchedItemData.core_item.item_type,
@@ -338,7 +337,6 @@ const showItem = debounce(async function (item: min_item) {
         message: "Missing item ID",
         icon: matPriorityHigh
       });
-      await router.push({ name: "shop", query: { game: item.game } });
     } else {
       items.setSelectedItem(itemData);
     }
@@ -728,10 +726,18 @@ const showItem = debounce(async function (item: min_item) {
                   <q-chip
                     v-if="item.type === 'Armor'"
                     text-color="white"
-                    :clickable="false"
+                    clickable
                     :ripple="false"
                     class="tw:p-1! tw:invisible"
                     aria-label="Armor item type"
+                    @click="
+                      openSheet(
+                        router,
+                        'item',
+                        item.game ?? settings.game,
+                        item.id
+                      )
+                    "
                   >
                     <q-avatar
                       class="tw:visible"
@@ -750,10 +756,18 @@ const showItem = debounce(async function (item: min_item) {
                   <q-chip
                     v-if="item.type === 'Consumable'"
                     text-color="white"
-                    :clickable="false"
+                    clickable
                     :ripple="false"
                     class="tw:p-1! tw:invisible"
                     aria-label="Consumable item type"
+                    @click="
+                      openSheet(
+                        router,
+                        'item',
+                        item.game ?? settings.game,
+                        item.id
+                      )
+                    "
                   >
                     <q-avatar
                       class="tw:visible"
@@ -772,10 +786,18 @@ const showItem = debounce(async function (item: min_item) {
                   <q-chip
                     v-if="item.type === 'Equipment'"
                     text-color="white"
-                    :clickable="false"
+                    clickable
                     :ripple="false"
                     class="tw:p-1! tw:invisible"
                     aria-label="Equipment item type"
+                    @click="
+                      openSheet(
+                        router,
+                        'item',
+                        item.game ?? settings.game,
+                        item.id
+                      )
+                    "
                   >
                     <q-avatar class="tw:visible" :icon="mdiRing" color="green">
                       <q-tooltip
@@ -790,10 +812,18 @@ const showItem = debounce(async function (item: min_item) {
                   <q-chip
                     v-if="item.type === 'Shield'"
                     text-color="white"
-                    :clickable="false"
+                    clickable
                     :ripple="false"
                     class="tw:p-1! tw:invisible"
                     aria-label="Shield item type"
+                    @click="
+                      openSheet(
+                        router,
+                        'item',
+                        item.game ?? settings.game,
+                        item.id
+                      )
+                    "
                   >
                     <q-avatar
                       class="tw:visible"
@@ -812,10 +842,18 @@ const showItem = debounce(async function (item: min_item) {
                   <q-chip
                     v-if="item.type === 'Weapon'"
                     text-color="white"
-                    :clickable="false"
+                    clickable
                     :ripple="false"
                     class="tw:p-1! tw:invisible"
                     aria-label="Weapon item type"
+                    @click="
+                      openSheet(
+                        router,
+                        'item',
+                        item.game ?? settings.game,
+                        item.id
+                      )
+                    "
                   >
                     <q-avatar class="tw:visible" :icon="mdiSword" color="red">
                       <q-tooltip

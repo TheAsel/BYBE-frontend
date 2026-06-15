@@ -26,6 +26,7 @@ import { encounterStore } from "@/stores/encounter";
 import { infoStore } from "@/stores/info";
 import { partyStore } from "@/stores/party";
 import { settingsStore } from "@/stores/settings";
+import { getGameAonLink, openSheet } from "@/utils/sheet";
 
 import type {
   encounter_info,
@@ -47,8 +48,6 @@ const party = partyStore();
 const encounter = encounterStore();
 const info = infoStore();
 const settings = settingsStore();
-
-const currentAon = ref(settings.game === "sf" ? "aonsrd" : "aonprd");
 
 const importEncounterDialog = ref(false);
 const importNameInput = ref();
@@ -374,7 +373,7 @@ const importEncounter = async () => {
           id: hazard.id,
           archive_link:
             "https://2e." +
-            currentAon.value +
+            getGameAonLink(hazard.game) +
             ".com/search?q=" +
             encodeURIComponent(fetchedHazardsData.core_hazard.essential.name) +
             " type%3A(hazard)&type=eqs",
@@ -483,7 +482,6 @@ const showItem = debounce(async function (item: min_creature_hazard) {
           message: "Missing hazard ID",
           icon: matPriorityHigh
         });
-        await router.push({ name: "encounter", query: { game: item.game } });
       } else {
         encounter.removeSelectedCreature();
         encounter.setSelectedHazard(itemData);
@@ -911,10 +909,19 @@ const showItem = debounce(async function (item: min_creature_hazard) {
                   <q-chip
                     v-if="item.is_hazard === false"
                     text-color="white"
-                    :clickable="false"
+                    clickable
                     :ripple="false"
                     class="tw:p-1! tw:invisible"
                     aria-label="Creature type"
+                    @click="
+                      openSheet(
+                        router,
+                        'bestiary',
+                        item.game ?? settings.game,
+                        item.id,
+                        item.variant
+                      )
+                    "
                   >
                     <q-avatar class="tw:visible" :icon="fasDragon" color="blue">
                       <q-tooltip
@@ -929,10 +936,18 @@ const showItem = debounce(async function (item: min_creature_hazard) {
                   <q-chip
                     v-if="item.is_hazard === true"
                     text-color="white"
-                    :clickable="false"
+                    clickable
                     :ripple="false"
                     class="tw:p-1! tw:invisible"
                     aria-label="Hazard type"
+                    @click="
+                      openSheet(
+                        router,
+                        'hazard',
+                        item.game ?? settings.game,
+                        item.id
+                      )
+                    "
                   >
                     <q-avatar
                       class="tw:visible"

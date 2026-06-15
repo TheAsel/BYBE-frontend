@@ -43,7 +43,7 @@ updateLocalStorageEncounters();
 const tmpKoboldMage: min_creature_hazard = {
   game: "pf",
   id: 5009,
-  archive_link: "https://2e.aonprd.com/NPCs.aspx?ID=3074",
+  archive_link: "https://2e.aonprd.com/npcs?id=3074",
   name: "Kobold Cavern Mage",
   level: 2,
   variant: "Base",
@@ -52,7 +52,7 @@ const tmpKoboldMage: min_creature_hazard = {
 const tmpKoboldWarrior: min_creature_hazard = {
   game: "pf",
   id: 4977,
-  archive_link: "https://2e.aonprd.com/NPCs.aspx?ID=3072",
+  archive_link: "https://2e.aonprd.com/npcs?id=3072",
   name: "Kobold Warrior",
   level: -1,
   variant: "Base",
@@ -61,7 +61,7 @@ const tmpKoboldWarrior: min_creature_hazard = {
 const tmpMirrorDoor: min_creature_hazard = {
   game: "pf",
   id: 459,
-  archive_link: "https://2e.aonprd.com/Hazards.aspx?ID=626",
+  archive_link: "https://2e.aonprd.com/npcs?id=626",
   name: "Mirror Door",
   level: -1,
   is_hazard: true,

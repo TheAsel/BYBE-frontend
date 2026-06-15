@@ -20,6 +20,7 @@ import { filtersStore } from "@/stores/filters";
 import { itemsStore } from "@/stores/items";
 import { settingsStore } from "@/stores/settings";
 import { templateStore } from "@/stores/template";
+import { getGameAonLink } from "@/utils/sheet";
 
 import type { min_item } from "@/types/item";
 import type { shop_data } from "@/types/shop";
@@ -31,12 +32,6 @@ const settings = settingsStore();
 const filters = filtersStore();
 const items = itemsStore();
 const template = templateStore();
-
-const currentAon = ref(
-  settings.game === "sf"
-    ? "https://2e.aonsrd.com/search"
-    : "https://2e.aonprd.com/Search.aspx"
-);
 
 const dialog = ref(false);
 const tab = ref("General");
@@ -252,8 +247,9 @@ const generateShop = debounce(async function () {
           game: randomShop.results[i]!.game,
           id: randomShop.results[i]!.core_item.id,
           archive_link:
-            currentAon.value +
-            "?q=" +
+            "https://2e." +
+            getGameAonLink(settings.game) +
+            ".com/search?q=" +
             encodeURIComponent(randomShop.results[i]!.core_item.name) +
             "&type=eqs",
           name: randomShop.results[i]!.core_item.name,

@@ -21,15 +21,17 @@ import {
 } from "@quasar/extras/fontawesome-v7";
 import { matPriorityHigh, matWarning } from "@quasar/extras/material-icons";
 import { mdiBowArrow, mdiMagicStaff, mdiSword } from "@quasar/extras/mdi-v7";
-import { capitalize, debounce } from "lodash-es";
+import { capitalize, debounce, isNull } from "lodash-es";
 import { useQuasar } from "quasar";
 import { onMounted, onUnmounted, ref, toRaw, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import {
+  requestCreatureId,
   requestCreatureRanges,
   requestCreatures,
   requestFilters,
+  requestHazardId,
   requestHazardFilters,
   requestHazardRanges,
   requestHazards
@@ -39,7 +41,7 @@ import PartyBuilder from "@/components/encounter/EncounterTable/PartyBuilder.vue
 import { encounterStore } from "@/stores/encounter";
 import { filtersStore } from "@/stores/filters";
 import { settingsStore } from "@/stores/settings";
-import { openSheet } from "@/utils/sheet";
+import { getGameAonLink, openSheet } from "@/utils/sheet";
 
 import type { QTableProps } from "quasar";
 import type { creature } from "@/types/creature";
@@ -67,8 +69,6 @@ const encounter = encounterStore();
 
 const encounterBuilderRef = ref();
 const router = useRouter();
-
-const currentAon = ref(settings.game === "sf" ? "aonsrd" : "aonprd");
 
 const hazardToggle = ref<"creatures" | "hazards">("creatures");
 encounter.removeSelectedHazard();
@@ -303,7 +303,7 @@ const columnCreatures: {
   {
     name: "trait",
     label: "Traits",
-    field: row => row.core_data.traits,
+    field: row => row.core_data.traits.map(t => t.name),
     required: false,
     align: "left",
     sortable: true,
@@ -427,7 +427,7 @@ const columnHazards: {
   {
     name: "trait",
     label: "Traits",
-    field: row => row.core_hazard.traits,
+    field: row => row.core_hazard.traits.map(t => t.name),
     required: false,
     align: "left",
     sortable: true,
@@ -918,7 +918,7 @@ const addHazard = debounce(function (hazard: hazard) {
     id: hazard.core_hazard.essential.id,
     archive_link:
       "https://2e." +
-      currentAon.value +
+      getGameAonLink(hazard.game) +
       ".com/search?q=" +
       encodeURIComponent(hazard.core_hazard.essential.name) +
       " type%3A(hazard)&type=eqs",
@@ -928,6 +928,54 @@ const addHazard = debounce(function (hazard: hazard) {
     complexity: hazard.core_hazard.essential.complexity
   };
   encounter.addToEncounter(min_hazard);
+}, 50);
+
+const showCreature = debounce(async function (creature: creature) {
+  try {
+    const creatureData = await requestCreatureId(
+      creature.game,
+      creature.core_data.essential.id,
+      "Base",
+      encounter.is_pwl_on
+    );
+    if (isNull(creatureData) || creatureData === undefined) {
+      console.error("Missing creature ID");
+      $q.notify({
+        progress: true,
+        type: "warning",
+        message: "Missing creature ID",
+        icon: matPriorityHigh
+      });
+    } else {
+      encounter.removeSelectedCreature();
+      encounter.setSelectedCreature(creatureData);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}, 50);
+
+const showHazard = debounce(async function (hazard: hazard) {
+  try {
+    const hazardData = await requestHazardId(
+      hazard.game,
+      hazard.core_hazard.essential.id
+    );
+    if (isNull(hazardData) || hazardData === undefined) {
+      console.error("Missing hazard ID");
+      $q.notify({
+        progress: true,
+        type: "warning",
+        message: "Missing hazard ID",
+        icon: matPriorityHigh
+      });
+    } else {
+      encounter.removeSelectedHazard();
+      encounter.setSelectedHazard(hazardData);
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }, 50);
 
 const activateNavigation = () => {
@@ -994,11 +1042,9 @@ async function onTableKey(evt: KeyboardEvent) {
   switch (evt.key) {
     case "Enter": {
       if (hazardToggle.value === "hazards") {
-        const tmp_hazard = selected.value[0]! as hazard;
-        addHazard(tmp_hazard);
+        showHazard(selected.value[0]! as hazard);
       } else {
-        const tmp_creature = selected.value[0]! as creature;
-        addCreature(tmp_creature);
+        showCreature(selected.value[0]! as creature);
       }
       break;
     }
@@ -1007,11 +1053,9 @@ async function onTableKey(evt: KeyboardEvent) {
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
       if (hazardToggle.value === "hazards") {
-        const tmp_hazard = selected.value[0]! as hazard;
-        encounter.setSelectedHazard(tmp_hazard);
+        showHazard(selected.value[0]! as hazard);
       } else {
-        const tmp_creature = selected.value[0]! as creature;
-        encounter.setSelectedCreature(tmp_creature);
+        showCreature(selected.value[0]! as creature);
       }
       encounterTable.value.scrollTo(index);
       break;
@@ -1021,11 +1065,9 @@ async function onTableKey(evt: KeyboardEvent) {
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
       if (hazardToggle.value === "hazards") {
-        const tmp_hazard = selected.value[0]! as hazard;
-        encounter.setSelectedHazard(tmp_hazard);
+        showHazard(selected.value[0]! as hazard);
       } else {
-        const tmp_creature = selected.value[0]! as creature;
-        encounter.setSelectedCreature(tmp_creature);
+        showCreature(selected.value[0]! as creature);
       }
       encounterTable.value.scrollTo(index);
       break;
@@ -1039,11 +1081,9 @@ async function onTableKey(evt: KeyboardEvent) {
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
       if (hazardToggle.value === "hazards") {
-        const tmp_hazard = selected.value[0]! as hazard;
-        encounter.setSelectedHazard(tmp_hazard);
+        showHazard(selected.value[0]! as hazard);
       } else {
-        const tmp_creature = selected.value[0]! as creature;
-        encounter.setSelectedCreature(tmp_creature);
+        showCreature(selected.value[0]! as creature);
       }
       encounterTable.value.scrollTo(index);
       break;
@@ -1057,11 +1097,9 @@ async function onTableKey(evt: KeyboardEvent) {
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
       if (hazardToggle.value === "hazards") {
-        const tmp_hazard = selected.value[0]! as hazard;
-        encounter.setSelectedHazard(tmp_hazard);
+        showHazard(selected.value[0]! as hazard);
       } else {
-        const tmp_creature = selected.value[0]! as creature;
-        encounter.setSelectedCreature(tmp_creature);
+        showCreature(selected.value[0]! as creature);
       }
       encounterTable.value.scrollTo(index - 1);
       break;
@@ -1080,11 +1118,9 @@ async function onTableKey(evt: KeyboardEvent) {
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
       if (hazardToggle.value === "hazards") {
-        const tmp_hazard = selected.value[0]! as hazard;
-        encounter.setSelectedHazard(tmp_hazard);
+        showHazard(selected.value[0]! as hazard);
       } else {
-        const tmp_creature = selected.value[0]! as creature;
-        encounter.setSelectedCreature(tmp_creature);
+        showCreature(selected.value[0]! as creature);
       }
       encounterTable.value.scrollTo(index);
       break;
@@ -1095,11 +1131,9 @@ async function onTableKey(evt: KeyboardEvent) {
         const { computedRows } = encounterTable.value;
         selected.value = [computedRows[index]];
         if (hazardToggle.value === "hazards") {
-          const tmp_hazard = selected.value[0]! as hazard;
-          encounter.setSelectedHazard(tmp_hazard);
+          showHazard(selected.value[0]! as hazard);
         } else {
-          const tmp_creature = selected.value[0]! as creature;
-          encounter.setSelectedCreature(tmp_creature);
+          showCreature(selected.value[0]! as creature);
         }
       }
       encounterTable.value.scrollTo(index - 1);
@@ -1119,11 +1153,9 @@ async function onTableKey(evt: KeyboardEvent) {
       const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
       if (hazardToggle.value === "hazards") {
-        const tmp_hazard = selected.value[0]! as hazard;
-        encounter.setSelectedHazard(tmp_hazard);
+        showHazard(selected.value[0]! as hazard);
       } else {
-        const tmp_creature = selected.value[0]! as creature;
-        encounter.setSelectedCreature(tmp_creature);
+        showCreature(selected.value[0]! as creature);
       }
       encounterTable.value.scrollTo(index);
       break;
@@ -1134,11 +1166,9 @@ async function onTableKey(evt: KeyboardEvent) {
         const { computedRows } = encounterTable.value;
         selected.value = [computedRows[index]];
         if (hazardToggle.value === "hazards") {
-          const tmp_hazard = selected.value[0]! as hazard;
-          encounter.setSelectedHazard(tmp_hazard);
+          showHazard(selected.value[0]! as hazard);
         } else {
-          const tmp_creature = selected.value[0]! as creature;
-          encounter.setSelectedCreature(tmp_creature);
+          showCreature(selected.value[0]! as creature);
         }
       }
       encounterTable.value.scrollTo(index);
@@ -1362,7 +1392,7 @@ onMounted(async () => {
       @request="onRequest"
       @row-click="
         (_: any, row: creature) => {
-          encounter.setSelectedCreature(row);
+          showCreature(row);
           selected = [row];
         }
       "
@@ -2182,7 +2212,7 @@ onMounted(async () => {
               v-else-if="settings.game === 'sf' && settings.is_aon_links_on"
               :href="
                 'https://2e.' +
-                currentAon +
+                getGameAonLink(settings.game) +
                 '.com/search?q=' +
                 encodeURIComponent(name.value) +
                 ' type%3A(creature)&type=eqs'
@@ -2218,6 +2248,7 @@ onMounted(async () => {
           >
             {{
               traits.row.core_data.traits
+                .map((t: { name: string; description: string }) => t.name)
                 .map((trait: string) => {
                   return capitalize(trait);
                 })
@@ -2437,7 +2468,7 @@ onMounted(async () => {
       @request="onRequest"
       @row-click="
         (_: any, row: hazard) => {
-          encounter.setSelectedHazard(row);
+          showHazard(row);
           selected = [row];
         }
       "
@@ -3294,7 +3325,7 @@ onMounted(async () => {
               v-if="settings.is_aon_links_on"
               :href="
                 'https://2e.' +
-                currentAon +
+                getGameAonLink(settings.game) +
                 '.com/search?q=' +
                 encodeURIComponent(name.value) +
                 ' type%3A(hazard)&type=eqs'
@@ -3332,6 +3363,7 @@ onMounted(async () => {
           >
             {{
               traits.row.core_hazard.traits
+                .map((t: { name: string; description: string }) => t.name)
                 .map((trait: string) => {
                   return capitalize(trait);
                 })

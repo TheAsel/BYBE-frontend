@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { biBoxArrowUpRight, biXLg } from "@quasar/extras/bootstrap-icons";
 import { upperFirst } from "lodash-es";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
+import TraitsList from "@/components/generic/TraitsList.vue";
 import { encounterStore } from "@/stores/encounter";
 import { settingsStore } from "@/stores/settings";
 import {
-  actionTraitsString,
   addPlus,
+  cleanDescription,
   getGameFont,
   getGameFontSize,
   openSheet,
@@ -54,11 +55,6 @@ const variantStyle = (value: string | number | undefined) => {
   return value;
 };
 
-const cleanDescription = (description: string) => {
-  const cleanRegex = /<\/?(?:p)?(?:li)?(?:ul)?>|<hr ?\/>|@Localize\[.+\]/g;
-  return description.replaceAll(cleanRegex, "");
-};
-
 const perceptionString = computed(() => {
   const perception = encounter.selectedCreature?.extra_data?.perception;
   const senses = encounter.selectedCreature?.extra_data?.senses;
@@ -88,8 +84,8 @@ const perceptionString = computed(() => {
         if (sense.acuity) {
           finalString += " " + "(" + sense.acuity + ")";
         }
-        if (sense.range) {
-          finalString += " " + sense.range + " feet";
+        if (sense.range?.value) {
+          finalString += " " + sense.range.value + " feet";
         }
         finalString += ", ";
       }
@@ -123,6 +119,7 @@ const perceptionString = computed(() => {
 
 const languageString = computed(() => {
   const languages = encounter.selectedCreature?.extra_data?.languages;
+  languages?.sort();
   let finalString = "";
   if (languages !== undefined && languages.length > 0) {
     finalString += "<strong>Languages&nbsp;</strong>";
@@ -593,7 +590,8 @@ const spellString = computed(() => {
             router,
             'bestiary',
             encounter.selectedCreature?.game ?? settings.game,
-            encounter.selectedCreature!.core_data.essential.id
+            encounter.selectedCreature!.core_data.essential.id,
+            encounter.selectedCreature!.variant_data?.variant
           )
         "
       >
@@ -778,10 +776,26 @@ const spellString = computed(() => {
     </div>
     <div
       v-for="item in encounter.selectedCreature?.core_data.traits.sort()"
-      :key="item"
+      :key="item.name"
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ item.toUpperCase() }}
+      <span
+        v-if="item.description !== null"
+        class="tw:decoration-2 tw:hover:underline"
+        >{{ item.name.toUpperCase().replaceAll("-", " ")
+        }}<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>{{ item.name.toUpperCase().replaceAll("-", " ") }}</strong>
+          <hr class="tw:my-1!" />
+          <span v-html="cleanDescription(item.description)" /> </q-tooltip
+      ></span>
+      <span v-else>{{ item.name.toUpperCase().replaceAll("-", " ") }}</span>
     </div>
   </div>
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
@@ -884,9 +898,7 @@ const spellString = computed(() => {
             )
           }}
         </span>
-        <span v-if="item.traits !== undefined && item.traits.length > 0">
-          {{ actionTraitsString(item.traits) }}
-        </span>
+        <TraitsList :traits="item.traits" />
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>
     </template>
@@ -939,9 +951,7 @@ const spellString = computed(() => {
             )
           }}
         </span>
-        <span v-if="item.traits !== undefined && item.traits.length > 0">
-          {{ actionTraitsString(item.traits) }}
-        </span>
+        <TraitsList :traits="item.traits" />
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>
     </template>
@@ -987,7 +997,7 @@ const spellString = computed(() => {
               encounter.selectedCreature?.variant_data?.variant !== 'Base'
           }"
           >{{ addPlus(item.weapon_data?.to_hit_bonus!) }}
-          <span v-if="item.item_core.traits.includes('agile')"
+          <span v-if="item.item_core.traits.map(t => t.name).includes('agile')"
             >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 4) }}/{{
               addPlus(item.weapon_data?.to_hit_bonus! - 8)
             }}]
@@ -998,10 +1008,25 @@ const spellString = computed(() => {
             }}]
           </span>
         </span>
-        <span v-if="item.item_core.traits.length !== 0">
-          ({{ item.item_core.traits.sort().join(", ").replaceAll("-", " ") }}),
-        </span>
-        <strong>Damage </strong>
+        <TraitsList
+          :traits="
+            item.weapon_data?.range?.increment
+              ? item.item_core.traits.concat({
+                  name:
+                    'range increment ' +
+                    item.weapon_data?.range?.increment +
+                    ' feet',
+                  description: null
+                })
+              : item.weapon_data?.range?.value
+                ? item.item_core.traits.concat({
+                    name: 'range ' + item.weapon_data?.range?.value + ' feet',
+                    description: null
+                  })
+                : item.item_core.traits
+          "
+        />
+        <strong> Damage </strong>
         <span
           v-for="(weapon, index) in item.weapon_data?.damage_data"
           :key="index"
@@ -1054,9 +1079,7 @@ const spellString = computed(() => {
             )
           }}
         </span>
-        <span v-if="item.traits !== undefined && item.traits.length > 0">
-          {{ actionTraitsString(item.traits) }}
-        </span>
+        <TraitsList :traits="item.traits" />
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>
     </template>

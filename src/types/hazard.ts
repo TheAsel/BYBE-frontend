@@ -18,7 +18,7 @@ export type hazard = {
           slug: string;
           source: string;
         };
-        traits: string[];
+        traits: { name: string; description: string | null }[];
       }
     ];
     essential: {
@@ -46,7 +46,7 @@ export type hazard = {
       will: number;
     };
     game_system: games;
-    traits: string[];
+    traits: { name: string; description: string | null }[];
   };
 };
 

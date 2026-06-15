@@ -2,10 +2,12 @@
 import { biBoxArrowUpRight, biXLg } from "@quasar/extras/bootstrap-icons";
 import { useRouter } from "vue-router";
 
+import TraitsList from "@/components/generic/TraitsList.vue";
 import { encounterStore } from "@/stores/encounter";
 import { settingsStore } from "@/stores/settings";
 import {
-  actionTraitsString,
+  cleanDescription,
+  getGameAonLink,
   getGameFont,
   getGameFontSize,
   openSheet,
@@ -16,13 +18,6 @@ const router = useRouter();
 
 const encounter = encounterStore();
 const settings = settingsStore();
-
-const cleanDescription = (description: string) => {
-  const cleanRegex = /<\/?>|<hr ?\/>|@Localize\[.+\]/g;
-  description = description.replace("<p>", "");
-  description = description.replaceAll(cleanRegex, "");
-  return description.replaceAll("<hr>", "<br>");
-};
 </script>
 
 <template>
@@ -66,7 +61,9 @@ const cleanDescription = (description: string) => {
       v-if="settings.is_aon_links_on && encounter.selectedHazard"
       class="tw:my-auto"
       :href="
-        'https://2e.aonprd.com/search?q=' +
+        'https://2e.' +
+        getGameAonLink(encounter.selectedHazard?.game ?? settings.game) +
+        '.com/search?q=' +
         encodeURIComponent(
           encounter.selectedHazard.core_hazard.essential.name
         ) +
@@ -155,10 +152,26 @@ const cleanDescription = (description: string) => {
     </div>
     <div
       v-for="item in encounter.selectedHazard?.core_hazard.traits"
-      :key="item"
+      :key="item.name"
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ item.toUpperCase() }}
+      <span
+        v-if="item.description !== null"
+        class="tw:decoration-2 tw:hover:underline"
+        >{{ item.name.toUpperCase().replaceAll("-", " ")
+        }}<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>{{ item.name.toUpperCase().replaceAll("-", " ") }}</strong>
+          <hr class="tw:my-1!" />
+          <span v-html="cleanDescription(item.description)" /> </q-tooltip
+      ></span>
+      <span v-else>{{ item.name.toUpperCase().replaceAll("-", " ") }}</span>
     </div>
   </div>
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
@@ -247,9 +260,7 @@ const cleanDescription = (description: string) => {
             )
           }}
         </span>
-        <span v-if="action.traits !== undefined && action.traits.length > 0">
-          {{ actionTraitsString(action.traits) }}
-        </span>
+        <TraitsList :traits="action.traits" />
         <span
           class="v-html"
           v-html="' ' + cleanDescription(action.core_action.description)"

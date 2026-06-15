@@ -20,13 +20,14 @@ import {
   mdiSword,
   mdiTshirtCrew
 } from "@quasar/extras/mdi-v7";
-import { capitalize, debounce } from "lodash-es";
+import { capitalize, debounce, isNull } from "lodash-es";
 import { useQuasar } from "quasar";
 import { onMounted, onUnmounted, ref, toRaw, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import {
   requestFilters,
+  requestItemId,
   requestItems,
   requestShopRanges,
   requestTemplates
@@ -36,7 +37,7 @@ import { filtersStore } from "@/stores/filters";
 import { itemsStore } from "@/stores/items";
 import { settingsStore } from "@/stores/settings";
 import { templateStore } from "@/stores/template";
-import { openSheet } from "@/utils/sheet";
+import { getGameAonLink, openSheet } from "@/utils/sheet";
 
 import type { QTableProps } from "quasar";
 import type { item_columns, item_filters, rarities } from "@/types/filters";
@@ -51,12 +52,6 @@ const filters = filtersStore();
 
 const shopBuilderRef = ref();
 const router = useRouter();
-
-const currentAon = ref(
-  settings.game === "sf"
-    ? "https://2e.aonsrd.com/search"
-    : "https://2e.aonprd.com/Search.aspx"
-);
 
 watch(
   () => filters.shopRanges,
@@ -149,7 +144,7 @@ const columns: {
   {
     name: "trait",
     label: "Traits",
-    field: row => row.core_item.traits,
+    field: row => row.core_item.traits.map(t => t.name),
     required: false,
     align: "left",
     sortable: true,
@@ -307,13 +302,11 @@ const sort = (col: item_columns) => {
 
 const addItem = debounce(function (item: item) {
   const aon_link =
-    settings.game === "sf"
-      ? "https://2e.aonsrd.com/search?q=" +
-        encodeURIComponent(item.core_item.name) +
-        "&type=eqs"
-      : "https://2e.aonprd.com/Search.aspx?q=" +
-        encodeURIComponent(item.core_item.name) +
-        "&type=eqs";
+    "https://2e." +
+    getGameAonLink(settings.game) +
+    ".com/search?q=" +
+    encodeURIComponent(item.core_item.name) +
+    "&type=eqs";
   const min_item: min_item = {
     game: item.game,
     id: item.core_item.id,
@@ -325,6 +318,26 @@ const addItem = debounce(function (item: item) {
     quantity: item.core_item.quantity
   };
   items.addToShop(min_item);
+}, 50);
+
+const showItem = debounce(async function (item: item) {
+  try {
+    const itemData = await requestItemId(item.game, item.core_item.id);
+    if (isNull(itemData) || itemData === undefined) {
+      console.error("Missing item ID");
+      $q.notify({
+        progress: true,
+        type: "warning",
+        message: "Missing item ID",
+        icon: matPriorityHigh
+      });
+    } else {
+      items.removeSelectedItem();
+      items.setSelectedItem(itemData);
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }, 50);
 
 const activateNavigation = () => {
@@ -397,7 +410,7 @@ async function onTableKey(evt: KeyboardEvent) {
       index = 0;
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
-      items.setSelectedItem(selected.value[0]!);
+      showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
       break;
     }
@@ -405,7 +418,7 @@ async function onTableKey(evt: KeyboardEvent) {
       index = rowsPerPage - 1;
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
-      items.setSelectedItem(selected.value[0]!);
+      showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
       break;
     }
@@ -417,7 +430,7 @@ async function onTableKey(evt: KeyboardEvent) {
 
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
-      items.setSelectedItem(selected.value[0]!);
+      showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
       break;
     }
@@ -429,7 +442,7 @@ async function onTableKey(evt: KeyboardEvent) {
 
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
-      items.setSelectedItem(selected.value[0]!);
+      showItem(selected.value[0]!);
       itemTable.value.scrollTo(index - 1);
       break;
     }
@@ -446,7 +459,7 @@ async function onTableKey(evt: KeyboardEvent) {
 
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
-      items.setSelectedItem(selected.value[0]!);
+      showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
       break;
     }
@@ -455,7 +468,7 @@ async function onTableKey(evt: KeyboardEvent) {
         index = currentIndex - 1;
         const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]!);
+        showItem(selected.value[0]!);
       }
       itemTable.value.scrollTo(index - 1);
       break;
@@ -473,7 +486,7 @@ async function onTableKey(evt: KeyboardEvent) {
 
       const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
-      items.setSelectedItem(selected.value[0]!);
+      showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
       break;
     }
@@ -482,7 +495,7 @@ async function onTableKey(evt: KeyboardEvent) {
         index = currentIndex + 1;
         const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
-        items.setSelectedItem(selected.value[0]!);
+        showItem(selected.value[0]!);
       }
       itemTable.value.scrollTo(index);
       break;
@@ -604,7 +617,7 @@ onMounted(async () => {
       @request="onRequest"
       @row-click="
         (_: any, row: item) => {
-          items.setSelectedItem(row);
+          showItem(row);
           selected = [row];
         }
       "
@@ -1083,8 +1096,9 @@ onMounted(async () => {
             <a
               v-if="settings.is_aon_links_on"
               :href="
-                currentAon +
-                '?q=' +
+                'https://2e.' +
+                getGameAonLink(settings.game) +
+                '.com/search?q=' +
                 encodeURIComponent(name.row.core_item.name) +
                 '&type=eqs'
               "
@@ -1119,6 +1133,7 @@ onMounted(async () => {
           >
             {{
               trait.row.core_item.traits
+                .map((t: { name: string; description: string }) => t.name)
                 .map((trait: string) => {
                   return trait
                     .split("-")

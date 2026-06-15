@@ -85,7 +85,7 @@ export type creature = {
       };
       creature_role?: roles[];
     };
-    traits: string[];
+    traits: { name: string; description: string | null }[];
   };
   extra_data?: {
     ability_scores: {
@@ -113,7 +113,7 @@ export type creature = {
           slug: string;
           source: string;
         };
-        traits: string[];
+        traits: { name: string; description: string | null }[];
       }
     ];
     has_vision: boolean;
@@ -128,7 +128,12 @@ export type creature = {
         acuity: string;
         id: number;
         name: string;
-        range: number;
+        range?: {
+          id: number;
+          value: string;
+          increment: string | null;
+          max: string | null;
+        };
       }
     ];
     skills: [
@@ -165,7 +170,12 @@ export type creature = {
           level: number;
           license: string;
           name: string;
-          range: string;
+          range?: {
+            id: number;
+            value: string;
+            increment: string | null;
+            max: string | null;
+          };
           rarity: string;
           remaster: boolean;
           saving_throw_is_basic: boolean;
