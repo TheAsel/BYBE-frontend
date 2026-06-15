@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { biBoxArrowUpRight, biXLg } from "@quasar/extras/bootstrap-icons";
 import { upperFirst } from "lodash-es";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import TraitsList from "@/components/generic/TraitsList.vue";
