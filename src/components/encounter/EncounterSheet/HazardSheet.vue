@@ -258,7 +258,7 @@ const settings = settingsStore();
               action.core_action.n_of_actions,
               action.core_action.action_type
             )
-          }}
+          }}{{ " " }}
         </span>
         <TraitsList :traits="action.traits" />
         <span

@@ -354,7 +354,7 @@ function isTextInput(target: EventTarget | null): boolean {
   return !!el?.closest('input, textarea, [contenteditable="true"], .q-editor');
 }
 
-// Table sortcuts
+// Table shortcuts
 async function onTableKey(evt: KeyboardEvent) {
   if (isTextInput(evt.target)) {
     return;

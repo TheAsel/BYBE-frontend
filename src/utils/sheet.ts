@@ -57,7 +57,7 @@ export function cleanSymbols(description: string) {
 }
 
 export function cleanDescription(description: string) {
-  const cleanRegex = /<\/?(?:li)?(?:ul)?>|@Localize\[.+\]/g;
+  const cleanRegex = /@Localize\[.+\]/g;
 
   let finalString = cleanSymbols(description);
 

@@ -16,6 +16,7 @@ import {
   pfActionSymbol
 } from "@/utils/sheet";
 
+import type { creature } from "@/types/creature";
 import type { variants } from "@/types/filters";
 
 const route = useRoute();
@@ -564,6 +565,32 @@ const spellString = computed(() => {
   }
   return finalStrings;
 });
+
+const rangeTraits = (
+  weapon: NonNullable<creature["combat_data"]>["weapons"][number]
+) => {
+  if (weapon.weapon_data?.range?.value) {
+    return weapon.item_core.traits.concat({
+      name: "range " + weapon.weapon_data?.range?.value + " feet",
+      description: null
+    });
+  } else if (
+    weapon.weapon_data?.range?.increment &&
+    weapon.weapon_data?.range?.increment !== "null"
+  ) {
+    return weapon.item_core.traits.concat({
+      name: "range increment " + weapon.weapon_data?.range?.increment + " feet",
+      description: null
+    });
+  } else if (weapon.weapon_data?.range?.max) {
+    return weapon.item_core.traits.concat({
+      name: "range " + weapon.weapon_data?.range?.max + " feet",
+      description: null
+    });
+  } else {
+    return weapon.item_core.traits;
+  }
+};
 </script>
 
 <template>
@@ -896,7 +923,7 @@ const spellString = computed(() => {
               item.core_action.n_of_actions,
               item.core_action.action_type
             )
-          }}
+          }}{{ " " }}
         </span>
         <TraitsList :traits="item.traits" />
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
@@ -949,8 +976,9 @@ const spellString = computed(() => {
               item.core_action.n_of_actions,
               item.core_action.action_type
             )
-          }}
+          }}{{ " " }}
         </span>
+
         <TraitsList :traits="item.traits" />
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>
@@ -974,8 +1002,8 @@ const spellString = computed(() => {
     </div>
 
     <template
-      v-for="item in encounter.selectedCreature?.combat_data?.weapons"
-      :key="item.item_core.id"
+      v-for="(item, index) in encounter.selectedCreature?.combat_data?.weapons"
+      :key="index"
     >
       <div
         v-if="item.weapon_data?.weapon_type !== 'Generic'"
@@ -1008,24 +1036,7 @@ const spellString = computed(() => {
             }}]
           </span>
         </span>
-        <TraitsList
-          :traits="
-            item.weapon_data?.range?.increment
-              ? item.item_core.traits.concat({
-                  name:
-                    'range increment ' +
-                    item.weapon_data?.range?.increment +
-                    ' feet',
-                  description: null
-                })
-              : item.weapon_data?.range?.value
-                ? item.item_core.traits.concat({
-                    name: 'range ' + item.weapon_data?.range?.value + ' feet',
-                    description: null
-                  })
-                : item.item_core.traits
-          "
-        />
+        <TraitsList :traits="rangeTraits(item)" />
         <strong> Damage </strong>
         <span
           v-for="(weapon, index) in item.weapon_data?.damage_data"
@@ -1077,7 +1088,7 @@ const spellString = computed(() => {
               item.core_action.n_of_actions,
               item.core_action.action_type
             )
-          }}
+          }}{{ " " }}
         </span>
         <TraitsList :traits="item.traits" />
         <span v-html="' ' + cleanDescription(item.core_action.description)" />

@@ -947,6 +947,37 @@ const showCreature = debounce(async function (creature: creature) {
         icon: matPriorityHigh
       });
     } else {
+      if (creatureData?.combat_data?.weapons) {
+        creatureData?.combat_data?.weapons.sort((a, b) => {
+          if (
+            a.weapon_data?.damage_data[0].dice?.dice_size &&
+            b.weapon_data?.damage_data[0].dice?.dice_size
+          ) {
+            return (
+              b.weapon_data.damage_data[0].dice?.dice_size -
+              a.weapon_data.damage_data[0].dice?.dice_size
+            );
+          } else {
+            return 0;
+          }
+        });
+        creatureData?.combat_data?.weapons.sort((a, b) => {
+          if (a.weapon_data?.to_hit_bonus && b.weapon_data?.to_hit_bonus) {
+            return b.weapon_data.to_hit_bonus - a.weapon_data.to_hit_bonus;
+          } else {
+            return 0;
+          }
+        });
+        creatureData?.combat_data?.weapons.sort((a, b) => {
+          if (a.weapon_data?.weapon_type && b.weapon_data?.weapon_type) {
+            return a.weapon_data.weapon_type.localeCompare(
+              b.weapon_data.weapon_type
+            );
+          } else {
+            return 0;
+          }
+        });
+      }
       encounter.removeSelectedCreature();
       encounter.setSelectedCreature(creatureData);
     }
@@ -992,7 +1023,7 @@ function isTextInput(target: EventTarget | null): boolean {
   return !!el?.closest('input, textarea, [contenteditable="true"], .q-editor');
 }
 
-// Table sortcuts
+// Table shortcuts
 async function onTableKey(evt: KeyboardEvent) {
   if (isTextInput(evt.target)) {
     return;

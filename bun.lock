@@ -11,7 +11,7 @@
         "@unhead/vue": "^3.1.4",
         "lodash-es": "^4.18.1",
         "pinia": "^3.0.4",
-        "quasar": "^2.20.0",
+        "quasar": "^2.20.1",
         "shepherd.js": "^15.2.2",
         "vue": "^3.5.38",
         "vue-router": "^5.1.0",
@@ -746,7 +746,7 @@
 
     "quansync": ["quansync@0.2.11", "", {}, "sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA=="],
 
-    "quasar": ["quasar@2.20.0", "", {}, "sha512-TIiEF6DG62TlbjivLU8puwWk0XXryTHW2aJMQu5/d37c2ysOp+vWg/1WH77nNRaK5b2lHIb30Y0POgPlqOs4xw=="],
+    "quasar": ["quasar@2.20.1", "", {}, "sha512-C+uFyt9/D2B2Dad/c9tGSlyWLMsrz+ROJLm3FKFdY9i+vc1Mk2q/+JyHBmQnuvQCEpUrdiXqcWQbpmZhuvo60A=="],
 
     "range-parser": ["range-parser@1.2.1", "", {}, "sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg=="],
 
