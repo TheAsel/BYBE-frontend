@@ -61,18 +61,17 @@ export function cleanDescription(description: string) {
 
   let finalString = cleanSymbols(description);
 
+  finalString = finalString.replaceAll("</p>\n<p>", "</p><br><p>");
+
   finalString = finalString.replaceAll(
     "<p><strong>",
-    '<p class="tw:my-0!"><strong>'
+    '<p class="tw:my-0! tw:-indent-2 tw:pl-2 q-gutter-y-xs"><strong>'
   );
 
   finalString = finalString.replaceAll("<p>", "<span>");
-  finalString = finalString.replaceAll(
-    "</p>",
-    '</span><br style="display: block; margin-top: 0px;"/>'
-  );
+  finalString = finalString.replaceAll("</p>", "</span>");
 
-  finalString = finalString.replaceAll("<h2>", "<br /><h5><strong>");
+  finalString = finalString.replaceAll("<h2>", "<br><br><h5><strong>");
   finalString = finalString.replaceAll("</h2>", "</strong></h5>");
 
   finalString = finalString.replaceAll(
@@ -81,8 +80,8 @@ export function cleanDescription(description: string) {
   );
 
   finalString = finalString.replaceAll(
-    "\n",
-    '<br style="display: block; margin-top: 0px;"/>'
+    "<hr>",
+    '<hr class="q-separator q-separator--horizontal tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-500!" style="height: 2px;" aria-orientation="horizontal">'
   );
 
   return finalString.replaceAll(cleanRegex, "");
