@@ -54,7 +54,7 @@ const settings = settingsStore();
             <h1
               :class="
                 getGameFontSize(settings.game) +
-                ' tw:mr-4 tw:leading-8 tw:my-auto'
+                ' tw:mr-4 tw:leading-8 tw:my-auto tw:break-all'
               "
             >
               <span
@@ -81,7 +81,7 @@ const settings = settingsStore();
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
           <div
-            class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white"
+            class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white tw:break-all"
           >
             <div
               v-if="npcs.npcs[npcs.activeNpc]!.npc.gender"
@@ -124,14 +124,14 @@ const settings = settingsStore();
           </div>
           <div
             v-if="npcs.npcs[npcs.activeNpc]!.npc.languages"
-            class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+            class="tw:-indent-2 tw:pl-2 tw:text-base tw:text-gray-800 tw:dark:text-white tw:break-all"
           >
             <strong>Languages </strong>
             {{ npcs.npcs[npcs.activeNpc]!.npc.languages }}
           </div>
           <div
             v-if="npcs.npcs[npcs.activeNpc]!.npc.quirk"
-            class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+            class="tw:-indent-2 tw:pl-2 tw:text-base tw:text-gray-800 tw:dark:text-white tw:break-all"
           >
             <strong>Quirks </strong>
             {{ npcs.npcs[npcs.activeNpc]!.npc.quirk }}
@@ -152,7 +152,7 @@ const settings = settingsStore();
             class="only-print"
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
-          <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
+          <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs tw:break-all">
             <div
               v-if="npcs.npcs[npcs.activeNpc]!.npc.description"
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
@@ -204,7 +204,7 @@ const settings = settingsStore();
             class="only-print"
             style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
           />
-          <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
+          <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs tw:break-all">
             <div
               v-for="(item, index) in npcs.npcs[npcs.activeNpc]!.npc
                 .custom_fields"
