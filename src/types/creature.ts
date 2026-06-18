@@ -6,6 +6,7 @@ import type {
   sizes,
   variants
 } from "@/types/filters";
+import type { action, range, trait } from "@/types/generic";
 import type { item } from "@/types/item";
 
 interface KeyValue {
@@ -85,7 +86,7 @@ export type creature = {
       };
       creature_role?: roles[];
     };
-    traits: { name: string; description: string | null }[];
+    traits: trait[];
   };
   extra_data?: {
     ability_scores: {
@@ -97,25 +98,7 @@ export type creature = {
       wisdom: number;
     };
     ac_detail: string;
-    actions: [
-      {
-        core_action: {
-          action_type: string;
-          category: string;
-          creature_id: number;
-          description: string;
-          id: number;
-          license: string;
-          n_of_actions: number | null;
-          name: string;
-          rarity: rarities;
-          remaster: boolean;
-          slug: string;
-          source: string;
-        };
-        traits: { name: string; description: string | null }[];
-      }
-    ];
+    actions: action[];
     has_vision: boolean;
     hp_detail: string;
     items: [item["core_item"]];
@@ -128,12 +111,7 @@ export type creature = {
         acuity: string;
         id: number;
         name: string;
-        range?: {
-          id: number;
-          value: string;
-          increment: string | null;
-          max: string | null;
-        };
+        range?: range;
       }
     ];
     skills: [
@@ -170,12 +148,7 @@ export type creature = {
           level: number;
           license: string;
           name: string;
-          range?: {
-            id: number;
-            value: string;
-            increment: string | null;
-            max: string | null;
-          };
+          range?: range;
           rarity: string;
           remaster: boolean;
           saving_throw_is_basic: boolean;

@@ -1,4 +1,5 @@
 import type { games, rarities, sizes } from "@/types/filters";
+import type { action, range, trait } from "@/types/generic";
 
 export type item = {
   game: games;
@@ -36,7 +37,7 @@ export type item = {
     source: string;
     rarity: rarities;
     size: sizes;
-    traits: { name: string; description: string | null }[];
+    traits: trait[];
   };
   shield_data?: {
     bonus_ac: number;
@@ -61,15 +62,11 @@ export type item = {
     n_of_potency_runes: number;
     n_of_striking_runes: number;
     property_runes: string[];
-    range?: {
-      id: number;
-      value: string;
-      increment: string | null;
-      max: string | null;
-    };
+    range?: range;
     reload: string;
     weapon_type: "Melee" | "Ranged" | "Generic";
     splash_dmg: number;
+    attack_effects: action[];
   };
 };
 

@@ -1,26 +1,10 @@
 import type { complexities, games, rarities, sizes } from "@/types/filters";
+import type { action, trait } from "@/types/generic";
 
 export type hazard = {
   game: games;
   core_hazard: {
-    actions: [
-      {
-        core_action: {
-          action_type: string;
-          category: string;
-          description: string;
-          id: number;
-          license: string;
-          n_of_actions: number;
-          name: string;
-          rarity: rarities;
-          remaster: boolean;
-          slug: string;
-          source: string;
-        };
-        traits: { name: string; description: string | null }[];
-      }
-    ];
+    actions: action[];
     essential: {
       ac: number;
       complexity: complexities;
@@ -46,7 +30,7 @@ export type hazard = {
       will: number;
     };
     game_system: games;
-    traits: { name: string; description: string | null }[];
+    traits: trait[];
   };
 };
 

@@ -145,7 +145,10 @@ const skillString = computed(() => {
     finalString += "<strong>Skills&nbsp;</strong>";
     for (const skill of skills) {
       finalString +=
-        skill.name + " " + variantStyle(addPlus(skill.modifier)) + ", ";
+        upperFirst(skill.name) +
+        " " +
+        variantStyle(addPlus(skill.modifier)) +
+        ", ";
     }
   }
   return finalString.substring(0, finalString.length - 2);
@@ -1010,7 +1013,7 @@ const rangeTraits = (
         class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       >
         <strong v-if="item.weapon_data?.weapon_type === 'Melee'">Melee </strong>
-        <strong v-if="item.weapon_data?.weapon_type === 'Ranged'"
+        <strong v-else-if="item.weapon_data?.weapon_type === 'Ranged'"
           >Ranged
         </strong>
         <span
@@ -1063,6 +1066,47 @@ const rangeTraits = (
             </span>
           </span>
         </span>
+        <span v-if="item.weapon_data!.attack_effects.length > 0">
+          <template
+            v-for="action in item.weapon_data!.attack_effects"
+            :key="action.core_action.id"
+          >
+            plus
+            <span
+              v-if="action.core_action.description !== null"
+              class="tw:decoration-2 tw:underline"
+            >
+              {{ action.core_action.name }}
+              <q-tooltip
+                style="
+                  font-family:
+                    Good Pro,
+                    sans-serif;
+                "
+                class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+              >
+                <strong>{{
+                  action.core_action.name.toUpperCase() + " "
+                }}</strong>
+                <span
+                  style="font-family: Pathfinder2eActions, sans-serif"
+                  class="tw:text-2xl"
+                  >{{
+                    pfActionSymbol(
+                      action.core_action.n_of_actions,
+                      action.core_action.action_type
+                    )
+                  }}</span
+                >
+                <hr class="tw:my-1!" />
+                <span
+                  v-html="cleanDescription(action.core_action.description)"
+                />
+              </q-tooltip>
+            </span>
+            <span v-else>{{ action.core_action.name }}</span>
+          </template>
+        </span>
       </div>
     </template>
     <template v-for="entity in spellString" :key="entity">
@@ -1076,7 +1120,14 @@ const rangeTraits = (
       :key="item.core_action.name"
     >
       <div
-        v-if="item.core_action.category === 'offensive'"
+        v-if="
+          item.core_action.category === 'offensive' &&
+          encounter.selectedCreature?.combat_data?.weapons.every(weapon =>
+            weapon.weapon_data?.attack_effects.every(
+              action => action.core_action.id !== item.core_action.id
+            )
+          )
+        "
         class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       >
         <strong>{{ item.core_action.name + " " }}</strong>
