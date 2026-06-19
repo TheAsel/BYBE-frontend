@@ -32,7 +32,7 @@ const npcId = Number(route.query.id);
 
 updateLocalStorageNpcs();
 
-if (isNaN(npcId) || npcId < 0 || npcId >= npcs.npcs.length) {
+if (Number.isNaN(npcId) || npcId < 0 || npcId >= npcs.npcs.length) {
   console.error("Missing NPC ID");
   $q.notify({
     progress: true,
