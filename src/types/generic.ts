@@ -10,6 +10,7 @@ export type range = {
 export type trait = {
   name: string;
   description: string | null;
+  display_name: string | null;
 };
 
 export type action = {

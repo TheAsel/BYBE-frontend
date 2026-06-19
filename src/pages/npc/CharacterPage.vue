@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { matPrint } from "@quasar/extras/material-icons";
+import { matPrint, matPriorityHigh } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
+import { useQuasar } from "quasar";
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import NpcSheet from "@/components/npc/NpcSheet.vue";
 import { npcStore } from "@/stores/npc";
+import { settingsStore } from "@/stores/settings";
 import { updateLocalStorageNpcs } from "@/utils/local-storage";
 
 const title = ref("NPC Sheet - BYBE");
@@ -21,13 +23,27 @@ useHead({
 });
 
 const route = useRoute();
+const router = useRouter();
+const $q = useQuasar();
 const npcs = npcStore();
+const settings = settingsStore();
 
 const npcId = Number(route.query.id);
 
 updateLocalStorageNpcs();
 
-npcs.setActiveNpc(npcId);
+if (isNaN(npcId) || npcId < 0 || npcId >= npcs.npcs.length) {
+  console.error("Missing NPC ID");
+  $q.notify({
+    progress: true,
+    type: "warning",
+    message: "Missing NPC ID",
+    icon: matPriorityHigh
+  });
+  await router.push({ name: "npc", query: { game: settings.game } });
+} else {
+  npcs.setActiveNpc(npcId);
+}
 
 const printPage = () => {
   globalThis.print();

@@ -66,7 +66,7 @@ export type item = {
     reload: string;
     weapon_type: "Melee" | "Ranged" | "Generic";
     splash_dmg: number;
-    attack_effects: action[];
+    attack_effects?: action[];
   };
 };
 

@@ -104,7 +104,7 @@ const perceptionString = computed(() => {
         }
       }
     }
-    if (!encounter.selectedCreature!.extra_data!.has_vision) {
+    if (!encounter.selectedCreature?.extra_data?.has_vision) {
       finalString += "no vision" + ", ";
     }
     if (encounter.selectedCreature?.extra_data?.perception_detail) {
@@ -575,7 +575,8 @@ const rangeTraits = (
   if (weapon.weapon_data?.range?.value) {
     return weapon.item_core.traits.concat({
       name: "range " + weapon.weapon_data?.range?.value + " feet",
-      description: null
+      description: null,
+      display_name: null
     });
   } else if (
     weapon.weapon_data?.range?.increment &&
@@ -583,12 +584,14 @@ const rangeTraits = (
   ) {
     return weapon.item_core.traits.concat({
       name: "range increment " + weapon.weapon_data?.range?.increment + " feet",
-      description: null
+      description: null,
+      display_name: null
     });
   } else if (weapon.weapon_data?.range?.max) {
     return weapon.item_core.traits.concat({
       name: "range " + weapon.weapon_data?.range?.max + " feet",
-      description: null
+      description: null,
+      display_name: null
     });
   } else {
     return weapon.item_core.traits;
@@ -620,8 +623,8 @@ const rangeTraits = (
             router,
             'bestiary',
             encounter.selectedCreature?.game ?? settings.game,
-            encounter.selectedCreature!.core_data.essential.id,
-            encounter.selectedCreature!.variant_data?.variant
+            encounter.selectedCreature?.core_data.essential.id ?? 0,
+            encounter.selectedCreature?.variant_data?.variant
           )
         "
       >
@@ -702,7 +705,7 @@ const rangeTraits = (
           "
           >Elite
         </span>
-        {{ encounter.selectedCreature!.core_data.essential.name }}
+        {{ encounter.selectedCreature?.core_data.essential.name }}
       </h1>
     </a>
     <h1
@@ -721,7 +724,7 @@ const rangeTraits = (
         "
         >Elite
       </span>
-      {{ encounter.selectedCreature!.core_data.essential.name }}
+      {{ encounter.selectedCreature?.core_data.essential.name }}
     </h1>
     <q-space />
     <q-select
@@ -812,7 +815,7 @@ const rangeTraits = (
       <span
         v-if="item.description !== null"
         class="tw:decoration-2 tw:hover:underline"
-        >{{ item.name.toUpperCase().replaceAll("-", " ")
+        >{{ item.display_name?.toUpperCase().replaceAll("-", " ")
         }}<q-tooltip
           style="
             font-family:
@@ -1058,17 +1061,17 @@ const rangeTraits = (
             {{ weapon.dmg_type }}
             <span
               v-if="
-                item.weapon_data!.damage_data.length > 1 &&
-                index !== item.weapon_data!.damage_data.length - 1
+                item.weapon_data?.damage_data.length &&
+                index !== item.weapon_data?.damage_data.length - 1
               "
             >
               plus
             </span>
           </span>
         </span>
-        <span v-if="item.weapon_data!.attack_effects.length > 0">
+        <span v-if="item.weapon_data?.attack_effects?.length">
           <template
-            v-for="action in item.weapon_data!.attack_effects"
+            v-for="action in item.weapon_data.attack_effects"
             :key="action.core_action.id"
           >
             plus
@@ -1123,7 +1126,7 @@ const rangeTraits = (
         v-if="
           item.core_action.category === 'offensive' &&
           encounter.selectedCreature?.combat_data?.weapons.every(weapon =>
-            weapon.weapon_data?.attack_effects.every(
+            weapon.weapon_data?.attack_effects?.every(
               action => action.core_action.id !== item.core_action.id
             )
           )

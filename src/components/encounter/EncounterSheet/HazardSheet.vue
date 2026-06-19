@@ -44,7 +44,7 @@ const settings = settingsStore();
             router,
             'hazard',
             encounter.selectedHazard?.game ?? settings.game,
-            encounter.selectedHazard!.core_hazard.essential.id
+            encounter.selectedHazard?.core_hazard.essential.id ?? 0
           )
         "
       >
