@@ -68,8 +68,8 @@ const tmpCloakFull: item = {
     rarity: "Common",
     size: "Medium",
     traits: [
-      { name: "invested", description: "" },
-      { name: "occult", description: "" }
+      { name: "invested", description: "", display_name: "" },
+      { name: "occult", description: "", display_name: "" }
     ]
   }
 };
@@ -121,7 +121,7 @@ const tmpLaserRifleFull: item = {
     source: "Starfinder Player Core",
     rarity: "Common",
     size: "Medium",
-    traits: [{ name: "tech", description: "" }]
+    traits: [{ name: "tech", description: "", display_name: "" }]
   }
 };
 const tmpLaserRifle: min_item = {

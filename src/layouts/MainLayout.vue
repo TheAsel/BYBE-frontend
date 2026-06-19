@@ -137,14 +137,22 @@ if (import.meta.env.IS_APP) {
 }
 
 @media print {
+  @page {
+    margin: 0 !important;
+  }
+
   header,
   footer {
     display: none !important;
   }
 
-  .q-scrollarea {
-    height: 120vh !important;
-    padding-top: 3vh !important;
+  .q-page-container {
+    padding: 0 !important;
+  }
+
+  .q-layout {
+    background-image: none !important;
+    background: white !important;
   }
 
   .hide-print {
@@ -178,50 +186,50 @@ if (import.meta.env.IS_APP) {
   }
 
   .q-gutter-y-xs * {
-    margin-top: 0.2rem !important;
-    line-height: 1.2rem !important;
+    margin: 1 !important;
   }
 
   .tw\:text-2xl {
-    font-size: 18px !important;
-    padding-top: 1vh !important;
-    line-height: 0.2rem !important;
-    color: black !important;
-  }
-
-  .tw\:text-sm {
     font-size: 12px !important;
     color: black !important;
   }
 
-  .tw\:text-base {
-    font-size: 14px !important;
+  .tw\:text-sm {
+    font-size: 10px !important;
     color: black !important;
   }
 
-  body {
-    width: 95vh !important;
-    padding-right: 30vh !important;
-    padding-left: 5vh !important;
+  .tw\:text-base {
+    font-size: 12px !important;
+    color: black !important;
+  }
+
+  hr {
+    height: 0 !important;
+    margin: 0 !important;
+    margin-bottom: 0.5rem !important;
   }
 
   html,
   body {
-    height: 99% !important;
-    overflow: hidden !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    background: white !important;
   }
 }
 
 @-moz-document url-prefix() {
   @media print {
-    body {
-      padding-right: 0 !important;
-      padding-left: 0 !important;
+    .tw\:text-2xl {
+      font-size: 8px !important;
     }
 
-    html,
-    body {
-      height: 120vh !important;
+    .tw\:text-sm {
+      font-size: 10px !important;
+    }
+
+    .tw\:text-base {
+      font-size: 8px !important;
     }
   }
 }

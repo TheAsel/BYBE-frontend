@@ -71,7 +71,7 @@ const settings = settingsStore();
               </span>
             </h1>
             <q-space />
-            <div class="tw:ml-4 tw:my-1">
+            <div class="tw:ml-4 tw:my-1 tw:text-2xl!">
               NPC {{ npcs.npcs[npcs.activeNpc]!.npc.level }}
             </div>
           </div>
@@ -85,7 +85,7 @@ const settings = settingsStore();
           >
             <div
               v-if="npcs.npcs[npcs.activeNpc]!.npc.gender"
-              class="tw:bg-[#6d5f9d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+              class="tw:text-white! tw:bg-[#6d5f9d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ npcs.npcs[npcs.activeNpc]!.npc.gender!.toUpperCase() }}
             </div>
@@ -95,7 +95,7 @@ const settings = settingsStore();
                   settings.game === 'sf') &&
                 npcs.npcs[npcs.activeNpc]!.npc.ancestry
               "
-              class="tw:bg-[#28765d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+              class="tw:text-white! tw:bg-[#28765d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ npcs.npcs[npcs.activeNpc]!.npc.ancestry!.toUpperCase() }}
             </div>
@@ -105,19 +105,19 @@ const settings = settingsStore();
                 npcs.npcs[npcs.activeNpc]!.culture &&
                 npcs.npcs[npcs.activeNpc]!.npc.culture
               "
-              class="tw:bg-[#28765d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+              class="tw:text-white! tw:bg-[#28765d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ npcs.npcs[npcs.activeNpc]!.npc.culture!.toUpperCase() }}
             </div>
             <div
               v-if="npcs.npcs[npcs.activeNpc]!.npc.class"
-              class="tw:bg-[#820d00] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+              class="tw:text-white! tw:bg-[#820d00] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ npcs.npcs[npcs.activeNpc]!.npc.class!.toUpperCase() }}
             </div>
             <div
               v-if="npcs.npcs[npcs.activeNpc]!.npc.job"
-              class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+              class="tw:text-white! tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
               {{ npcs.npcs[npcs.activeNpc]!.npc.job!.toUpperCase() }}
             </div>

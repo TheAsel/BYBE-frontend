@@ -575,23 +575,24 @@ const rangeTraits = (
   if (weapon.weapon_data?.range?.value) {
     return weapon.item_core.traits.concat({
       name: "range " + weapon.weapon_data?.range?.value + " feet",
-      description: null,
-      display_name: null
+      description:
+        "These attacks will either list a finite range or a range increment, which follows the normal rules for range increments.",
+      display_name: "range " + weapon.weapon_data?.range?.value + " feet"
     });
-  } else if (
-    weapon.weapon_data?.range?.increment &&
-    weapon.weapon_data?.range?.increment !== "null"
-  ) {
+  } else if (weapon.weapon_data?.range?.increment) {
     return weapon.item_core.traits.concat({
       name: "range increment " + weapon.weapon_data?.range?.increment + " feet",
-      description: null,
-      display_name: null
+      description:
+        "These attacks will either list a finite range or a range increment, which follows the normal rules for range increments.",
+      display_name:
+        "range increment " + weapon.weapon_data?.range?.increment + " feet"
     });
   } else if (weapon.weapon_data?.range?.max) {
     return weapon.item_core.traits.concat({
       name: "range " + weapon.weapon_data?.range?.max + " feet",
-      description: null,
-      display_name: null
+      description:
+        "These attacks will either list a finite range or a range increment, which follows the normal rules for range increments.",
+      display_name: "range " + weapon.weapon_data?.range?.max + " feet"
     });
   } else {
     return weapon.item_core.traits;
@@ -739,7 +740,7 @@ const rangeTraits = (
         changeVariant(encounter.selectedCreature?.variant_data?.variant!)
       "
     />
-    <div class="tw:my-1">
+    <div class="tw:my-1 tw:text-2xl!">
       {{ encounter.selectedCreature?.core_data.essential.cr_type }}
       <span
         :class="{
@@ -768,14 +769,33 @@ const rangeTraits = (
     class="only-print"
     style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
   />
-  <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white">
+  <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm">
     <div
       v-if="
         encounter.selectedCreature?.core_data.essential.rarity === 'Uncommon'
       "
       class="tw:bg-[#c45500] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounter.selectedCreature?.core_data.essential.rarity.toUpperCase() }}
+      <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        >{{
+          encounter.selectedCreature?.core_data.essential.rarity.toUpperCase()
+        }}<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>{{
+            encounter.selectedCreature?.core_data.essential.rarity.toUpperCase()
+          }}</strong>
+          <q-separator class="tw:my-1!" style="height: 2px" />
+          <span>{{
+            "Something of uncommon rarity requires special training or comes from a particular culture or part of the world. Some character choices give access to uncommon options, and the GM can choose to allow access for anyone. Less is known about uncommon creatures than common creatures. They typically can't be summoned. The DC of Recall Knowledge checks related to these creature is increased by 2."
+          }}</span>
+        </q-tooltip>
+      </span>
     </div>
     <div
       v-else-if="
@@ -783,7 +803,26 @@ const rangeTraits = (
       "
       class="tw:bg-[#0c1466] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounter.selectedCreature?.core_data.essential.rarity.toUpperCase() }}
+      <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        >{{
+          encounter.selectedCreature?.core_data.essential.rarity.toUpperCase()
+        }}<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>{{
+            encounter.selectedCreature?.core_data.essential.rarity.toUpperCase()
+          }}</strong>
+          <q-separator class="tw:my-1!" style="height: 2px" />
+          <span>{{
+            "This rarity indicates that a rules element is very difficult to find in the game world. A rare feat, spell, item or the like is available to players only if the GM decides to include it in the game, typically through discovery during play. Creatures with this trait are rare. They typically can't be summoned. The DC of Recall Knowledge checks related to these creatures is increased by 5."
+          }}</span>
+        </q-tooltip>
+      </span>
     </div>
     <div
       v-else-if="
@@ -791,7 +830,26 @@ const rangeTraits = (
       "
       class="tw:bg-[#800080] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounter.selectedCreature?.core_data.essential.rarity.toUpperCase() }}
+      <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        >{{
+          encounter.selectedCreature?.core_data.essential.rarity.toUpperCase()
+        }}<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>{{
+            encounter.selectedCreature?.core_data.essential.rarity.toUpperCase()
+          }}</strong>
+          <q-separator class="tw:my-1!" style="height: 2px" />
+          <span>{{
+            "A rules element with this trait is one-of-a-kind. The DC of Recall Knowledge checks related to creatures with this trait is increased by 10."
+          }}</span>
+        </q-tooltip>
+      </span>
     </div>
     <div
       v-if="
@@ -800,12 +858,30 @@ const rangeTraits = (
       "
       class="tw:bg-[#4287f5] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{
-        encounter.selectedCreature?.core_data.essential.alignment.toUpperCase()
-      }}
+      <a
+        class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        href="https://2e.aonprd.com/Rules.aspx?ID=95"
+        target="_blank"
+        rel="noopener"
+      >
+        {{
+          encounter.selectedCreature?.core_data.essential.alignment.toUpperCase()
+        }}
+      </a>
     </div>
     <div class="tw:bg-[#478c42] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1">
-      {{ encounter.selectedCreature?.core_data.essential.size.toUpperCase() }}
+      <a
+        class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        :href="
+          settings.game === 'sf'
+            ? 'https://2e.aonsrd.com/rules/407-size-space-and-reach'
+            : 'https://2e.aonprd.com/Rules.aspx?ID=2359'
+        "
+        target="_blank"
+        rel="noopener"
+      >
+        {{ encounter.selectedCreature?.core_data.essential.size.toUpperCase() }}
+      </a>
     </div>
     <div
       v-for="item in encounter.selectedCreature?.core_data.traits.sort()"
@@ -814,7 +890,7 @@ const rangeTraits = (
     >
       <span
         v-if="item.description !== null"
-        class="tw:decoration-2 tw:hover:underline"
+        class="tw:text-white! tw:decoration-2 tw:hover:underline"
         >{{ item.display_name?.toUpperCase().replaceAll("-", " ")
         }}<q-tooltip
           style="
@@ -825,7 +901,7 @@ const rangeTraits = (
           class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
         >
           <strong>{{ item.name.toUpperCase().replaceAll("-", " ") }}</strong>
-          <hr class="tw:my-1!" />
+          <q-separator class="tw:my-1!" style="height: 2px" />
           <span v-html="cleanDescription(item.description)" /> </q-tooltip
       ></span>
       <span v-else>{{ item.name.toUpperCase().replaceAll("-", " ") }}</span>
@@ -1101,7 +1177,7 @@ const rangeTraits = (
                     )
                   }}</span
                 >
-                <hr class="tw:my-1!" />
+                <q-separator class="tw:my-1!" style="height: 2px" />
                 <span
                   v-html="cleanDescription(action.core_action.description)"
                 />

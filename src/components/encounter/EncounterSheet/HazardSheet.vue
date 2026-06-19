@@ -91,7 +91,7 @@ const settings = settingsStore();
       {{ encounter.selectedHazard?.core_hazard.essential.name }}
     </h1>
     <q-space />
-    <div class="tw:my-1">
+    <div class="tw:my-1 tw:text-2xl!">
       Hazard
       <span>{{ encounter.selectedHazard?.core_hazard.essential.level }}</span>
     </div>
@@ -121,44 +121,9 @@ const settings = settingsStore();
       "
       class="tw:bg-[#c45500] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
-      {{ encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase() }}
-    </div>
-    <div
-      v-else-if="
-        encounter.selectedHazard?.core_hazard.essential.rarity === 'Rare'
-      "
-      class="tw:bg-[#0c1466] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
-    >
-      {{ encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase() }}
-    </div>
-    <div
-      v-else-if="
-        encounter.selectedHazard?.core_hazard.essential.rarity === 'Unique'
-      "
-      class="tw:bg-[#800080] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
-    >
-      {{ encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase() }}
-    </div>
-    <div class="tw:bg-[#478c42] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1">
-      {{ encounter.selectedHazard?.core_hazard.essential.size.toUpperCase() }}
-    </div>
-    <div
-      v-if="
-        encounter.selectedHazard?.core_hazard.essential.complexity === 'Complex'
-      "
-      class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
-    >
-      COMPLEX
-    </div>
-    <div
-      v-for="item in encounter.selectedHazard?.core_hazard.traits"
-      :key="item.name"
-      class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
-    >
-      <span
-        v-if="item.description !== null"
-        class="tw:decoration-2 tw:hover:underline"
-        >{{ item.name.toUpperCase().replaceAll("-", " ")
+      <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        >{{
+          encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
         }}<q-tooltip
           style="
             font-family:
@@ -167,11 +132,129 @@ const settings = settingsStore();
           "
           class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
         >
-          <strong>{{ item.name.toUpperCase().replaceAll("-", " ") }}</strong>
-          <hr class="tw:my-1!" />
+          <strong>{{
+            encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+          }}</strong>
+          <q-separator class="tw:my-1!" style="height: 2px" />
+          <span>{{
+            "Something of uncommon rarity requires special training or comes from a particular culture or part of the world. Some character choices give access to uncommon options, and the GM can choose to allow access for anyone. Less is known about uncommon creatures than common creatures. They typically can't be summoned. The DC of Recall Knowledge checks related to these creature is increased by 2."
+          }}</span>
+        </q-tooltip>
+      </span>
+    </div>
+    <div
+      v-else-if="
+        encounter.selectedHazard?.core_hazard.essential.rarity === 'Rare'
+      "
+      class="tw:bg-[#0c1466] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+    >
+      <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        >{{
+          encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+        }}<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>{{
+            encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+          }}</strong>
+          <q-separator class="tw:my-1!" style="height: 2px" />
+          <span>{{
+            "This rarity indicates that a rules element is very difficult to find in the game world. A rare feat, spell, item or the like is available to players only if the GM decides to include it in the game, typically through discovery during play. Creatures with this trait are rare. They typically can't be summoned. The DC of Recall Knowledge checks related to these creatures is increased by 5."
+          }}</span>
+        </q-tooltip>
+      </span>
+    </div>
+    <div
+      v-else-if="
+        encounter.selectedHazard?.core_hazard.essential.rarity === 'Unique'
+      "
+      class="tw:bg-[#800080] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+    >
+      <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        >{{
+          encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+        }}<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>{{
+            encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+          }}</strong>
+          <q-separator class="tw:my-1!" style="height: 2px" />
+          <span>{{
+            "A rules element with this trait is one-of-a-kind. The DC of Recall Knowledge checks related to creatures with this trait is increased by 10."
+          }}</span>
+        </q-tooltip>
+      </span>
+    </div>
+    <div class="tw:bg-[#478c42] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1">
+      <a
+        class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        :href="
+          settings.game === 'sf'
+            ? 'https://2e.aonsrd.com/rules/407-size-space-and-reach'
+            : 'https://2e.aonprd.com/Rules.aspx?ID=2359'
+        "
+        target="_blank"
+        rel="noopener"
+      >
+        {{ encounter.selectedHazard?.core_hazard.essential.size.toUpperCase() }}
+      </a>
+    </div>
+    <div
+      v-if="
+        encounter.selectedHazard?.core_hazard.essential.complexity === 'Complex'
+      "
+      class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+    >
+      <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        >COMPLEX<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>COMPLEX</strong>
+          <q-separator class="tw:my-1!" style="height: 2px" />
+          <span>{{
+            "A hazard with this trait takes turns in an encounter."
+          }}</span>
+        </q-tooltip>
+      </span>
+    </div>
+    <div
+      v-for="item in encounter.selectedHazard?.core_hazard.traits"
+      :key="item.name"
+      class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
+    >
+      <span
+        v-if="item.description !== null"
+        class="tw:text-white! tw:decoration-2 tw:hover:underline"
+        >{{ item.display_name?.toUpperCase()
+        }}<q-tooltip
+          style="
+            font-family:
+              Good Pro,
+              sans-serif;
+          "
+          class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+        >
+          <strong>{{ item.display_name?.toUpperCase() }}</strong>
+          <q-separator class="tw:my-1!" style="height: 2px" />
           <span v-html="cleanDescription(item.description)" /> </q-tooltip
       ></span>
-      <span v-else>{{ item.name.toUpperCase().replaceAll("-", " ") }}</span>
+      <span v-else>{{ item.display_name?.toUpperCase() }}</span>
     </div>
   </div>
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
