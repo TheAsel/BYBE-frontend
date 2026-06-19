@@ -152,7 +152,6 @@ if (import.meta.env.IS_APP) {
 
   .q-layout {
     background-image: none !important;
-    background: white !important;
   }
 
   .hide-print {
