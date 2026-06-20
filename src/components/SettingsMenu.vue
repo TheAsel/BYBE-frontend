@@ -173,11 +173,11 @@ switch (localPwl.value) {
     break;
 }
 
-encounter.setPwL(is_pwl_on.value);
+settings.setPwL(is_pwl_on.value);
 
 const togglePwL = () => {
   localStorage.setItem("is_pwl_on", JSON.stringify(is_pwl_on.value));
-  encounter.setPwL(is_pwl_on.value);
+  settings.setPwL(is_pwl_on.value);
 };
 
 const is_aon_links_on = ref(false);

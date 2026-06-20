@@ -46,7 +46,7 @@ try {
           settings.game,
           creatureId,
           "Weak",
-          encounters.is_pwl_on
+          settings.is_pwl_on
         );
         break;
       case "elite":
@@ -55,7 +55,7 @@ try {
           settings.game,
           creatureId,
           "Elite",
-          encounters.is_pwl_on
+          settings.is_pwl_on
         );
         break;
       default:
@@ -64,7 +64,7 @@ try {
           settings.game,
           creatureId,
           "Base",
-          encounters.is_pwl_on
+          settings.is_pwl_on
         );
         break;
     }

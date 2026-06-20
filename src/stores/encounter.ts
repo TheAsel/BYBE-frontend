@@ -11,7 +11,6 @@ export const encounterStore = defineStore("encounter", {
     selectedHazard: {} as hazard | null,
     encounters: [{ name: "Default", creatures: [] }] as encounter_list[],
     activeEncounter: 0,
-    is_pwl_on: false,
     generating: false
   }),
   actions: {
@@ -105,9 +104,6 @@ export const encounterStore = defineStore("encounter", {
     },
     updateEncounters(newEncounters: encounter_list[]) {
       this.encounters = newEncounters;
-    },
-    setPwL(newPwl: boolean) {
-      this.is_pwl_on = newPwl;
     },
     setGenerating(newGenerating: boolean) {
       this.generating = newGenerating;

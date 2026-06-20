@@ -936,7 +936,7 @@ const showCreature = debounce(async function (creature: creature) {
       creature.game,
       creature.core_data.essential.id,
       "Base",
-      encounter.is_pwl_on
+      settings.is_pwl_on
     );
     if (isNull(creatureData) || creatureData === undefined) {
       console.error("Missing creature ID");

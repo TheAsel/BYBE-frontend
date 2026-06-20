@@ -2,6 +2,7 @@
 import {
   biDash,
   biInputCursorText,
+  biPlayFill,
   biPlus,
   biPlusLg,
   biShare,
@@ -152,7 +153,7 @@ watch(
   [
     () => encounter.encounters,
     () => encounter.activeEncounter,
-    () => encounter.is_pwl_on
+    () => settings.is_pwl_on
   ],
   async () => {
     tmpEncounter.value = {
@@ -495,7 +496,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
         item.game,
         item.id,
         item.variant!,
-        encounter.is_pwl_on
+        settings.is_pwl_on
       );
       if (isNull(itemData) || itemData === undefined) {
         console.error("Missing creature ID");
@@ -515,6 +516,29 @@ const showItem = debounce(async function (item: min_creature_hazard) {
     }
   }
 }, 300);
+
+const startTracker = () => {
+  const trackerId = crypto.randomUUID();
+
+  const routeData = router.resolve({
+    name: "tracker",
+    query: { game: settings.game, tid: trackerId }
+  });
+
+  localStorage.setItem(
+    `tracker:${trackerId}`,
+    JSON.stringify({
+      party: party.parties[party.activeParty],
+      encounter_list: encounter.encounters[encounter.activeEncounter]
+    })
+  );
+
+  if (import.meta.env.IS_APP === true) {
+    globalThis.open(routeData.href, "_self");
+  } else {
+    globalThis.open(routeData.href, "_blank");
+  }
+};
 </script>
 
 <template>
@@ -1084,8 +1108,32 @@ const showItem = debounce(async function (item: min_creature_hazard) {
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
         <div class="tw:flex tw:mx-4 tw:my-1.5">
+          <q-btn
+            class="tw:w-48!"
+            :icon-right="biPlayFill"
+            color="positive"
+            label="Start"
+            unelevated
+            dense
+            push
+            aria-label="Start encounter tracking"
+            @click="startTracker"
+          >
+            <q-tooltip
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Start encounter tracker
+            </q-tooltip>
+          </q-btn>
+          <q-separator
+            vertical
+            class="tw:mx-4! tw:bg-gray-200! tw:dark:bg-gray-700!"
+          />
           <q-linear-progress
             id="shepherd-11"
+            class="tw:my-auto"
             rounded
             size="35px"
             :value="1"
@@ -1094,13 +1142,7 @@ const showItem = debounce(async function (item: min_creature_hazard) {
           >
             <div class="absolute-full flex flex-center">
               <q-badge
-                class="tw:absolute tw:text-base! tw:hidden! tw:xl:flex!"
-                color="grey-10"
-                text-color="white"
-                :label="'Challenge: ' + info.info.challenge"
-              />
-              <q-badge
-                class="tw:absolute tw:text-base! tw:xl:hidden! tw:flex!"
+                class="tw:absolute tw:text-base! tw:flex!"
                 color="grey-10"
                 text-color="white"
                 :label="info.info.challenge"

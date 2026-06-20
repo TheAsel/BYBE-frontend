@@ -182,7 +182,7 @@ const generateEncounter = debounce(async function () {
   encounter.setGenerating(true);
   saveChanges();
   const partyLevels = party.parties[party.activeParty]!.members;
-  const is_pwl_on = encounter.is_pwl_on;
+  const is_pwl_on = settings.is_pwl_on;
   const game_version = settings.game_version;
 
   const body: encounter_data = {
