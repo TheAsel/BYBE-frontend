@@ -1,7 +1,7 @@
 import type { games, rarities, sizes } from "@/types/filters";
 import type { action, range, trait } from "@/types/generic";
 
-export type item = {
+export interface item {
   game: games;
   armor_data?: {
     ac_bonus: number;
@@ -68,16 +68,16 @@ export type item = {
     splash_dmg: number;
     attack_effects?: action[];
   };
-};
+}
 
-export type item_response = {
+export interface item_response {
   count: number;
   total: number;
   next: string;
   results: item[];
-};
+}
 
-export type min_item = {
+export interface min_item {
   game: games;
   id: number;
   archive_link: string;
@@ -86,4 +86,4 @@ export type min_item = {
   type: string;
   price: number;
   quantity: number;
-};
+}

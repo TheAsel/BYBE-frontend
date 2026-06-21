@@ -13,7 +13,7 @@ export async function apiFetch<T>(
     throw new Error(typeof error === "string" ? error : String(error));
   }
 
-  return data as T;
+  return data;
 }
 
 export async function apiFetchText(

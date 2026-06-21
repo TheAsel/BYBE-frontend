@@ -5,43 +5,11 @@ import type { encounter_list, min_creature_hazard } from "@/types/encounter";
 import type { variants } from "@/types/filters";
 import type { hazard } from "@/types/hazard";
 
-export const encounterStore = defineStore("encounter", {
-  state: () => ({
-    selectedCreature: {} as creature | null,
-    selectedHazard: {} as hazard | null,
-    encounters: [{ name: "Default", creatures: [] }] as encounter_list[],
-    activeEncounter: 0,
-    generating: false
-  }),
+export const encounterStore = defineStore("encounter_store", {
   actions: {
-    setSelectedCreature(newSelectedCreature: creature) {
-      this.selectedHazard = null;
-      this.selectedCreature = newSelectedCreature;
-    },
-    setSelectedHazard(newSelectedHazard: hazard) {
-      this.selectedCreature = null;
-      this.selectedHazard = newSelectedHazard;
-    },
-    removeSelectedCreature() {
-      this.selectedCreature = null;
-    },
-    removeSelectedHazard() {
-      this.selectedHazard = null;
-    },
-    clearEncounter() {
-      this.encounters[this.activeEncounter]!.creatures.splice(
-        0,
-        this.encounters[this.activeEncounter]!.creatures.length
-      );
-    },
-    clearCreature(creature: min_creature_hazard) {
-      const index =
-        this.encounters[this.activeEncounter]!.creatures.indexOf(creature);
-      this.encounters[this.activeEncounter]!.creatures.splice(index, 1);
-    },
-    changeVariant(index: number, variant: variants) {
-      this.encounters[this.activeEncounter]!.creatures[index]!.variant =
-        variant;
+    addEncounter(encounterName: string) {
+      this.encounters.push({ creatures: [], name: encounterName });
+      this.activeEncounter = this.encounters.length - 1;
     },
     addToEncounter(creature: min_creature_hazard, index?: number) {
       if (index! >= 0) {
@@ -61,6 +29,40 @@ export const encounterStore = defineStore("encounter", {
         this.encounters[this.activeEncounter]!.creatures.push(newCreature);
       }
     },
+    changeActiveEncounter(encounterIndex: number) {
+      if (encounterIndex >= this.encounters.length || encounterIndex < 0) {
+        this.activeEncounter = 0;
+      } else {
+        this.activeEncounter = encounterIndex;
+      }
+    },
+    changeVariant(index: number, variant: variants) {
+      this.encounters[this.activeEncounter]!.creatures[index]!.variant =
+        variant;
+    },
+    clearCreature(creature: min_creature_hazard) {
+      const index =
+        this.encounters[this.activeEncounter]!.creatures.indexOf(creature);
+      this.encounters[this.activeEncounter]!.creatures.splice(index, 1);
+    },
+    clearEncounter() {
+      this.encounters[this.activeEncounter]!.creatures.splice(
+        0,
+        this.encounters[this.activeEncounter]!.creatures.length
+      );
+    },
+    getEncounterIndex(encounterName: string): number {
+      return this.encounters
+        .map(encounter => encounter.name)
+        .indexOf(encounterName);
+    },
+    removeEncounter() {
+      this.encounters.splice(this.activeEncounter, 1);
+      this.activeEncounter = 0;
+      if (this.encounters.length <= 0) {
+        this.encounters = [{ creatures: [], name: "Default" }];
+      }
+    },
     removeFromEncounter(index: number) {
       if (
         this.encounters[this.activeEncounter]!.creatures[index]!.quantity! > 1
@@ -70,28 +72,22 @@ export const encounterStore = defineStore("encounter", {
         this.encounters[this.activeEncounter]!.creatures.splice(index, 1);
       }
     },
-    changeActiveEncounter(encounterIndex: number) {
-      if (encounterIndex >= this.encounters.length || encounterIndex < 0) {
-        this.activeEncounter = 0;
-      } else {
-        this.activeEncounter = encounterIndex;
-      }
+    removeSelectedCreature() {
+      this.selectedCreature = null;
     },
-    addEncounter(encounterName: string) {
-      this.encounters.push({ name: encounterName, creatures: [] });
-      this.activeEncounter = this.encounters.length - 1;
+    removeSelectedHazard() {
+      this.selectedHazard = null;
     },
-    removeEncounter() {
-      this.encounters.splice(this.activeEncounter, 1);
-      this.activeEncounter = 0;
-      if (this.encounters.length <= 0) {
-        this.encounters = [{ name: "Default", creatures: [] }];
-      }
+    setGenerating(newGenerating: boolean) {
+      this.generating = newGenerating;
     },
-    getEncounterIndex(encounterName: string): number {
-      return this.encounters
-        .map(encounter => encounter.name)
-        .indexOf(encounterName);
+    setSelectedCreature(newSelectedCreature: creature) {
+      this.selectedHazard = null;
+      this.selectedCreature = newSelectedCreature;
+    },
+    setSelectedHazard(newSelectedHazard: hazard) {
+      this.selectedCreature = null;
+      this.selectedHazard = newSelectedHazard;
     },
     updateEncounter(
       encounterName: string,
@@ -104,9 +100,19 @@ export const encounterStore = defineStore("encounter", {
     },
     updateEncounters(newEncounters: encounter_list[]) {
       this.encounters = newEncounters;
-    },
-    setGenerating(newGenerating: boolean) {
-      this.generating = newGenerating;
     }
-  }
+  },
+  state: (): {
+    selectedCreature: creature | null;
+    selectedHazard: hazard | null;
+    encounters: encounter_list[];
+    activeEncounter: number;
+    generating: boolean;
+  } => ({
+    activeEncounter: 0,
+    encounters: [{ creatures: [], name: "Default" }],
+    generating: false,
+    selectedCreature: null,
+    selectedHazard: null
+  })
 });

@@ -2,75 +2,75 @@ import type { RouteRecordRaw } from "vue-router";
 
 const routes: RouteRecordRaw[] = [
   {
-    path: "/",
-    component: () => import("@/layouts/MainLayout.vue"),
     children: [
       {
-        path: "",
+        component: () => import("@/pages/IndexPage.vue"),
         name: "home",
-        component: () => import("@/pages/IndexPage.vue")
+        path: ""
       },
       {
-        path: "download",
+        component: () => import("@/pages/DownloadPage.vue"),
         name: "download",
-        component: () => import("@/pages/DownloadPage.vue")
+        path: "download"
       },
       {
-        path: "encounter",
+        component: () => import("@/pages/encounter/EncounterPage.vue"),
         name: "encounter",
-        component: () => import("@/pages/encounter/EncounterPage.vue")
+        path: "encounter"
       },
       {
-        path: "bestiary",
+        component: () => import("@/pages/encounter/BestiaryPage.vue"),
         name: "bestiary",
-        component: () => import("@/pages/encounter/BestiaryPage.vue")
+        path: "bestiary"
       },
       {
-        path: "hazard",
+        component: () => import("@/pages/encounter/HazardPage.vue"),
         name: "hazard",
-        component: () => import("@/pages/encounter/HazardPage.vue")
+        path: "hazard"
       },
       {
-        path: "tracker",
+        component: () => import("@/pages/tracker/TrackerPage.vue"),
         name: "tracker",
-        component: () => import("@/pages/tracker/TrackerPage.vue")
+        path: "tracker"
       },
       {
-        path: "shop",
+        component: () => import("@/pages/shop/ShopPage.vue"),
         name: "shop",
-        component: () => import("@/pages/shop/ShopPage.vue")
+        path: "shop"
       },
       {
-        path: "item",
+        component: () => import("@/pages/shop/ItemPage.vue"),
         name: "item",
-        component: () => import("@/pages/shop/ItemPage.vue")
+        path: "item"
       },
       {
-        path: "npc",
+        component: () => import("@/pages/npc/NpcPage.vue"),
         name: "npc",
-        component: () => import("@/pages/npc/NpcPage.vue")
+        path: "npc"
       },
       {
-        path: "character",
+        component: () => import("@/pages/npc/CharacterPage.vue"),
         name: "character",
-        component: () => import("@/pages/npc/CharacterPage.vue")
+        path: "character"
       },
       {
-        path: "creature",
+        component: () => import("@/pages/creature/CreaturePage.vue"),
         name: "creature",
-        component: () => import("@/pages/creature/CreaturePage.vue")
+        path: "creature"
       },
       {
-        path: "city",
+        component: () => import("@/pages/city/CityPage.vue"),
         name: "city",
-        component: () => import("@/pages/city/CityPage.vue")
+        path: "city"
       },
       {
-        path: "license",
+        component: () => import("@/pages/LicensePage.vue"),
         name: "license",
-        component: () => import("@/pages/LicensePage.vue")
+        path: "license"
       }
-    ]
+    ],
+    component: () => import("@/layouts/MainLayout.vue"),
+    path: "/"
   },
   {
     path: "/:game(pf|sf)",
@@ -85,7 +85,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/:game(pf|sf)/:page",
     redirect: to => ({
-      path: `/${to.params.page as string}`,
+      path: `/${String(to.params.page)}`,
       query: {
         ...to.query,
         game: to.params.game
@@ -93,8 +93,8 @@ const routes: RouteRecordRaw[] = [
     })
   },
   {
-    path: "/:catchAll(.*)*",
-    component: () => import("@/pages/ErrorNotFound.vue")
+    component: () => import("@/pages/ErrorNotFound.vue"),
+    path: "/:catchAll(.*)*"
   }
 ];
 

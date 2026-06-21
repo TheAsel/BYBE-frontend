@@ -16,49 +16,55 @@ import type { hazard } from "@/types/hazard";
 const title = ref("Hazard Sheet - BYBE");
 
 useHead({
-  title: title,
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/hazard"
+      href: "https://bybe.app/hazard",
+      rel: "canonical"
     }
-  ]
+  ],
+  title
 });
 
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 const encounters = encounterStore();
-const settings = settingsStore();
+const settings_store = settingsStore();
 
 const hazardId = Number(route.query.id);
 
-let hazardData: hazard | undefined;
+let hazardData: hazard | null;
 try {
-  if (hazardId !== undefined && !Number.isNaN(hazardId)) {
-    hazardData = await requestHazardId(settings.game, hazardId);
+  if (hazardId && !Number.isNaN(hazardId)) {
+    hazardData = await requestHazardId(settings_store.game, hazardId);
     if (isNull(hazardData) || hazardData === undefined) {
       console.error("Missing hazard ID");
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Missing hazard ID",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
-      await router.push({ name: "encounter", query: { game: settings.game } });
+      await router.push({
+        name: "encounter",
+        query: { game: settings_store.game }
+      });
     } else {
-      title.value = hazardData?.core_hazard.essential.name + " - BYBE";
+      title.value = `${hazardData?.core_hazard.essential.name} - BYBE`;
       encounters.setSelectedHazard(hazardData);
     }
   } else {
     console.error("Invalid hazard ID");
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Invalid hazard ID",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
-    await router.push({ name: "encounter", query: { game: settings.game } });
+    await router.push({
+      name: "encounter",
+      query: { game: settings_store.game }
+    });
   }
 } catch (error) {
   console.error(error);

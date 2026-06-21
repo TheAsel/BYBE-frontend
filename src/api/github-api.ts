@@ -9,5 +9,6 @@ export async function requestRepoInfo(repo: string) {
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }

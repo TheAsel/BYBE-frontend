@@ -40,8 +40,8 @@ const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 
-const settings = settingsStore();
-const items = itemsStore();
+const settings_store = settingsStore();
+const items_store = itemsStore();
 
 const importShopDialog = ref(false);
 const importNameInput = ref();
@@ -62,24 +62,24 @@ const newShopRename = ref("");
 
 const removeShopDialog = ref(false);
 
-const tmpShop = ref<shop_list>(items.shops[items.activeShop]!);
-const shops = ref<string[]>(items.shops.map(shop => shop.name));
+const tmpShop = ref<shop_list>(items_store.shops[items_store.activeShop]!);
+const shops = ref<string[]>(items_store.shops.map(shop => shop.name));
 
 tmpShop.value = {
-  name: items.shops[items.activeShop]!.name,
-  items: items.shops[items.activeShop]!.items
+  items: items_store.shops[items_store.activeShop]!.items,
+  name: items_store.shops[items_store.activeShop]!.name
 };
 
-// save on shop list change
-watch(items, () => {
+// Save on shop list change
+watch(items_store, () => {
   tmpShop.value = {
-    name: items.shops[items.activeShop]!.name,
-    items: items.shops[items.activeShop]!.items
+    items: items_store.shops[items_store.activeShop]!.items,
+    name: items_store.shops[items_store.activeShop]!.name
   };
   saveChanges();
 });
 
-// read the "share" query and decode it
+// Read the "share" query and decode it
 const shareQuery =
   String(route.query.share) === "undefined" ||
   String(route.query.share) === "null"
@@ -93,7 +93,7 @@ const decodeData = async () => {
     importShopDialog.value = true;
     try {
       const decodedData = await decodeShopLink(encodedData.value);
-      if (decodedData === undefined) {
+      if (!decodedData) {
         importShopDialog.value = false;
         throw new TypeError("Error importing shop");
       }
@@ -103,10 +103,10 @@ const decodeData = async () => {
       importShopDialog.value = false;
       console.error(error);
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Error importing shop",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     }
     isGenerating.value = false;
@@ -114,7 +114,7 @@ const decodeData = async () => {
 };
 await decodeData();
 
-// clean and check the link for manual app import
+// Clean and check the link for manual app import
 const sharedLink = ref("");
 const cleanLink = async () => {
   try {
@@ -123,10 +123,10 @@ const cleanLink = async () => {
     if (path !== route.path) {
       closeDialog();
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Invalid page for this link",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
       throw new Error("Invalid page for this link");
     }
@@ -134,10 +134,10 @@ const cleanLink = async () => {
     if (share === null || share === "") {
       closeDialog();
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Missing share hash",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
       throw new TypeError("Missing share code");
     }
@@ -149,32 +149,32 @@ const cleanLink = async () => {
   }
 };
 
-// clean the url from queries
+// Clean the url from queries
 await router.replace({
   path: route.path,
-  query: { game: settings.game }
+  query: { game: settings_store.game }
 });
 
-// open the share dialog and generate the shareable link
+// Open the share dialog and generate the shareable link
 const openShare = async () => {
   isGenerating.value = true;
   shareDialog.value = true;
-  const shopList = items.shops[items.activeShop]!.items;
+  const shopList = items_store.shops[items_store.activeShop]!.items;
   const body: shareable_shop = {
-    shop_name: items.shops[items.activeShop]?.name
-      ? items.shops[items.activeShop]!.name
-      : "Default",
-    items_data: []
+    items_data: [],
+    shop_name: items_store.shops[items_store.activeShop]?.name
+      ? items_store.shops[items_store.activeShop]!.name
+      : "Default"
   };
 
   for (const item of shopList) {
     if (item.game !== "pf" && item.game !== "sf") {
       shareDialog.value = false;
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "This legacy list cannot be shared",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
       return;
     }
@@ -183,37 +183,35 @@ const openShare = async () => {
     const tmp_game: games = item.game;
 
     body.items_data.push({
+      game: tmp_game,
       id: item.id,
-      qty: tmp_qty,
-      game: tmp_game
+      qty: tmp_qty
     });
   }
 
   try {
     const shareableLink = await generateShopLink(body);
     if (typeof shareableLink === "string") {
-      shareUrl.value =
-        "https://bybe.app/shop?game=" +
-        settings.game +
-        "&share=" +
-        shareableLink;
+      shareUrl.value = `https://bybe.app/shop?game=${
+        settings_store.game
+      }&share=${shareableLink}`;
     } else {
       shareDialog.value = false;
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Error generating shared link",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     }
   } catch (error) {
     shareDialog.value = false;
     console.error(error);
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Error generating shared link",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
   }
   isGenerating.value = false;
@@ -223,37 +221,64 @@ const importShop = async () => {
   importNameInput.value.validate();
   if (!importNameInput.value.hasError) {
     const tmp_items: min_item[] = [];
-    for (const item of importShopData.value?.items_data ?? []) {
-      try {
-        const fetchedItemData = await requestItemId(item.game, item.id);
 
-        if (fetchedItemData !== undefined) {
-          tmp_items.push({
-            game: item.game,
-            id: item.id,
-            archive_link:
-              "https://2e." +
-              getGameAonLink(item.game) +
-              ".com/search?q=" +
-              encodeURIComponent(fetchedItemData.core_item.name) +
-              "&type=eqs",
-            name: fetchedItemData.core_item.name,
-            level: fetchedItemData.core_item.level,
-            type: fetchedItemData.core_item.item_type,
-            price: fetchedItemData.core_item.price,
-            quantity: item.qty
-          });
+    const results = await Promise.all(
+      (importShopData.value?.items_data ?? []).map(
+        async (
+          item
+        ): Promise<{ success: true; item: min_item } | { success: false }> => {
+          try {
+            const fetchedItemData = await requestItemId(item.game, item.id);
+            if (!fetchedItemData) {
+              console.error("Missing item ID");
+              return { success: false };
+            }
+            return {
+              item: {
+                archive_link: `https://2e.${getGameAonLink(
+                  item.game
+                )}.com/search?q=${encodeURIComponent(
+                  fetchedItemData.core_item.name
+                )}&type=eqs`,
+                game: item.game,
+                id: item.id,
+                level: fetchedItemData.core_item.level,
+                name: fetchedItemData.core_item.name,
+                price: fetchedItemData.core_item.price,
+                quantity: item.qty,
+                type: fetchedItemData.core_item.item_type
+              },
+              success: true
+            };
+          } catch (error) {
+            console.error(error);
+            return { success: false };
+          }
         }
-      } catch (error) {
-        console.error(error);
-      }
+      )
+    );
+
+    if (results.some(i => !i.success)) {
+      $q.notify({
+        icon: matPriorityHigh,
+        message: "Some items could not be loaded",
+        progress: true,
+        type: "warning"
+      });
     }
-    items.addShop(importShopName.value);
-    shops.value = items.shops.map(shop => shop.name);
-    items.updateShop(importShopName.value, tmp_items);
+
+    tmp_items.push(
+      ...results
+        .filter((i): i is Extract<typeof i, { success: true }> => i.success)
+        .map(c => c.item)
+    );
+
+    items_store.addShop(importShopName.value);
+    shops.value = items_store.shops.map(shop => shop.name);
+    items_store.updateShop(importShopName.value, tmp_items);
     tmpShop.value = {
-      name: items.shops[items.activeShop]!.name,
-      items: [...items.shops[items.activeShop]!.items]
+      items: [...items_store.shops[items_store.activeShop]!.items],
+      name: items_store.shops[items_store.activeShop]!.name
     };
     saveChanges();
     importShopName.value = "";
@@ -275,11 +300,11 @@ const closeDialog = () => {
 const addShop = () => {
   shopNameInput.value.validate();
   if (!shopNameInput.value.hasError) {
-    items.addShop(newShopName.value);
-    shops.value = items.shops.map(shop => shop.name);
+    items_store.addShop(newShopName.value);
+    shops.value = items_store.shops.map(shop => shop.name);
     tmpShop.value = {
-      name: items.shops[items.activeShop]!.name,
-      items: [...items.shops[items.activeShop]!.items]
+      items: [...items_store.shops[items_store.activeShop]!.items],
+      name: items_store.shops[items_store.activeShop]!.name
     };
     saveChanges();
     newShopName.value = "";
@@ -290,11 +315,11 @@ const addShop = () => {
 const renameShop = () => {
   shopRenameInput.value.validate();
   if (!shopRenameInput.value.hasError) {
-    items.shops[items.activeShop]!.name = newShopRename.value;
-    shops.value = items.shops.map(shop => shop.name);
+    items_store.shops[items_store.activeShop]!.name = newShopRename.value;
+    shops.value = items_store.shops.map(shop => shop.name);
     tmpShop.value = {
-      name: items.shops[items.activeShop]!.name,
-      items: [...items.shops[items.activeShop]!.items]
+      items: [...items_store.shops[items_store.activeShop]!.items],
+      name: items_store.shops[items_store.activeShop]!.name
     };
     saveChanges();
     newShopRename.value = "";
@@ -303,42 +328,42 @@ const renameShop = () => {
 };
 
 const removeShop = () => {
-  items.removeShop();
-  shops.value = items.shops.map(shop => shop.name);
+  items_store.removeShop();
+  shops.value = items_store.shops.map(shop => shop.name);
   tmpShop.value = {
-    name: items.shops[items.activeShop]!.name,
-    items: [...items.shops[items.activeShop]!.items]
+    items: [...items_store.shops[items_store.activeShop]!.items],
+    name: items_store.shops[items_store.activeShop]!.name
   };
   saveChanges();
   removeShopDialog.value = false;
 };
 
 const changeActiveShop = (selected: string) => {
-  items.changeActiveShop(items.getShopIndex(selected));
+  items_store.changeActiveShop(items_store.getShopIndex(selected));
   tmpShop.value = {
-    name: items.shops[items.activeShop]!.name,
-    items: [...items.shops[items.activeShop]!.items]
+    items: [...items_store.shops[items_store.activeShop]!.items],
+    name: items_store.shops[items_store.activeShop]!.name
   };
 };
 
 const saveChanges = () => {
-  items.updateShop(tmpShop.value.name, tmpShop.value.items);
-  localStorage.setItem("shops", JSON.stringify(items.shops));
+  items_store.updateShop(tmpShop.value.name, tmpShop.value.items);
+  localStorage.setItem("shops", JSON.stringify(items_store.shops));
 };
 
-const showItem = debounce(async function (item: min_item) {
+const showItem = debounce(async (item: min_item) => {
   try {
     const itemData = await requestItemId(item.game, item.id);
     if (isNull(itemData) || itemData === undefined) {
       console.error("Missing item ID");
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Missing item ID",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     } else {
-      items.setSelectedItem(itemData);
+      items_store.setSelectedItem(itemData);
     }
   } catch (error) {
     console.error(error);
@@ -683,15 +708,20 @@ const showItem = debounce(async function (item: min_item) {
             label="Shops"
             @update:model-value="changeActiveShop(tmpShop.name)"
           />
-          <q-btn flat dense aria-label="Clear shop" @click="items.clearShop"
+          <q-btn
+            flat
+            dense
+            aria-label="Clear shop"
+            @click="items_store.clearShop"
             >CLEAR</q-btn
           >
         </div>
       </q-header>
-      <q-page-container v-if="items.generating === false">
+      <q-page-container v-if="items_store.generating === false">
         <q-page class="tw:min-h-auto!">
           <div
-            v-for="(item, index) in items.shops[items.activeShop]!.items"
+            v-for="(item, index) in items_store.shops[items_store.activeShop]!
+              .items"
             :key="index"
           >
             <div class="tw:flex">
@@ -703,7 +733,7 @@ const showItem = debounce(async function (item: min_item) {
                   class="q-px-md"
                   :icon="biPlus"
                   aria-label="Add item"
-                  @click="items.addToShop(item, index)"
+                  @click="items_store.addToShop(item, index)"
                 />
                 <q-btn
                   unelevated
@@ -712,7 +742,7 @@ const showItem = debounce(async function (item: min_item) {
                   class="q-px-md"
                   :icon="biDash"
                   aria-label="Remove item"
-                  @click="items.removeFromShop(index)"
+                  @click="items_store.removeFromShop(index)"
                 />
               </div>
               <div
@@ -734,7 +764,7 @@ const showItem = debounce(async function (item: min_item) {
                       openSheet(
                         router,
                         'item',
-                        item.game ?? settings.game,
+                        item.game ?? settings_store.game,
                         item.id
                       )
                     "
@@ -764,7 +794,7 @@ const showItem = debounce(async function (item: min_item) {
                       openSheet(
                         router,
                         'item',
-                        item.game ?? settings.game,
+                        item.game ?? settings_store.game,
                         item.id
                       )
                     "
@@ -794,7 +824,7 @@ const showItem = debounce(async function (item: min_item) {
                       openSheet(
                         router,
                         'item',
-                        item.game ?? settings.game,
+                        item.game ?? settings_store.game,
                         item.id
                       )
                     "
@@ -820,7 +850,7 @@ const showItem = debounce(async function (item: min_item) {
                       openSheet(
                         router,
                         'item',
-                        item.game ?? settings.game,
+                        item.game ?? settings_store.game,
                         item.id
                       )
                     "
@@ -850,7 +880,7 @@ const showItem = debounce(async function (item: min_item) {
                       openSheet(
                         router,
                         'item',
-                        item.game ?? settings.game,
+                        item.game ?? settings_store.game,
                         item.id
                       )
                     "
@@ -884,9 +914,9 @@ const showItem = debounce(async function (item: min_item) {
                 </div>
                 <div class="tw:shrink tw:text-nowrap tw:my-auto tw:mx-1">
                   {{
-                    items.getFormattedPrice(
+                    items_store.getFormattedPrice(
                       item.price * item.quantity!,
-                      settings.game
+                      settings_store.game
                     )
                   }}
                 </div>
@@ -901,7 +931,7 @@ const showItem = debounce(async function (item: min_item) {
                   :icon="biTrash"
                   round
                   aria-label="Clear item"
-                  @click="items.clearItem(item)"
+                  @click="items_store.clearItem(item)"
                 />
               </div>
             </div>
@@ -926,7 +956,12 @@ const showItem = debounce(async function (item: min_item) {
             class="text-subtitle1 font-bold tw:whitespace-nowrap tw:py-2.5 tw:pr-4"
           >
             Total cost:
-            {{ items.getFormattedPrice(items.getTotalCost, settings.game) }}
+            {{
+              items_store.getFormattedPrice(
+                items_store.getTotalCost,
+                settings_store.game
+              )
+            }}
           </div>
         </div>
       </q-footer>

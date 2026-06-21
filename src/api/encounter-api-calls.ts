@@ -31,20 +31,21 @@ export async function requestCreatures(
   try {
     const url = buildUrl(import.meta.env.API_URL, [game, "bestiary", "list"], {
       cursor: String(cursor),
+      order_by,
       page_size: String(page_size === 0 ? -1 : page_size),
-      sort_by,
-      order_by
+      sort_by
     });
     return await apiFetch<creature_response>(url, {
-      method: "POST",
+      body: JSON.stringify(body),
       headers: {
-        accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        accept: "application/json"
       },
-      body: JSON.stringify(body)
+      method: "POST"
     });
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -59,20 +60,21 @@ export async function requestHazards(
   try {
     const url = buildUrl(import.meta.env.API_URL, [game, "hazard", "list"], {
       cursor: String(cursor),
+      order_by,
       page_size: String(page_size === 0 ? -1 : page_size),
-      sort_by,
-      order_by
+      sort_by
     });
     return await apiFetch<hazard_response>(url, {
-      method: "POST",
+      body: JSON.stringify(body),
       headers: {
-        accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        accept: "application/json"
       },
-      body: JSON.stringify(body)
+      method: "POST"
     });
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -94,6 +96,7 @@ export async function requestFilters(
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -107,6 +110,7 @@ export async function requestHazardFilters(
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -117,6 +121,7 @@ export async function requestCreatureRanges(game: games) {
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -127,6 +132,7 @@ export async function requestHazardRanges(game: games) {
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -142,16 +148,17 @@ export async function requestCreatureId(
         import.meta.env.API_URL,
         [game, "bestiary", variant.toLowerCase(), String(creature_id)],
         {
-          extra_data: "true",
           combat_data: "true",
-          spellcasting_data: "true",
-          is_pwl_on: is_pwl_on
+          extra_data: "true",
+          is_pwl_on,
+          spellcasting_data: "true"
         }
       )
     );
     return data.results;
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -163,6 +170,7 @@ export async function requestHazardId(game: games, hazard_id: number) {
     return data.results;
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -171,16 +179,17 @@ export async function encounterInfo(game: games, encounter: encounter_info) {
     return await apiFetch<encounter>(
       buildUrl(import.meta.env.API_URL, [game, "encounter", "info"]),
       {
-        method: "POST",
+        body: JSON.stringify(encounter),
         headers: {
-          accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          accept: "application/json"
         },
-        body: JSON.stringify(encounter)
+        method: "POST"
       }
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -189,16 +198,17 @@ export async function encounterGenerator(game: games, body: encounter_data) {
     return await apiFetch<random_encounter>(
       buildUrl(import.meta.env.API_URL, [game, "encounter", "generator"]),
       {
-        method: "POST",
+        body: JSON.stringify(body),
         headers: {
-          accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          accept: "application/json"
         },
-        body: JSON.stringify(body)
+        method: "POST"
       }
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -207,16 +217,17 @@ export async function generateEncounterLink(body: shareable_encounter) {
     return await apiFetchText(
       buildUrl(import.meta.env.API_URL, ["shareable", "encounter", "encode"]),
       {
-        method: "POST",
+        body: JSON.stringify(body),
         headers: {
-          accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          accept: "application/json"
         },
-        body: JSON.stringify(body)
+        method: "POST"
       }
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -232,5 +243,6 @@ export async function decodeEncounterLink(encoded_data: string) {
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }

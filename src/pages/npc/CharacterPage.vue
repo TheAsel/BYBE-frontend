@@ -13,36 +13,36 @@ import { updateLocalStorageNpcs } from "@/utils/local-storage";
 const title = ref("NPC Sheet - BYBE");
 
 useHead({
-  title: title,
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/character"
+      href: "https://bybe.app/character",
+      rel: "canonical"
     }
-  ]
+  ],
+  title
 });
 
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
-const npcs = npcStore();
-const settings = settingsStore();
+const npc_store = npcStore();
+const settings_store = settingsStore();
 
 const npcId = Number(route.query.id);
 
 updateLocalStorageNpcs();
 
-if (Number.isNaN(npcId) || npcId < 0 || npcId >= npcs.npcs.length) {
+if (Number.isNaN(npcId) || npcId < 0 || npcId >= npc_store.npcs.length) {
   console.error("Missing NPC ID");
   $q.notify({
-    progress: true,
-    type: "warning",
+    icon: matPriorityHigh,
     message: "Missing NPC ID",
-    icon: matPriorityHigh
+    progress: true,
+    type: "warning"
   });
-  await router.push({ name: "npc", query: { game: settings.game } });
+  await router.push({ name: "npc", query: { game: settings_store.game } });
 } else {
-  npcs.setActiveNpc(npcId);
+  npc_store.setActiveNpc(npcId);
 }
 
 const printPage = () => {

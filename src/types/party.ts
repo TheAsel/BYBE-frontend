@@ -1,7 +1,7 @@
-export type party = {
+export interface party {
   name: string;
   size?: number | undefined;
   level?: number | undefined;
   advanced?: boolean | undefined;
   members: number[];
-};
+}

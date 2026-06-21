@@ -6,12 +6,12 @@ import HazardSheet from "@/components/encounter/EncounterSheet/HazardSheet.vue";
 import { encounterStore } from "@/stores/encounter";
 import { trackerStore } from "@/stores/tracker";
 
-const encounter = encounterStore();
-const tracker = trackerStore();
+const encounter_store = encounterStore();
+const tracker_store = trackerStore();
 
-watch(tracker, async () => {
-  encounter.selectedCreature = tracker.selectedCreature;
-  encounter.selectedHazard = tracker.selectedHazard;
+watch(tracker_store, async () => {
+  encounter_store.selectedCreature = tracker_store.selectedCreature;
+  encounter_store.selectedHazard = tracker_store.selectedHazard;
 });
 </script>
 
@@ -23,20 +23,23 @@ watch(tracker, async () => {
       <q-scroll-area class="tw:h-full">
         <div
           v-if="
-            (encounter.selectedCreature &&
-              encounter.selectedCreature.core_data) ||
-            (encounter.selectedHazard && encounter.selectedHazard.core_hazard)
+            (encounter_store.selectedCreature &&
+              encounter_store.selectedCreature.core_data) ||
+            (encounter_store.selectedHazard &&
+              encounter_store.selectedHazard.core_hazard)
           "
           class="q-gutter-y-xs tw:p-4 show-print"
         >
           <BestiarySheet
             v-if="
-              encounter.selectedCreature && encounter.selectedCreature.core_data
+              encounter_store.selectedCreature &&
+              encounter_store.selectedCreature.core_data
             "
           />
           <HazardSheet
             v-if="
-              encounter.selectedHazard && encounter.selectedHazard.core_hazard
+              encounter_store.selectedHazard &&
+              encounter_store.selectedHazard.core_hazard
             "
           />
         </div>

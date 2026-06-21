@@ -16,13 +16,13 @@ import {
 
 const router = useRouter();
 
-const settings = settingsStore();
-const items = itemsStore();
+const settings_store = settingsStore();
+const items_store = itemsStore();
 
-const selectedItem = computed(() => items.selectedItem);
+const selectedItem = computed(() => items_store.selectedItem);
 const coreItem = computed(() => selectedItem.value?.core_item);
 const weaponData = computed(() => selectedItem.value?.weapon_data);
-const game = computed(() => selectedItem.value?.game ?? settings.game);
+const game = computed(() => selectedItem.value?.game ?? settings_store.game);
 </script>
 
 <template>
@@ -89,7 +89,7 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
         round
         dense
         aria-label="Remove selected item"
-        @click="items.removeSelectedItem()"
+        @click="items_store.removeSelectedItem()"
       />
     </div>
   </div>
@@ -215,7 +215,7 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <strong>Price</strong>
-      {{ items.getFormattedPrice(coreItem.price, settings.game) }};
+      {{ items_store.getFormattedPrice(coreItem.price, settings_store.game) }};
       <span v-if="weaponData?.damage_data[0]?.dice">
         <strong>Damage</strong>
         {{ weaponData.damage_data[0].dice.n_of_dices }}d{{
@@ -224,12 +224,12 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
         {{ weaponData.damage_data[0].dmg_type }};
       </span>
       <strong>Bulk</strong>
-      {{ items.getFormattedBulk(coreItem.bulk) }}
+      {{ items_store.getFormattedBulk(coreItem.bulk) }}
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <span v-if="coreItem.usage">
         <strong>Hands</strong>
-        {{ items.getFormattedUsage(coreItem.usage) }};
+        {{ items_store.getFormattedUsage(coreItem.usage) }};
       </span>
       <span v-if="weaponData?.range?.value">
         <strong>Range</strong>

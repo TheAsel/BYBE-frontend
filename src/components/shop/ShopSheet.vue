@@ -5,7 +5,7 @@ import ShieldSheet from "@/components/shop/ShopSheet/ShieldSheet.vue";
 import WeaponSheet from "@/components/shop/ShopSheet/WeaponSheet.vue";
 import { itemsStore } from "@/stores/items";
 
-const items = itemsStore();
+const items_store = itemsStore();
 </script>
 
 <template>
@@ -15,23 +15,23 @@ const items = itemsStore();
     >
       <q-scroll-area class="tw:h-full">
         <div
-          v-if="items.selectedItem && items.selectedItem.core_item"
+          v-if="items_store.selectedItem && items_store.selectedItem.core_item"
           class="q-gutter-y-xs tw:p-4 show-print"
         >
           <ArmorSheet
-            v-if="items.selectedItem.core_item.item_type === 'Armor'"
+            v-if="items_store.selectedItem.core_item.item_type === 'Armor'"
           />
           <ItemSheet
             v-if="
-              items.selectedItem.core_item.item_type === 'Consumable' ||
-              items.selectedItem.core_item.item_type === 'Equipment'
+              items_store.selectedItem.core_item.item_type === 'Consumable' ||
+              items_store.selectedItem.core_item.item_type === 'Equipment'
             "
           />
           <ShieldSheet
-            v-if="items.selectedItem.core_item.item_type === 'Shield'"
+            v-if="items_store.selectedItem.core_item.item_type === 'Shield'"
           />
           <WeaponSheet
-            v-if="items.selectedItem.core_item.item_type === 'Weapon'"
+            v-if="items_store.selectedItem.core_item.item_type === 'Weapon'"
           />
         </div>
         <div v-else class="tw:text-center tw:text-lg tw:pt-[38vh]">

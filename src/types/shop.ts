@@ -1,21 +1,21 @@
 import type { games } from "@/types/filters";
 import type { min_item } from "@/types/item";
 
-export type shop_list = {
+export interface shop_list {
   name: string;
   items: min_item[];
-};
+}
 
-export type shareable_shop = {
+export interface shareable_shop {
   shop_name: string;
   items_data: {
     id: number;
     qty: number;
     game: games;
   }[];
-};
+}
 
-export type shop_data = {
+export interface shop_data {
   source_filter: string[] | null;
   trait_blacklist_filter: string[] | null;
   trait_whitelist_filter: string[] | null;
@@ -37,4 +37,4 @@ export type shop_data = {
   max_level: number;
   shop_template?: string;
   game_system_version: string;
-};
+}

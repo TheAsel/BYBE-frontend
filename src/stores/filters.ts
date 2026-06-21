@@ -7,75 +7,29 @@ import type {
   shop_ranges
 } from "@/types/filters";
 
-export const filtersStore = defineStore("filters", {
-  state: () => ({
-    creatureFilters: {
-      traits: [] as string[],
-      alignments: [] as string[],
-      sizes: [] as string[],
-      rarities: [] as string[],
-      families: [] as string[],
-      creature_types: [] as string[],
-      sources: [] as string[],
-      creature_roles: [] as string[]
-    },
-    creatureRanges: {} as bestiary_ranges,
-    hazardFilters: {
-      traits: [] as string[],
-      complexities: [] as string[],
-      sizes: [] as string[],
-      rarities: [] as string[],
-      sources: [] as string[]
-    },
-    hazardRanges: {} as hazard_ranges,
-    itemFilters: {
-      sources: [] as string[],
-      traits: [{}] as { label: string; value: string }[]
-    },
-    shopRanges: {} as shop_ranges
-  }),
+export const filtersStore = defineStore("filters_store", {
   actions: {
-    updateTraits(newTraits: string[]) {
-      this.creatureFilters.traits = newTraits.map(trait => {
-        return capitalize(trait);
-      });
-    },
     updateAlignments(newAlignments: string[]) {
       this.creatureFilters.alignments = newAlignments;
-    },
-    updateSizes(newSizes: string[]) {
-      newSizes.reverse();
-      this.creatureFilters.sizes = newSizes;
-    },
-    updateRarities(newRarities: string[]) {
-      this.creatureFilters.rarities = newRarities;
-    },
-    updateFamilies(newFamilies: string[]) {
-      this.creatureFilters.families = newFamilies;
     },
     updateCreatureType(newCreatureType: string[]) {
       this.creatureFilters.creature_types = newCreatureType;
     },
-    updateSources(newSources: string[]) {
-      this.creatureFilters.sources = newSources;
+    updateFamilies(newFamilies: string[]) {
+      this.creatureFilters.families = newFamilies;
     },
-    updateRoles(newRoles: string[]) {
-      this.creatureFilters.creature_roles = newRoles;
-    },
-    updateHazardTraits(newTraits: string[]) {
-      this.hazardFilters.traits = newTraits.map(trait => {
-        return capitalize(trait);
-      });
+    updateHazardRarities(newRarities: string[]) {
+      this.hazardFilters.rarities = newRarities;
     },
     updateHazardSizes(newSizes: string[]) {
       newSizes.reverse();
       this.hazardFilters.sizes = newSizes;
     },
-    updateHazardRarities(newRarities: string[]) {
-      this.hazardFilters.rarities = newRarities;
-    },
     updateHazardSources(newSources: string[]) {
       this.hazardFilters.sources = newSources;
+    },
+    updateHazardTraits(newTraits: string[]) {
+      this.hazardFilters.traits = newTraits.map(trait => capitalize(trait));
     },
     updateItemSources(newSources: string[]) {
       this.itemFilters.sources = newSources;
@@ -89,6 +43,113 @@ export const filtersStore = defineStore("filters", {
           .replace("Additive", "Additive "),
         value: trait
       }));
+    },
+    updateRarities(newRarities: string[]) {
+      this.creatureFilters.rarities = newRarities;
+    },
+    updateRoles(newRoles: string[]) {
+      this.creatureFilters.creature_roles = newRoles;
+    },
+    updateSizes(newSizes: string[]) {
+      newSizes.reverse();
+      this.creatureFilters.sizes = newSizes;
+    },
+    updateSources(newSources: string[]) {
+      this.creatureFilters.sources = newSources;
+    },
+    updateTraits(newTraits: string[]) {
+      this.creatureFilters.traits = newTraits.map(trait => capitalize(trait));
     }
-  }
+  },
+  state: (): {
+    creatureFilters: {
+      traits: string[];
+      alignments: string[];
+      sizes: string[];
+      rarities: string[];
+      families: string[];
+      creature_types: string[];
+      sources: string[];
+      creature_roles: string[];
+    };
+    creatureRanges: bestiary_ranges;
+    hazardFilters: {
+      traits: string[];
+      complexities: string[];
+      sizes: string[];
+      rarities: string[];
+      sources: string[];
+    };
+    hazardRanges: hazard_ranges;
+    itemFilters: {
+      sources: string[];
+      traits: {
+        label: string;
+        value: string;
+      }[];
+    };
+    shopRanges: shop_ranges;
+  } => ({
+    creatureFilters: {
+      alignments: [],
+      creature_roles: [],
+      creature_types: [],
+      families: [],
+      rarities: [],
+      sizes: [],
+      sources: [],
+      traits: []
+    },
+    creatureRanges: {
+      max_focus_points: 0,
+      max_hp: 0,
+      max_level: 0,
+      min_focus_points: 0,
+      min_hp: 0,
+      min_level: 0
+    },
+    hazardFilters: {
+      complexities: [],
+      rarities: [],
+      sizes: [],
+      sources: [],
+      traits: []
+    },
+    hazardRanges: {
+      max_ac: 0,
+      max_fortitude: 0,
+      max_hardness: 0,
+      max_hp: 0,
+      max_level: 0,
+      max_reflex: 0,
+      max_stealth: 0,
+      max_will: 0,
+      min_ac: 0,
+      min_fortitude: 0,
+      min_hardness: 0,
+      min_hp: 0,
+      min_level: 0,
+      min_reflex: 0,
+      min_stealth: 0,
+      min_will: 0
+    },
+    itemFilters: {
+      sources: [],
+      traits: []
+    },
+    shopRanges: {
+      max_bulk: 0,
+      max_hp: 0,
+      max_level: 0,
+      max_number_of_uses: 0,
+      max_price: 0,
+      max_quantity: 0,
+      min_bulk: 0,
+      min_hp: 0,
+      min_level: 0,
+      min_number_of_uses: 0,
+      min_price: 0,
+      min_quantity: 0
+    }
+  })
 });

@@ -2,61 +2,32 @@ import { defineStore } from "pinia";
 
 import type { npc, npc_list } from "@/types/npcs";
 
-export const npcStore = defineStore("npc", {
-  state: () => ({
-    npcs: [
-      {
-        name: "Default",
-        npc: {
-          level: -1,
-          gender: "",
-          ancestry: "",
-          culture: "",
-          class: "",
-          job: "",
-          name: "",
-          custom_fields: [{ name: "", body: "" }]
-        },
-        culture: false
-      }
-    ] as npc_list[],
-    activeNpc: 0,
-    generating: false,
-    locks: {
-      name: false,
-      nickname: false,
-      gender: false,
-      ancestry: false,
-      culture: false,
-      class: false,
-      job: false,
-      level: false
-    }
-  }),
+export const npcStore = defineStore("npc_store", {
   actions: {
-    setActiveNpc(newActiveNpc: number) {
-      this.activeNpc = newActiveNpc;
-    },
-    clearNpc() {
-      const tmpNpc: npc = {
-        level: -1,
-        gender: "",
-        ancestry: "",
-        culture: "",
-        class: "",
-        job: "",
-        name: "",
-        nickname: "",
-        languages: "",
-        description: "",
-        personality: "",
-        quirk: "",
-        relationships: "",
-        ideology: "",
-        custom_fields: [{ name: "", body: "" }],
-        game: "pf"
-      };
-      this.npcs[this.activeNpc]!.npc = tmpNpc;
+    addNpc(npcName: string) {
+      this.npcs.push({
+        culture: false,
+        name: npcName,
+        npc: {
+          ancestry: "",
+          class: "",
+          culture: "",
+          custom_fields: [{ body: "", name: "" }],
+          description: "",
+          game: "pf",
+          gender: "",
+          ideology: "",
+          job: "",
+          languages: "",
+          level: -1,
+          name: "",
+          nickname: "",
+          personality: "",
+          quirk: "",
+          relationships: ""
+        }
+      });
+      this.activeNpc = this.npcs.length - 1;
     },
     changeActiveNpc(npcIndex: number) {
       if (npcIndex >= this.npcs.length || npcIndex < 0) {
@@ -65,30 +36,29 @@ export const npcStore = defineStore("npc", {
         this.activeNpc = npcIndex;
       }
     },
-    addNpc(npcName: string) {
-      this.npcs.push({
-        name: npcName,
-        npc: {
-          level: -1,
-          gender: "",
-          ancestry: "",
-          culture: "",
-          class: "",
-          job: "",
-          name: "",
-          nickname: "",
-          languages: "",
-          description: "",
-          personality: "",
-          quirk: "",
-          relationships: "",
-          ideology: "",
-          custom_fields: [{ name: "", body: "" }],
-          game: "pf"
-        },
-        culture: false
-      });
-      this.activeNpc = this.npcs.length - 1;
+    clearNpc() {
+      const tmpNpc: npc = {
+        ancestry: "",
+        class: "",
+        culture: "",
+        custom_fields: [{ body: "", name: "" }],
+        description: "",
+        game: "pf",
+        gender: "",
+        ideology: "",
+        job: "",
+        languages: "",
+        level: -1,
+        name: "",
+        nickname: "",
+        personality: "",
+        quirk: "",
+        relationships: ""
+      };
+      this.npcs[this.activeNpc]!.npc = tmpNpc;
+    },
+    getNpcIndex(npcName: string): number {
+      return this.npcs.map(npc => npc.name).indexOf(npcName);
     },
     removeNpc() {
       this.npcs.splice(this.activeNpc, 1);
@@ -96,32 +66,35 @@ export const npcStore = defineStore("npc", {
       if (this.npcs.length <= 0) {
         this.npcs = [
           {
+            culture: false,
             name: "Default",
             npc: {
-              level: -1,
-              gender: "",
               ancestry: "",
-              culture: "",
               class: "",
+              culture: "",
+              custom_fields: [{ body: "", name: "" }],
+              description: "",
+              game: "pf",
+              gender: "",
+              ideology: "",
               job: "",
+              languages: "",
+              level: -1,
               name: "",
               nickname: "",
-              languages: "",
-              description: "",
               personality: "",
               quirk: "",
-              relationships: "",
-              ideology: "",
-              custom_fields: [{ name: "", body: "" }],
-              game: "pf"
-            },
-            culture: false
+              relationships: ""
+            }
           }
         ];
       }
     },
-    getNpcIndex(npcName: string): number {
-      return this.npcs.map(npc => npc.name).indexOf(npcName);
+    setActiveNpc(newActiveNpc: number) {
+      this.activeNpc = newActiveNpc;
+    },
+    setGenerating(newGenerating: boolean) {
+      this.generating = newGenerating;
     },
     updateNpc(npcName: string, newNpc: npc) {
       const npcIndex = this.getNpcIndex(npcName);
@@ -131,9 +104,58 @@ export const npcStore = defineStore("npc", {
     },
     updateNpcs(newNpcs: npc_list[]) {
       this.npcs = newNpcs;
-    },
-    setGenerating(newGenerating: boolean) {
-      this.generating = newGenerating;
     }
-  }
+  },
+  state: (): {
+    npcs: npc_list[];
+    activeNpc: number;
+    generating: boolean;
+    locks: {
+      name: boolean;
+      nickname: boolean;
+      gender: boolean;
+      ancestry: boolean;
+      culture: boolean;
+      class: boolean;
+      job: boolean;
+      level: boolean;
+    };
+  } => ({
+    activeNpc: 0,
+    generating: false,
+    locks: {
+      ancestry: false,
+      class: false,
+      culture: false,
+      gender: false,
+      job: false,
+      level: false,
+      name: false,
+      nickname: false
+    },
+    npcs: [
+      {
+        culture: false,
+        name: "Default",
+        npc: {
+          ancestry: "",
+          class: "",
+          culture: "",
+          custom_fields: [{ name: "", body: "" }],
+          description: "",
+          game: "pf",
+          gender: "",
+          ideology: "",
+          job: "",
+          languages: "",
+          level: -1,
+          name: "",
+          nickname: "",
+          personality: "",
+          quirk: "",
+          relationships: ""
+        }
+      }
+    ]
+  })
 });

@@ -3,7 +3,7 @@ import BestiarySheet from "@/components/encounter/EncounterSheet/BestiarySheet.v
 import HazardSheet from "@/components/encounter/EncounterSheet/HazardSheet.vue";
 import { encounterStore } from "@/stores/encounter";
 
-const encounter = encounterStore();
+const encounter_store = encounterStore();
 </script>
 
 <template>
@@ -14,20 +14,23 @@ const encounter = encounterStore();
       <q-scroll-area class="tw:h-full">
         <div
           v-if="
-            (encounter.selectedCreature &&
-              encounter.selectedCreature.core_data) ||
-            (encounter.selectedHazard && encounter.selectedHazard.core_hazard)
+            (encounter_store.selectedCreature &&
+              encounter_store.selectedCreature.core_data) ||
+            (encounter_store.selectedHazard &&
+              encounter_store.selectedHazard.core_hazard)
           "
           class="q-gutter-y-xs tw:p-4 show-print"
         >
           <BestiarySheet
             v-if="
-              encounter.selectedCreature && encounter.selectedCreature.core_data
+              encounter_store.selectedCreature &&
+              encounter_store.selectedCreature.core_data
             "
           />
           <HazardSheet
             v-if="
-              encounter.selectedHazard && encounter.selectedHazard.core_hazard
+              encounter_store.selectedHazard &&
+              encounter_store.selectedHazard.core_hazard
             "
           />
         </div>

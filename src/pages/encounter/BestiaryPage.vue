@@ -17,75 +17,79 @@ import type { variants } from "@/types/filters";
 const title = ref("Bestiary Sheet - BYBE");
 
 useHead({
-  title: title,
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/bestiary"
+      href: "https://bybe.app/bestiary",
+      rel: "canonical"
     }
-  ]
+  ],
+  title
 });
 
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 const encounters = encounterStore();
-const settings = settingsStore();
+const settings_store = settingsStore();
 
 const creatureId = Number(route.query.id);
 const queryVariant: string = String(route.query.variant).toLowerCase();
 const creatureVariant = ref<variants>("Base");
 
-let creatureData: creature | undefined;
+let creatureData: creature | null;
 try {
-  if (creatureId !== undefined && !Number.isNaN(creatureId)) {
+  if (creatureId && !Number.isNaN(creatureId)) {
     switch (queryVariant) {
-      case "weak":
+      case "weak": {
         creatureVariant.value = "Weak";
         creatureData = await requestCreatureId(
-          settings.game,
+          settings_store.game,
           creatureId,
           "Weak",
-          settings.is_pwl_on
+          settings_store.is_pwl_on
         );
         break;
-      case "elite":
+      }
+      case "elite": {
         creatureVariant.value = "Elite";
         creatureData = await requestCreatureId(
-          settings.game,
+          settings_store.game,
           creatureId,
           "Elite",
-          settings.is_pwl_on
+          settings_store.is_pwl_on
         );
         break;
-      default:
+      }
+      default: {
         creatureVariant.value = "Base";
         creatureData = await requestCreatureId(
-          settings.game,
+          settings_store.game,
           creatureId,
           "Base",
-          settings.is_pwl_on
+          settings_store.is_pwl_on
         );
         break;
+      }
     }
     if (isNull(creatureData) || creatureData === undefined) {
       console.error("Missing creature ID");
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Missing creature ID",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
-      await router.push({ name: "encounter", query: { game: settings.game } });
+      await router.push({
+        name: "encounter",
+        query: { game: settings_store.game }
+      });
     } else if (creatureVariant.value === "Base") {
-      title.value = creatureData?.core_data.essential.name + " - BYBE";
+      title.value = `${creatureData?.core_data.essential.name} - BYBE`;
       encounters.setSelectedCreature(creatureData);
     } else {
-      title.value =
-        creatureVariant.value +
-        " " +
-        creatureData?.core_data.essential.name +
-        " - BYBE";
+      title.value = `${creatureVariant.value} ${
+        creatureData?.core_data.essential.name
+      } - BYBE`;
       encounters.setSelectedCreature(creatureData);
     }
     if (creatureData?.combat_data?.weapons) {
@@ -122,12 +126,15 @@ try {
   } else {
     console.error("Invalid creature ID");
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Invalid creature ID",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
-    await router.push({ name: "encounter", query: { game: settings.game } });
+    await router.push({
+      name: "encounter",
+      query: { game: settings_store.game }
+    });
   }
 } catch (error) {
   console.error(error);

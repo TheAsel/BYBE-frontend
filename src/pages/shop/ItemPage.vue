@@ -16,49 +16,49 @@ import type { item } from "@/types/item";
 const title = ref("Item Sheet - BYBE");
 
 useHead({
-  title: title,
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/item"
+      href: "https://bybe.app/item",
+      rel: "canonical"
     }
-  ]
+  ],
+  title
 });
 
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
-const items = itemsStore();
-const settings = settingsStore();
+const items_store = itemsStore();
+const settings_store = settingsStore();
 
 const itemId = Number(route.query.id);
 
-let itemData: item | undefined;
+let itemData: item | null;
 try {
-  if (itemId !== undefined && !Number.isNaN(itemId)) {
-    itemData = await requestItemId(settings.game, itemId);
+  if (itemId && !Number.isNaN(itemId)) {
+    itemData = await requestItemId(settings_store.game, itemId);
     if (isNull(itemData) || itemData === undefined) {
       console.error("Missing item ID");
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Missing item ID",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
-      await router.push({ name: "shop", query: { game: settings.game } });
+      await router.push({ name: "shop", query: { game: settings_store.game } });
     } else {
-      title.value = itemData?.core_item.name + " - BYBE";
-      items.setSelectedItem(itemData);
+      title.value = `${itemData?.core_item.name} - BYBE`;
+      items_store.setSelectedItem(itemData);
     }
   } else {
     console.error("Invalid item ID");
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Invalid item ID",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
-    await router.push({ name: "shop", query: { game: settings.game } });
+    await router.push({ name: "shop", query: { game: settings_store.game } });
   }
 } catch (error) {
   console.error(error);

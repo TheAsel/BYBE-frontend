@@ -10,7 +10,6 @@ import { matPriorityHigh } from "@quasar/extras/material-icons";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 
-import { encounterStore } from "@/stores/encounter";
 import { settingsStore } from "@/stores/settings";
 
 import type { encounter_list } from "@/types/encounter";
@@ -21,8 +20,7 @@ import type { template } from "@/types/template";
 
 const $q = useQuasar();
 
-const settings = settingsStore();
-const encounter = encounterStore();
+const settings_store = settingsStore();
 
 const settingsDialog = ref(false);
 const tab = ref("General");
@@ -31,22 +29,26 @@ const gameVersion = ref("Any");
 const localGameVersion = ref(localStorage.getItem("game_version"));
 
 switch (localGameVersion.value?.toLowerCase()) {
-  case "any":
+  case "any": {
     gameVersion.value = "Any";
     break;
-  case "legacy":
+  }
+  case "legacy": {
     gameVersion.value = "Legacy";
     break;
-  case "remaster":
+  }
+  case "remaster": {
     gameVersion.value = "Remaster";
     break;
-  default:
+  }
+  default: {
     gameVersion.value = "Any";
     localStorage.setItem("game_version", "Any");
     break;
+  }
 }
 
-settings.setGameVersion(gameVersion.value);
+settings_store.setGameVersion(gameVersion.value);
 
 const toggleGameVersion = () => {
   localStorage.setItem("game_version", gameVersion.value);
@@ -57,16 +59,19 @@ const hideSupport = ref(false);
 const localSupport = ref(localStorage.getItem("hide_support"));
 
 switch (localSupport.value) {
-  case "true":
+  case "true": {
     hideSupport.value = true;
     break;
-  case "false":
+  }
+  case "false": {
     hideSupport.value = false;
     break;
-  default:
+  }
+  default: {
     hideSupport.value = false;
     localStorage.setItem("hide_support", "false");
     break;
+  }
 }
 
 interface Widget {
@@ -80,31 +85,32 @@ interface Widget {
 }
 declare let kofiWidgetOverlay: Widget;
 
-const loadKofiWidget = () => {
-  return new Promise<void>((resolve, reject) => {
+const loadKofiWidget = () =>
+  new Promise<void>((resolve, reject) => {
     const kofiWidget = document.createElement("script");
     kofiWidget.src = "https://storage.ko-fi.com/cdn/scripts/overlay-widget.js";
     kofiWidget.integrity =
       "sha512-lcOFkHZZIXe4UQdsL95YQNPTGWRzMBlh4CU8XRt0E1TLqeoJG5i7WgGZ0cSPB1Uua5EF4gy6UibwS8kBuHU8hg==";
     kofiWidget.crossOrigin = "anonymous";
     kofiWidget.async = true;
-    kofiWidget.onload = () => {
+    kofiWidget.addEventListener("load", () => {
       resolve();
-    };
-    kofiWidget.onerror = () => reject(new Error("Failed to load script"));
+    });
+    kofiWidget.addEventListener("error", () => {
+      reject(new Error("Failed to load script"));
+    });
     document.body.appendChild(kofiWidget);
   });
-};
 
 if (!hideSupport.value) {
   try {
     await loadKofiWidget();
     if (kofiWidgetOverlay && typeof kofiWidgetOverlay.draw === "function") {
       kofiWidgetOverlay.draw("theasel", {
-        type: "floating-chat",
-        "floating-chat.donateButton.text": "Support Us",
         "floating-chat.donateButton.background-color": "#00b9fe",
-        "floating-chat.donateButton.text-color": "#fff"
+        "floating-chat.donateButton.text": "Support Us",
+        "floating-chat.donateButton.text-color": "#fff",
+        type: "floating-chat"
       });
       const supportButton = document
         .querySelectorAll("[id^=kofi-widget-overlay-]")
@@ -128,36 +134,39 @@ const is_pwl_on = ref(false);
 const localPwl = ref(localStorage.getItem("is_pwl_on"));
 
 switch (localPwl.value) {
-  case "true":
+  case "true": {
     is_pwl_on.value = true;
     break;
-  case "false":
+  }
+  case "false": {
     is_pwl_on.value = false;
     break;
-  default:
+  }
+  default: {
     is_pwl_on.value = false;
     localStorage.setItem("is_pwl_on", "false");
     break;
+  }
 }
 
-settings.setPwL(is_pwl_on.value);
+settings_store.setPwL(is_pwl_on.value);
 
 const togglePwL = () => {
   localStorage.setItem("is_pwl_on", JSON.stringify(is_pwl_on.value));
-  settings.setPwL(is_pwl_on.value);
+  settings_store.setPwL(is_pwl_on.value);
 };
 
 const uploadData = () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = ".json";
-  input.onchange = async event => {
+  input.addEventListener("change", async event => {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       const arrayBuffer = await file.text();
       validateData(arrayBuffer);
     }
-  };
+  });
   input.click();
 };
 
@@ -169,9 +178,9 @@ const validateData = (result: string) => {
         case "encounters": {
           const parsedEncounter = JSON.parse(parsedData[key]);
           if (Array.isArray(parsedEncounter)) {
-            const isCompatible = parsedEncounter.every(p => {
-              return typeof p.name === "string" && Array.isArray(p.creatures);
-            });
+            const isCompatible = parsedEncounter.every(
+              p => typeof p.name === "string" && Array.isArray(p.creatures)
+            );
             if (isCompatible) {
               const encounters: encounter_list[] = parsedEncounter;
               const encounterNames = encounters.map(p => p.name);
@@ -189,9 +198,9 @@ const validateData = (result: string) => {
         case "shops": {
           const parsedShop = JSON.parse(parsedData[key]);
           if (Array.isArray(parsedShop)) {
-            const isCompatible = parsedShop.every(p => {
-              return typeof p.name === "string" && Array.isArray(p.items);
-            });
+            const isCompatible = parsedShop.every(
+              p => typeof p.name === "string" && Array.isArray(p.items)
+            );
             if (isCompatible) {
               const shops: shop_list[] = parsedShop;
               const shopNames = shops.map(p => p.name);
@@ -209,9 +218,9 @@ const validateData = (result: string) => {
         case "npcs": {
           const parsedNpc = JSON.parse(parsedData[key]);
           if (Array.isArray(parsedNpc)) {
-            const isCompatible = parsedNpc.every(p => {
-              return typeof p.name === "string";
-            });
+            const isCompatible = parsedNpc.every(
+              p => typeof p.name === "string"
+            );
             if (isCompatible) {
               const npcs: npc_list[] = parsedNpc;
               const npcNames = npcs.map(p => p.name);
@@ -229,11 +238,9 @@ const validateData = (result: string) => {
         case "templates": {
           const parsedTemplates = JSON.parse(parsedData[key]);
           if (Array.isArray(parsedTemplates)) {
-            const isCompatible = parsedTemplates.every(p => {
-              return (
-                typeof p.name === "string" && typeof p.default === "boolean"
-              );
-            });
+            const isCompatible = parsedTemplates.every(
+              p => typeof p.name === "string" && typeof p.default === "boolean"
+            );
             if (isCompatible) {
               const templates: template[] = parsedTemplates;
               const templatesNames = templates.map(p => p.name);
@@ -248,7 +255,7 @@ const validateData = (result: string) => {
           }
           break;
         }
-        case "game_version":
+        case "game_version": {
           if (
             !["any", "legacy", "remaster"].includes(
               parsedData[key].toLowerCase()
@@ -257,18 +264,18 @@ const validateData = (result: string) => {
             throw new Error("Invalid loaded game version value");
           }
           break;
+        }
         case "parties": {
           const parsedParties = JSON.parse(parsedData[key]);
           if (Array.isArray(parsedParties)) {
-            const isCompatible = parsedParties.every(p => {
-              return (
+            const isCompatible = parsedParties.every(
+              p =>
                 typeof p.name === "string" &&
                 Array.isArray(p.members) &&
                 p.members.every(
                   (member: undefined) => typeof member === "number"
                 )
-              );
-            });
+            );
             if (isCompatible) {
               const parties: party[] = parsedParties;
               for (const p of parties) {
@@ -291,23 +298,27 @@ const validateData = (result: string) => {
           }
           break;
         }
-        case "theme":
+        case "theme": {
           if (parsedData[key] !== "light" && parsedData[key] !== "dark") {
             throw new Error("Invalid loaded theme value");
           }
           break;
-        case "is_pwl_on":
+        }
+        case "is_pwl_on": {
           if (parsedData[key] !== "true" && parsedData[key] !== "false") {
             throw new Error("Invalid loaded pwl value");
           }
           break;
-        case "hide_support":
+        }
+        case "hide_support": {
           if (parsedData[key] !== "true" && parsedData[key] !== "false") {
             throw new Error("Invalid loaded hide support value");
           }
           break;
-        default:
-          throw new Error("Unknown loaded key: " + key);
+        }
+        default: {
+          throw new Error(`Unknown loaded key: ${key}`);
+        }
       }
       localStorage.setItem(key, parsedData[key]);
     }
@@ -315,10 +326,10 @@ const validateData = (result: string) => {
   } catch (error) {
     console.error(error);
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Error reading the uploaded file",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
   }
 };
@@ -445,7 +456,7 @@ const downloadData = () => {
               size="sm"
               :icon="biQuestionCircle"
               :href="
-                settings.game === 'sf'
+                settings_store.game === 'sf'
                   ? 'https://2e.aonsrd.com/rules/839-proficiency-without-level'
                   : 'https://2e.aonprd.com/rules?id=2762'
               "

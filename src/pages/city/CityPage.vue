@@ -2,13 +2,13 @@
 import { useHead } from "@unhead/vue";
 
 useHead({
-  title: "City Planner - BYBE",
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/city"
+      href: "https://bybe.app/city",
+      rel: "canonical"
     }
-  ]
+  ],
+  title: "City Planner - BYBE"
 });
 </script>
 

@@ -8,8 +8,8 @@ import { getGameFont, getGameFontSize, openSheet } from "@/utils/sheet";
 
 const router = useRouter();
 
-const npcs = npcStore();
-const settings = settingsStore();
+const npc_store = npcStore();
+const settings_store = settingsStore();
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const settings = settingsStore();
             class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
             :style="
               'font-family: ' +
-              getGameFont(settings.game) +
+              getGameFont(settings_store.game) +
               ', sans-serif; font-variant-caps: small-caps'
             "
           >
@@ -39,7 +39,12 @@ const settings = settingsStore();
                 class="tw:mr-1! only-screen character-page-element"
                 aria-label="Open NPC sheet"
                 @click="
-                  openSheet(router, 'character', settings.game, npcs.activeNpc)
+                  openSheet(
+                    router,
+                    'character',
+                    settings_store.game,
+                    npc_store.activeNpc
+                  )
                 "
               >
                 <q-tooltip
@@ -53,26 +58,30 @@ const settings = settingsStore();
             </div>
             <h1
               :class="
-                getGameFontSize(settings.game) +
+                getGameFontSize(settings_store.game) +
                 ' tw:mr-4 tw:leading-8 tw:my-auto tw:break-all'
               "
             >
               <span
-                v-if="npcs.npcs[npcs.activeNpc]!.npc.name"
+                v-if="npc_store.npcs[npc_store.activeNpc]!.npc.name"
                 class="tw:leading-8 tw:my-auto"
               >
-                {{ npcs.npcs[npcs.activeNpc]!.npc.name }}
+                {{ npc_store.npcs[npc_store.activeNpc]!.npc.name }}
               </span>
               <span
-                v-if="npcs.npcs[npcs.activeNpc]!.npc.nickname"
+                v-if="npc_store.npcs[npc_store.activeNpc]!.npc.nickname"
                 class="tw:leading-8 tw:my-auto"
               >
-                {{ '&nbsp;"' + npcs.npcs[npcs.activeNpc]!.npc.nickname + '"' }}
+                {{
+                  '&nbsp;"' +
+                  npc_store.npcs[npc_store.activeNpc]!.npc.nickname +
+                  '"'
+                }}
               </span>
             </h1>
             <q-space />
             <div class="tw:ml-4 tw:my-1 tw:text-2xl!">
-              NPC {{ npcs.npcs[npcs.activeNpc]!.npc.level }}
+              NPC {{ npc_store.npcs[npc_store.activeNpc]!.npc.level }}
             </div>
           </div>
           <q-separator class="tw:my-2!" style="height: 2px" />
@@ -84,66 +93,74 @@ const settings = settingsStore();
             class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white tw:break-all"
           >
             <div
-              v-if="npcs.npcs[npcs.activeNpc]!.npc.gender"
+              v-if="npc_store.npcs[npc_store.activeNpc]!.npc.gender"
               class="tw:text-white! tw:bg-[#6d5f9d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
-              {{ npcs.npcs[npcs.activeNpc]!.npc.gender!.toUpperCase() }}
+              {{
+                npc_store.npcs[npc_store.activeNpc]!.npc.gender!.toUpperCase()
+              }}
             </div>
             <div
               v-if="
-                (!npcs.npcs[npcs.activeNpc]!.culture ||
-                  settings.game === 'sf') &&
-                npcs.npcs[npcs.activeNpc]!.npc.ancestry
+                (!npc_store.npcs[npc_store.activeNpc]!.culture ||
+                  settings_store.game === 'sf') &&
+                npc_store.npcs[npc_store.activeNpc]!.npc.ancestry
               "
               class="tw:text-white! tw:bg-[#28765d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
-              {{ npcs.npcs[npcs.activeNpc]!.npc.ancestry!.toUpperCase() }}
+              {{
+                npc_store.npcs[npc_store.activeNpc]!.npc.ancestry!.toUpperCase()
+              }}
             </div>
             <div
               v-if="
-                settings.game === 'pf' &&
-                npcs.npcs[npcs.activeNpc]!.culture &&
-                npcs.npcs[npcs.activeNpc]!.npc.culture
+                settings_store.game === 'pf' &&
+                npc_store.npcs[npc_store.activeNpc]!.culture &&
+                npc_store.npcs[npc_store.activeNpc]!.npc.culture
               "
               class="tw:text-white! tw:bg-[#28765d] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
-              {{ npcs.npcs[npcs.activeNpc]!.npc.culture!.toUpperCase() }}
+              {{
+                npc_store.npcs[npc_store.activeNpc]!.npc.culture!.toUpperCase()
+              }}
             </div>
             <div
-              v-if="npcs.npcs[npcs.activeNpc]!.npc.class"
+              v-if="npc_store.npcs[npc_store.activeNpc]!.npc.class"
               class="tw:text-white! tw:bg-[#820d00] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
-              {{ npcs.npcs[npcs.activeNpc]!.npc.class!.toUpperCase() }}
+              {{
+                npc_store.npcs[npc_store.activeNpc]!.npc.class!.toUpperCase()
+              }}
             </div>
             <div
-              v-if="npcs.npcs[npcs.activeNpc]!.npc.job"
+              v-if="npc_store.npcs[npc_store.activeNpc]!.npc.job"
               class="tw:text-white! tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
             >
-              {{ npcs.npcs[npcs.activeNpc]!.npc.job!.toUpperCase() }}
+              {{ npc_store.npcs[npc_store.activeNpc]!.npc.job!.toUpperCase() }}
             </div>
           </div>
           <div
-            v-if="npcs.npcs[npcs.activeNpc]!.npc.languages"
+            v-if="npc_store.npcs[npc_store.activeNpc]!.npc.languages"
             class="tw:-indent-2 tw:pl-2 tw:text-base tw:text-gray-800 tw:dark:text-white tw:break-all"
           >
             <strong>Languages </strong>
-            {{ npcs.npcs[npcs.activeNpc]!.npc.languages }}
+            {{ npc_store.npcs[npc_store.activeNpc]!.npc.languages }}
           </div>
           <div
-            v-if="npcs.npcs[npcs.activeNpc]!.npc.quirk"
+            v-if="npc_store.npcs[npc_store.activeNpc]!.npc.quirk"
             class="tw:-indent-2 tw:pl-2 tw:text-base tw:text-gray-800 tw:dark:text-white tw:break-all"
           >
             <strong>Quirks </strong>
-            {{ npcs.npcs[npcs.activeNpc]!.npc.quirk }}
+            {{ npc_store.npcs[npc_store.activeNpc]!.npc.quirk }}
           </div>
           <q-separator
             v-if="
-              (npcs.npcs[npcs.activeNpc]!.npc.languages ||
-                npcs.npcs[npcs.activeNpc]!.npc.quirk) &&
-              (npcs.npcs[npcs.activeNpc]!.npc.description ||
-                npcs.npcs[npcs.activeNpc]!.npc.personality ||
-                npcs.npcs[npcs.activeNpc]!.npc.relationships ||
-                npcs.npcs[npcs.activeNpc]!.npc.ideology)
+              (npc_store.npcs[npc_store.activeNpc]!.npc.languages ||
+                npc_store.npcs[npc_store.activeNpc]!.npc.quirk) &&
+              (npc_store.npcs[npc_store.activeNpc]!.npc.description ||
+                npc_store.npcs[npc_store.activeNpc]!.npc.personality ||
+                npc_store.npcs[npc_store.activeNpc]!.npc.relationships ||
+                npc_store.npcs[npc_store.activeNpc]!.npc.ideology)
             "
             class="tw:my-2!"
             style="height: 2px"
@@ -154,46 +171,46 @@ const settings = settingsStore();
           />
           <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs tw:break-all">
             <div
-              v-if="npcs.npcs[npcs.activeNpc]!.npc.description"
+              v-if="npc_store.npcs[npc_store.activeNpc]!.npc.description"
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
             >
               <strong>Description </strong>
-              {{ npcs.npcs[npcs.activeNpc]!.npc.description }}
+              {{ npc_store.npcs[npc_store.activeNpc]!.npc.description }}
             </div>
             <div
-              v-if="npcs.npcs[npcs.activeNpc]!.npc.personality"
+              v-if="npc_store.npcs[npc_store.activeNpc]!.npc.personality"
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
             >
               <strong>Personality </strong>
-              {{ npcs.npcs[npcs.activeNpc]!.npc.personality }}
+              {{ npc_store.npcs[npc_store.activeNpc]!.npc.personality }}
             </div>
             <div
-              v-if="npcs.npcs[npcs.activeNpc]!.npc.relationships"
+              v-if="npc_store.npcs[npc_store.activeNpc]!.npc.relationships"
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
             >
               <strong>Relationships </strong>
-              {{ npcs.npcs[npcs.activeNpc]!.npc.relationships }}
+              {{ npc_store.npcs[npc_store.activeNpc]!.npc.relationships }}
             </div>
             <div
-              v-if="npcs.npcs[npcs.activeNpc]!.npc.ideology"
+              v-if="npc_store.npcs[npc_store.activeNpc]!.npc.ideology"
               class="tw:text-base tw:text-gray-800 tw:dark:text-white"
             >
               <strong>Ideology </strong>
-              {{ npcs.npcs[npcs.activeNpc]!.npc.ideology }}
+              {{ npc_store.npcs[npc_store.activeNpc]!.npc.ideology }}
             </div>
           </div>
           <q-separator
             v-if="
-              (npcs.npcs[npcs.activeNpc]!.npc.languages ||
-                npcs.npcs[npcs.activeNpc]!.npc.quirk ||
-                npcs.npcs[npcs.activeNpc]!.npc.description ||
-                npcs.npcs[npcs.activeNpc]!.npc.personality ||
-                npcs.npcs[npcs.activeNpc]!.npc.relationships ||
-                npcs.npcs[npcs.activeNpc]!.npc.ideology) &&
-              (npcs.npcs[npcs.activeNpc]!.npc.custom_fields.some(
+              (npc_store.npcs[npc_store.activeNpc]!.npc.languages ||
+                npc_store.npcs[npc_store.activeNpc]!.npc.quirk ||
+                npc_store.npcs[npc_store.activeNpc]!.npc.description ||
+                npc_store.npcs[npc_store.activeNpc]!.npc.personality ||
+                npc_store.npcs[npc_store.activeNpc]!.npc.relationships ||
+                npc_store.npcs[npc_store.activeNpc]!.npc.ideology) &&
+              (npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields.some(
                 item => item.name
               ) ||
-                npcs.npcs[npcs.activeNpc]!.npc.custom_fields.some(
+                npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields.some(
                   item => item.body
                 ))
             "
@@ -206,7 +223,7 @@ const settings = settingsStore();
           />
           <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs tw:break-all">
             <div
-              v-for="(item, index) in npcs.npcs[npcs.activeNpc]!.npc
+              v-for="(item, index) in npc_store.npcs[npc_store.activeNpc]!.npc
                 .custom_fields"
               :key="index"
             >

@@ -21,17 +21,17 @@ import {
 import type { min_creature_hazard } from "@/types/encounter";
 
 useHead({
-  title: "Encounter Builder - BYBE",
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/encounter"
+      href: "https://bybe.app/encounter",
+      rel: "canonical"
     }
-  ]
+  ],
+  title: "Encounter Builder - BYBE"
 });
 
-const settings = settingsStore();
-const encounter = encounterStore();
+const settings_store = settingsStore();
+const encounter_store = encounterStore();
 const screenWidth = ref(screen.width);
 
 const scrollUp = ref(false);
@@ -41,83 +41,85 @@ updateLocalStorageEncounters();
 
 // PF2E encounter
 const tmpKoboldMage: min_creature_hazard = {
+  archive_link: "https://2e.aonprd.com/npcs?id=3074",
   game: "pf",
   id: 5009,
-  archive_link: "https://2e.aonprd.com/npcs?id=3074",
-  name: "Kobold Cavern Mage",
+  is_hazard: false,
   level: 2,
-  variant: "Base",
-  is_hazard: false
+  name: "Kobold Cavern Mage",
+  variant: "Base"
 };
 const tmpKoboldWarrior: min_creature_hazard = {
+  archive_link: "https://2e.aonprd.com/npcs?id=3072",
   game: "pf",
   id: 4977,
-  archive_link: "https://2e.aonprd.com/npcs?id=3072",
-  name: "Kobold Warrior",
+  is_hazard: false,
   level: -1,
-  variant: "Base",
-  is_hazard: false
+  name: "Kobold Warrior",
+  variant: "Base"
 };
 const tmpMirrorDoor: min_creature_hazard = {
+  archive_link: "https://2e.aonprd.com/npcs?id=626",
+  complexity: "Simple",
   game: "pf",
   id: 459,
-  archive_link: "https://2e.aonprd.com/npcs?id=626",
-  name: "Mirror Door",
-  level: -1,
   is_hazard: true,
-  complexity: "Simple"
+  level: -1,
+  name: "Mirror Door"
 };
 
 //SF2E encounter
 const tmpFerrofluidOoze: min_creature_hazard = {
+  archive_link: "https://2e.aonsrd.com/creatures/66-ferrofluid-ooze",
   game: "sf",
   id: 157,
-  archive_link: "https://2e.aonsrd.com/creatures/66-ferrofluid-ooze",
-  name: "Ferrofluid Ooze",
+  is_hazard: false,
   level: 2,
-  variant: "Base",
-  is_hazard: false
+  name: "Ferrofluid Ooze",
+  variant: "Base"
 };
 const tmpAnaciteWingbot: min_creature_hazard = {
+  archive_link: "https://2e.aonsrd.com/creatures/2-anacite-wingbot",
   game: "sf",
   id: 11,
-  archive_link: "https://2e.aonsrd.com/creatures/2-anacite-wingbot",
-  name: "Anacite Wingbot",
+  is_hazard: false,
   level: -1,
-  variant: "Base",
-  is_hazard: false
+  name: "Anacite Wingbot",
+  variant: "Base"
 };
 const tmpAntiGravityPulse: min_creature_hazard = {
+  archive_link: "https://2e.aonsrd.com/hazards/5-anti-gravity-pulse",
+  complexity: "Simple",
   game: "sf",
   id: 18,
-  archive_link: "https://2e.aonsrd.com/hazards/5-anti-gravity-pulse",
-  name: "Anti-Gravity Pulse",
-  level: 0,
   is_hazard: true,
-  complexity: "Simple"
+  level: 0,
+  name: "Anti-Gravity Pulse"
 };
 
 Shepherd.on("start", () => {
-  const index = encounter.encounters.findIndex(obj => obj.name === "Example");
+  const index = encounter_store.encounters.findIndex(
+    obj => obj.name === "Example"
+  );
   if (index === -1) {
-    encounter.addEncounter("Example");
-    if (settings.game === "sf") {
-      encounter.addToEncounter(tmpFerrofluidOoze);
-      encounter.addToEncounter(tmpAnaciteWingbot);
-      encounter.addToEncounter(tmpAntiGravityPulse);
+    encounter_store.addEncounter("Example");
+    if (settings_store.game === "sf") {
+      encounter_store.addToEncounter(tmpFerrofluidOoze);
+      encounter_store.addToEncounter(tmpAnaciteWingbot);
+      encounter_store.addToEncounter(tmpAntiGravityPulse);
     } else {
-      encounter.addToEncounter(tmpKoboldMage);
-      encounter.addToEncounter(tmpKoboldWarrior);
-      encounter.addToEncounter(tmpMirrorDoor);
+      encounter_store.addToEncounter(tmpKoboldMage);
+      encounter_store.addToEncounter(tmpKoboldWarrior);
+      encounter_store.addToEncounter(tmpMirrorDoor);
     }
   } else {
-    encounter.changeActiveEncounter(index);
+    encounter_store.changeActiveEncounter(index);
   }
 });
 
 ["complete", "cancel"].forEach(event =>
   Shepherd.on(event, () => {
-    encounter.removeEncounter();
+    encounter_store.removeEncounter();
   })
 );
 
@@ -129,8 +131,7 @@ function scrollDirection() {
 }
 
 function scrollPage() {
-  const settings = settingsStore();
-  settings.setHiddenNav(true);
+  settings_store.setHiddenNav(true);
   setTimeout(() => {
     if (scrollUp.value) {
       scroll.setVerticalScrollPosition(pageRef.value!, 0, 500);

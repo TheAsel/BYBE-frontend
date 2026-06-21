@@ -2,13 +2,13 @@
 import { useHead } from "@unhead/vue";
 
 useHead({
-  title: "Creature Generator - BYBE",
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/creature"
+      href: "https://bybe.app/creature",
+      rel: "canonical"
     }
-  ]
+  ],
+  title: "Creature Generator - BYBE"
 });
 </script>
 

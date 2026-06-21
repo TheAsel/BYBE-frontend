@@ -1,19 +1,19 @@
-import { rarities } from "@/types/filters";
+import type { rarities } from "@/types/filters";
 
-export type range = {
+export interface range {
   id: number;
   increment: string | null;
   max: string | null;
   value: string;
-};
+}
 
-export type trait = {
+export interface trait {
   name: string;
   description: string | null;
   display_name: string | null;
-};
+}
 
-export type action = {
+export interface action {
   core_action: {
     action_type: string;
     category: string;
@@ -28,4 +28,4 @@ export type action = {
     source: string;
   };
   traits: trait[];
-};
+}

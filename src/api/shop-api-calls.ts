@@ -20,6 +20,7 @@ export async function requestFilters(
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -30,6 +31,7 @@ export async function requestTemplates(game: games) {
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -44,20 +46,21 @@ export async function requestItems(
   try {
     const url = buildUrl(import.meta.env.API_URL, [game, "shop", "list"], {
       cursor: String(cursor),
+      order_by,
       page_size: String(page_size === 0 ? -1 : page_size),
-      sort_by,
-      order_by
+      sort_by
     });
     return await apiFetch<item_response>(url, {
-      method: "POST",
+      body: JSON.stringify(body),
       headers: {
-        accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        accept: "application/json"
       },
-      body: JSON.stringify(body)
+      method: "POST"
     });
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -68,6 +71,7 @@ export async function requestShopRanges(game: games) {
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -79,6 +83,7 @@ export async function requestItemId(game: games, item_id: number) {
     return data.results;
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -87,16 +92,17 @@ export async function shopGenerator(game: games, body: shop_data) {
     return await apiFetch<item_response>(
       buildUrl(import.meta.env.API_URL, [game, "shop", "generator"]),
       {
-        method: "POST",
+        body: JSON.stringify(body),
         headers: {
-          accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          accept: "application/json"
         },
-        body: JSON.stringify(body)
+        method: "POST"
       }
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -105,16 +111,17 @@ export async function generateShopLink(body: shareable_shop) {
     return await apiFetchText(
       buildUrl(import.meta.env.API_URL, ["shareable", "shop", "encode"]),
       {
-        method: "POST",
+        body: JSON.stringify(body),
         headers: {
-          accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          accept: "application/json"
         },
-        body: JSON.stringify(body)
+        method: "POST"
       }
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -130,5 +137,6 @@ export async function decodeShopLink(encoded_data: string) {
     );
   } catch (error) {
     console.error(error);
+    return null;
   }
 }

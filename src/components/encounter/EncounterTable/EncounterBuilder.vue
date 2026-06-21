@@ -28,26 +28,26 @@ import type {
 
 const $q = useQuasar();
 
-const settings = settingsStore();
-const party = partyStore();
-const filters = filtersStore();
-const encounter = encounterStore();
+const settings_store = settingsStore();
+const party_store = partyStore();
+const filters_store = filtersStore();
+const encounter_store = encounterStore();
 
 const dialog = ref(false);
 const tab = ref("General");
 
 const currentRules = ref(
-  settings.game === "sf"
+  settings_store.game === "sf"
     ? "https://2e.aonsrd.com/rules/791-encounter-design"
     : "https://2e.aonprd.com/rules?id=2717"
 );
 
 watch(
-  () => filters.hazardRanges,
+  () => filters_store.hazardRanges,
   ranges => {
     hazardStealth.value = {
-      min: ranges.min_stealth,
-      max: ranges.max_stealth
+      max: ranges.max_stealth,
+      min: ranges.min_stealth
     };
   }
 );
@@ -55,32 +55,36 @@ watch(
 const creatureHazardRatio = ref<number>(100);
 
 const creatureTraits = ref<string[]>();
-const creatureTraitsOptions = ref<string[]>(filters.creatureFilters.traits);
+const creatureTraitsOptions = ref<string[]>(
+  filters_store.creatureFilters.traits
+);
 const alignment = ref<alignments[]>();
 const creatureSize = ref<sizes[]>();
 const creatureRarity = ref<rarities[]>();
 const family = ref<string[]>();
-const familiesOptions = filters.creatureFilters.families;
+const familiesOptions = filters_store.creatureFilters.families;
 const creature_type = ref<string[]>();
 const creature_roles = ref<roles[]>();
 const creatureSources = ref<string[]>();
-const creatureSourcesOptions = ref<string[]>(filters.creatureFilters.sources);
+const creatureSourcesOptions = ref<string[]>(
+  filters_store.creatureFilters.sources
+);
 const allow_weak_variants = ref<boolean>(true);
 const allow_elite_variants = ref<boolean>(true);
-const creature_number = ref({ min: 1, max: 20 });
+const creature_number = ref({ max: 20, min: 1 });
 
 const hazardTraits = ref<string[]>();
-const hazardTraitsOptions = ref<string[]>(filters.hazardFilters.traits);
+const hazardTraitsOptions = ref<string[]>(filters_store.hazardFilters.traits);
 const complexity = ref<complexities[]>();
 const hazardSize = ref<sizes[]>();
 const hazardRarity = ref<rarities[]>();
 const hazardSources = ref<string[]>();
-const hazardSourcesOptions = ref<string[]>(filters.hazardFilters.sources);
+const hazardSourcesOptions = ref<string[]>(filters_store.hazardFilters.sources);
 const hazardStealth = ref({
-  min: filters.hazardRanges.min_stealth,
-  max: filters.hazardRanges.max_stealth
+  max: filters_store.hazardRanges.max_stealth,
+  min: filters_store.hazardRanges.min_stealth
 });
-const hazard_number = ref({ min: 1, max: 20 });
+const hazard_number = ref({ max: 20, min: 1 });
 
 const challenge = ref<challenges>();
 const adventure_group_toggle = ref(false);
@@ -121,31 +125,31 @@ const adventureGroupSelect = [
 ];
 
 const tmpFilters = ref({
-  creature_hazard_ratio: creatureHazardRatio.value,
-  adventure_group_toggle: adventure_group_toggle.value,
   adventure_group: adventure_group.value,
+  adventure_group_toggle: adventure_group_toggle.value,
   challenge: challenge.value,
+  creature_hazard_ratio: creatureHazardRatio.value,
   creatures: {
-    number: creature_number.value,
-    traits: creatureTraits.value,
     alignment: alignment.value,
-    size: creatureSize.value,
-    rarity: creatureRarity.value,
-    family: family.value,
-    creature_type: creature_type.value,
-    sources: creatureSources.value,
-    allow_weak_variants: allow_weak_variants.value,
     allow_elite_variants: allow_elite_variants.value,
-    creature_roles: creature_roles.value
+    allow_weak_variants: allow_weak_variants.value,
+    creature_roles: creature_roles.value,
+    creature_type: creature_type.value,
+    family: family.value,
+    number: creature_number.value,
+    rarity: creatureRarity.value,
+    size: creatureSize.value,
+    sources: creatureSources.value,
+    traits: creatureTraits.value
   },
   hazards: {
-    number: hazard_number.value,
-    traits: hazardTraits.value,
     complexity: complexity.value,
-    size: hazardSize.value,
+    number: hazard_number.value,
     rarity: hazardRarity.value,
+    size: hazardSize.value,
     sources: hazardSources.value,
-    stealth: hazardStealth.value
+    stealth: hazardStealth.value,
+    traits: hazardTraits.value
   }
 });
 
@@ -178,38 +182,38 @@ const restoreSettings = () => {
   tmpFilters.value.hazards.stealth = hazardStealth.value;
 };
 
-const generateEncounter = debounce(async function () {
-  encounter.setGenerating(true);
+const generateEncounter = debounce(async () => {
+  encounter_store.setGenerating(true);
   saveChanges();
-  const partyLevels = party.parties[party.activeParty]!.members;
-  const is_pwl_on = settings.is_pwl_on;
-  const game_version = settings.game_version;
+  const partyLevels = party_store.parties[party_store.activeParty]!.members;
+  const { is_pwl_on } = settings_store;
+  const { game_version } = settings_store;
 
   const body: encounter_data = {
     creature_data: {
-      trait_whitelist_filter: tmpFilters.value.creatures.traits,
       alignment_filter: tmpFilters.value.creatures.alignment,
-      size_filter: tmpFilters.value.creatures.size,
-      rarity_filter: tmpFilters.value.creatures.rarity,
-      family_filter: tmpFilters.value.creatures.family,
-      type_filter: tmpFilters.value.creatures.creature_type,
-      source_filter: tmpFilters.value.creatures.sources,
-      allow_weak_variants: tmpFilters.value.creatures.allow_weak_variants,
       allow_elite_variants: tmpFilters.value.creatures.allow_elite_variants,
+      allow_weak_variants: tmpFilters.value.creatures.allow_weak_variants,
+      family_filter: tmpFilters.value.creatures.family,
+      game_system_version: game_version,
+      is_pwl_on,
       party_levels: partyLevels,
+      rarity_filter: tmpFilters.value.creatures.rarity,
       role_filter: creature_roles.value,
-      is_pwl_on: is_pwl_on,
-      game_system_version: game_version
+      size_filter: tmpFilters.value.creatures.size,
+      source_filter: tmpFilters.value.creatures.sources,
+      trait_whitelist_filter: tmpFilters.value.creatures.traits,
+      type_filter: tmpFilters.value.creatures.creature_type
     },
     hazard_data: {
-      trait_whitelist_filter: tmpFilters.value.hazards.traits,
       complexity_filter: tmpFilters.value.hazards.complexity,
+      game_system_version: game_version,
+      max_stealth: tmpFilters.value.hazards.stealth.max,
+      min_stealth: tmpFilters.value.hazards.stealth.min,
       rarity_filter: tmpFilters.value.hazards.rarity,
       size_filter: tmpFilters.value.hazards.size,
       source_filter: tmpFilters.value.hazards.sources,
-      min_stealth: tmpFilters.value.hazards.stealth.min,
-      max_stealth: tmpFilters.value.hazards.stealth.max,
-      game_system_version: game_version
+      trait_whitelist_filter: tmpFilters.value.hazards.traits
     },
     party_levels: partyLevels
   };
@@ -226,27 +230,31 @@ const generateEncounter = debounce(async function () {
     body.challenge = tmpFilters.value.challenge!;
   }
   try {
-    const randomEncounter = await encounterGenerator(settings.game, body);
+    const randomEncounter = await encounterGenerator(settings_store.game, body);
     if (randomEncounter === undefined) {
       throw new TypeError("Error generating random encounter");
     }
-    if (randomEncounter.count > 0 && randomEncounter.results) {
-      encounter.clearEncounter();
+    if (
+      randomEncounter &&
+      randomEncounter.count > 0 &&
+      randomEncounter.results
+    ) {
+      encounter_store.clearEncounter();
       if (
         randomEncounter.results.creatures &&
         randomEncounter.results.creatures.length > 0
       ) {
         for (const creature of randomEncounter.results.creatures) {
           const min_creature: min_creature_hazard = {
+            archive_link: creature.core_data.derived.archive_link,
             game: creature.game,
             id: creature.core_data.essential.id,
-            archive_link: creature.core_data.derived.archive_link,
-            name: creature.core_data.essential.name,
+            is_hazard: false,
             level: creature.core_data.essential.base_level,
-            variant: creature.variant_data?.variant,
-            is_hazard: false
+            name: creature.core_data.essential.name,
+            variant: creature.variant_data?.variant
           };
-          encounter.addToEncounter(min_creature);
+          encounter_store.addToEncounter(min_creature);
         }
       }
       if (
@@ -255,40 +263,39 @@ const generateEncounter = debounce(async function () {
       ) {
         for (const hazard of randomEncounter.results.hazards) {
           const min_hazard: min_creature_hazard = {
+            archive_link: `https://2e.${getGameAonLink(
+              hazard.game
+            )}.com/search?q=${encodeURIComponent(
+              hazard.core_hazard.essential.name
+            )} type%3A(hazard)&type=eqs`,
+            complexity: hazard.core_hazard.essential.complexity,
             game: hazard.game,
             id: hazard.core_hazard.essential.id,
-            archive_link:
-              "https://2e." +
-              getGameAonLink(hazard.game) +
-              ".com/search?q=" +
-              encodeURIComponent(hazard.core_hazard.essential.name) +
-              " type%3A(hazard)&type=eqs",
-            name: hazard.core_hazard.essential.name,
-            level: hazard.core_hazard.essential.level,
             is_hazard: true,
-            complexity: hazard.core_hazard.essential.complexity
+            level: hazard.core_hazard.essential.level,
+            name: hazard.core_hazard.essential.name
           };
-          encounter.addToEncounter(min_hazard);
+          encounter_store.addToEncounter(min_hazard);
         }
       }
     } else {
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "No encounter could be generated from the current filters",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     }
   } catch (error) {
     console.error(error);
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Error generating the encounter",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
   }
-  encounter.setGenerating(false);
+  encounter_store.setGenerating(false);
 }, 300);
 
 const saveChanges = () => {
@@ -324,8 +331,8 @@ const filterCreatureTraitsFn = (
 ) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.traits = creatureTraitsOptions.value.filter(v =>
-      v.toLowerCase().includes(filter)
+    filters_store.creatureFilters.traits = creatureTraitsOptions.value.filter(
+      v => v.toLowerCase().includes(filter)
     );
   });
 };
@@ -333,7 +340,7 @@ const filterCreatureTraitsFn = (
 const filterFamiliesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.families = familiesOptions.filter(v =>
+    filters_store.creatureFilters.families = familiesOptions.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -345,8 +352,8 @@ const filterCreatureSourcesFn = (
 ) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.sources = creatureSourcesOptions.value.filter(v =>
-      v.toLowerCase().includes(filter)
+    filters_store.creatureFilters.sources = creatureSourcesOptions.value.filter(
+      v => v.toLowerCase().includes(filter)
     );
   });
 };
@@ -357,7 +364,7 @@ const filterHazardTraitsFn = (
 ) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.hazardFilters.traits = hazardTraitsOptions.value.filter(v =>
+    filters_store.hazardFilters.traits = hazardTraitsOptions.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -369,7 +376,7 @@ const filterHazardSourcesFn = (
 ) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.hazardFilters.sources = hazardSourcesOptions.value.filter(v =>
+    filters_store.hazardFilters.sources = hazardSourcesOptions.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -626,7 +633,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.traits)"
+                :options="Object.freeze(filters_store.creatureFilters.traits)"
                 use-input
                 input-debounce="0"
                 label="Traits"
@@ -642,7 +649,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.sizes)"
+                :options="Object.freeze(filters_store.creatureFilters.sizes)"
                 label="Size"
                 style="max-width: 248px"
               />
@@ -654,7 +661,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.rarities)"
+                :options="Object.freeze(filters_store.creatureFilters.rarities)"
                 label="Rarity"
                 style="max-width: 248px"
               />
@@ -666,7 +673,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.families)"
+                :options="Object.freeze(filters_store.creatureFilters.families)"
                 use-input
                 input-debounce="0"
                 label="Family"
@@ -682,7 +689,9 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.creature_types)"
+                :options="
+                  Object.freeze(filters_store.creatureFilters.creature_types)
+                "
                 label="Creature Type"
                 style="max-width: 248px"
               />
@@ -694,7 +703,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.sources)"
+                :options="Object.freeze(filters_store.creatureFilters.sources)"
                 use-input
                 input-debounce="0"
                 label="Sources"
@@ -712,7 +721,9 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.alignments)"
+                :options="
+                  Object.freeze(filters_store.creatureFilters.alignments)
+                "
                 label="Alignment"
                 style="width: 248px"
               />
@@ -724,7 +735,9 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.creature_roles)"
+                :options="
+                  Object.freeze(filters_store.creatureFilters.creature_roles)
+                "
                 label="Roles"
                 style="width: 248px"
               />
@@ -754,7 +767,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.hazardFilters.traits)"
+                :options="Object.freeze(filters_store.hazardFilters.traits)"
                 use-input
                 input-debounce="0"
                 label="Traits"
@@ -781,7 +794,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.hazardFilters.sizes)"
+                :options="Object.freeze(filters_store.hazardFilters.sizes)"
                 label="Size"
                 style="max-width: 248px"
               />
@@ -793,7 +806,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.hazardFilters.rarities)"
+                :options="Object.freeze(filters_store.hazardFilters.rarities)"
                 label="Rarity"
                 style="max-width: 248px"
               />
@@ -805,7 +818,7 @@ defineExpose({ generateEncounter });
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.hazardFilters.sources)"
+                :options="Object.freeze(filters_store.hazardFilters.sources)"
                 use-input
                 input-debounce="0"
                 label="Sources"
@@ -820,8 +833,8 @@ defineExpose({ generateEncounter });
                 <q-range
                   v-model="tmpFilters.hazards.stealth"
                   label-always
-                  :min="filters.hazardRanges.min_stealth"
-                  :max="filters.hazardRanges.max_stealth"
+                  :min="filters_store.hazardRanges.min_stealth"
+                  :max="filters_store.hazardRanges.max_stealth"
                   markers
                   :left-label-value="'Min: ' + tmpFilters.hazards.stealth.min"
                   :right-label-value="'Max: ' + tmpFilters.hazards.stealth.max"

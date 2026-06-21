@@ -12,54 +12,54 @@ import { useHead } from "@unhead/vue";
 import { settingsStore } from "@/stores/settings";
 
 useHead({
-  title: "BYBE - Pathfinder & Starfinder 2e GM Tools",
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app"
+      href: "https://bybe.app",
+      rel: "canonical"
     }
-  ]
+  ],
+  title: "BYBE - Pathfinder & Starfinder 2e GM Tools"
 });
 
-const settings = settingsStore();
+const settings_store = settingsStore();
 
 const cards = [
   {
-    name: "Encounter Builder",
-    to: "/encounter",
     description: "Balance or randomly create combat encounters.",
+    icon: biCalculator,
+    name: "Encounter Builder",
     subtext: "Try it out",
-    icon: biCalculator
+    to: "/encounter"
   },
   {
-    name: "Shop Generator",
-    to: "/shop",
     description: "Create various types of shops of a specific level.",
+    icon: biShop,
+    name: "Shop Generator",
     subtext: "Try it out",
-    icon: biShop
+    to: "/shop"
   },
   {
-    name: "NPC Generator",
-    to: "/npc",
     description:
       "Quickly generate an NPC's name, ancestry, background and quirks.",
+    icon: biPersonVcard,
+    name: "NPC Generator",
     subtext: "Try it out",
-    icon: biPersonVcard
+    to: "/npc"
   },
   {
-    name: "Creature Generator",
-    to: "/creature",
     description: "Create custom creatures with the help of custom generation.",
+    icon: biPencil,
+    name: "Creature Generator",
     subtext: "Work in progress...",
-    icon: biPencil
+    to: "/creature"
   },
   {
-    name: "City Planner",
-    to: "/city",
     description:
       "Combine what you created with the other tools to plan an entire city.",
+    icon: biHouses,
+    name: "City Planner",
     subtext: "Work in progress...",
-    icon: biHouses
+    to: "/city"
   }
 ];
 </script>
@@ -88,7 +88,7 @@ const cards = [
         :key="item.to"
         flat
         class="tw:group tw:backdrop-blur tw:border-2 tw:bg-white/5 tw:dark:bg-gray-800/20 tw:border-gray-200/20 tw:dark:border-neutral-800/20 tw:hover:border-blue-600 tw:dark:hover:border-blue-500 tw:flex tw:gap-y-6! tw:w-full tw:h-full tw:rounded-lg tw:p-5! tw:transition-all"
-        :to="{ path: item.to, query: { game: settings.game } }"
+        :to="{ path: item.to, query: { game: settings_store.game } }"
       >
         <q-icon
           :name="item.icon"

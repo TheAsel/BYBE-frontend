@@ -1,11 +1,11 @@
 import type { games } from "@/types/filters";
 
-export type valid_genders = {
+export interface valid_genders {
   ancestry: string;
   valid_genders: string[];
-};
+}
 
-export type npc = {
+export interface npc {
   level: number | undefined;
   gender: string | undefined;
   ancestry: string | undefined;
@@ -25,15 +25,15 @@ export type npc = {
     body: string | null;
   }[];
   game: games;
-};
+}
 
-export type npc_list = {
+export interface npc_list {
   name: string;
   npc: npc;
   culture: boolean;
-};
+}
 
-export type shareable_npc = {
+export interface shareable_npc {
   list_name: string;
   npcs_data: {
     name: string;
@@ -46,4 +46,4 @@ export type shareable_npc = {
     class: string;
     game: games;
   }[];
-};
+}

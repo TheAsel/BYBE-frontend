@@ -7,13 +7,13 @@ import { onMounted, ref } from "vue";
 import { requestRepoInfo } from "@/api/github-api";
 
 useHead({
-  title: "Download - BYBE",
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/download"
+      href: "https://bybe.app/download",
+      rel: "canonical"
     }
-  ]
+  ],
+  title: "Download - BYBE"
 });
 
 const tab = ref("windows");

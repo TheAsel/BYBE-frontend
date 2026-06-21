@@ -15,12 +15,12 @@ import {
 
 const router = useRouter();
 
-const settings = settingsStore();
-const items = itemsStore();
+const settings_store = settingsStore();
+const items_store = itemsStore();
 
-const selectedItem = computed(() => items.selectedItem);
+const selectedItem = computed(() => items_store.selectedItem);
 const coreItem = computed(() => selectedItem.value?.core_item);
-const game = computed(() => selectedItem.value?.game ?? settings.game);
+const game = computed(() => selectedItem.value?.game ?? settings_store.game);
 </script>
 
 <template>
@@ -87,7 +87,7 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
         round
         dense
         aria-label="Remove selected item"
-        @click="items.removeSelectedItem()"
+        @click="items_store.removeSelectedItem()"
       />
     </div>
   </div>
@@ -216,15 +216,15 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     >
       <strong>Price</strong>
-      {{ items.getFormattedPrice(coreItem.price, settings.game) }};
+      {{ items_store.getFormattedPrice(coreItem.price, settings_store.game) }};
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <span v-if="coreItem.usage">
         <strong>Usage</strong>
-        {{ items.getFormattedUsage(coreItem.usage) }};
+        {{ items_store.getFormattedUsage(coreItem.usage) }};
       </span>
       <strong>Bulk</strong>
-      {{ items.getFormattedBulk(coreItem.bulk) }}
+      {{ items_store.getFormattedBulk(coreItem.bulk) }}
     </div>
   </div>
   <div v-if="coreItem">

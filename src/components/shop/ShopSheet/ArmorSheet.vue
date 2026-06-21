@@ -17,13 +17,13 @@ import {
 
 const router = useRouter();
 
-const settings = settingsStore();
-const items = itemsStore();
+const settings_store = settingsStore();
+const items_store = itemsStore();
 
-const selectedItem = computed(() => items.selectedItem);
+const selectedItem = computed(() => items_store.selectedItem);
 const coreItem = computed(() => selectedItem.value?.core_item);
 const armorData = computed(() => selectedItem.value?.armor_data);
-const game = computed(() => selectedItem.value?.game ?? settings.game);
+const game = computed(() => selectedItem.value?.game ?? settings_store.game);
 </script>
 
 <template>
@@ -90,7 +90,7 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
         round
         dense
         aria-label="Remove selected item"
-        @click="items.removeSelectedItem()"
+        @click="items_store.removeSelectedItem()"
       />
     </div>
   </div>
@@ -216,7 +216,7 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <strong>Price</strong>
-      {{ items.getFormattedPrice(coreItem.price, settings.game) }};
+      {{ items_store.getFormattedPrice(coreItem.price, settings_store.game) }};
       <span v-if="armorData">
         <strong>AC Bonus</strong>
         {{ addPlus(armorData.ac_bonus) }};
@@ -239,7 +239,7 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
         <span v-else>—; </span>
       </span>
       <strong>Bulk</strong>
-      {{ items.getFormattedBulk(coreItem.bulk) }};
+      {{ items_store.getFormattedBulk(coreItem.bulk) }};
       <span v-if="coreItem.category">
         <strong>Category</strong>
         {{ upperFirst(coreItem.category) }};

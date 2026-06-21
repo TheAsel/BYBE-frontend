@@ -43,22 +43,22 @@ import type { QTableProps } from "quasar";
 import type { item_columns, item_filters, rarities } from "@/types/filters";
 import type { item, min_item } from "@/types/item";
 
-const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
+const props = defineProps({ sheetVisible: Boolean, toggleSheetView: Function });
 
 const $q = useQuasar();
-const settings = settingsStore();
-const items = itemsStore();
-const filters = filtersStore();
+const settings_store = settingsStore();
+const items_store = itemsStore();
+const filters_store = filtersStore();
 
 const shopBuilderRef = ref();
 const router = useRouter();
 
 watch(
-  () => filters.shopRanges,
+  () => filters_store.shopRanges,
   ranges => {
     activeFilters.value.level_filter = {
-      min: ranges.min_level,
-      max: ranges.max_level
+      max: ranges.max_level,
+      min: ranges.min_level
     };
   }
 );
@@ -69,11 +69,11 @@ const selected = ref<item[]>([]);
 const rows = ref<item[]>([]);
 const loading = ref(true);
 const pagination = ref({
-  sortBy: "name",
   descending: false,
   page: 1,
+  rowsNumber: 0,
   rowsPerPage: 100,
-  rowsNumber: 0
+  sortBy: "name"
 });
 const activeFilters = ref<{
   name_filter: string;
@@ -85,24 +85,24 @@ const activeFilters = ref<{
   sort_by: item_columns;
   order_by: "ascending" | "descending";
 }>({
-  name_filter: "",
   level_filter: {
-    min: filters.shopRanges.min_level,
-    max: filters.shopRanges.max_level
+    max: filters_store.shopRanges.max_level,
+    min: filters_store.shopRanges.min_level
   },
-  trait_filter: [],
+  name_filter: "",
+  order_by: "ascending",
   rarity_filter: [],
-  type_filter: [],
-  source_filter: [],
   sort_by: "name",
-  order_by: "ascending"
+  source_filter: [],
+  trait_filter: [],
+  type_filter: []
 });
 const fullscreen = ref(false);
 const tableOpacity = ref("");
 
-const sourceFilter = ref<string[]>(filters.itemFilters.sources);
+const sourceFilter = ref<string[]>(filters_store.itemFilters.sources);
 const traitFilter = ref<{ label: string; value: string }[]>(
-  filters.itemFilters.traits
+  filters_store.itemFilters.traits
 );
 
 const columns: {
@@ -115,65 +115,65 @@ const columns: {
   style?: string;
 }[] = [
   {
-    name: "source",
-    label: "Source",
-    field: row => row.core_item.source,
-    required: false,
     align: "center",
+    field: row => row.core_item.source,
+    label: "Source",
+    name: "source",
+    required: false,
     sortable: true,
     style: "min-width: 120px; max-width: 120px;"
   },
   {
-    name: "name",
-    label: "Name",
-    field: row => row.core_item.name,
-    required: true,
     align: "left",
+    field: row => row.core_item.name,
+    label: "Name",
+    name: "name",
+    required: true,
     sortable: true,
     style: "min-width: 215px;"
   },
   {
-    name: "level",
-    label: "Level",
-    field: row => row.core_item.level,
-    required: false,
     align: "left",
+    field: row => row.core_item.level,
+    label: "Level",
+    name: "level",
+    required: false,
     sortable: true,
     style: "min-width: 80px;"
   },
   {
-    name: "trait",
-    label: "Traits",
-    field: row => row.core_item.traits.map(t => t.name),
-    required: false,
     align: "left",
+    field: row => row.core_item.traits.map(t => t.name),
+    label: "Traits",
+    name: "trait",
+    required: false,
     sortable: true,
     style: "min-width: 110px; max-width: 180px;"
   },
   {
-    name: "rarity",
-    label: "Rarity",
-    field: row => row.core_item.rarity,
-    required: false,
     align: "left",
+    field: row => row.core_item.rarity,
+    label: "Rarity",
+    name: "rarity",
+    required: false,
     sortable: true,
     style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: "type",
-    label: "Type",
+    align: "center",
     field: row => row.core_item.item_type,
+    label: "Type",
+    name: "type",
     required: false,
-    align: "center",
     sortable: true,
     style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: "id",
-    label: "Cart",
-    field: row => row.core_item.id,
-    required: false,
     align: "center",
+    field: row => row.core_item.id,
+    label: "Cart",
+    name: "id",
+    required: false,
     sortable: false
   }
 ];
@@ -185,79 +185,79 @@ const waitForPageLoad = () =>
     resolveWhenLoaded = resolve;
   });
 
-const fetchFromServer = debounce(async function (
-  startRow: number,
-  rowsPerPage: number
-) {
-  const body: item_filters = {
-    min_level_filter: activeFilters.value.level_filter.min,
-    max_level_filter: activeFilters.value.level_filter.max,
-    game_system_version: settings.game_version
-  };
-  if (activeFilters.value.name_filter !== "") {
-    body.name_filter = activeFilters.value.name_filter;
-  }
-  if (
-    activeFilters.value.trait_filter !== undefined &&
-    activeFilters.value.trait_filter !== null &&
-    activeFilters.value.trait_filter.length > 0
-  ) {
-    body.trait_whitelist_filter = activeFilters.value.trait_filter;
-  }
-  if (
-    activeFilters.value.rarity_filter !== undefined &&
-    activeFilters.value.rarity_filter !== null &&
-    activeFilters.value.rarity_filter.length > 0
-  ) {
-    body.rarity_filter = activeFilters.value.rarity_filter;
-  }
-  if (
-    activeFilters.value.type_filter !== undefined &&
-    activeFilters.value.type_filter !== null &&
-    activeFilters.value.type_filter.length > 0
-  ) {
-    body.type_filter = activeFilters.value.type_filter;
-  }
-  if (
-    activeFilters.value.source_filter !== undefined &&
-    activeFilters.value.source_filter !== null &&
-    activeFilters.value.source_filter.length > 0
-  ) {
-    body.source_filter = activeFilters.value.source_filter;
-  }
-  try {
-    const request = await requestItems(
-      settings.game,
-      startRow,
-      rowsPerPage,
-      activeFilters.value.sort_by,
-      activeFilters.value.order_by,
-      body
-    );
-    if (request) {
-      pagination.value.rowsNumber = request.total;
-      rows.value = request.results;
-      loading.value = false;
-      resolveWhenLoaded?.();
-      resolveWhenLoaded = null;
-    } else {
-      throw new Error("Error loading items");
+const fetchFromServer = debounce(
+  async (startRow: number, rowsPerPage: number) => {
+    const body: item_filters = {
+      game_system_version: settings_store.game_version,
+      max_level_filter: activeFilters.value.level_filter.max,
+      min_level_filter: activeFilters.value.level_filter.min
+    };
+    if (activeFilters.value.name_filter !== "") {
+      body.name_filter = activeFilters.value.name_filter;
     }
-  } catch (error) {
-    console.error(error);
-    $q.notify({
-      progress: true,
-      type: "warning",
-      message: "Error loading the items",
-      icon: matPriorityHigh
-    });
-  }
-}, 300);
+    if (
+      activeFilters.value.trait_filter !== undefined &&
+      activeFilters.value.trait_filter !== null &&
+      activeFilters.value.trait_filter.length > 0
+    ) {
+      body.trait_whitelist_filter = activeFilters.value.trait_filter;
+    }
+    if (
+      activeFilters.value.rarity_filter !== undefined &&
+      activeFilters.value.rarity_filter !== null &&
+      activeFilters.value.rarity_filter.length > 0
+    ) {
+      body.rarity_filter = activeFilters.value.rarity_filter;
+    }
+    if (
+      activeFilters.value.type_filter !== undefined &&
+      activeFilters.value.type_filter !== null &&
+      activeFilters.value.type_filter.length > 0
+    ) {
+      body.type_filter = activeFilters.value.type_filter;
+    }
+    if (
+      activeFilters.value.source_filter !== undefined &&
+      activeFilters.value.source_filter !== null &&
+      activeFilters.value.source_filter.length > 0
+    ) {
+      body.source_filter = activeFilters.value.source_filter;
+    }
+    try {
+      const request = await requestItems(
+        settings_store.game,
+        startRow,
+        rowsPerPage,
+        activeFilters.value.sort_by,
+        activeFilters.value.order_by,
+        body
+      );
+      if (request) {
+        pagination.value.rowsNumber = request.total;
+        rows.value = request.results;
+        loading.value = false;
+        resolveWhenLoaded?.();
+        resolveWhenLoaded = null;
+      } else {
+        throw new Error("Error loading items");
+      }
+    } catch (error) {
+      console.error(error);
+      $q.notify({
+        icon: matPriorityHigh,
+        message: "Error loading the items",
+        progress: true,
+        type: "warning"
+      });
+    }
+  },
+  300
+);
 
 async function onRequest(
-  props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
+  table_props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
 ) {
-  const { page, rowsPerPage } = props.pagination;
+  const { page, rowsPerPage } = table_props.pagination;
 
   loading.value = true;
 
@@ -271,17 +271,17 @@ async function onRequest(
 
 const resetFilters = () => {
   activeFilters.value = {
-    name_filter: "",
     level_filter: {
-      min: filters.shopRanges.min_level,
-      max: filters.shopRanges.max_level
+      max: filters_store.shopRanges.max_level,
+      min: filters_store.shopRanges.min_level
     },
-    trait_filter: [],
+    name_filter: "",
+    order_by: "ascending",
     rarity_filter: [],
-    type_filter: [],
-    source_filter: [],
     sort_by: "name",
-    order_by: "ascending"
+    source_filter: [],
+    trait_filter: [],
+    type_filter: []
   };
 };
 
@@ -300,39 +300,36 @@ const sort = (col: item_columns) => {
   }
 };
 
-const addItem = debounce(function (item: item) {
-  const aon_link =
-    "https://2e." +
-    getGameAonLink(settings.game) +
-    ".com/search?q=" +
-    encodeURIComponent(item.core_item.name) +
-    "&type=eqs";
+const addItem = debounce((item: item) => {
+  const aon_link = `https://2e.${getGameAonLink(
+    settings_store.game
+  )}.com/search?q=${encodeURIComponent(item.core_item.name)}&type=eqs`;
   const min_item: min_item = {
+    archive_link: aon_link,
     game: item.game,
     id: item.core_item.id,
-    archive_link: aon_link,
-    name: item.core_item.name,
     level: item.core_item.level,
-    type: item.core_item.item_type,
+    name: item.core_item.name,
     price: item.core_item.price,
-    quantity: item.core_item.quantity
+    quantity: item.core_item.quantity,
+    type: item.core_item.item_type
   };
-  items.addToShop(min_item);
+  items_store.addToShop(min_item);
 }, 50);
 
-const showItem = debounce(async function (item: item) {
+const showItem = debounce(async (item: item) => {
   try {
     const itemData = await requestItemId(item.game, item.core_item.id);
     if (isNull(itemData) || itemData === undefined) {
       console.error("Missing item ID");
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Missing item ID",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     } else {
-      items.setSelectedItem(itemData);
+      items_store.setSelectedItem(itemData);
     }
   } catch (error) {
     console.error(error);
@@ -350,7 +347,9 @@ const deactivateNavigation = () => {
 // Checks if typing to prevent stealing shortcuts
 function isTextInput(target: EventTarget | null): boolean {
   const el = target as HTMLElement | null;
-  return !!el?.closest('input, textarea, [contenteditable="true"], .q-editor');
+  return Boolean(
+    el?.closest('input, textarea, [contenteditable="true"], .q-editor')
+  );
 }
 
 // Table shortcuts
@@ -402,12 +401,11 @@ async function onTableKey(evt: KeyboardEvent) {
 
   switch (evt.key) {
     case "Enter": {
-      addItem(items.selectedItem!);
+      addItem(items_store.selectedItem!);
       break;
     }
     case "PageUp": {
       index = 0;
-      const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
       showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
@@ -415,7 +413,6 @@ async function onTableKey(evt: KeyboardEvent) {
     }
     case "PageDown": {
       index = rowsPerPage - 1;
-      const { computedRows } = itemTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
       showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
@@ -427,7 +424,6 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.firstPage();
       await promise;
 
-      const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
       showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
@@ -439,7 +435,6 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.lastPage();
       await promise;
 
-      const { computedRows } = itemTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
       showItem(selected.value[0]!);
       itemTable.value.scrollTo(index - 1);
@@ -456,7 +451,6 @@ async function onTableKey(evt: KeyboardEvent) {
       }
       await promise;
 
-      const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
       showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
@@ -465,7 +459,6 @@ async function onTableKey(evt: KeyboardEvent) {
     case "ArrowUp": {
       if (currentIndex > 0) {
         index = currentIndex - 1;
-        const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
         showItem(selected.value[0]!);
       }
@@ -483,7 +476,6 @@ async function onTableKey(evt: KeyboardEvent) {
       }
       await promise;
 
-      const { computedRows } = itemTable.value;
       selected.value = [computedRows[index]];
       showItem(selected.value[0]!);
       itemTable.value.scrollTo(index);
@@ -492,7 +484,6 @@ async function onTableKey(evt: KeyboardEvent) {
     case "ArrowDown": {
       if (currentIndex < lastIndex) {
         index = currentIndex + 1;
-        const { computedRows } = itemTable.value;
         selected.value = [computedRows[index]];
         showItem(selected.value[0]!);
       }
@@ -535,7 +526,7 @@ const toggleFullscreen = () => {
 const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.itemFilters.sources = sourceFilter.value.filter(v =>
+    filters_store.itemFilters.sources = sourceFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -544,7 +535,7 @@ const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
 const filterTraitsFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.itemFilters.traits = traitFilter.value.filter(v =>
+    filters_store.itemFilters.traits = traitFilter.value.filter(v =>
       v.label.toLowerCase().includes(filter)
     );
   });
@@ -554,34 +545,42 @@ onMounted(async () => {
   try {
     const [sourcesRequest, traitsRequest, templatesRequest, shopRangesRequest] =
       await Promise.all([
-        requestFilters(settings.game, "sources"),
-        requestFilters(settings.game, "traits"),
-        requestTemplates(settings.game),
-        requestShopRanges(settings.game),
+        requestFilters(settings_store.game, "sources"),
+        requestFilters(settings_store.game, "traits"),
+        requestTemplates(settings_store.game),
+        requestShopRanges(settings_store.game),
         fetchFromServer(0, 100)
       ]);
 
-    if (!sourcesRequest) throw new Error("Error fetching sources");
-    if (!traitsRequest) throw new Error("Error fetching traits");
-    if (!templatesRequest) throw new Error("Error fetching templates");
-    if (!shopRangesRequest) throw new Error("Error fetching shop ranges");
+    if (!sourcesRequest) {
+      throw new Error("Error fetching sources");
+    }
+    if (!traitsRequest) {
+      throw new Error("Error fetching traits");
+    }
+    if (!templatesRequest) {
+      throw new Error("Error fetching templates");
+    }
+    if (!shopRangesRequest) {
+      throw new Error("Error fetching shop ranges");
+    }
 
-    filters.updateItemSources(sourcesRequest);
-    sourceFilter.value = filters.itemFilters.sources;
+    filters_store.updateItemSources(sourcesRequest);
+    sourceFilter.value = filters_store.itemFilters.sources;
 
-    filters.updateItemTraits(traitsRequest);
-    traitFilter.value = filters.itemFilters.traits;
+    filters_store.updateItemTraits(traitsRequest);
+    traitFilter.value = filters_store.itemFilters.traits;
 
     templateStore().addDefaultTemplates(templatesRequest);
 
-    filters.shopRanges = shopRangesRequest;
+    filters_store.shopRanges = shopRangesRequest;
   } catch (error) {
     console.error(error);
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Error fetching activeFilters",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
   }
 });
@@ -809,7 +808,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filters.itemFilters.sources)"
+                  :options="Object.freeze(filters_store.itemFilters.sources)"
                   :label="columns[0]!.label"
                   :style="columns[0]!.style"
                   use-input
@@ -875,8 +874,8 @@ onMounted(async () => {
                       <q-range
                         v-model="activeFilters.level_filter"
                         label-always
-                        :min="filters.shopRanges.min_level"
-                        :max="filters.shopRanges.min_level"
+                        :min="filters_store.shopRanges.min_level"
+                        :max="filters_store.shopRanges.min_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
@@ -915,7 +914,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="filters.itemFilters.traits"
+                  :options="filters_store.itemFilters.traits"
                   :label="columns[3]!.label"
                   :style="columns[3]!.style"
                   map-options
@@ -1036,7 +1035,7 @@ onMounted(async () => {
             openSheet(
               router,
               'item',
-              settings.game,
+              settings_store.game,
               selectedItem.row.core_item.id
             )
           "
@@ -1085,8 +1084,8 @@ onMounted(async () => {
           <div class="row items-center wrap">
             <q-icon
               v-if="
-                items.selectedItem?.core_item &&
-                name.row.core_item.id === items.selectedItem?.core_item.id
+                items_store.selectedItem?.core_item &&
+                name.row.core_item.id === items_store.selectedItem?.core_item.id
               "
               class="tw:mr-1 tw:align-middle"
               size="xs"
@@ -1095,7 +1094,7 @@ onMounted(async () => {
             <a
               :href="
                 'https://2e.' +
-                getGameAonLink(settings.game) +
+                getGameAonLink(settings_store.game) +
                 '.com/search?q=' +
                 encodeURIComponent(name.row.core_item.name) +
                 '&type=eqs'
@@ -1110,7 +1109,10 @@ onMounted(async () => {
               >
             </a>
             <q-chip
-              v-if="settings.game === 'pf' && settings.game_version === 'Any'"
+              v-if="
+                settings_store.game === 'pf' &&
+                settings_store.game_version === 'Any'
+              "
               dense
               :color="name.row.core_item.remaster ? 'blue' : 'red-10'"
               text-color="white"

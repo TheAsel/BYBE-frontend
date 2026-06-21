@@ -18,17 +18,17 @@ import { updateLocalStorageNpcs } from "@/utils/local-storage";
 import type { npc } from "@/types/npcs";
 
 useHead({
-  title: "NPC Generator - BYBE",
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/npc"
+      href: "https://bybe.app/npc",
+      rel: "canonical"
     }
-  ]
+  ],
+  title: "NPC Generator - BYBE"
 });
 
-const settings = settingsStore();
-const npcs = npcStore();
+const settings_store = settingsStore();
+const npc_store = npcStore();
 
 const screenWidth = ref(screen.width);
 
@@ -37,38 +37,38 @@ const scrollUp = ref(false);
 updateLocalStorageNpcs();
 
 const tmpLanks: npc = {
+  ancestry: "Halfling",
+  class: "Rogue",
+  culture: "",
+  custom_fields: [{ body: "", name: "" }],
+  description: "The mascot of this site, being always on top of the list",
+  game: settings_store.game,
+  gender: "Male",
+  ideology: "The frontend is better than the backend",
+  job: "God",
+  languages: "Common",
   level: 5,
   name: '"Lucky" Lanks',
-  gender: "Male",
-  ancestry: "Halfling",
-  culture: "",
-  class: "Rogue",
-  job: "God",
   nickname: "",
-  languages: "Common",
-  description: "The mascot of this site, being always on top of the list",
   personality: "Kind and supportive, loves giving feedback",
   quirk: "Sometimes his weapons disappear or duplicate",
   relationships:
-    "The frontend developer TheAsel and the backend developer RakuJa",
-  ideology: "The frontend is better than the backend",
-  custom_fields: [{ name: "", body: "" }],
-  game: settings.game
+    "The frontend developer TheAsel and the backend developer RakuJa"
 };
 
 Shepherd.on("start", () => {
-  const index = npcs.npcs.findIndex(obj => obj.name === "Example");
+  const index = npc_store.npcs.findIndex(obj => obj.name === "Example");
   if (index === -1) {
-    npcs.addNpc("Example");
-    npcs.updateNpc("Example", tmpLanks);
+    npc_store.addNpc("Example");
+    npc_store.updateNpc("Example", tmpLanks);
   } else {
-    npcs.changeActiveNpc(index);
+    npc_store.changeActiveNpc(index);
   }
 });
 
 ["complete", "cancel"].forEach(event =>
   Shepherd.on(event, () => {
-    npcs.removeNpc();
+    npc_store.removeNpc();
   })
 );
 
@@ -80,8 +80,7 @@ function scrollDirection() {
 }
 
 function scrollPage() {
-  const settings = settingsStore();
-  settings.setHiddenNav(true);
+  settings_store.setHiddenNav(true);
   setTimeout(() => {
     if (scrollUp.value) {
       scroll.setVerticalScrollPosition(pageRef.value!, 0, 500);

@@ -16,8 +16,8 @@ import {
 
 const router = useRouter();
 
-const encounter = encounterStore();
-const settings = settingsStore();
+const encounter_store = encounterStore();
+const settings_store = settingsStore();
 </script>
 
 <template>
@@ -25,7 +25,7 @@ const settings = settingsStore();
     class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
     :style="
       'font-family: ' +
-      getGameFont(encounter.selectedHazard?.game ?? settings.game) +
+      getGameFont(encounter_store.selectedHazard?.game ?? settings_store.game) +
       ', sans-serif; font-variant-caps: small-caps'
     "
   >
@@ -43,8 +43,8 @@ const settings = settingsStore();
           openSheet(
             router,
             'hazard',
-            encounter.selectedHazard?.game ?? settings.game,
-            encounter.selectedHazard?.core_hazard.essential.id ?? 0
+            encounter_store.selectedHazard?.game ?? settings_store.game,
+            encounter_store.selectedHazard?.core_hazard.essential.id ?? 0
           )
         "
       >
@@ -58,14 +58,16 @@ const settings = settingsStore();
       </q-btn>
     </div>
     <a
-      v-if="encounter.selectedHazard"
+      v-if="encounter_store.selectedHazard"
       class="tw:my-auto"
       :href="
         'https://2e.' +
-        getGameAonLink(encounter.selectedHazard?.game ?? settings.game) +
+        getGameAonLink(
+          encounter_store.selectedHazard?.game ?? settings_store.game
+        ) +
         '.com/search?q=' +
         encodeURIComponent(
-          encounter.selectedHazard.core_hazard.essential.name
+          encounter_store.selectedHazard.core_hazard.essential.name
         ) +
         ' type%3A(hazard)&type=eqs'
       "
@@ -74,17 +76,21 @@ const settings = settingsStore();
     >
       <h1
         :class="
-          getGameFontSize(encounter.selectedHazard?.game ?? settings.game) +
+          getGameFontSize(
+            encounter_store.selectedHazard?.game ?? settings_store.game
+          ) +
           ' tw:mr-4 tw:leading-8 tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400'
         "
       >
-        {{ encounter.selectedHazard?.core_hazard.essential.name }}
+        {{ encounter_store.selectedHazard?.core_hazard.essential.name }}
       </h1>
     </a>
     <q-space />
     <div class="tw:my-1 tw:text-2xl!">
       Hazard
-      <span>{{ encounter.selectedHazard?.core_hazard.essential.level }}</span>
+      <span>{{
+        encounter_store.selectedHazard?.core_hazard.essential.level
+      }}</span>
     </div>
     <div class="tw:my-auto!">
       <q-btn
@@ -96,7 +102,7 @@ const settings = settingsStore();
         round
         dense
         aria-label="Remove selected hazard"
-        @click="encounter.removeSelectedHazard()"
+        @click="encounter_store.removeSelectedHazard()"
       />
     </div>
   </div>
@@ -108,13 +114,14 @@ const settings = settingsStore();
   <div class="tw:flex tw:flex-wrap tw:font-bold tw:text-sm tw:text-white">
     <div
       v-if="
-        encounter.selectedHazard?.core_hazard.essential.rarity === 'Uncommon'
+        encounter_store.selectedHazard?.core_hazard.essential.rarity ===
+        'Uncommon'
       "
       class="tw:bg-[#c45500] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
       <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
         >{{
-          encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+          encounter_store.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
         }}<q-tooltip
           style="
             font-family:
@@ -124,7 +131,7 @@ const settings = settingsStore();
           class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
         >
           <strong>{{
-            encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+            encounter_store.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
           }}</strong>
           <q-separator class="tw:my-1!" style="height: 2px" />
           <span>{{
@@ -135,13 +142,13 @@ const settings = settingsStore();
     </div>
     <div
       v-else-if="
-        encounter.selectedHazard?.core_hazard.essential.rarity === 'Rare'
+        encounter_store.selectedHazard?.core_hazard.essential.rarity === 'Rare'
       "
       class="tw:bg-[#0c1466] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
       <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
         >{{
-          encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+          encounter_store.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
         }}<q-tooltip
           style="
             font-family:
@@ -151,7 +158,7 @@ const settings = settingsStore();
           class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
         >
           <strong>{{
-            encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+            encounter_store.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
           }}</strong>
           <q-separator class="tw:my-1!" style="height: 2px" />
           <span>{{
@@ -162,13 +169,14 @@ const settings = settingsStore();
     </div>
     <div
       v-else-if="
-        encounter.selectedHazard?.core_hazard.essential.rarity === 'Unique'
+        encounter_store.selectedHazard?.core_hazard.essential.rarity ===
+        'Unique'
       "
       class="tw:bg-[#800080] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
       <span class="tw:text-white! tw:decoration-2 tw:hover:underline"
         >{{
-          encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+          encounter_store.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
         }}<q-tooltip
           style="
             font-family:
@@ -178,7 +186,7 @@ const settings = settingsStore();
           class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
         >
           <strong>{{
-            encounter.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
+            encounter_store.selectedHazard?.core_hazard.essential.rarity.toUpperCase()
           }}</strong>
           <q-separator class="tw:my-1!" style="height: 2px" />
           <span>{{
@@ -191,19 +199,22 @@ const settings = settingsStore();
       <a
         class="tw:text-white! tw:decoration-2 tw:hover:underline"
         :href="
-          settings.game === 'sf'
+          settings_store.game === 'sf'
             ? 'https://2e.aonsrd.com/rules/407-size-space-and-reach'
             : 'https://2e.aonprd.com/rules?id=2359'
         "
         target="_blank"
         rel="noopener"
       >
-        {{ encounter.selectedHazard?.core_hazard.essential.size.toUpperCase() }}
+        {{
+          encounter_store.selectedHazard?.core_hazard.essential.size.toUpperCase()
+        }}
       </a>
     </div>
     <div
       v-if="
-        encounter.selectedHazard?.core_hazard.essential.complexity === 'Complex'
+        encounter_store.selectedHazard?.core_hazard.essential.complexity ===
+        'Complex'
       "
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
@@ -219,13 +230,13 @@ const settings = settingsStore();
           <strong>COMPLEX</strong>
           <q-separator class="tw:my-1!" style="height: 2px" />
           <span>{{
-            "A hazard with this trait takes turns in an encounter."
+            "A hazard with this trait takes turns in an encounter_store."
           }}</span>
         </q-tooltip>
       </span>
     </div>
     <div
-      v-for="item in encounter.selectedHazard?.core_hazard.traits"
+      v-for="item in encounter_store.selectedHazard?.core_hazard.traits"
       :key="item.name"
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
@@ -250,7 +261,7 @@ const settings = settingsStore();
   </div>
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
     <div
-      v-if="encounter.selectedHazard?.core_hazard.essential.source"
+      v-if="encounter_store.selectedHazard?.core_hazard.essential.source"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     >
       <strong>Source </strong>
@@ -258,7 +269,7 @@ const settings = settingsStore();
         :href="
           'https://store.paizo.com/search.php?search_query=' +
           encodeURIComponent(
-            encounter.selectedHazard?.core_hazard.essential.source
+            encounter_store.selectedHazard?.core_hazard.essential.source
           ) +
           '&section=product'
         "
@@ -268,34 +279,36 @@ const settings = settingsStore();
         <i
           class="tw:text-blue-600 tw:decoration-2 tw:hover:underline tw:dark:text-blue-400"
         >
-          {{ encounter.selectedHazard?.core_hazard.essential.source }}
+          {{ encounter_store.selectedHazard?.core_hazard.essential.source }}
         </i>
       </a>
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <strong>Complexity </strong>
-      {{ encounter.selectedHazard?.core_hazard.essential.complexity }}
+      {{ encounter_store.selectedHazard?.core_hazard.essential.complexity }}
     </div>
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
       <strong>Stealth</strong>
-      DC {{ encounter.selectedHazard?.core_hazard.essential.stealth }}
+      DC {{ encounter_store.selectedHazard?.core_hazard.essential.stealth }}
       <span
-        v-if="encounter.selectedHazard?.core_hazard.essential.stealth_detail"
+        v-if="
+          encounter_store.selectedHazard?.core_hazard.essential.stealth_detail
+        "
         class="v-html"
         v-html="
           cleanDescription(
-            encounter.selectedHazard?.core_hazard.essential.stealth_detail
+            encounter_store.selectedHazard?.core_hazard.essential.stealth_detail
           )
         "
       />
     </div>
     <div
-      v-if="encounter.selectedHazard?.core_hazard.essential.description"
+      v-if="encounter_store.selectedHazard?.core_hazard.essential.description"
       class="v-html tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="
         '<strong>Description</strong> ' +
         cleanDescription(
-          encounter.selectedHazard?.core_hazard?.essential.description
+          encounter_store.selectedHazard?.core_hazard?.essential.description
         )
       "
     />
@@ -308,18 +321,20 @@ const settings = settingsStore();
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
     <div
       v-if="
-        encounter.selectedHazard?.core_hazard?.essential.disable_description
+        encounter_store.selectedHazard?.core_hazard?.essential
+          .disable_description
       "
       class="v-html tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="
         '<strong>Disable</strong> ' +
         cleanDescription(
-          encounter.selectedHazard?.core_hazard?.essential.disable_description
+          encounter_store.selectedHazard?.core_hazard?.essential
+            .disable_description
         )
       "
     />
     <template
-      v-for="action in encounter.selectedHazard?.core_hazard?.actions"
+      v-for="action in encounter_store.selectedHazard?.core_hazard?.actions"
       :key="action.core_action.name"
     >
       <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
@@ -343,17 +358,23 @@ const settings = settingsStore();
     </template>
   </div>
   <q-separator
-    v-if="encounter.selectedHazard?.core_hazard.essential.routine_description"
+    v-if="
+      encounter_store.selectedHazard?.core_hazard.essential.routine_description
+    "
     class="tw:my-2!"
     style="height: 2px"
   />
   <hr
-    v-if="encounter.selectedHazard?.core_hazard.essential.routine_description"
+    v-if="
+      encounter_store.selectedHazard?.core_hazard.essential.routine_description
+    "
     class="only-print"
     style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
   />
   <div
-    v-if="encounter.selectedHazard?.core_hazard.essential.routine_description"
+    v-if="
+      encounter_store.selectedHazard?.core_hazard.essential.routine_description
+    "
     class="tw:-indent-2 tw:pl-2 q-gutter-y-xs"
   >
     <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
@@ -362,24 +383,31 @@ const settings = settingsStore();
         v-html="
           '<p><strong>Routine</strong> ' +
           cleanDescription(
-            encounter.selectedHazard.core_hazard.essential.routine_description
+            encounter_store.selectedHazard.core_hazard.essential
+              .routine_description
           )
         "
       />
     </div>
   </div>
   <q-separator
-    v-if="encounter.selectedHazard?.core_hazard?.essential.reset_description"
+    v-if="
+      encounter_store.selectedHazard?.core_hazard?.essential.reset_description
+    "
     class="tw:my-2!"
     style="height: 2px"
   />
   <hr
-    v-if="encounter.selectedHazard?.core_hazard?.essential.reset_description"
+    v-if="
+      encounter_store.selectedHazard?.core_hazard?.essential.reset_description
+    "
     class="only-print"
     style="border: 1px solid #e0e0e0; margin-top: 0; margin-bottom: 8px"
   />
   <div
-    v-if="encounter.selectedHazard?.core_hazard?.essential.reset_description"
+    v-if="
+      encounter_store.selectedHazard?.core_hazard?.essential.reset_description
+    "
     class="tw:-indent-2 tw:pl-2 q-gutter-y-xs"
   >
     <div
@@ -387,7 +415,8 @@ const settings = settingsStore();
       v-html="
         '<p><strong>Reset</strong> ' +
         cleanDescription(
-          encounter.selectedHazard?.core_hazard?.essential.reset_description
+          encounter_store.selectedHazard?.core_hazard?.essential
+            .reset_description
         ) +
         '</p>'
       "

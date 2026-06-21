@@ -2,13 +2,13 @@
 import { useHead } from "@unhead/vue";
 
 useHead({
-  title: "404 Not Found - BYBE",
   meta: [
     {
-      name: "robots",
-      content: "noindex"
+      content: "noindex",
+      name: "robots"
     }
-  ]
+  ],
+  title: "404 Not Found - BYBE"
 });
 </script>
 

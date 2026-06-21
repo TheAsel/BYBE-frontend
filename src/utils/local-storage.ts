@@ -12,19 +12,18 @@ import type { shop_list } from "@/types/shop";
 import type { template } from "@/types/template";
 
 export function updateLocalStorageParties() {
-  const party = partyStore();
+  const party_store = partyStore();
   const localParty = localStorage.getItem("parties");
   if (localParty) {
     try {
       const parsedParties = JSON.parse(localParty);
       if (Array.isArray(parsedParties)) {
-        const isCompatible = parsedParties.every(p => {
-          return (
+        const isCompatible = parsedParties.every(
+          p =>
             typeof p.name === "string" &&
             Array.isArray(p.members) &&
             p.members.every((member: undefined) => typeof member === "number")
-          );
-        });
+        );
         if (isCompatible) {
           const parties: party[] = parsedParties;
           for (const party of parties) {
@@ -36,7 +35,7 @@ export function updateLocalStorageParties() {
           if (new Set(partyNames).size !== partyNames.length) {
             throw new Error("Duplicate saved party names");
           }
-          party.updateParties(parties);
+          party_store.updateParties(parties);
         } else {
           throw new Error("Invalid saved party format");
         }
@@ -46,35 +45,35 @@ export function updateLocalStorageParties() {
     } catch (error) {
       console.error(error);
       const defaultParty = {
-        name: "Default",
-        size: 4,
-        level: 1,
         advanced: false,
-        members: [1, 1, 1, 1]
+        level: 1,
+        members: [1, 1, 1, 1],
+        name: "Default",
+        size: 4
       };
       localStorage.setItem("parties", JSON.stringify([defaultParty]));
-      party.updateParties([defaultParty]);
+      party_store.updateParties([defaultParty]);
     }
   }
 }
 
 export function updateLocalStorageEncounters() {
-  const encounter = encounterStore();
+  const encounter_store = encounterStore();
   const localEncounters = localStorage.getItem("encounters");
   if (localEncounters) {
     try {
       const parsedEncounters = JSON.parse(localEncounters);
       if (Array.isArray(parsedEncounters)) {
-        const isCompatible = parsedEncounters.every(p => {
-          return typeof p.name === "string" && Array.isArray(p.creatures);
-        });
+        const isCompatible = parsedEncounters.every(
+          p => typeof p.name === "string" && Array.isArray(p.creatures)
+        );
         if (isCompatible) {
           const encounters: encounter_list[] = parsedEncounters;
           const encounterNames = encounters.map(p => p.name);
           if (new Set(encounterNames).size !== encounterNames.length) {
             throw new Error("Duplicate saved encounter names");
           }
-          encounter.updateEncounters(encounters);
+          encounter_store.updateEncounters(encounters);
         } else {
           throw new Error("Invalid saved encounter format");
         }
@@ -83,30 +82,30 @@ export function updateLocalStorageEncounters() {
       }
     } catch (error) {
       console.error(error);
-      const defaultEncounter = { name: "Default", creatures: [] };
+      const defaultEncounter = { creatures: [], name: "Default" };
       localStorage.setItem("encounters", JSON.stringify([defaultEncounter]));
-      encounter.updateEncounters([defaultEncounter]);
+      encounter_store.updateEncounters([defaultEncounter]);
     }
   }
 }
 
 export function updateLocalStorageShops() {
-  const items = itemsStore();
+  const items_store = itemsStore();
   const localShops = localStorage.getItem("shops");
   if (localShops) {
     try {
       const parsedShops = JSON.parse(localShops);
       if (Array.isArray(parsedShops)) {
-        const isCompatible = parsedShops.every(p => {
-          return typeof p.name === "string" && Array.isArray(p.items);
-        });
+        const isCompatible = parsedShops.every(
+          p => typeof p.name === "string" && Array.isArray(p.items)
+        );
         if (isCompatible) {
           const shops: shop_list[] = parsedShops;
           const shopNames = shops.map(p => p.name);
           if (new Set(shopNames).size !== shopNames.length) {
             throw new Error("Duplicate saved shop names");
           }
-          items.updateShops(shops);
+          items_store.updateShops(shops);
         } else {
           throw new Error("Invalid saved shop format");
         }
@@ -115,23 +114,23 @@ export function updateLocalStorageShops() {
       }
     } catch (error) {
       console.error(error);
-      const defaultShop = { name: "Default", items: [] };
+      const defaultShop = { items: [], name: "Default" };
       localStorage.setItem("shops", JSON.stringify([defaultShop]));
-      items.updateShops([defaultShop]);
+      items_store.updateShops([defaultShop]);
     }
   }
 }
 
 export function updateLocalStorageTemplates() {
-  const template = templateStore();
+  const template_store = templateStore();
   const localTemplates = localStorage.getItem("templates");
   if (localTemplates) {
     try {
       const parsedTemplates = JSON.parse(localTemplates);
       if (Array.isArray(parsedTemplates)) {
-        const isCompatible = parsedTemplates.every(p => {
-          return typeof p.name === "string" && typeof p.default === "boolean";
-        });
+        const isCompatible = parsedTemplates.every(
+          p => typeof p.name === "string" && typeof p.default === "boolean"
+        );
         if (isCompatible) {
           const templates: template[] = parsedTemplates;
           const templateNames = templates.map(p => p.name);
@@ -141,7 +140,7 @@ export function updateLocalStorageTemplates() {
           for (const template of templates) {
             template.default = false;
           }
-          template.updateTemplates(templates);
+          template_store.updateTemplates(templates);
         } else {
           throw new Error("Invalid saved template format");
         }
@@ -151,30 +150,28 @@ export function updateLocalStorageTemplates() {
     } catch (error) {
       console.error(error);
       localStorage.setItem("shops", JSON.stringify([]));
-      template.updateTemplates([]);
+      template_store.updateTemplates([]);
     }
   }
 }
 
 export function updateLocalStorageNpcs() {
-  const npcs = npcStore();
-  const settings = settingsStore();
+  const npc_store = npcStore();
+  const settings_store = settingsStore();
 
   const localNpcs = localStorage.getItem("npcs");
   if (localNpcs) {
     try {
       const parsedNpcs = JSON.parse(localNpcs);
       if (Array.isArray(parsedNpcs)) {
-        const isCompatible = parsedNpcs.every(p => {
-          return typeof p.name === "string";
-        });
+        const isCompatible = parsedNpcs.every(p => typeof p.name === "string");
         if (isCompatible) {
           const npcList: npc_list[] = parsedNpcs;
           const npcNames = npcList.map(p => p.name);
           if (new Set(npcNames).size !== npcNames.length) {
             throw new Error("Duplicate saved npc names");
           }
-          npcs.updateNpcs(npcList);
+          npc_store.updateNpcs(npcList);
         } else {
           throw new Error("Invalid saved npc format");
         }
@@ -184,29 +181,29 @@ export function updateLocalStorageNpcs() {
     } catch (error) {
       console.error(error);
       const defaultNpc: npc_list = {
+        culture: false,
         name: "Default",
         npc: {
-          level: 0,
-          gender: "",
           ancestry: "",
-          culture: "",
           class: "",
+          culture: "",
+          custom_fields: [{ body: "", name: "" }],
+          description: "",
+          game: settings_store.game,
+          gender: "",
+          ideology: "",
           job: "",
+          languages: "",
+          level: 0,
           name: "",
           nickname: "",
-          languages: "",
-          description: "",
           personality: "",
           quirk: "",
-          relationships: "",
-          ideology: "",
-          custom_fields: [{ name: "", body: "" }],
-          game: settings.game
-        },
-        culture: false
+          relationships: ""
+        }
       };
       localStorage.setItem("npcs", JSON.stringify([defaultNpc]));
-      npcs.updateNpcs([defaultNpc]);
+      npc_store.updateNpcs([defaultNpc]);
     }
   }
 }

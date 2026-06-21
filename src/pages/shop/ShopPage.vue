@@ -21,17 +21,17 @@ import {
 import type { item, min_item } from "@/types/item";
 
 useHead({
-  title: "Shop Generator - BYBE",
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/shop"
+      href: "https://bybe.app/shop",
+      rel: "canonical"
     }
-  ]
+  ],
+  title: "Shop Generator - BYBE"
 });
 
-const settings = settingsStore();
-const items = itemsStore();
+const settings_store = settingsStore();
+const items_store = itemsStore();
 
 const screenWidth = ref(screen.width);
 
@@ -42,131 +42,131 @@ updateLocalStorageTemplates();
 
 // PF2E shop
 const tmpCloakFull: item = {
-  game: "pf",
   core_item: {
-    id: 3511,
-    name: "Cloak of Illusions",
-    bulk: 0.1,
-    quantity: 1,
     base_item: null,
+    bulk: 0.1,
     category: "",
     description:
       "<p>This cloak flows, covering and concealing the wearer's body. The cloak allows you to cast Figment as an occult innate cantrip. Although naturally a dull gray, while invested the cloak picks up colors and patterns from its surroundings, granting a +1 item bonus to Stealth checks.</p>\n<p><strong>Activate—Draw Hood</strong> <span class=\"action-glyph\">2</span> (manipulate)</p>\n<p><strong>Frequency</strong> once per day</p>\n<hr />\n<p><strong>Effect</strong> You draw the hood up and gain the effects of Invisibility, with the spell's normal duration or until you pull the hood back down, whichever comes first. While you are invisible, your <em>figment</em> innate cantrip gains the subtle trait, concealing the observable effects of your spellcasting.</p>",
+    group: "",
     hardness: 0,
     hp: 0,
-    level: 7,
-    price: 36000,
-    usage: "worncloak",
-    group: "",
+    id: 3511,
     item_type: "Equipment",
+    level: 7,
+    license: "ORC",
     material_grade: "",
     material_type: "",
+    name: "Cloak of Illusions",
     number_of_uses: 0,
-    license: "ORC",
-    remaster: true,
-    source: "Pathfinder GM Core",
+    price: 36_000,
+    quantity: 1,
     rarity: "Common",
+    remaster: true,
     size: "Medium",
+    source: "Pathfinder GM Core",
     traits: [
-      { name: "invested", description: "", display_name: "" },
-      { name: "occult", description: "", display_name: "" }
-    ]
-  }
+      { description: "", display_name: "", name: "invested" },
+      { description: "", display_name: "", name: "occult" }
+    ],
+    usage: "worncloak"
+  },
+  game: "pf"
 };
 const tmpCloak: min_item = {
+  archive_link: "https://2e.aonprd.com/equipment?id=3069",
   game: "pf",
   id: 3511,
-  archive_link: "https://2e.aonprd.com/equipment?id=3069",
-  name: "Cloak of Illusions",
   level: 7,
-  type: "Equipment",
-  price: 36000,
-  quantity: 1
+  name: "Cloak of Illusions",
+  price: 36_000,
+  quantity: 1,
+  type: "Equipment"
 };
 const tmpPotion: min_item = {
+  archive_link: "https://2e.aonprd.com/equipment?id=2943",
   game: "pf",
   id: 2967,
-  archive_link: "https://2e.aonprd.com/equipment?id=2943",
-  name: "Healing Potion (Moderate)",
   level: 6,
-  type: "Consumable",
+  name: "Healing Potion (Moderate)",
   price: 5000,
-  quantity: 3
+  quantity: 3,
+  type: "Consumable"
 };
 
 // SF2E shop
 const tmpLaserRifleFull: item = {
-  game: "sf",
   core_item: {
-    id: 402,
-    name: "Laser Rifle",
-    bulk: 2,
-    quantity: 1,
     base_item: "laser-rifle",
+    bulk: 2,
     category: "simple",
     description:
       "<p><strong>Upgrades:</strong> 1</p><hr /><p>These dependable, mass-produced rifles shoot concentrated beams of energy out of square-shaped barrels. The universal standard Pact Worlds model is highly modifiable and designed to function with a variety of accessories and upgrades, with wielders adapting the laser rifle to their preferences and even kit-bashing it into a nearly unrecognizable weapon.</p>",
+    group: "laser",
     hardness: 0,
     hp: 0,
-    level: 0,
-    price: 450,
-    usage: "held-in-two-hands",
-    group: "laser",
+    id: 402,
     item_type: "Weapon",
+    level: 0,
+    license: "ORC",
     material_grade: "",
     material_type: "",
+    name: "Laser Rifle",
     number_of_uses: 0,
-    license: "ORC",
-    remaster: true,
-    source: "Starfinder Player Core",
+    price: 450,
+    quantity: 1,
     rarity: "Common",
+    remaster: true,
     size: "Medium",
-    traits: [{ name: "tech", description: "", display_name: "" }]
-  }
+    source: "Starfinder Player Core",
+    traits: [{ description: "", display_name: "", name: "tech" }],
+    usage: "held-in-two-hands"
+  },
+  game: "sf"
 };
 const tmpLaserRifle: min_item = {
+  archive_link: "https://2e.aonsrd.com/equipment/weapons/41-laser-rifle",
   game: "sf",
   id: 402,
-  archive_link: "https://2e.aonsrd.com/equipment/weapons/41-laser-rifle",
-  name: "Laser Rifle",
   level: 0,
-  type: "Weapon",
+  name: "Laser Rifle",
   price: 450,
-  quantity: 1
+  quantity: 1,
+  type: "Weapon"
 };
 const tmpFlightSuit: min_item = {
+  archive_link: "https://2e.aonsrd.com/equipment/armor/2-flight-suit",
   game: "sf",
   id: 328,
-  archive_link: "https://2e.aonsrd.com/equipment/armor/2-flight-suit",
-  name: "Flight Suit",
   level: 1,
-  type: "Armor",
+  name: "Flight Suit",
   price: 100,
-  quantity: 1
+  quantity: 1,
+  type: "Armor"
 };
 
 Shepherd.on("start", () => {
-  const index = items.shops.findIndex(obj => obj.name === "Example");
+  const index = items_store.shops.findIndex(obj => obj.name === "Example");
   if (index === -1) {
-    items.addShop("Example");
-    if (settings.game === "sf") {
-      items.setSelectedItem(tmpLaserRifleFull);
-      items.addToShop(tmpLaserRifle);
-      items.addToShop(tmpFlightSuit);
+    items_store.addShop("Example");
+    if (settings_store.game === "sf") {
+      items_store.setSelectedItem(tmpLaserRifleFull);
+      items_store.addToShop(tmpLaserRifle);
+      items_store.addToShop(tmpFlightSuit);
     } else {
-      items.setSelectedItem(tmpCloakFull);
-      items.addToShop(tmpCloak);
-      items.addToShop(tmpPotion);
+      items_store.setSelectedItem(tmpCloakFull);
+      items_store.addToShop(tmpCloak);
+      items_store.addToShop(tmpPotion);
     }
   } else {
-    items.changeActiveShop(index);
+    items_store.changeActiveShop(index);
   }
 });
 
 ["complete", "cancel"].forEach(event =>
   Shepherd.on(event, () => {
-    items.removeShop();
-    items.removeSelectedItem();
+    items_store.removeShop();
+    items_store.removeSelectedItem();
   })
 );
 
@@ -178,8 +178,7 @@ function scrollDirection() {
 }
 
 function scrollPage() {
-  const settings = settingsStore();
-  settings.setHiddenNav(true);
+  settings_store.setHiddenNav(true);
   setTimeout(() => {
     if (scrollUp.value) {
       scroll.setVerticalScrollPosition(pageRef.value!, 0, 500);

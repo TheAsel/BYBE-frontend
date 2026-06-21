@@ -4,16 +4,16 @@ import { useHead } from "@unhead/vue";
 import { settingsStore } from "@/stores/settings";
 
 useHead({
-  title: "Licenses - BYBE",
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/license"
+      href: "https://bybe.app/license",
+      rel: "canonical"
     }
-  ]
+  ],
+  title: "Licenses - BYBE"
 });
 
-const settings = settingsStore();
+const settings_store = settingsStore();
 </script>
 
 <template>
@@ -23,7 +23,7 @@ const settings = settingsStore();
     >
       <q-scroll-area class="tw:h-full">
         <div
-          v-if="settings.game === 'sf'"
+          v-if="settings_store.game === 'sf'"
           class="q-gutter-y-sm tw:p-4! tw:text-left tw:text-gray-800 tw:dark:text-white"
         >
           <h1

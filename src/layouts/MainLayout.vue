@@ -12,20 +12,18 @@ import { version } from "@/../package.json";
 const newestVersion = ref(version);
 const isApp = import.meta.env.IS_APP;
 const repoUrl = import.meta.env.REPO_URL;
-const latestRelease = "https://github.com/" + repoUrl + "/releases/latest";
+const latestRelease = `https://github.com/${repoUrl}/releases/latest`;
 
-const settings = settingsStore();
+const settings_store = settingsStore();
 
 const route = useRoute();
-const isDownload = computed(() => {
-  return route.path === "/download";
-});
+const isDownload = computed(() => route.path === "/download");
 
 const queryGame: string = String(route.query.game).toLowerCase();
 if (queryGame === "sf") {
-  settings.setGame("sf");
+  settings_store.setGame("sf");
 } else {
-  settings.setGame("pf");
+  settings_store.setGame("pf");
 }
 
 const backgroundStyle = computed(() => {
@@ -35,7 +33,7 @@ const backgroundStyle = computed(() => {
     imageUrl = "/imgs/backgrounds/mixed-background.webp";
   } else {
     imageUrl =
-      settings.game === "sf"
+      settings_store.game === "sf"
         ? "/imgs/backgrounds/sf2e-background.webp"
         : "/imgs/backgrounds/pf2e-background.webp";
   }
@@ -65,11 +63,17 @@ try {
 // Open external links in default browser on portable
 if (import.meta.env.IS_APP) {
   document.addEventListener("click", async e => {
-    const target = e.target;
-    if (!(target instanceof HTMLElement)) return;
+    const { target } = e;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
     const link = target.closest('a[target="_blank"]');
-    if (!(link instanceof HTMLAnchorElement)) return;
-    if (!link.href.startsWith("http")) return;
+    if (!(link instanceof HTMLAnchorElement)) {
+      return;
+    }
+    if (!link.href.startsWith("http")) {
+      return;
+    }
     e.preventDefault();
     await openUrl(link.href);
   });
@@ -105,7 +109,7 @@ if (import.meta.env.IS_APP) {
           |
           <span v-if="!isDownload">
             <router-link
-              :to="{ path: '/license', query: { game: settings.game } }"
+              :to="{ path: '/license', query: { game: settings_store.game } }"
               class="tw:hover:text-gray-900 tw:dark:hover:text-neutral-300"
               >Licenses and Policies</router-link
             >

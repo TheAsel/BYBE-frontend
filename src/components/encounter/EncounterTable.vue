@@ -31,8 +31,8 @@ import {
   requestCreatureRanges,
   requestCreatures,
   requestFilters,
-  requestHazardId,
   requestHazardFilters,
+  requestHazardId,
   requestHazardRanges,
   requestHazards
 } from "@/api/encounter-api-calls";
@@ -60,18 +60,18 @@ import type {
 } from "@/types/filters";
 import type { hazard } from "@/types/hazard";
 
-const props = defineProps({ toggleSheetView: Function, sheetVisible: Boolean });
+const props = defineProps({ sheetVisible: Boolean, toggleSheetView: Function });
 
 const $q = useQuasar();
-const settings = settingsStore();
-const filters = filtersStore();
-const encounter = encounterStore();
+const settings_store = settingsStore();
+const filters_store = filtersStore();
+const encounter_store = encounterStore();
 
 const encounterBuilderRef = ref();
 const router = useRouter();
 
 const hazardToggle = ref<"creatures" | "hazards">("creatures");
-encounter.removeSelectedHazard();
+encounter_store.removeSelectedHazard();
 
 const encounterTable = ref();
 const navigationActive = ref(false);
@@ -80,11 +80,11 @@ const creatureRows = ref<creature[]>([]);
 const hazardRows = ref<hazard[]>([]);
 const loading = ref(true);
 const pagination = ref({
-  sortBy: "name",
   descending: false,
   page: 1,
+  rowsNumber: 0,
   rowsPerPage: 100,
-  rowsNumber: 0
+  sortBy: "name"
 });
 
 const creatureFilters = ref<{
@@ -107,42 +107,42 @@ const creatureFilters = ref<{
   sort_by: creature_columns;
   order_by: "ascending" | "descending";
 }>({
-  name_filter: "",
-  level_filter: {
-    min: filters.creatureRanges.min_level,
-    max: filters.creatureRanges.max_level
-  },
-  hp_filter: {
-    min: filters.creatureRanges.min_hp,
-    max: filters.creatureRanges.max_hp
-  },
-  trait_filter: [],
   alignment_filter: [],
-  size_filter: [],
-  rarity_filter: [],
-  family_filter: [],
-  type_filter: [],
   attack_data_filter: {
     melee: null,
     ranged: null,
     spellcaster: null
   },
+  family_filter: [],
+  hp_filter: {
+    max: filters_store.creatureRanges.max_hp,
+    min: filters_store.creatureRanges.min_hp
+  },
+  level_filter: {
+    max: filters_store.creatureRanges.max_level,
+    min: filters_store.creatureRanges.min_level
+  },
+  name_filter: "",
+  order_by: "ascending",
+  rarity_filter: [],
   role_filter: [],
-  source_filter: [],
+  size_filter: [],
   sort_by: "name",
-  order_by: "ascending"
+  source_filter: [],
+  trait_filter: [],
+  type_filter: []
 });
 
 watch(
-  () => filters.creatureRanges,
+  () => filters_store.creatureRanges,
   ranges => {
     creatureFilters.value.level_filter = {
-      min: ranges.min_level,
-      max: ranges.max_level
+      max: ranges.max_level,
+      min: ranges.min_level
     };
     creatureFilters.value.hp_filter = {
-      min: ranges.min_hp,
-      max: ranges.max_hp
+      max: ranges.max_hp,
+      min: ranges.min_hp
     };
   }
 );
@@ -165,82 +165,82 @@ const hazardFilters = ref<{
   sort_by: hazard_columns;
   order_by: "ascending" | "descending";
 }>({
-  name_filter: "",
-  level_filter: {
-    min: filters.hazardRanges.min_level,
-    max: filters.hazardRanges.max_level
-  },
-  hp_filter: {
-    min: filters.hazardRanges.min_hp,
-    max: filters.hazardRanges.max_hp
-  },
-  trait_filter: [],
-  complexity_filter: null,
-  size_filter: [],
-  rarity_filter: [],
-  stealth_filter: {
-    min: filters.hazardRanges.min_stealth,
-    max: filters.hazardRanges.max_stealth
-  },
   ac_filter: {
-    min: filters.hazardRanges.min_ac,
-    max: filters.hazardRanges.max_ac
+    max: filters_store.hazardRanges.max_ac,
+    min: filters_store.hazardRanges.min_ac
   },
+  complexity_filter: null,
   fortitude_filter: {
-    min: filters.hazardRanges.min_fortitude,
-    max: filters.hazardRanges.max_fortitude
-  },
-  reflex_filter: {
-    min: filters.hazardRanges.min_reflex,
-    max: filters.hazardRanges.max_reflex
-  },
-  will_filter: {
-    min: filters.hazardRanges.min_will,
-    max: filters.hazardRanges.max_will
+    max: filters_store.hazardRanges.max_fortitude,
+    min: filters_store.hazardRanges.min_fortitude
   },
   hardness_filter: {
-    min: filters.hazardRanges.min_hardness,
-    max: filters.hazardRanges.max_hardness
+    max: filters_store.hazardRanges.max_hardness,
+    min: filters_store.hazardRanges.min_hardness
   },
-  source_filter: [],
+  hp_filter: {
+    max: filters_store.hazardRanges.max_hp,
+    min: filters_store.hazardRanges.min_hp
+  },
+  level_filter: {
+    max: filters_store.hazardRanges.max_level,
+    min: filters_store.hazardRanges.min_level
+  },
+  name_filter: "",
+  order_by: "ascending",
+  rarity_filter: [],
+  reflex_filter: {
+    max: filters_store.hazardRanges.max_reflex,
+    min: filters_store.hazardRanges.min_reflex
+  },
+  size_filter: [],
   sort_by: "name",
-  order_by: "ascending"
+  source_filter: [],
+  stealth_filter: {
+    max: filters_store.hazardRanges.max_stealth,
+    min: filters_store.hazardRanges.min_stealth
+  },
+  trait_filter: [],
+  will_filter: {
+    max: filters_store.hazardRanges.max_will,
+    min: filters_store.hazardRanges.min_will
+  }
 });
 
 watch(
-  () => filters.hazardRanges,
+  () => filters_store.hazardRanges,
   ranges => {
     hazardFilters.value.level_filter = {
-      min: ranges.min_level,
-      max: ranges.max_level
+      max: ranges.max_level,
+      min: ranges.min_level
     };
     hazardFilters.value.hp_filter = {
-      min: ranges.min_hp,
-      max: ranges.max_hp
+      max: ranges.max_hp,
+      min: ranges.min_hp
     };
     hazardFilters.value.stealth_filter = {
-      min: ranges.min_stealth,
-      max: ranges.max_stealth
+      max: ranges.max_stealth,
+      min: ranges.min_stealth
     };
     hazardFilters.value.ac_filter = {
-      min: ranges.min_ac,
-      max: ranges.max_ac
+      max: ranges.max_ac,
+      min: ranges.min_ac
     };
     hazardFilters.value.fortitude_filter = {
-      min: ranges.min_fortitude,
-      max: ranges.max_fortitude
+      max: ranges.max_fortitude,
+      min: ranges.min_fortitude
     };
     hazardFilters.value.reflex_filter = {
-      min: ranges.min_reflex,
-      max: ranges.max_reflex
+      max: ranges.max_reflex,
+      min: ranges.min_reflex
     };
     hazardFilters.value.will_filter = {
-      min: ranges.min_will,
-      max: ranges.max_will
+      max: ranges.max_will,
+      min: ranges.min_will
     };
     hazardFilters.value.hardness_filter = {
-      min: ranges.min_hardness,
-      max: ranges.max_hardness
+      max: ranges.max_hardness,
+      min: ranges.min_hardness
     };
   }
 );
@@ -248,11 +248,15 @@ watch(
 const fullscreen = ref(false);
 const tableOpacity = ref("");
 
-const sourceCreatureFilter = ref<string[]>(filters.creatureFilters.sources);
-const traitCreatureFilter = ref<string[]>(filters.creatureFilters.traits);
-const familyCreatureFilter = ref<string[]>(filters.creatureFilters.families);
-const sourceHazardFilter = ref<string[]>(filters.hazardFilters.sources);
-const traitHazardFilter = ref<string[]>(filters.hazardFilters.traits);
+const sourceCreatureFilter = ref<string[]>(
+  filters_store.creatureFilters.sources
+);
+const traitCreatureFilter = ref<string[]>(filters_store.creatureFilters.traits);
+const familyCreatureFilter = ref<string[]>(
+  filters_store.creatureFilters.families
+);
+const sourceHazardFilter = ref<string[]>(filters_store.hazardFilters.sources);
+const traitHazardFilter = ref<string[]>(filters_store.hazardFilters.traits);
 
 // ---- Creature columns declaration
 const columnCreatures: {
@@ -265,114 +269,114 @@ const columnCreatures: {
   style?: string;
 }[] = [
   {
-    name: "source",
-    label: "Source",
-    field: row => row.core_data.essential.source,
-    required: false,
     align: "center",
+    field: row => row.core_data.essential.source,
+    label: "Source",
+    name: "source",
+    required: false,
     sortable: true,
     style: "min-width: 120px; max-width: 120px;"
   },
   {
-    name: "name",
-    label: "Name",
-    field: row => row.core_data.essential.name,
-    required: true,
     align: "left",
+    field: row => row.core_data.essential.name,
+    label: "Name",
+    name: "name",
+    required: true,
     sortable: true,
     style: "min-width: 225px;"
   },
   {
-    name: "level",
-    label: "Level",
-    field: row => row.core_data.essential.base_level,
-    required: false,
     align: "left",
+    field: row => row.core_data.essential.base_level,
+    label: "Level",
+    name: "level",
+    required: false,
     sortable: true,
     style: "min-width: 80px;"
   },
   {
-    name: "hp",
-    label: "HP",
-    field: row => row.core_data.essential.hp,
-    required: false,
     align: "left",
+    field: row => row.core_data.essential.hp,
+    label: "HP",
+    name: "hp",
+    required: false,
     sortable: true,
     style: "min-width: 100px;"
   },
   {
-    name: "trait",
-    label: "Traits",
-    field: row => row.core_data.traits.map(t => t.name),
-    required: false,
     align: "left",
+    field: row => row.core_data.traits.map(t => t.name),
+    label: "Traits",
+    name: "trait",
+    required: false,
     sortable: true,
     style: "min-width: 110px; max-width: 180px;"
   },
   {
-    name: "alignment",
-    label: "Alignment",
-    field: row => row.core_data.essential.alignment,
-    required: false,
     align: "left",
+    field: row => row.core_data.essential.alignment,
+    label: "Alignment",
+    name: "alignment",
+    required: false,
     sortable: true,
     style: "min-width: 135px; max-width: 180px;"
   },
   {
-    name: "size",
-    label: "Size",
+    align: "left",
     field: row => row.core_data.essential.size,
+    label: "Size",
+    name: "size",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: "rarity",
-    label: "Rarity",
+    align: "left",
     field: row => row.core_data.essential.rarity,
+    label: "Rarity",
+    name: "rarity",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: "family",
-    label: "Family",
-    field: row => row.core_data.essential.family,
-    required: false,
     align: "left",
+    field: row => row.core_data.essential.family,
+    label: "Family",
+    name: "family",
+    required: false,
     sortable: true,
     style: "min-width: 125px; max-width: 180px;"
   },
   {
-    name: "type",
-    label: "Type",
-    field: row => row.core_data.essential.cr_type,
-    required: false,
     align: "left",
+    field: row => row.core_data.essential.cr_type,
+    label: "Type",
+    name: "type",
+    required: false,
     sortable: true,
     style: "min-width: 100px"
   },
   {
-    name: "attack",
-    label: "Attacks",
+    align: "left",
     field: row => [
       row.core_data.derived.attack_data.melee,
       row.core_data.derived.attack_data.ranged,
       row.core_data.derived.attack_data.spellcaster
     ],
+    label: "Attacks",
+    name: "attack",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 80px;"
   },
   {
-    name: "role",
-    label: "Roles",
-    field: row => row.core_data.derived.creature_role!,
-    required: false,
     align: "left",
+    field: row => row.core_data.derived.creature_role!,
+    label: "Roles",
+    name: "role",
+    required: false,
     sortable: true,
     style: "min-width: 100px; max-width: 200px;"
   }
@@ -389,128 +393,128 @@ const columnHazards: {
   style?: string;
 }[] = [
   {
-    name: "source",
-    label: "Source",
-    field: row => row.core_hazard.essential.source,
-    required: false,
     align: "center",
+    field: row => row.core_hazard.essential.source,
+    label: "Source",
+    name: "source",
+    required: false,
     sortable: true,
     style: "min-width: 120px; max-width: 120px;"
   },
   {
-    name: "name",
-    label: "Name",
-    field: row => row.core_hazard.essential.name,
-    required: true,
     align: "left",
+    field: row => row.core_hazard.essential.name,
+    label: "Name",
+    name: "name",
+    required: true,
     sortable: true,
     style: "min-width: 225px;"
   },
   {
-    name: "level",
-    label: "Level",
-    field: row => row.core_hazard.essential.level,
-    required: false,
     align: "left",
+    field: row => row.core_hazard.essential.level,
+    label: "Level",
+    name: "level",
+    required: false,
     sortable: true,
     style: "min-width: 80px;"
   },
   {
-    name: "hp",
-    label: "HP",
-    field: row => row.core_hazard.essential.hp,
-    required: false,
     align: "left",
+    field: row => row.core_hazard.essential.hp,
+    label: "HP",
+    name: "hp",
+    required: false,
     sortable: true,
     style: "min-width: 100px;"
   },
   {
-    name: "trait",
-    label: "Traits",
-    field: row => row.core_hazard.traits.map(t => t.name),
-    required: false,
     align: "left",
+    field: row => row.core_hazard.traits.map(t => t.name),
+    label: "Traits",
+    name: "trait",
+    required: false,
     sortable: true,
     style: "min-width: 110px; max-width: 180px;"
   },
   {
-    name: "complexity",
-    label: "Complexity",
-    field: row => row.core_hazard.essential.complexity,
-    required: false,
     align: "left",
+    field: row => row.core_hazard.essential.complexity,
+    label: "Complexity",
+    name: "complexity",
+    required: false,
     sortable: true,
     style: "min-width: 135px; max-width: 180px;"
   },
   {
-    name: "size",
-    label: "Size",
+    align: "left",
     field: row => row.core_hazard.essential.size,
+    label: "Size",
+    name: "size",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: "rarity",
-    label: "Rarity",
+    align: "left",
     field: row => row.core_hazard.essential.rarity,
+    label: "Rarity",
+    name: "rarity",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 100px; max-width: 180px;"
   },
   {
-    name: "stealth",
-    label: "Stealth",
+    align: "left",
     field: row => row.core_hazard.essential.stealth,
+    label: "Stealth",
+    name: "stealth",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 100px;"
   },
   {
-    name: "ac",
-    label: "AC",
+    align: "left",
     field: row => row.core_hazard.essential.ac,
+    label: "AC",
+    name: "ac",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 100px;"
   },
   {
-    name: "fortitude",
-    label: "Fortitude",
+    align: "left",
     field: row => row.core_hazard.essential.fortitude,
+    label: "Fortitude",
+    name: "fortitude",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 100px;"
   },
   {
-    name: "reflex",
-    label: "Reflex",
+    align: "left",
     field: row => row.core_hazard.essential.reflex,
+    label: "Reflex",
+    name: "reflex",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 100px;"
   },
   {
-    name: "will",
-    label: "Will",
+    align: "left",
     field: row => row.core_hazard.essential.will,
+    label: "Will",
+    name: "will",
     required: false,
-    align: "left",
     sortable: true,
     style: "min-width: 100px;"
   },
   {
-    name: "hardness",
-    label: "Hardness",
-    field: row => row.core_hazard.essential.hardness,
-    required: false,
     align: "left",
+    field: row => row.core_hazard.essential.hardness,
+    label: "Hardness",
+    name: "hardness",
+    required: false,
     sortable: true,
     style: "min-width: 100px;"
   }
@@ -523,242 +527,243 @@ const waitForPageLoad = () =>
     resolveWhenLoaded = resolve;
   });
 
-const fetchFromServer = debounce(async function (
-  startRow: number,
-  rowsPerPage: number
-) {
-  if (hazardToggle.value === "creatures") {
-    const body: creature_filters = {
-      min_level_filter: creatureFilters.value.level_filter.min,
-      max_level_filter: creatureFilters.value.level_filter.max,
-      min_hp_filter: creatureFilters.value.hp_filter.min,
-      max_hp_filter: creatureFilters.value.hp_filter.max,
-      attack_data_filter: creatureFilters.value.attack_data_filter,
-      role_threshold: 50,
-      game_system_version: settings.game_version
-    };
-    if (creatureFilters.value.name_filter !== "") {
-      body.name_filter = creatureFilters.value.name_filter;
-    }
-    if (
-      creatureFilters.value.trait_filter !== undefined &&
-      creatureFilters.value.trait_filter !== null &&
-      creatureFilters.value.trait_filter.length > 0
-    ) {
-      body.trait_whitelist_filter = creatureFilters.value.trait_filter;
-    }
-    if (
-      creatureFilters.value.alignment_filter !== undefined &&
-      creatureFilters.value.alignment_filter !== null &&
-      creatureFilters.value.alignment_filter.length > 0
-    ) {
-      body.alignment_filter = creatureFilters.value.alignment_filter;
-    }
-    if (
-      creatureFilters.value.size_filter !== undefined &&
-      creatureFilters.value.size_filter !== null &&
-      creatureFilters.value.size_filter.length > 0
-    ) {
-      body.size_filter = creatureFilters.value.size_filter;
-    }
-    if (
-      creatureFilters.value.rarity_filter !== undefined &&
-      creatureFilters.value.rarity_filter !== null &&
-      creatureFilters.value.rarity_filter.length > 0
-    ) {
-      body.rarity_filter = creatureFilters.value.rarity_filter;
-    }
-    if (
-      creatureFilters.value.family_filter !== undefined &&
-      creatureFilters.value.family_filter !== null &&
-      creatureFilters.value.family_filter.length > 0
-    ) {
-      body.family_filter = creatureFilters.value.family_filter;
-    }
-    if (
-      creatureFilters.value.type_filter !== undefined &&
-      creatureFilters.value.type_filter !== null &&
-      creatureFilters.value.type_filter.length > 0
-    ) {
-      body.type_filter = creatureFilters.value.type_filter;
-    }
-    if (
-      creatureFilters.value.role_filter !== undefined &&
-      creatureFilters.value.role_filter !== null &&
-      creatureFilters.value.role_filter.length > 0
-    ) {
-      body.role_filter = creatureFilters.value.role_filter;
-    }
-    if (
-      creatureFilters.value.source_filter !== undefined &&
-      creatureFilters.value.source_filter !== null &&
-      creatureFilters.value.source_filter.length > 0
-    ) {
-      body.source_filter = creatureFilters.value.source_filter;
-    }
-    try {
-      const request = await requestCreatures(
-        settings.game,
-        startRow,
-        rowsPerPage,
-        creatureFilters.value.sort_by,
-        creatureFilters.value.order_by,
-        body
-      );
-      if (request) {
-        pagination.value.rowsNumber = request.total;
-        for (const creature of request.results) {
-          // calculate the roles of the creature, by picking the percentages that are at least over 50%
-          const rolePercentages: { role: roles; percentage: number }[] = [
-            {
-              role: "Brute",
-              percentage: creature.core_data.derived.role_data.brute
-            },
-            {
-              role: "Magical Striker",
-              percentage: creature.core_data.derived.role_data.magical_striker
-            },
-            {
-              role: "Skill Paragon",
-              percentage: creature.core_data.derived.role_data.skill_paragon
-            },
-            {
-              role: "Skirmisher",
-              percentage: creature.core_data.derived.role_data.skirmisher
-            },
-            {
-              role: "Sniper",
-              percentage: creature.core_data.derived.role_data.sniper
-            },
-            {
-              role: "Soldier",
-              percentage: creature.core_data.derived.role_data.soldier
-            },
-            {
-              role: "Spellcaster",
-              percentage: creature.core_data.derived.role_data.spellcaster
+const fetchFromServer = debounce(
+  async (startRow: number, rowsPerPage: number) => {
+    if (hazardToggle.value === "creatures") {
+      const body: creature_filters = {
+        attack_data_filter: creatureFilters.value.attack_data_filter,
+        game_system_version: settings_store.game_version,
+        max_hp_filter: creatureFilters.value.hp_filter.max,
+        max_level_filter: creatureFilters.value.level_filter.max,
+        min_hp_filter: creatureFilters.value.hp_filter.min,
+        min_level_filter: creatureFilters.value.level_filter.min,
+        role_threshold: 50
+      };
+      if (creatureFilters.value.name_filter !== "") {
+        body.name_filter = creatureFilters.value.name_filter;
+      }
+      if (
+        creatureFilters.value.trait_filter !== undefined &&
+        creatureFilters.value.trait_filter !== null &&
+        creatureFilters.value.trait_filter.length > 0
+      ) {
+        body.trait_whitelist_filter = creatureFilters.value.trait_filter;
+      }
+      if (
+        creatureFilters.value.alignment_filter !== undefined &&
+        creatureFilters.value.alignment_filter !== null &&
+        creatureFilters.value.alignment_filter.length > 0
+      ) {
+        body.alignment_filter = creatureFilters.value.alignment_filter;
+      }
+      if (
+        creatureFilters.value.size_filter !== undefined &&
+        creatureFilters.value.size_filter !== null &&
+        creatureFilters.value.size_filter.length > 0
+      ) {
+        body.size_filter = creatureFilters.value.size_filter;
+      }
+      if (
+        creatureFilters.value.rarity_filter !== undefined &&
+        creatureFilters.value.rarity_filter !== null &&
+        creatureFilters.value.rarity_filter.length > 0
+      ) {
+        body.rarity_filter = creatureFilters.value.rarity_filter;
+      }
+      if (
+        creatureFilters.value.family_filter !== undefined &&
+        creatureFilters.value.family_filter !== null &&
+        creatureFilters.value.family_filter.length > 0
+      ) {
+        body.family_filter = creatureFilters.value.family_filter;
+      }
+      if (
+        creatureFilters.value.type_filter !== undefined &&
+        creatureFilters.value.type_filter !== null &&
+        creatureFilters.value.type_filter.length > 0
+      ) {
+        body.type_filter = creatureFilters.value.type_filter;
+      }
+      if (
+        creatureFilters.value.role_filter !== undefined &&
+        creatureFilters.value.role_filter !== null &&
+        creatureFilters.value.role_filter.length > 0
+      ) {
+        body.role_filter = creatureFilters.value.role_filter;
+      }
+      if (
+        creatureFilters.value.source_filter !== undefined &&
+        creatureFilters.value.source_filter !== null &&
+        creatureFilters.value.source_filter.length > 0
+      ) {
+        body.source_filter = creatureFilters.value.source_filter;
+      }
+      try {
+        const request = await requestCreatures(
+          settings_store.game,
+          startRow,
+          rowsPerPage,
+          creatureFilters.value.sort_by,
+          creatureFilters.value.order_by,
+          body
+        );
+        if (request) {
+          pagination.value.rowsNumber = request.total;
+          for (const creature of request.results) {
+            // Calculate the roles of the creature, by picking the percentages that are at least over 50%
+            const rolePercentages: { role: roles; percentage: number }[] = [
+              {
+                percentage: creature.core_data.derived.role_data.brute,
+                role: "Brute"
+              },
+              {
+                percentage:
+                  creature.core_data.derived.role_data.magical_striker,
+                role: "Magical Striker"
+              },
+              {
+                percentage: creature.core_data.derived.role_data.skill_paragon,
+                role: "Skill Paragon"
+              },
+              {
+                percentage: creature.core_data.derived.role_data.skirmisher,
+                role: "Skirmisher"
+              },
+              {
+                percentage: creature.core_data.derived.role_data.sniper,
+                role: "Sniper"
+              },
+              {
+                percentage: creature.core_data.derived.role_data.soldier,
+                role: "Soldier"
+              },
+              {
+                percentage: creature.core_data.derived.role_data.spellcaster,
+                role: "Spellcaster"
+              }
+            ];
+            const rolesList: roles[] = [];
+            for (const role of rolePercentages) {
+              if (role.percentage >= 50) {
+                rolesList.push(role.role);
+              }
             }
-          ];
-          const rolesList: roles[] = [];
-          for (const role of rolePercentages) {
-            if (role.percentage >= 50) {
-              rolesList.push(role.role);
+            if (rolePercentages.length > 0) {
+              creature.core_data.derived.creature_role = rolesList;
+            } else {
+              creature.core_data.derived.creature_role = ["None"];
             }
           }
-          if (rolePercentages.length > 0) {
-            creature.core_data.derived.creature_role = rolesList;
-          } else {
-            creature.core_data.derived.creature_role = ["None"];
-          }
+          creatureRows.value = request.results;
+          loading.value = false;
+          resolveWhenLoaded?.();
+          resolveWhenLoaded = null;
+        } else {
+          throw new Error("Error loading creatures");
         }
-        creatureRows.value = request.results;
-        loading.value = false;
-        resolveWhenLoaded?.();
-        resolveWhenLoaded = null;
-      } else {
-        throw new Error("Error loading creatures");
+      } catch (error) {
+        console.error(error);
+        $q.notify({
+          icon: matPriorityHigh,
+          message: "Error loading the creatures",
+          progress: true,
+          type: "warning"
+        });
       }
-    } catch (error) {
-      console.error(error);
-      $q.notify({
-        progress: true,
-        type: "warning",
-        message: "Error loading the creatures",
-        icon: matPriorityHigh
-      });
-    }
-  } else {
-    const body: hazard_filters = {
-      min_level_filter: hazardFilters.value.level_filter.min,
-      max_level_filter: hazardFilters.value.level_filter.max,
-      min_hp_filter: hazardFilters.value.hp_filter.min,
-      max_hp_filter: hazardFilters.value.hp_filter.max,
-      min_stealth_filter: hazardFilters.value.stealth_filter.min,
-      max_stealth_filter: hazardFilters.value.stealth_filter.max,
-      min_ac_filter: hazardFilters.value.ac_filter.min,
-      max_ac_filter: hazardFilters.value.ac_filter.max,
-      min_fortitude_filter: hazardFilters.value.fortitude_filter.min,
-      max_fortitude_filter: hazardFilters.value.fortitude_filter.max,
-      min_reflex_filter: hazardFilters.value.reflex_filter.min,
-      max_reflex_filter: hazardFilters.value.reflex_filter.max,
-      min_will_filter: hazardFilters.value.will_filter.min,
-      max_will_filter: hazardFilters.value.will_filter.max,
-      min_hardness_filter: hazardFilters.value.hardness_filter.min,
-      max_hardness_filter: hazardFilters.value.hardness_filter.max,
-      game_system_version: settings.game_version
-    };
-    if (hazardFilters.value.name_filter !== "") {
-      body.name_filter = hazardFilters.value.name_filter;
-    }
-    if (
-      hazardFilters.value.trait_filter !== undefined &&
-      hazardFilters.value.trait_filter !== null &&
-      hazardFilters.value.trait_filter.length > 0
-    ) {
-      body.trait_whitelist_filter = hazardFilters.value.trait_filter;
-    }
-    if (
-      hazardFilters.value.complexity_filter !== undefined &&
-      hazardFilters.value.complexity_filter !== null &&
-      hazardFilters.value.complexity_filter.length > 0
-    ) {
-      body.complexity_filter = hazardFilters.value.complexity_filter;
-    }
-    if (
-      hazardFilters.value.size_filter !== undefined &&
-      hazardFilters.value.size_filter !== null &&
-      hazardFilters.value.size_filter.length > 0
-    ) {
-      body.size_filter = hazardFilters.value.size_filter;
-    }
-    if (
-      hazardFilters.value.rarity_filter !== undefined &&
-      hazardFilters.value.rarity_filter !== null &&
-      hazardFilters.value.rarity_filter.length > 0
-    ) {
-      body.rarity_filter = hazardFilters.value.rarity_filter;
-    }
-    if (
-      hazardFilters.value.source_filter !== undefined &&
-      hazardFilters.value.source_filter !== null &&
-      hazardFilters.value.source_filter.length > 0
-    ) {
-      body.source_filter = hazardFilters.value.source_filter;
-    }
-    try {
-      const request = await requestHazards(
-        settings.game,
-        startRow,
-        rowsPerPage,
-        hazardFilters.value.sort_by,
-        hazardFilters.value.order_by,
-        body
-      );
-      if (request) {
-        pagination.value.rowsNumber = request.total;
-        hazardRows.value = request.results;
-        loading.value = false;
-        resolveWhenLoaded?.();
-        resolveWhenLoaded = null;
-      } else {
-        throw new Error("Error loading hazards");
+    } else {
+      const body: hazard_filters = {
+        game_system_version: settings_store.game_version,
+        max_ac_filter: hazardFilters.value.ac_filter.max,
+        max_fortitude_filter: hazardFilters.value.fortitude_filter.max,
+        max_hardness_filter: hazardFilters.value.hardness_filter.max,
+        max_hp_filter: hazardFilters.value.hp_filter.max,
+        max_level_filter: hazardFilters.value.level_filter.max,
+        max_reflex_filter: hazardFilters.value.reflex_filter.max,
+        max_stealth_filter: hazardFilters.value.stealth_filter.max,
+        max_will_filter: hazardFilters.value.will_filter.max,
+        min_ac_filter: hazardFilters.value.ac_filter.min,
+        min_fortitude_filter: hazardFilters.value.fortitude_filter.min,
+        min_hardness_filter: hazardFilters.value.hardness_filter.min,
+        min_hp_filter: hazardFilters.value.hp_filter.min,
+        min_level_filter: hazardFilters.value.level_filter.min,
+        min_reflex_filter: hazardFilters.value.reflex_filter.min,
+        min_stealth_filter: hazardFilters.value.stealth_filter.min,
+        min_will_filter: hazardFilters.value.will_filter.min
+      };
+      if (hazardFilters.value.name_filter !== "") {
+        body.name_filter = hazardFilters.value.name_filter;
       }
-    } catch (error) {
-      console.error(error);
-      $q.notify({
-        progress: true,
-        type: "warning",
-        message: "Error loading the hazards",
-        icon: matPriorityHigh
-      });
+      if (
+        hazardFilters.value.trait_filter !== undefined &&
+        hazardFilters.value.trait_filter !== null &&
+        hazardFilters.value.trait_filter.length > 0
+      ) {
+        body.trait_whitelist_filter = hazardFilters.value.trait_filter;
+      }
+      if (
+        hazardFilters.value.complexity_filter !== undefined &&
+        hazardFilters.value.complexity_filter !== null &&
+        hazardFilters.value.complexity_filter.length > 0
+      ) {
+        body.complexity_filter = hazardFilters.value.complexity_filter;
+      }
+      if (
+        hazardFilters.value.size_filter !== undefined &&
+        hazardFilters.value.size_filter !== null &&
+        hazardFilters.value.size_filter.length > 0
+      ) {
+        body.size_filter = hazardFilters.value.size_filter;
+      }
+      if (
+        hazardFilters.value.rarity_filter !== undefined &&
+        hazardFilters.value.rarity_filter !== null &&
+        hazardFilters.value.rarity_filter.length > 0
+      ) {
+        body.rarity_filter = hazardFilters.value.rarity_filter;
+      }
+      if (
+        hazardFilters.value.source_filter !== undefined &&
+        hazardFilters.value.source_filter !== null &&
+        hazardFilters.value.source_filter.length > 0
+      ) {
+        body.source_filter = hazardFilters.value.source_filter;
+      }
+      try {
+        const request = await requestHazards(
+          settings_store.game,
+          startRow,
+          rowsPerPage,
+          hazardFilters.value.sort_by,
+          hazardFilters.value.order_by,
+          body
+        );
+        if (request) {
+          pagination.value.rowsNumber = request.total;
+          hazardRows.value = request.results;
+          loading.value = false;
+          resolveWhenLoaded?.();
+          resolveWhenLoaded = null;
+        } else {
+          throw new Error("Error loading hazards");
+        }
+      } catch (error) {
+        console.error(error);
+        $q.notify({
+          icon: matPriorityHigh,
+          message: "Error loading the hazards",
+          progress: true,
+          type: "warning"
+        });
+      }
     }
-  }
-}, 300);
+  },
+  300
+);
 
 async function onRequest(
-  props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
+  table_props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
 ) {
-  const { page, rowsPerPage } = props.pagination;
+  const { page, rowsPerPage } = table_props.pagination;
 
   loading.value = true;
 
@@ -773,75 +778,75 @@ async function onRequest(
 // ---- Reset filters functions
 const resetCreatureFilters = () => {
   creatureFilters.value = {
-    source_filter: [],
-    name_filter: "",
-    level_filter: {
-      min: filters.creatureRanges.min_level,
-      max: filters.creatureRanges.max_level
-    },
-    hp_filter: {
-      min: filters.creatureRanges.min_hp,
-      max: filters.creatureRanges.max_hp
-    },
-    trait_filter: [],
     alignment_filter: [],
-    size_filter: [],
-    rarity_filter: [],
-    family_filter: [],
-    type_filter: [],
     attack_data_filter: {
       melee: null,
       ranged: null,
       spellcaster: null
     },
+    family_filter: [],
+    hp_filter: {
+      max: filters_store.creatureRanges.max_hp,
+      min: filters_store.creatureRanges.min_hp
+    },
+    level_filter: {
+      max: filters_store.creatureRanges.max_level,
+      min: filters_store.creatureRanges.min_level
+    },
+    name_filter: "",
+    order_by: "ascending",
+    rarity_filter: [],
     role_filter: [],
+    size_filter: [],
     sort_by: "name",
-    order_by: "ascending"
+    source_filter: [],
+    trait_filter: [],
+    type_filter: []
   };
 };
 
 const resetHazardFilters = () => {
   hazardFilters.value = {
-    source_filter: [],
-    name_filter: "",
-    level_filter: {
-      min: filters.hazardRanges.min_level,
-      max: filters.hazardRanges.max_level
-    },
-    hp_filter: {
-      min: filters.hazardRanges.min_hp,
-      max: filters.hazardRanges.max_hp
-    },
-    trait_filter: [],
-    complexity_filter: null,
-    size_filter: [],
-    rarity_filter: [],
-    stealth_filter: {
-      min: filters.hazardRanges.min_stealth,
-      max: filters.hazardRanges.max_stealth
-    },
     ac_filter: {
-      min: filters.hazardRanges.min_ac,
-      max: filters.hazardRanges.max_ac
+      max: filters_store.hazardRanges.max_ac,
+      min: filters_store.hazardRanges.min_ac
     },
+    complexity_filter: null,
     fortitude_filter: {
-      min: filters.hazardRanges.min_fortitude,
-      max: filters.hazardRanges.max_fortitude
-    },
-    reflex_filter: {
-      min: filters.hazardRanges.min_reflex,
-      max: filters.hazardRanges.max_reflex
-    },
-    will_filter: {
-      min: filters.hazardRanges.min_will,
-      max: filters.hazardRanges.max_will
+      max: filters_store.hazardRanges.max_fortitude,
+      min: filters_store.hazardRanges.min_fortitude
     },
     hardness_filter: {
-      min: filters.hazardRanges.min_hardness,
-      max: filters.hazardRanges.max_hardness
+      max: filters_store.hazardRanges.max_hardness,
+      min: filters_store.hazardRanges.min_hardness
     },
+    hp_filter: {
+      max: filters_store.hazardRanges.max_hp,
+      min: filters_store.hazardRanges.min_hp
+    },
+    level_filter: {
+      max: filters_store.hazardRanges.max_level,
+      min: filters_store.hazardRanges.min_level
+    },
+    name_filter: "",
+    order_by: "ascending",
+    rarity_filter: [],
+    reflex_filter: {
+      max: filters_store.hazardRanges.max_reflex,
+      min: filters_store.hazardRanges.min_reflex
+    },
+    size_filter: [],
     sort_by: "name",
-    order_by: "ascending"
+    source_filter: [],
+    stealth_filter: {
+      max: filters_store.hazardRanges.max_stealth,
+      min: filters_store.hazardRanges.min_stealth
+    },
+    trait_filter: [],
+    will_filter: {
+      max: filters_store.hazardRanges.max_will,
+      min: filters_store.hazardRanges.min_will
+    }
   };
 };
 
@@ -892,59 +897,58 @@ const sortHazards = (col: hazard_columns) => {
 };
 
 // ---- Add creature to encounter function
-const addCreature = debounce(function (creature: creature) {
+const addCreature = debounce((creature: creature) => {
   const aon_link =
-    settings.game === "sf"
-      ? "https://2e.aonsrd.com/search?q=" +
-        encodeURIComponent(creature.core_data.essential.name) +
-        " type%3A(creature)&type=eqs"
+    settings_store.game === "sf"
+      ? `https://2e.aonsrd.com/search?q=${encodeURIComponent(
+          creature.core_data.essential.name
+        )} type%3A(creature)&type=eqs`
       : creature.core_data.derived.archive_link;
   const min_creature: min_creature_hazard = {
+    archive_link: aon_link,
     game: creature.game,
     id: creature.core_data.essential.id,
-    archive_link: aon_link,
-    name: creature.core_data.essential.name,
+    is_hazard: false,
     level: creature.core_data.essential.base_level,
-    variant: "Base",
-    is_hazard: false
+    name: creature.core_data.essential.name,
+    variant: "Base"
   };
-  encounter.addToEncounter(min_creature);
+  encounter_store.addToEncounter(min_creature);
 }, 50);
 
 // ---- Add hazard to encounter function
-const addHazard = debounce(function (hazard: hazard) {
+const addHazard = debounce((hazard: hazard) => {
   const min_hazard: min_creature_hazard = {
+    archive_link: `https://2e.${getGameAonLink(
+      hazard.game
+    )}.com/search?q=${encodeURIComponent(
+      hazard.core_hazard.essential.name
+    )} type%3A(hazard)&type=eqs`,
+    complexity: hazard.core_hazard.essential.complexity,
     game: hazard.game,
     id: hazard.core_hazard.essential.id,
-    archive_link:
-      "https://2e." +
-      getGameAonLink(hazard.game) +
-      ".com/search?q=" +
-      encodeURIComponent(hazard.core_hazard.essential.name) +
-      " type%3A(hazard)&type=eqs",
-    name: hazard.core_hazard.essential.name,
-    level: hazard.core_hazard.essential.level,
     is_hazard: true,
-    complexity: hazard.core_hazard.essential.complexity
+    level: hazard.core_hazard.essential.level,
+    name: hazard.core_hazard.essential.name
   };
-  encounter.addToEncounter(min_hazard);
+  encounter_store.addToEncounter(min_hazard);
 }, 50);
 
-const showCreature = debounce(async function (creature: creature) {
+const showCreature = debounce(async (creature: creature) => {
   try {
     const creatureData = await requestCreatureId(
       creature.game,
       creature.core_data.essential.id,
       "Base",
-      settings.is_pwl_on
+      settings_store.is_pwl_on
     );
     if (isNull(creatureData) || creatureData === undefined) {
       console.error("Missing creature ID");
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Missing creature ID",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     } else {
       if (creatureData?.combat_data?.weapons) {
@@ -978,14 +982,14 @@ const showCreature = debounce(async function (creature: creature) {
           }
         });
       }
-      encounter.setSelectedCreature(creatureData);
+      encounter_store.setSelectedCreature(creatureData);
     }
   } catch (error) {
     console.error(error);
   }
 }, 50);
 
-const showHazard = debounce(async function (hazard: hazard) {
+const showHazard = debounce(async (hazard: hazard) => {
   try {
     const hazardData = await requestHazardId(
       hazard.game,
@@ -994,13 +998,13 @@ const showHazard = debounce(async function (hazard: hazard) {
     if (isNull(hazardData) || hazardData === undefined) {
       console.error("Missing hazard ID");
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Missing hazard ID",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     } else {
-      encounter.setSelectedHazard(hazardData);
+      encounter_store.setSelectedHazard(hazardData);
     }
   } catch (error) {
     console.error(error);
@@ -1018,7 +1022,9 @@ const deactivateNavigation = () => {
 // Checks if typing to prevent stealing shortcuts
 function isTextInput(target: EventTarget | null): boolean {
   const el = target as HTMLElement | null;
-  return !!el?.closest('input, textarea, [contenteditable="true"], .q-editor');
+  return Boolean(
+    el?.closest('input, textarea, [contenteditable="true"], .q-editor')
+  );
 }
 
 // Table shortcuts
@@ -1079,7 +1085,6 @@ async function onTableKey(evt: KeyboardEvent) {
     }
     case "PageUp": {
       index = 0;
-      const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
       if (hazardToggle.value === "hazards") {
         showHazard(selected.value[0]! as hazard);
@@ -1091,7 +1096,6 @@ async function onTableKey(evt: KeyboardEvent) {
     }
     case "PageDown": {
       index = rowsPerPage - 1;
-      const { computedRows } = encounterTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
       if (hazardToggle.value === "hazards") {
         showHazard(selected.value[0]! as hazard);
@@ -1107,7 +1111,6 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.firstPage();
       await promise;
 
-      const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
       if (hazardToggle.value === "hazards") {
         showHazard(selected.value[0]! as hazard);
@@ -1123,7 +1126,6 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.lastPage();
       await promise;
 
-      const { computedRows } = encounterTable.value;
       selected.value = [computedRows[Math.min(index, computedRows.length - 1)]];
       if (hazardToggle.value === "hazards") {
         showHazard(selected.value[0]! as hazard);
@@ -1144,7 +1146,6 @@ async function onTableKey(evt: KeyboardEvent) {
       }
       await promise;
 
-      const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
       if (hazardToggle.value === "hazards") {
         showHazard(selected.value[0]! as hazard);
@@ -1157,7 +1158,6 @@ async function onTableKey(evt: KeyboardEvent) {
     case "ArrowUp": {
       if (currentIndex > 0) {
         index = currentIndex - 1;
-        const { computedRows } = encounterTable.value;
         selected.value = [computedRows[index]];
         if (hazardToggle.value === "hazards") {
           showHazard(selected.value[0]! as hazard);
@@ -1179,7 +1179,6 @@ async function onTableKey(evt: KeyboardEvent) {
       }
       await promise;
 
-      const { computedRows } = encounterTable.value;
       selected.value = [computedRows[index]];
       if (hazardToggle.value === "hazards") {
         showHazard(selected.value[0]! as hazard);
@@ -1192,7 +1191,6 @@ async function onTableKey(evt: KeyboardEvent) {
     case "ArrowDown": {
       if (currentIndex < lastIndex) {
         index = currentIndex + 1;
-        const { computedRows } = encounterTable.value;
         selected.value = [computedRows[index]];
         if (hazardToggle.value === "hazards") {
           showHazard(selected.value[0]! as hazard);
@@ -1242,8 +1240,8 @@ const filterCreatureSourcesFn = (
 ) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.sources = sourceCreatureFilter.value.filter(v =>
-      v.toLowerCase().includes(filter)
+    filters_store.creatureFilters.sources = sourceCreatureFilter.value.filter(
+      v => v.toLowerCase().includes(filter)
     );
   });
 };
@@ -1254,7 +1252,7 @@ const filterCreatureTraitsFn = (
 ) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.traits = traitCreatureFilter.value.filter(v =>
+    filters_store.creatureFilters.traits = traitCreatureFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -1266,8 +1264,8 @@ const filterCreatureFamiliesFn = (
 ) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.creatureFilters.families = familyCreatureFilter.value.filter(v =>
-      v.toLowerCase().includes(filter)
+    filters_store.creatureFilters.families = familyCreatureFilter.value.filter(
+      v => v.toLowerCase().includes(filter)
     );
   });
 };
@@ -1278,7 +1276,7 @@ const filterHazardSourcesFn = (
 ) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.hazardFilters.sources = sourceHazardFilter.value.filter(v =>
+    filters_store.hazardFilters.sources = sourceHazardFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -1290,7 +1288,7 @@ const filterHazardTraitsFn = (
 ) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.hazardFilters.traits = traitHazardFilter.value.filter(v =>
+    filters_store.hazardFilters.traits = traitHazardFilter.value.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -1314,78 +1312,101 @@ onMounted(async () => {
       hazardSourcesRequest,
       hazardRangesRequest
     ] = await Promise.all([
-      requestFilters(settings.game, "traits"),
-      requestFilters(settings.game, "alignments"),
-      requestFilters(settings.game, "sizes"),
-      requestFilters(settings.game, "rarities"),
-      requestFilters(settings.game, "families"),
-      requestFilters(settings.game, "creature_types"),
-      requestFilters(settings.game, "sources"),
-      requestFilters(settings.game, "creature_roles"),
-      requestCreatureRanges(settings.game),
-      requestHazardFilters(settings.game, "traits"),
-      requestHazardFilters(settings.game, "sizes"),
-      requestHazardFilters(settings.game, "rarities"),
-      requestHazardFilters(settings.game, "sources"),
-      requestHazardRanges(settings.game),
+      requestFilters(settings_store.game, "traits"),
+      requestFilters(settings_store.game, "alignments"),
+      requestFilters(settings_store.game, "sizes"),
+      requestFilters(settings_store.game, "rarities"),
+      requestFilters(settings_store.game, "families"),
+      requestFilters(settings_store.game, "creature_types"),
+      requestFilters(settings_store.game, "sources"),
+      requestFilters(settings_store.game, "creature_roles"),
+      requestCreatureRanges(settings_store.game),
+      requestHazardFilters(settings_store.game, "traits"),
+      requestHazardFilters(settings_store.game, "sizes"),
+      requestHazardFilters(settings_store.game, "rarities"),
+      requestHazardFilters(settings_store.game, "sources"),
+      requestHazardRanges(settings_store.game),
       fetchFromServer(0, 100)
     ]);
 
-    if (!traitsRequest) throw new Error("Error fetching creature traits");
-    if (!alignmentsRequest)
+    if (!traitsRequest) {
+      throw new Error("Error fetching creature traits");
+    }
+    if (!alignmentsRequest) {
       throw new Error("Error fetching creature alignments");
-    if (!sizesRequest) throw new Error("Error fetching creature sizes");
-    if (!raritiesRequest) throw new Error("Error fetching creature rarities");
-    if (!familiesRequest) throw new Error("Error fetching creature families");
-    if (!typesRequest)
+    }
+    if (!sizesRequest) {
+      throw new Error("Error fetching creature sizes");
+    }
+    if (!raritiesRequest) {
+      throw new Error("Error fetching creature rarities");
+    }
+    if (!familiesRequest) {
+      throw new Error("Error fetching creature families");
+    }
+    if (!typesRequest) {
       throw new Error("Error fetching creature creature_types");
-    if (!sourcesRequest) throw new Error("Error fetching creature sources");
-    if (!rolesRequest)
+    }
+    if (!sourcesRequest) {
+      throw new Error("Error fetching creature sources");
+    }
+    if (!rolesRequest) {
       throw new Error("Error fetching creature creature_roles");
-    if (!creatureRangesRequest)
+    }
+    if (!creatureRangesRequest) {
       throw new Error("Error fetching creature ranges");
-    if (!hazardTraitsRequest) throw new Error("Error fetching hazard traits");
-    if (!hazardSizesRequest) throw new Error("Error fetching hazard sizes");
-    if (!hazardRaritiesRequest)
+    }
+    if (!hazardTraitsRequest) {
+      throw new Error("Error fetching hazard traits");
+    }
+    if (!hazardSizesRequest) {
+      throw new Error("Error fetching hazard sizes");
+    }
+    if (!hazardRaritiesRequest) {
       throw new Error("Error fetching hazard rarities");
-    if (!hazardSourcesRequest) throw new Error("Error fetching hazard sources");
-    if (!hazardRangesRequest) throw new Error("Error fetching hazard ranges");
+    }
+    if (!hazardSourcesRequest) {
+      throw new Error("Error fetching hazard sources");
+    }
+    if (!hazardRangesRequest) {
+      throw new Error("Error fetching hazard ranges");
+    }
 
-    filters.updateTraits(traitsRequest);
-    traitCreatureFilter.value = filters.creatureFilters.traits;
+    filters_store.updateTraits(traitsRequest);
+    traitCreatureFilter.value = filters_store.creatureFilters.traits;
 
-    filters.updateAlignments(alignmentsRequest);
-    filters.updateSizes(sizesRequest);
-    filters.updateRarities(raritiesRequest);
+    filters_store.updateAlignments(alignmentsRequest);
+    filters_store.updateSizes(sizesRequest);
+    filters_store.updateRarities(raritiesRequest);
 
-    filters.updateFamilies(familiesRequest);
-    familyCreatureFilter.value = filters.creatureFilters.families;
+    filters_store.updateFamilies(familiesRequest);
+    familyCreatureFilter.value = filters_store.creatureFilters.families;
 
-    filters.updateCreatureType(typesRequest);
+    filters_store.updateCreatureType(typesRequest);
 
-    filters.updateSources(sourcesRequest);
-    sourceCreatureFilter.value = filters.creatureFilters.sources;
+    filters_store.updateSources(sourcesRequest);
+    sourceCreatureFilter.value = filters_store.creatureFilters.sources;
 
-    filters.updateRoles(rolesRequest);
-    filters.creatureRanges = creatureRangesRequest;
+    filters_store.updateRoles(rolesRequest);
+    filters_store.creatureRanges = creatureRangesRequest;
 
-    filters.updateHazardTraits(hazardTraitsRequest);
-    traitHazardFilter.value = filters.hazardFilters.traits;
+    filters_store.updateHazardTraits(hazardTraitsRequest);
+    traitHazardFilter.value = filters_store.hazardFilters.traits;
 
-    filters.updateHazardSizes(hazardSizesRequest);
-    filters.updateHazardRarities(hazardRaritiesRequest);
+    filters_store.updateHazardSizes(hazardSizesRequest);
+    filters_store.updateHazardRarities(hazardRaritiesRequest);
 
-    filters.updateHazardSources(hazardSourcesRequest);
-    sourceHazardFilter.value = filters.hazardFilters.sources;
+    filters_store.updateHazardSources(hazardSourcesRequest);
+    sourceHazardFilter.value = filters_store.hazardFilters.sources;
 
-    filters.hazardRanges = hazardRangesRequest;
+    filters_store.hazardRanges = hazardRangesRequest;
   } catch (error) {
     console.error(error);
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Error fetching filters",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
   }
 });
@@ -1554,8 +1575,8 @@ onMounted(async () => {
                 { label: 'Hazards', value: 'hazards' }
               ]"
               @update:model-value="
-                encounter.removeSelectedCreature();
-                encounter.removeSelectedHazard();
+                encounter_store.removeSelectedCreature();
+                encounter_store.removeSelectedHazard();
                 loading = true;
                 pagination.page = 0;
                 fetchFromServer(0, 100);
@@ -1632,7 +1653,9 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filters.creatureFilters.sources)"
+                  :options="
+                    Object.freeze(filters_store.creatureFilters.sources)
+                  "
                   use-input
                   input-debounce="0"
                   :label="columnCreatures[0]!.label"
@@ -1698,8 +1721,8 @@ onMounted(async () => {
                       <q-range
                         v-model="creatureFilters.level_filter"
                         label-always
-                        :min="filters.creatureRanges.min_level"
-                        :max="filters.creatureRanges.max_level"
+                        :min="filters_store.creatureRanges.min_level"
+                        :max="filters_store.creatureRanges.max_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
@@ -1747,8 +1770,8 @@ onMounted(async () => {
                       <q-range
                         v-model="creatureFilters.hp_filter"
                         label-always
-                        :min="filters.creatureRanges.min_hp"
-                        :max="filters.creatureRanges.max_hp"
+                        :min="filters_store.creatureRanges.min_hp"
+                        :max="filters_store.creatureRanges.max_hp"
                         style="min-width: 200px"
                         aria-label="Filter HP"
                         role="menuitem"
@@ -1787,7 +1810,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filters.creatureFilters.traits)"
+                  :options="Object.freeze(filters_store.creatureFilters.traits)"
                   use-input
                   input-debounce="0"
                   :label="columnCreatures[4]!.label"
@@ -1825,7 +1848,9 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.alignments)"
+                :options="
+                  Object.freeze(filters_store.creatureFilters.alignments)
+                "
                 :label="columnCreatures[5]!.label"
                 :style="columnCreatures[5]!.style"
               />
@@ -1858,7 +1883,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.sizes)"
+                :options="Object.freeze(filters_store.creatureFilters.sizes)"
                 :label="columnCreatures[6]!.label"
                 :style="columnCreatures[6]!.style"
               />
@@ -1891,7 +1916,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.rarities)"
+                :options="Object.freeze(filters_store.creatureFilters.rarities)"
                 :label="columnCreatures[7]!.label"
                 :style="columnCreatures[7]!.style"
               />
@@ -1925,7 +1950,9 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filters.creatureFilters.families)"
+                  :options="
+                    Object.freeze(filters_store.creatureFilters.families)
+                  "
                   use-input
                   input-debounce="0"
                   :label="columnCreatures[8]!.label"
@@ -1963,7 +1990,9 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.creature_types)"
+                :options="
+                  Object.freeze(filters_store.creatureFilters.creature_types)
+                "
                 :label="columnCreatures[9]!.label"
                 :style="columnCreatures[9]!.style"
               />
@@ -2135,7 +2164,9 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.creatureFilters.creature_roles)"
+                :options="
+                  Object.freeze(filters_store.creatureFilters.creature_roles)
+                "
                 :label="columnCreatures[11]!.label"
                 :style="columnCreatures[11]!.style"
               />
@@ -2168,7 +2199,7 @@ onMounted(async () => {
             openSheet(
               router,
               'bestiary',
-              settings.game,
+              settings_store.game,
               selectedCreature.row.core_data.essential.id
             )
           "
@@ -2217,9 +2248,9 @@ onMounted(async () => {
           <div class="row items-center wrap">
             <q-icon
               v-if="
-                encounter.selectedCreature?.core_data &&
+                encounter_store.selectedCreature?.core_data &&
                 name.row.core_data.essential.id ===
-                  encounter.selectedCreature?.core_data.essential.id
+                  encounter_store.selectedCreature?.core_data.essential.id
               "
               class="tw:mr-1 tw:align-middle"
               size="xs"
@@ -2238,10 +2269,10 @@ onMounted(async () => {
               >
             </a>
             <a
-              v-else-if="settings.game === 'sf'"
+              v-else-if="settings_store.game === 'sf'"
               :href="
                 'https://2e.' +
-                getGameAonLink(settings.game) +
+                getGameAonLink(settings_store.game) +
                 '.com/search?q=' +
                 encodeURIComponent(name.value) +
                 ' type%3A(creature)&type=eqs'
@@ -2257,7 +2288,10 @@ onMounted(async () => {
             </a>
             <span v-else class="tw:align-middle">{{ name.value }}</span>
             <q-chip
-              v-if="settings.game === 'pf' && settings.game_version === 'Any'"
+              v-if="
+                settings_store.game === 'pf' &&
+                settings_store.game_version === 'Any'
+              "
               dense
               :color="name.row.core_data.essential.remaster ? 'blue' : 'red-10'"
               text-color="white"
@@ -2630,8 +2664,8 @@ onMounted(async () => {
                 { label: 'Hazards', value: 'hazards' }
               ]"
               @update:model-value="
-                encounter.removeSelectedCreature();
-                encounter.removeSelectedHazard();
+                encounter_store.removeSelectedCreature();
+                encounter_store.removeSelectedHazard();
                 loading = true;
                 pagination.page = 0;
                 fetchFromServer(0, 100);
@@ -2708,7 +2742,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filters.hazardFilters.sources)"
+                  :options="Object.freeze(filters_store.hazardFilters.sources)"
                   use-input
                   input-debounce="0"
                   :label="columnHazards[0]!.label"
@@ -2774,8 +2808,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.level_filter"
                         label-always
-                        :min="filters.hazardRanges.min_level"
-                        :max="filters.hazardRanges.max_level"
+                        :min="filters_store.hazardRanges.min_level"
+                        :max="filters_store.hazardRanges.max_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
@@ -2823,8 +2857,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.hp_filter"
                         label-always
-                        :min="filters.hazardRanges.min_hp"
-                        :max="filters.hazardRanges.max_hp"
+                        :min="filters_store.hazardRanges.min_hp"
+                        :max="filters_store.hazardRanges.max_hp"
                         style="min-width: 200px"
                         aria-label="Filter HP"
                         role="menuitem"
@@ -2863,7 +2897,7 @@ onMounted(async () => {
                   outlined
                   clearable
                   options-dense
-                  :options="Object.freeze(filters.hazardFilters.traits)"
+                  :options="Object.freeze(filters_store.hazardFilters.traits)"
                   use-input
                   input-debounce="0"
                   :label="columnHazards[4]!.label"
@@ -2933,7 +2967,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.hazardFilters.sizes)"
+                :options="Object.freeze(filters_store.hazardFilters.sizes)"
                 :label="columnHazards[6]!.label"
                 :style="columnHazards[6]!.style"
               />
@@ -2966,7 +3000,7 @@ onMounted(async () => {
                 outlined
                 clearable
                 options-dense
-                :options="Object.freeze(filters.hazardFilters.rarities)"
+                :options="Object.freeze(filters_store.hazardFilters.rarities)"
                 :label="columnHazards[7]!.label"
                 :style="columnHazards[7]!.style"
               />
@@ -3009,8 +3043,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.stealth_filter"
                         label-always
-                        :min="filters.hazardRanges.min_stealth"
-                        :max="filters.hazardRanges.max_stealth"
+                        :min="filters_store.hazardRanges.min_stealth"
+                        :max="filters_store.hazardRanges.max_stealth"
                         style="min-width: 200px"
                         aria-label="Filter Stealth"
                         role="menuitem"
@@ -3058,8 +3092,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.ac_filter"
                         label-always
-                        :min="filters.hazardRanges.min_ac"
-                        :max="filters.hazardRanges.max_ac"
+                        :min="filters_store.hazardRanges.min_ac"
+                        :max="filters_store.hazardRanges.max_ac"
                         style="min-width: 200px"
                         aria-label="Filter AC"
                         role="menuitem"
@@ -3107,8 +3141,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.fortitude_filter"
                         label-always
-                        :min="filters.hazardRanges.min_fortitude"
-                        :max="filters.hazardRanges.max_fortitude"
+                        :min="filters_store.hazardRanges.min_fortitude"
+                        :max="filters_store.hazardRanges.max_fortitude"
                         style="min-width: 200px"
                         aria-label="Filter Fortitude"
                         role="menuitem"
@@ -3156,8 +3190,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.reflex_filter"
                         label-always
-                        :min="filters.hazardRanges.min_reflex"
-                        :max="filters.hazardRanges.max_reflex"
+                        :min="filters_store.hazardRanges.min_reflex"
+                        :max="filters_store.hazardRanges.max_reflex"
                         style="min-width: 200px"
                         aria-label="Filter Reflex"
                         role="menuitem"
@@ -3205,8 +3239,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.will_filter"
                         label-always
-                        :min="filters.hazardRanges.min_will"
-                        :max="filters.hazardRanges.max_will"
+                        :min="filters_store.hazardRanges.min_will"
+                        :max="filters_store.hazardRanges.max_will"
                         style="min-width: 200px"
                         aria-label="Filter Will"
                         role="menuitem"
@@ -3254,8 +3288,8 @@ onMounted(async () => {
                       <q-range
                         v-model="hazardFilters.hardness_filter"
                         label-always
-                        :min="filters.hazardRanges.min_hardness"
-                        :max="filters.hazardRanges.max_hardness"
+                        :min="filters_store.hazardRanges.min_hardness"
+                        :max="filters_store.hazardRanges.max_hardness"
                         style="min-width: 200px"
                         aria-label="Filter Hardness"
                         role="menuitem"
@@ -3293,7 +3327,7 @@ onMounted(async () => {
             openSheet(
               router,
               'hazard',
-              settings.game,
+              settings_store.game,
               selectedHazard.row.core_hazard.essential.id
             )
           "
@@ -3342,9 +3376,9 @@ onMounted(async () => {
           <div class="row items-center wrap">
             <q-icon
               v-if="
-                encounter.selectedHazard?.core_hazard &&
+                encounter_store.selectedHazard?.core_hazard &&
                 name.row.core_hazard.essential.id ===
-                  encounter.selectedHazard?.core_hazard.essential.id
+                  encounter_store.selectedHazard?.core_hazard.essential.id
               "
               class="tw:mr-1 tw:align-middle"
               size="xs"
@@ -3353,7 +3387,7 @@ onMounted(async () => {
             <a
               :href="
                 'https://2e.' +
-                getGameAonLink(settings.game) +
+                getGameAonLink(settings_store.game) +
                 '.com/search?q=' +
                 encodeURIComponent(name.value) +
                 ' type%3A(hazard)&type=eqs'
@@ -3368,7 +3402,10 @@ onMounted(async () => {
               >
             </a>
             <q-chip
-              v-if="settings.game === 'pf' && settings.game_version === 'Any'"
+              v-if="
+                settings_store.game === 'pf' &&
+                settings_store.game_version === 'Any'
+              "
               dense
               :color="
                 name.row.core_hazard.essential.remaster ? 'blue' : 'red-10'

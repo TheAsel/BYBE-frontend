@@ -10,9 +10,9 @@ export function openSheet(
 ) {
   const routeData = router.resolve({
     name: page,
-    query: { game: game, id: id, variant: variant?.toLowerCase() }
+    query: { game, id, variant: variant?.toLowerCase() }
   });
-  if (import.meta.env.IS_APP === true) {
+  if (import.meta.env.IS_APP) {
     globalThis.open(routeData.href, "_self");
   } else {
     globalThis.open(routeData.href, "_blank");
@@ -33,7 +33,7 @@ export function getGameAonLink(game: games) {
 
 export function addPlus(value: number | undefined) {
   if (value !== undefined && value >= 0) {
-    return "+" + value;
+    return `+${value}`;
   } else {
     return value;
   }
@@ -47,9 +47,9 @@ export function cleanSymbols(description: string) {
     if (i) {
       description = description.replaceAll(
         i[0],
-        '<span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl">' +
-          i[1] +
-          "</span>"
+        `<span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl">${
+          i[1]
+        }</span>`
       );
     }
   }
@@ -97,4 +97,5 @@ export function pfActionSymbol(num: number | null, action: string) {
   if (action === "reaction") {
     return 5;
   }
+  return 0;
 }

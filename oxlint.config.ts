@@ -22,12 +22,12 @@ export default defineConfig({
   plugins: ["typescript", "vue", "import", "eslint", "promise", "unicorn"],
 
   categories: {
-    correctness: "error"
-    // style: 'error',
-    // pedantic: 'warn',
-    // suspicious: 'error',
-    // perf: 'error',
-    // restriction: 'error'
+    correctness: "error",
+    // style: "error",
+    // pedantic: "warn",
+    suspicious: "error",
+    perf: "error"
+    // restriction: "error"
   },
 
   rules: {},

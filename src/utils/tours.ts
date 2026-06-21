@@ -6,17 +6,17 @@ import type { StepOptions, Tour } from "shepherd.js";
 function firstButtons(tour: Tour) {
   return [
     {
-      text: "CLOSE",
-      secondary: true,
       action() {
         return tour.cancel();
-      }
+      },
+      secondary: true,
+      text: "CLOSE"
     },
     {
-      text: "NEXT",
       action() {
         return tour.next();
-      }
+      },
+      text: "NEXT"
     }
   ];
 }
@@ -24,17 +24,17 @@ function firstButtons(tour: Tour) {
 function lastButtons(tour: Tour) {
   return [
     {
-      text: "PREVIOUS",
-      secondary: true,
       action() {
         return tour.back();
-      }
+      },
+      secondary: true,
+      text: "PREVIOUS"
     },
     {
-      text: "FINISH",
       action() {
         return tour.complete();
-      }
+      },
+      text: "FINISH"
     }
   ];
 }
@@ -42,130 +42,130 @@ function lastButtons(tour: Tour) {
 function defaultButtons(tour: Tour) {
   return [
     {
-      text: "CLOSE",
-      secondary: true,
       action() {
         return tour.cancel();
-      }
+      },
+      secondary: true,
+      text: "CLOSE"
     },
     {
-      text: "PREVIOUS",
       action() {
         return tour.back();
-      }
+      },
+      text: "PREVIOUS"
     },
     {
-      text: "NEXT",
       action() {
         return tour.next();
-      }
+      },
+      text: "NEXT"
     }
   ];
 }
 
 export function createTourEncounter() {
   const tour: Tour = useShepherd({
-    useModalOverlay: true,
     defaultStepOptions: {
-      scrollTo: true,
-      modalOverlayOpeningPadding: 5,
-      modalOverlayOpeningRadius: 10,
       floatingUIOptions: {
         middleware: [offset(16)]
-      }
-    }
+      },
+      modalOverlayOpeningPadding: 5,
+      modalOverlayOpeningRadius: 10,
+      scrollTo: true
+    },
+    useModalOverlay: true
   });
 
   const tourSteps: StepOptions[] = [
     {
       attachTo: { element: "#shepherd-0", on: "auto" },
-      title: "Creature & Hazard Table",
+      buttons: firstButtons(tour),
       text: "Double click on a row to add it to the Encounter List to the right.",
-      buttons: firstButtons(tour)
+      title: "Creature & Hazard Table"
     },
     {
       attachTo: { element: "#shepherd-1", on: "auto" },
-      title: "Party Builder",
+      buttons: defaultButtons(tour),
       text: "Here you can change your party size and the level of the individual players. You can also add multiple parties and select the active one.",
-      buttons: defaultButtons(tour)
+      title: "Party Builder"
     },
     {
       attachTo: { element: "#shepherd-2", on: "auto" },
-      title: "Generator Settings",
+      buttons: defaultButtons(tour),
       text: "From this window you can define your preferred settings for the random encounter generator.",
-      buttons: defaultButtons(tour)
+      title: "Generator Settings"
     },
     {
       attachTo: { element: "#shepherd-3", on: "auto" },
-      title: "Random Generator",
-      text: "Clicking this button will generate a new random encounter, based on the generator settings previously described and the currently active party.",
-      buttons: defaultButtons(tour)
+      buttons: defaultButtons(tour),
+      text: "Clicking this button will generate a new random encounter, based on the generator settings previously described and the currently active party_store.",
+      title: "Random Generator"
     },
     {
       attachTo: { element: "#shepherd-4", on: "auto" },
-      title: "Creatures / Hazards toggle",
+      buttons: defaultButtons(tour),
       text: "Click these buttons to toggle between the Creatures and Hazards Tables.",
-      buttons: defaultButtons(tour)
+      title: "Creatures / Hazards toggle"
     },
     {
       attachTo: { element: "#shepherd-5", on: "auto" },
-      title: "Display columns",
+      buttons: defaultButtons(tour),
       text: "From this dropdown you can select which columns of the table to show and hide.",
-      buttons: defaultButtons(tour)
+      title: "Display columns"
     },
     {
       attachTo: { element: ".shepherd-6", on: "auto" },
-      title: "Filters",
-      text: "Here you can sort the columns and narrow your search with the various filters.",
-      buttons: defaultButtons(tour)
+      buttons: defaultButtons(tour),
+      text: "Here you can sort the columns and narrow your search with the various filters_store.",
+      title: "Filters"
     },
     {
       attachTo: { element: "#shepherd-7", on: "auto" },
-      title: "Encounter List",
+      buttons: defaultButtons(tour),
       text: "This is where the creatures and hazards you added will be displayed.",
-      buttons: defaultButtons(tour)
+      title: "Encounter List"
     },
     {
       attachTo: { element: "#shepherd-8", on: "auto" },
-      title: "Creature numbers",
+      buttons: defaultButtons(tour),
       text: "You can increase or decrease the number creatures and hazards.",
-      buttons: defaultButtons(tour)
+      title: "Creature numbers"
     },
     {
       attachTo: { element: "#shepherd-9", on: "auto" },
-      title: "Change variant",
+      buttons: defaultButtons(tour),
       text: "You can also change creatures to their Weak/Elite variant.",
-      buttons: defaultButtons(tour)
+      title: "Change variant"
     },
     {
       attachTo: { element: "#shepherd-10", on: "auto" },
-      title: "Share",
+      buttons: defaultButtons(tour),
       text: "Clicking this button will generate a link to your current encounter that you can copy and share.",
-      buttons: defaultButtons(tour)
+      title: "Share"
     },
     {
       attachTo: { element: "#shepherd-11", on: "auto" },
-      title: "Encounter Challenge",
+      buttons: defaultButtons(tour),
       text: "This is where the challenge of the encounter will be displayed, adjusted according to your party level and size.",
-      buttons: defaultButtons(tour)
+      title: "Encounter Challenge"
     },
     {
       attachTo: { element: "#shepherd-12", on: "auto" },
-      title: "Tracker",
-      text: "This button starts the encounter tracker with the currently active party and encounter.",
-      buttons: defaultButtons(tour)
+      buttons: defaultButtons(tour),
+      text: "This button starts the encounter tracker with the currently active party and encounter_store.",
+      title: "Tracker"
     },
     {
       attachTo: { element: "#shepherd-13", on: "auto" },
-      title: "Show / Hide Sheet",
+      buttons: defaultButtons(tour),
       text: "Click here to show or hide the selected item's description.",
-      buttons: defaultButtons(tour)
+      title: "Show / Hide Sheet"
     },
     {
       attachTo: { element: "#shepherd-14", on: "auto" },
-      title: "Settings",
+      buttons: lastButtons(tour),
       text: 'You can enable the variant rule for Proficiency without Level by clicking here and going to the "Encounter" tab.',
-      buttons: lastButtons(tour)
+      title: "Settings"
     }
   ];
 
@@ -176,59 +176,59 @@ export function createTourEncounter() {
 
 export function createTourShop() {
   const tour = useShepherd({
-    useModalOverlay: true,
     defaultStepOptions: {
-      scrollTo: true,
-      modalOverlayOpeningPadding: 5,
-      modalOverlayOpeningRadius: 10,
       floatingUIOptions: {
         middleware: [offset(16)]
-      }
-    }
+      },
+      modalOverlayOpeningPadding: 5,
+      modalOverlayOpeningRadius: 10,
+      scrollTo: true
+    },
+    useModalOverlay: true
   });
 
   const tourSteps: StepOptions[] = [
     {
       attachTo: { element: "#shepherd-0", on: "auto" },
-      title: "Shop Table",
+      buttons: firstButtons(tour),
       text: "Click on a row to show its description and double click it to add it to the shop to the right.",
-      buttons: firstButtons(tour)
+      title: "Shop Table"
     },
     {
       attachTo: { element: "#shepherd-1", on: "auto" },
-      title: "Generator Settings",
+      buttons: defaultButtons(tour),
       text: "From this window you can define your preferred settings for the random shop generator and create custom templates.",
-      buttons: defaultButtons(tour)
+      title: "Generator Settings"
     },
     {
       attachTo: { element: "#shepherd-2", on: "auto" },
-      title: "Random Generator",
+      buttons: defaultButtons(tour),
       text: "Clicking this button will generate a new random shop, based on the generator settings previously described.",
-      buttons: defaultButtons(tour)
+      title: "Random Generator"
     },
     {
       attachTo: { element: ".shepherd-3", on: "auto" },
-      title: "Filters",
-      text: "Here you can sort the columns and narrow your search with the various filters.",
-      buttons: defaultButtons(tour)
+      buttons: defaultButtons(tour),
+      text: "Here you can sort the columns and narrow your search with the various filters_store.",
+      title: "Filters"
     },
     {
       attachTo: { element: "#shepherd-4", on: "auto" },
-      title: "Shop List",
+      buttons: defaultButtons(tour),
       text: "This is where the items you added or randomly generated will be displayed. You can also increase or decrease the number of each individual item.",
-      buttons: defaultButtons(tour)
+      title: "Shop List"
     },
     {
       attachTo: { element: "#shepherd-5", on: "auto" },
-      title: "Share",
+      buttons: defaultButtons(tour),
       text: "Clicking this button will generate a link to your current shop that you can copy and share.",
-      buttons: defaultButtons(tour)
+      title: "Share"
     },
     {
       attachTo: { element: "#shepherd-6", on: "auto" },
-      title: "Show / Hide Sheet",
+      buttons: lastButtons(tour),
       text: "Click here to show or hide the selected item's description.",
-      buttons: lastButtons(tour)
+      title: "Show / Hide Sheet"
     }
   ];
 
@@ -239,64 +239,64 @@ export function createTourShop() {
 
 export function createTourNpc() {
   const tour = useShepherd({
-    useModalOverlay: true,
     defaultStepOptions: {
-      scrollTo: true,
-      modalOverlayOpeningPadding: 5,
-      modalOverlayOpeningRadius: 10,
       floatingUIOptions: {
         middleware: [offset(16)]
-      }
-    }
+      },
+      modalOverlayOpeningPadding: 5,
+      modalOverlayOpeningRadius: 10,
+      scrollTo: true
+    },
+    useModalOverlay: true
   });
 
   const tourSteps: StepOptions[] = [
     {
       attachTo: { element: "#shepherd-0", on: "auto" },
-      title: "NPC Generator",
+      buttons: firstButtons(tour),
       text: "Here you can define your preferred setting for generating a random NPC.",
-      buttons: firstButtons(tour)
+      title: "NPC Generator"
     },
     {
       attachTo: { element: "#shepherd-1", on: "auto" },
-      title: "Random Generator",
+      buttons: defaultButtons(tour),
       text: "After having picked your settings of choice, click here to generate an NPC.",
-      buttons: defaultButtons(tour)
+      title: "Random Generator"
     },
     {
       attachTo: { element: "#shepherd-2", on: "auto" },
-      title: "NPC Editor",
+      buttons: defaultButtons(tour),
       text: "From here you can modify the individual parameters of your NPC. You can also save or delete the NPCs you created.",
-      buttons: defaultButtons(tour)
+      title: "NPC Editor"
     },
     {
       attachTo: { element: "#shepherd-3", on: "auto" },
-      title: "Share",
+      buttons: defaultButtons(tour),
       text: "Clicking this button will generate a link to your current NPC that you can copy and share.",
-      buttons: defaultButtons(tour)
+      title: "Share"
     },
     {
       attachTo: { element: "#shepherd-4", on: "auto" },
-      title: "Generated fields",
+      buttons: defaultButtons(tour),
       text: "Each of these fields can be manually locked, edited or randomly generated.",
-      buttons: defaultButtons(tour)
+      title: "Generated fields"
     },
     {
       attachTo: { element: "#shepherd-5", on: "auto" },
-      title: "Extra fields",
+      buttons: defaultButtons(tour),
       text: "These fields can only be manually edited instead.",
-      buttons: defaultButtons(tour)
+      title: "Extra fields"
     },
     {
       attachTo: { element: "#shepherd-6", on: "auto" },
-      title: "Custom fields",
+      buttons: defaultButtons(tour),
       text: 'Here you can modify custom fields. Add new ones by clicking the "+" button.',
-      buttons: defaultButtons(tour)
+      title: "Custom fields"
     },
     {
       attachTo: { element: "#shepherd-7", on: "auto" },
-      text: "This is where the final result of your NPC will be displayed. Click on the icon to the left of the name to open a new page with the fullscreen sheet.",
-      buttons: lastButtons(tour)
+      buttons: lastButtons(tour),
+      text: "This is where the final result of your NPC will be displayed. Click on the icon to the left of the name to open a new page with the fullscreen sheet."
     }
   ];
 

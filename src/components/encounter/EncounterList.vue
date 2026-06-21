@@ -45,10 +45,10 @@ const $q = useQuasar();
 
 const is_pwl_on = ref(false);
 
-const party = partyStore();
-const encounter = encounterStore();
-const info = infoStore();
-const settings = settingsStore();
+const party_store = partyStore();
+const encounter_store = encounterStore();
+const info_store = infoStore();
+const settings_store = settingsStore();
 
 const importEncounterDialog = ref(false);
 const importNameInput = ref();
@@ -70,62 +70,69 @@ const newEncounterRename = ref("");
 const removeEncounterDialog = ref(false);
 
 const tmpEncounter = ref<encounter_list>(
-  encounter.encounters[encounter.activeEncounter]!
+  encounter_store.encounters[encounter_store.activeEncounter]!
 );
 const encounters = ref<string[]>(
-  encounter.encounters.map(encounter => encounter.name)
+  encounter_store.encounters.map(encounter => encounter.name)
 );
 
 tmpEncounter.value = {
-  name: encounter.encounters[encounter.activeEncounter]!.name,
-  creatures: encounter.encounters[encounter.activeEncounter]!.creatures
+  creatures:
+    encounter_store.encounters[encounter_store.activeEncounter]!.creatures,
+  name: encounter_store.encounters[encounter_store.activeEncounter]!.name
 };
 
-const debouncedCall = debounce(async function () {
+const debouncedCall = debounce(async () => {
   const encounterList =
-    encounter.encounters[encounter.activeEncounter]!.creatures;
+    encounter_store.encounters[encounter_store.activeEncounter]!.creatures;
   const creatureLevels: number[] = [];
   const hazardLevels: { complexity: complexities; level: number }[] = [];
   for (const item of encounterList) {
     for (let j = 0; j < item.quantity!; j++) {
       if (item.is_hazard === false) {
         switch (item.variant) {
-          case "Weak":
+          case "Weak": {
             if (item.level === 1) {
               creatureLevels.push(item.level - 2);
             } else {
               creatureLevels.push(item.level - 1);
             }
             break;
-          case "Elite":
+          }
+          case "Elite": {
             if (item.level === -1 || item.level === 0) {
               creatureLevels.push(item.level + 2);
             } else {
               creatureLevels.push(item.level + 1);
             }
             break;
-          default:
+          }
+          default: {
             creatureLevels.push(item.level);
             break;
+          }
         }
       } else {
         hazardLevels.push({ complexity: item.complexity!, level: item.level });
       }
     }
   }
-  const partyLevels = party.parties[party.activeParty]!.members;
+  const partyLevels = party_store.parties[party_store.activeParty]!.members;
   const localPwl = ref(localStorage.getItem("is_pwl_on"));
   switch (localPwl.value) {
-    case "true":
+    case "true": {
       is_pwl_on.value = true;
       break;
-    case "false":
+    }
+    case "false": {
       is_pwl_on.value = false;
       break;
-    default:
+    }
+    default: {
       is_pwl_on.value = false;
       localStorage.setItem("is_pwl_on", "false");
       break;
+    }
   }
   const body: encounter_info = {
     creatures_params: {
@@ -136,29 +143,33 @@ const debouncedCall = debounce(async function () {
     party_levels: partyLevels
   };
   try {
-    if (!encounter.generating) {
-      const returnedEncounterInfo = await encounterInfo(settings.game, body);
-      if (returnedEncounterInfo === undefined) {
+    if (!encounter_store.generating) {
+      const returnedEncounterInfo = await encounterInfo(
+        settings_store.game,
+        body
+      );
+      if (!returnedEncounterInfo) {
         throw new TypeError("Error calculating encounter challenge");
       }
-      info.setInfo(returnedEncounterInfo);
+      info_store.setInfo(returnedEncounterInfo);
     }
   } catch (error) {
     console.error(error);
   }
 }, 300);
 
-// get info on creature list change
+// Get info on creature list change
 watch(
   [
-    () => encounter.encounters,
-    () => encounter.activeEncounter,
-    () => settings.is_pwl_on
+    () => encounter_store.encounters,
+    () => encounter_store.activeEncounter,
+    () => settings_store.is_pwl_on
   ],
   async () => {
     tmpEncounter.value = {
-      name: encounter.encounters[encounter.activeEncounter]!.name,
-      creatures: encounter.encounters[encounter.activeEncounter]!.creatures
+      creatures:
+        encounter_store.encounters[encounter_store.activeEncounter]!.creatures,
+      name: encounter_store.encounters[encounter_store.activeEncounter]!.name
     };
     saveChanges();
     await debouncedCall();
@@ -166,15 +177,15 @@ watch(
   { deep: true }
 );
 
-// get info on party change
-watch(party, async () => {
+// Get info on party change
+watch(party_store, async () => {
   await debouncedCall();
 });
 
-// get info on page load
+// Get info on page load
 await debouncedCall();
 
-// read the "share" query and decode it
+// Read the "share" query and decode it
 const shareQuery =
   String(route.query.share) === "undefined" ||
   String(route.query.share) === "null"
@@ -188,7 +199,7 @@ const decodeData = async () => {
     importEncounterDialog.value = true;
     try {
       const decodedData = await decodeEncounterLink(encodedData.value);
-      if (decodedData === undefined) {
+      if (!decodedData) {
         importEncounterDialog.value = false;
         throw new TypeError("Error importing encounter");
       }
@@ -198,10 +209,10 @@ const decodeData = async () => {
       importEncounterDialog.value = false;
       console.error(error);
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Error importing encounter",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     }
     isGenerating.value = false;
@@ -209,7 +220,7 @@ const decodeData = async () => {
 };
 await decodeData();
 
-// clean and check the link for manual app import
+// Clean and check the link for manual app import
 const sharedLink = ref("");
 const cleanLink = async () => {
   try {
@@ -218,10 +229,10 @@ const cleanLink = async () => {
     if (path !== route.path) {
       closeDialog();
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Invalid page for this link",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
       throw new Error("Invalid page for this link");
     }
@@ -229,10 +240,10 @@ const cleanLink = async () => {
     if (share === null || share === "") {
       closeDialog();
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Missing share hash",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
       throw new TypeError("Missing share code");
     }
@@ -244,23 +255,24 @@ const cleanLink = async () => {
   }
 };
 
-// clean the url from queries
+// Clean the url from queries
 await router.replace({
   path: route.path,
-  query: { game: settings.game }
+  query: { game: settings_store.game }
 });
 
-// open the share dialog and generate the shareable link
+// Open the share dialog and generate the shareable link
 const openShare = async () => {
   isGenerating.value = true;
   shareDialog.value = true;
   const encounterList =
-    encounter.encounters[encounter.activeEncounter]!.creatures;
+    encounter_store.encounters[encounter_store.activeEncounter]!.creatures;
   const body: shareable_encounter = {
-    encounter_name: encounter.encounters[encounter.activeEncounter]?.name
-      ? encounter.encounters[encounter.activeEncounter]!.name
-      : "Default",
     creatures_data: [],
+    encounter_name: encounter_store.encounters[encounter_store.activeEncounter]
+      ?.name
+      ? encounter_store.encounters[encounter_store.activeEncounter]!.name
+      : "Default",
     hazards_data: []
   };
 
@@ -268,10 +280,10 @@ const openShare = async () => {
     if (item.game !== "pf" && item.game !== "sf") {
       shareDialog.value = false;
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "This legacy list cannot be shared",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
       return;
     }
@@ -282,19 +294,19 @@ const openShare = async () => {
       const tmp_game: games = item.game;
 
       body.creatures_data.push({
+        game: tmp_game,
         id: item.id,
-        variant: tmp_variant,
         qty: tmp_qty,
-        game: tmp_game
+        variant: tmp_variant
       });
     } else {
       const tmp_qty: number = item.quantity ? item.quantity : 1;
       const tmp_game: games = item.game;
 
       body.hazards_data.push({
+        game: tmp_game,
         id: item.id,
-        qty: tmp_qty,
-        game: tmp_game
+        qty: tmp_qty
       });
     }
   }
@@ -302,28 +314,26 @@ const openShare = async () => {
   try {
     const shareableLink = await generateEncounterLink(body);
     if (typeof shareableLink === "string") {
-      shareUrl.value =
-        "https://bybe.app/encounter?game=" +
-        settings.game +
-        "&share=" +
-        shareableLink;
+      shareUrl.value = `https://bybe.app/encounter?game=${
+        settings_store.game
+      }&share=${shareableLink}`;
     } else {
       shareDialog.value = false;
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "Error generating shared link",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     }
   } catch (error) {
     shareDialog.value = false;
     console.error(error);
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Error generating shared link",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
   }
   isGenerating.value = false;
@@ -332,68 +342,130 @@ const openShare = async () => {
 const importEncounter = async () => {
   importNameInput.value.validate();
   if (!importNameInput.value.hasError) {
-    const tmp_creatures: min_creature_hazard[] = [];
-    for (const creature of importEncounterData.value?.creatures_data ?? []) {
-      try {
-        const fetchedCreatureData = await requestCreatureId(
-          creature.game,
-          creature.id,
-          creature.variant,
-          is_pwl_on.value
-        );
+    const tmp_encounter: min_creature_hazard[] = [];
 
-        if (fetchedCreatureData === undefined) {
-          throw new TypeError("Undefined response");
+    const creatures = await Promise.all(
+      (importEncounterData.value?.creatures_data ?? []).map(
+        async (
+          creature
+        ): Promise<
+          { success: true; creature: min_creature_hazard } | { success: false }
+        > => {
+          try {
+            const fetchedCreatureData = await requestCreatureId(
+              creature.game,
+              creature.id,
+              creature.variant,
+              is_pwl_on.value
+            );
+            if (!fetchedCreatureData) {
+              console.error("Missing creature ID");
+              return { success: false };
+            }
+            return {
+              creature: {
+                archive_link:
+                  fetchedCreatureData.core_data.derived.archive_link,
+                game: creature.game,
+                id: creature.id,
+                is_hazard: false,
+                level: fetchedCreatureData.core_data.essential.base_level,
+                name: fetchedCreatureData.core_data.essential.name,
+                quantity: creature.qty,
+                variant: creature.variant
+              },
+              success: true
+            };
+          } catch (error) {
+            console.error(error);
+            return { success: false };
+          }
         }
-        tmp_creatures.push({
-          game: creature.game,
-          id: creature.id,
-          archive_link: fetchedCreatureData.core_data.derived.archive_link,
-          name: fetchedCreatureData.core_data.essential.name,
-          level: fetchedCreatureData.core_data.essential.base_level,
-          quantity: creature.qty,
-          variant: creature.variant,
-          is_hazard: false
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    for (const hazard of importEncounterData.value?.hazards_data ?? []) {
-      try {
-        const fetchedHazardsData = await requestHazardId(
-          hazard.game,
-          hazard.id
-        );
+      )
+    );
 
-        if (fetchedHazardsData === undefined) {
-          throw new TypeError("Undefined response");
-        }
-        tmp_creatures.push({
-          game: hazard.game,
-          id: hazard.id,
-          archive_link:
-            "https://2e." +
-            getGameAonLink(hazard.game) +
-            ".com/search?q=" +
-            encodeURIComponent(fetchedHazardsData.core_hazard.essential.name) +
-            " type%3A(hazard)&type=eqs",
-          name: fetchedHazardsData.core_hazard.essential.name,
-          level: fetchedHazardsData.core_hazard.essential.level,
-          quantity: hazard.qty,
-          is_hazard: true,
-          complexity: fetchedHazardsData.core_hazard.essential.complexity
-        });
-      } catch (error) {
-        console.error(error);
-      }
+    if (creatures.some(c => !c.success)) {
+      $q.notify({
+        icon: matPriorityHigh,
+        message: "Some creatures could not be loaded",
+        progress: true,
+        type: "warning"
+      });
     }
-    encounter.addEncounter(importEncounterName.value);
-    encounters.value = encounter.encounters.map(encounter => encounter.name);
-    encounter.updateEncounter(importEncounterName.value, tmp_creatures);
+
+    tmp_encounter.push(
+      ...creatures
+        .filter((c): c is Extract<typeof c, { success: true }> => c.success)
+        .map(c => c.creature)
+    );
+
+    const hazards = await Promise.all(
+      (importEncounterData.value?.hazards_data ?? []).map(
+        async (
+          hazard
+        ): Promise<
+          { success: true; hazard: min_creature_hazard } | { success: false }
+        > => {
+          try {
+            const fetchedHazardsData = await requestHazardId(
+              hazard.game,
+              hazard.id
+            );
+            if (!fetchedHazardsData) {
+              console.error("Missing hazard ID");
+              return { success: false };
+            }
+            return {
+              hazard: {
+                archive_link: `https://2e.${getGameAonLink(
+                  hazard.game
+                )}.com/search?q=${encodeURIComponent(
+                  fetchedHazardsData.core_hazard.essential.name
+                )} type%3A(hazard)&type=eqs`,
+                complexity: fetchedHazardsData.core_hazard.essential.complexity,
+                game: hazard.game,
+                id: hazard.id,
+                is_hazard: true,
+                level: fetchedHazardsData.core_hazard.essential.level,
+                name: fetchedHazardsData.core_hazard.essential.name,
+                quantity: hazard.qty
+              },
+              success: true
+            };
+          } catch (error) {
+            console.error(error);
+            return { success: false };
+          }
+        }
+      )
+    );
+
+    if (hazards.some(h => !h.success)) {
+      $q.notify({
+        icon: matPriorityHigh,
+        message: "Some hazards could not be loaded",
+        progress: true,
+        type: "warning"
+      });
+    }
+
+    tmp_encounter.push(
+      ...hazards
+        .filter((h): h is Extract<typeof h, { success: true }> => h.success)
+        .map(h => h.hazard)
+    );
+
+    encounter_store.addEncounter(importEncounterName.value);
+    encounters.value = encounter_store.encounters.map(
+      encounter => encounter.name
+    );
+    encounter_store.updateEncounter(importEncounterName.value, tmp_encounter);
     tmpEncounter.value = {
-      name: encounter.encounters[encounter.activeEncounter]!.name,
-      creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
+      creatures: [
+        ...encounter_store.encounters[encounter_store.activeEncounter]!
+          .creatures
+      ],
+      name: encounter_store.encounters[encounter_store.activeEncounter]!.name
     };
     saveChanges();
     importEncounterName.value = "";
@@ -416,11 +488,16 @@ const closeDialog = () => {
 const addEncounter = () => {
   encounterNameInput.value.validate();
   if (!encounterNameInput.value.hasError) {
-    encounter.addEncounter(newEncounterName.value);
-    encounters.value = encounter.encounters.map(encounter => encounter.name);
+    encounter_store.addEncounter(newEncounterName.value);
+    encounters.value = encounter_store.encounters.map(
+      encounter => encounter.name
+    );
     tmpEncounter.value = {
-      name: encounter.encounters[encounter.activeEncounter]!.name,
-      creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
+      creatures: [
+        ...encounter_store.encounters[encounter_store.activeEncounter]!
+          .creatures
+      ],
+      name: encounter_store.encounters[encounter_store.activeEncounter]!.name
     };
     saveChanges();
     newEncounterName.value = "";
@@ -431,12 +508,17 @@ const addEncounter = () => {
 const renameEncounter = () => {
   encounterRenameInput.value.validate();
   if (!encounterRenameInput.value.hasError) {
-    encounter.encounters[encounter.activeEncounter]!.name =
+    encounter_store.encounters[encounter_store.activeEncounter]!.name =
       newEncounterRename.value;
-    encounters.value = encounter.encounters.map(encounter => encounter.name);
+    encounters.value = encounter_store.encounters.map(
+      encounter => encounter.name
+    );
     tmpEncounter.value = {
-      name: encounter.encounters[encounter.activeEncounter]!.name,
-      creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
+      creatures: [
+        ...encounter_store.encounters[encounter_store.activeEncounter]!
+          .creatures
+      ],
+      name: encounter_store.encounters[encounter_store.activeEncounter]!.name
     };
     saveChanges();
     newEncounterRename.value = "";
@@ -445,46 +527,57 @@ const renameEncounter = () => {
 };
 
 const removeEncounter = () => {
-  encounter.removeEncounter();
-  encounters.value = encounter.encounters.map(encounter => encounter.name);
+  encounter_store.removeEncounter();
+  encounters.value = encounter_store.encounters.map(
+    encounter => encounter.name
+  );
   tmpEncounter.value = {
-    name: encounter.encounters[encounter.activeEncounter]!.name,
-    creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
+    creatures: [
+      ...encounter_store.encounters[encounter_store.activeEncounter]!.creatures
+    ],
+    name: encounter_store.encounters[encounter_store.activeEncounter]!.name
   };
   saveChanges();
   removeEncounterDialog.value = false;
 };
 
 const changeActiveEncounter = (selected: string) => {
-  encounter.changeActiveEncounter(encounter.getEncounterIndex(selected));
+  encounter_store.changeActiveEncounter(
+    encounter_store.getEncounterIndex(selected)
+  );
   tmpEncounter.value = {
-    name: encounter.encounters[encounter.activeEncounter]!.name,
-    creatures: [...encounter.encounters[encounter.activeEncounter]!.creatures]
+    creatures: [
+      ...encounter_store.encounters[encounter_store.activeEncounter]!.creatures
+    ],
+    name: encounter_store.encounters[encounter_store.activeEncounter]!.name
   };
 };
 
 const saveChanges = () => {
-  encounter.updateEncounter(
+  encounter_store.updateEncounter(
     tmpEncounter.value.name,
     tmpEncounter.value.creatures
   );
-  localStorage.setItem("encounters", JSON.stringify(encounter.encounters));
+  localStorage.setItem(
+    "encounters",
+    JSON.stringify(encounter_store.encounters)
+  );
 };
 
-const showItem = debounce(async function (item: min_creature_hazard) {
+const showItem = debounce(async (item: min_creature_hazard) => {
   if (item.is_hazard) {
     try {
       const itemData = await requestHazardId(item.game, item.id);
       if (isNull(itemData) || itemData === undefined) {
         console.error("Missing hazard ID");
         $q.notify({
-          progress: true,
-          type: "warning",
+          icon: matPriorityHigh,
           message: "Missing hazard ID",
-          icon: matPriorityHigh
+          progress: true,
+          type: "warning"
         });
       } else {
-        encounter.setSelectedHazard(itemData);
+        encounter_store.setSelectedHazard(itemData);
       }
     } catch (error) {
       console.error(error);
@@ -495,19 +588,19 @@ const showItem = debounce(async function (item: min_creature_hazard) {
         item.game,
         item.id,
         item.variant!,
-        settings.is_pwl_on
+        settings_store.is_pwl_on
       );
       if (isNull(itemData) || itemData === undefined) {
         console.error("Missing creature ID");
         $q.notify({
-          progress: true,
-          type: "warning",
+          icon: matPriorityHigh,
           message: "Missing creature ID",
-          icon: matPriorityHigh
+          progress: true,
+          type: "warning"
         });
         await router.push({ name: "encounter", query: { game: item.game } });
       } else {
-        encounter.setSelectedCreature(itemData);
+        encounter_store.setSelectedCreature(itemData);
       }
     } catch (error) {
       console.error(error);
@@ -520,14 +613,15 @@ const startTracker = () => {
 
   const routeData = router.resolve({
     name: "tracker",
-    query: { game: settings.game, tid: trackerId }
+    query: { game: settings_store.game, tid: trackerId }
   });
 
   localStorage.setItem(
     `tracker:${trackerId}`,
     JSON.stringify({
-      party: party.parties[party.activeParty],
-      encounter_list: encounter.encounters[encounter.activeEncounter]
+      encounter_list:
+        encounter_store.encounters[encounter_store.activeEncounter],
+      party: party_store.parties[party_store.activeParty]
     })
   );
 
@@ -883,16 +977,16 @@ const startTracker = () => {
             flat
             dense
             aria-label="Clear encounter"
-            @click="encounter.clearEncounter"
+            @click="encounter_store.clearEncounter"
             >CLEAR</q-btn
           >
         </div>
       </q-header>
-      <q-page-container v-if="encounter.generating === false">
+      <q-page-container v-if="encounter_store.generating === false">
         <q-page class="tw:min-h-auto!">
           <div
-            v-for="(item, index) in encounter.encounters[
-              encounter.activeEncounter
+            v-for="(item, index) in encounter_store.encounters[
+              encounter_store.activeEncounter
             ]!.creatures"
             :key="index"
           >
@@ -908,7 +1002,7 @@ const startTracker = () => {
                   class="q-px-md"
                   :icon="biPlus"
                   aria-label="Add creature"
-                  @click="encounter.addToEncounter(item, index)"
+                  @click="encounter_store.addToEncounter(item, index)"
                 />
                 <q-btn
                   unelevated
@@ -917,7 +1011,7 @@ const startTracker = () => {
                   class="q-px-md"
                   :icon="biDash"
                   aria-label="Remove creature"
-                  @click="encounter.removeFromEncounter(index)"
+                  @click="encounter_store.removeFromEncounter(index)"
                 />
               </div>
               <div
@@ -939,7 +1033,7 @@ const startTracker = () => {
                       openSheet(
                         router,
                         'bestiary',
-                        item.game ?? settings.game,
+                        item.game ?? settings_store.game,
                         item.id,
                         item.variant
                       )
@@ -966,7 +1060,7 @@ const startTracker = () => {
                       openSheet(
                         router,
                         'hazard',
-                        item.game ?? settings.game,
+                        item.game ?? settings_store.game,
                         item.id
                       )
                     "
@@ -1025,7 +1119,7 @@ const startTracker = () => {
                       "
                       padding="xs"
                       class="text-weight-bold"
-                      @click="encounter.changeVariant(index, 'Weak')"
+                      @click="encounter_store.changeVariant(index, 'Weak')"
                     />
                     <q-btn
                       flat
@@ -1038,7 +1132,7 @@ const startTracker = () => {
                       "
                       padding="xs"
                       class="text-weight-bold"
-                      @click="encounter.changeVariant(index, 'Base')"
+                      @click="encounter_store.changeVariant(index, 'Base')"
                     />
                     <q-btn
                       flat
@@ -1051,7 +1145,7 @@ const startTracker = () => {
                       "
                       padding="xs"
                       class="text-weight-bold"
-                      @click="encounter.changeVariant(index, 'Elite')"
+                      @click="encounter_store.changeVariant(index, 'Elite')"
                     />
                   </q-btn-group>
                 </div>
@@ -1085,7 +1179,7 @@ const startTracker = () => {
                   :icon="biTrash"
                   round
                   aria-label="Clear creature"
-                  @click="encounter.clearCreature(item)"
+                  @click="encounter_store.clearCreature(item)"
                 />
               </div>
             </div>
@@ -1136,7 +1230,7 @@ const startTracker = () => {
             rounded
             size="35px"
             :value="1"
-            :color="info.info.color"
+            :color="info_store.info.color"
             aria-label="Encounter challenge"
           >
             <div class="absolute-full flex flex-center">
@@ -1144,7 +1238,7 @@ const startTracker = () => {
                 class="tw:absolute tw:text-base! tw:flex!"
                 color="grey-10"
                 text-color="white"
-                :label="info.info.challenge"
+                :label="info_store.info.challenge"
               />
             </div>
           </q-linear-progress>
@@ -1155,7 +1249,7 @@ const startTracker = () => {
           <div
             class="flex flex-center text-subtitle1 font-bold tw:whitespace-nowrap tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800!"
           >
-            Cost: {{ info.info.experience }} XP
+            Cost: {{ info_store.info.experience }} XP
           </div>
         </div>
       </q-footer>

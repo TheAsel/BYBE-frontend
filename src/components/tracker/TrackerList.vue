@@ -34,18 +34,18 @@ const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 
-const settings = settingsStore();
-const tracker = trackerStore();
+const settings_store = settingsStore();
+const tracker_store = trackerStore();
 
-const game = route.query.game;
-const tid = route.query.tid;
+const { game } = route.query;
+const { tid } = route.query;
 const storageKey = tid ? `tracker:${tid}` : null;
 
 const sessionData = sessionStorage.getItem("tracker_data");
 const trackerData = ref<{
   party: party | null;
   encounter_list: encounter_list | null;
-}>({ party: null, encounter_list: null });
+}>({ encounter_list: null, party: null });
 const isGenerating = ref(false);
 
 if (sessionData) {
@@ -76,78 +76,93 @@ async function initializeTracker() {
     localStorage.removeItem("tracker_data");
     console.error("Invalid tracker data");
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Invalid tracker data",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
-    await router.push({ name: "encounter", query: { game } });
+    await router.push({
+      name: "encounter",
+      query: { game: settings_store.game }
+    });
     return;
   }
 
   isGenerating.value = true;
   const tmpTrackerList: min_tracker[] = [];
 
-  for (const item of trackerData.value.encounter_list.creatures) {
-    if (item.is_hazard) {
-      try {
-        const itemData = await requestHazardId(item.game, item.id);
-        if (isNull(itemData) || itemData === undefined) {
-          console.error("Missing hazard ID");
-          $q.notify({
-            progress: true,
-            type: "warning",
-            message: "Missing hazard ID",
-            icon: matPriorityHigh
-          });
-        } else {
-          tmpTrackerList.push({
-            element: item,
-            is_player: false,
-            health: null,
-            max_health: null,
-            initiative: null,
-            perception: 0
-          });
+  const results = await Promise.all(
+    trackerData.value.encounter_list.creatures.map(
+      async (
+        item
+      ): Promise<{ success: true; item: min_tracker } | { success: false }> => {
+        try {
+          if (item.is_hazard) {
+            const itemData = await requestHazardId(item.game, item.id);
+            if (!itemData) {
+              console.error("Missing hazard ID");
+              return { success: false };
+            }
+            return {
+              item: {
+                element: item,
+                health: null,
+                initiative: null,
+                is_player: false,
+                max_health: null,
+                perception: 0
+              },
+              success: true
+            };
+          }
+          const itemData = await requestCreatureId(
+            item.game,
+            item.id,
+            item.variant!,
+            settings_store.is_pwl_on
+          );
+          if (!itemData) {
+            console.error("Missing creature ID");
+            return { success: false };
+          }
+          return {
+            item: {
+              element: item,
+              health: itemData.core_data.essential.hp,
+              initiative: null,
+              is_player: false,
+              max_health: itemData.core_data.essential.hp,
+              perception: itemData.extra_data?.perception ?? 0
+            },
+            success: true
+          };
+        } catch (error) {
+          console.error(error);
+          return { success: false };
         }
-      } catch (error) {
-        console.error(error);
       }
-    } else {
-      try {
-        const itemData = await requestCreatureId(
-          item.game,
-          item.id,
-          item.variant!,
-          settings.is_pwl_on
-        );
-        if (isNull(itemData) || itemData === undefined) {
-          console.error("Missing creature ID");
-          $q.notify({
-            progress: true,
-            type: "warning",
-            message: "Missing creature ID",
-            icon: matPriorityHigh
-          });
-          await router.push({
-            name: "encounter",
-            query: { game: item.game }
-          });
-        } else {
-          tmpTrackerList.push({
-            element: item,
-            is_player: false,
-            health: itemData.core_data.essential.hp,
-            max_health: itemData.core_data.essential.hp,
-            initiative: null,
-            perception: itemData.extra_data?.perception ?? 0
-          });
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
+    )
+  );
+
+  if (results.some(r => !r.success)) {
+    $q.notify({
+      icon: matPriorityHigh,
+      message: "Some items could not be loaded",
+      progress: true,
+      type: "warning"
+    });
+    await router.push({
+      name: "encounter",
+      query: { game: settings_store.game }
+    });
+    return;
   }
+
+  tmpTrackerList.push(
+    ...results
+      .filter((r): r is Extract<typeof r, { success: true }> => r.success)
+      .map(r => r.item)
+  );
 
   const explodedCreatureList: min_tracker[] = tmpTrackerList.flatMap(
     ({ element, ...rest }) => {
@@ -165,22 +180,22 @@ async function initializeTracker() {
 
   for (let i = 0; i < trackerData.value.party.members.length; i++) {
     explodedPlayerList.push({
-      element: "Player " + String(i + 1),
-      is_player: true,
+      element: `Player ${String(i + 1)}`,
       health: 1,
-      max_health: 1,
       initiative: null,
+      is_player: true,
+      max_health: 1,
       perception: 0
     });
   }
 
-  tracker.updateTracker(explodedCreatureList.concat(explodedPlayerList));
+  tracker_store.updateTracker(explodedCreatureList.concat(explodedPlayerList));
   isGenerating.value = false;
 }
 
 initializeTracker();
 
-const showItem = debounce(async function (item: min_tracker) {
+const showItem = debounce(async (item: min_tracker) => {
   if (!item.is_player && item.element && typeof item.element !== "string") {
     if (item.element.is_hazard) {
       try {
@@ -191,13 +206,13 @@ const showItem = debounce(async function (item: min_tracker) {
         if (isNull(itemData) || itemData === undefined) {
           console.error("Missing hazard ID");
           $q.notify({
-            progress: true,
-            type: "warning",
+            icon: matPriorityHigh,
             message: "Missing hazard ID",
-            icon: matPriorityHigh
+            progress: true,
+            type: "warning"
           });
         } else {
-          tracker.setSelectedHazard(itemData);
+          tracker_store.setSelectedHazard(itemData);
         }
       } catch (error) {
         console.error(error);
@@ -208,22 +223,22 @@ const showItem = debounce(async function (item: min_tracker) {
           item.element.game,
           item.element.id,
           item.element.variant!,
-          settings.is_pwl_on
+          settings_store.is_pwl_on
         );
         if (isNull(itemData) || itemData === undefined) {
           console.error("Missing creature ID");
           $q.notify({
-            progress: true,
-            type: "warning",
+            icon: matPriorityHigh,
             message: "Missing creature ID",
-            icon: matPriorityHigh
+            progress: true,
+            type: "warning"
           });
           await router.push({
             name: "encounter",
             query: { game: item.element.game }
           });
         } else {
-          tracker.setSelectedCreature(itemData);
+          tracker_store.setSelectedCreature(itemData);
         }
       } catch (error) {
         console.error(error);
@@ -234,26 +249,26 @@ const showItem = debounce(async function (item: min_tracker) {
 
 const rollInitiative = (index: number) => {
   const rollDice = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
-  if (tracker.trackerList.list[index]) {
-    tracker.trackerList.list[index]!.initiative =
-      rollDice + tracker.trackerList.list[index].perception;
+  if (tracker_store.trackerList.list[index]) {
+    tracker_store.trackerList.list[index]!.initiative =
+      rollDice + tracker_store.trackerList.list[index].perception;
   }
 };
 
 const rollAll = () => {
-  for (let i = 0; i < tracker.trackerList.list.length; i++) {
+  for (let i = 0; i < tracker_store.trackerList.list.length; i++) {
     rollInitiative(i);
   }
-  tracker.sortList();
+  tracker_store.sortList();
 };
 
 const rollAllNpcs = () => {
-  for (let i = 0; i < tracker.trackerList.list.length; i++) {
-    if (!tracker.trackerList.list[i]?.is_player) {
+  for (let i = 0; i < tracker_store.trackerList.list.length; i++) {
+    if (!tracker_store.trackerList.list[i]?.is_player) {
       rollInitiative(i);
     }
   }
-  tracker.sortList();
+  tracker_store.sortList();
 };
 
 const validateNumber = (newValue: unknown) => {
@@ -312,7 +327,11 @@ const validateNumber = (newValue: unknown) => {
           <b
             class="tw:basis-1/3 tw:my-auto! tw:text-center tw:max-h-[33.15px]!"
           >
-            {{ tracker.running ? "Round " + tracker.round : "Not Started" }}
+            {{
+              tracker_store.running
+                ? "Round " + tracker_store.round
+                : "Not Started"
+            }}
           </b>
           <div class="tw:basis-1/3 tw:my-auto! tw:text-end">
             <q-btn
@@ -320,7 +339,7 @@ const validateNumber = (newValue: unknown) => {
               flat
               rounded
               aria-label="Add player"
-              @click="tracker.addPlayer"
+              @click="tracker_store.addPlayer"
             >
               <q-tooltip
                 class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -336,11 +355,12 @@ const validateNumber = (newValue: unknown) => {
       <q-page-container v-if="!isGenerating">
         <q-page class="tw:min-h-auto!">
           <div
-            v-for="(item, index) in tracker.trackerList.list"
+            v-for="(item, index) in tracker_store.trackerList.list"
             :key="index"
             class="tw:m-1"
             :class="
-              index === tracker.trackerList.active_index && tracker.running
+              index === tracker_store.trackerList.active_index &&
+              tracker_store.running
                 ? 'tw:outline-solid tw:outline-red-600 tw:rounded-md  '
                 : ''
             "
@@ -357,7 +377,7 @@ const validateNumber = (newValue: unknown) => {
                 round
                 dense
                 aria-label="Remove element"
-                @click="tracker.removeFromTracker(index)"
+                @click="tracker_store.removeFromTracker(index)"
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -388,7 +408,7 @@ const validateNumber = (newValue: unknown) => {
                     openSheet(
                       router,
                       'bestiary',
-                      item.element.game ?? settings.game,
+                      item.element.game ?? settings_store.game,
                       item.element.id,
                       item.element.variant
                     )
@@ -415,7 +435,7 @@ const validateNumber = (newValue: unknown) => {
                     openSheet(
                       router,
                       'hazard',
-                      item.element.game ?? settings.game,
+                      item.element.game ?? settings_store.game,
                       item.element.id
                     )
                   "
@@ -532,7 +552,7 @@ const validateNumber = (newValue: unknown) => {
                   aria-label="Random encounter"
                   @click="
                     rollInitiative(index);
-                    tracker.sortList();
+                    tracker_store.sortList();
                   "
                 >
                   <svg
@@ -583,7 +603,7 @@ const validateNumber = (newValue: unknown) => {
                   @update:model-value="
                     (v: unknown) => (item.initiative = validateNumber(v))
                   "
-                  @blur="tracker.sortList()"
+                  @blur="tracker_store.sortList()"
                 />
               </div>
             </div>
@@ -609,11 +629,11 @@ const validateNumber = (newValue: unknown) => {
           >
             <span>
               <q-btn
-                v-if="tracker.running"
+                v-if="tracker_store.running"
                 class="tw:px-4!"
                 :icon="fasBackward"
                 aria-label="Previous round"
-                @click="tracker.prevRound()"
+                @click="tracker_store.prevRound()"
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -624,11 +644,11 @@ const validateNumber = (newValue: unknown) => {
                 </q-tooltip>
               </q-btn>
               <q-btn
-                v-if="tracker.running"
+                v-if="tracker_store.running"
                 class="tw:px-4!"
                 :icon="fasAngleLeft"
                 aria-label="Previous turn"
-                @click="tracker.prevTurn()"
+                @click="tracker_store.prevTurn()"
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -641,25 +661,27 @@ const validateNumber = (newValue: unknown) => {
             </span>
             <q-btn
               class="tw:grow!"
-              :icon="tracker.running ? mdiClose : mdiSwordCross"
-              :label="tracker.running ? 'End Encounter' : 'Begin Encounter'"
+              :icon="tracker_store.running ? mdiClose : mdiSwordCross"
+              :label="
+                tracker_store.running ? 'End Encounter' : 'Begin Encounter'
+              "
               aria-label="Toggle tracker running"
               @click="
-                tracker.running = !tracker.running;
-                if (!tracker.running) {
-                  tracker.resetTracker();
+                tracker_store.running = !tracker_store.running;
+                if (!tracker_store.running) {
+                  tracker_store.resetTracker();
                 } else {
-                  tracker.round = 1;
+                  tracker_store.round = 1;
                 }
               "
             />
             <span>
               <q-btn
-                v-if="tracker.running"
+                v-if="tracker_store.running"
                 class="tw:px-4!"
                 :icon="fasAngleRight"
                 aria-label="Next round"
-                @click="tracker.nextTurn()"
+                @click="tracker_store.nextTurn()"
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -670,11 +692,11 @@ const validateNumber = (newValue: unknown) => {
                 </q-tooltip>
               </q-btn>
               <q-btn
-                v-if="tracker.running"
+                v-if="tracker_store.running"
                 class="tw:px-4!"
                 :icon="fasForward"
                 aria-label="Previous turn"
-                @click="tracker.nextRound()"
+                @click="tracker_store.nextRound()"
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"

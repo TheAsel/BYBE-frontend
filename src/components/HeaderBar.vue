@@ -21,9 +21,9 @@ import { TailwindDarkFix } from "@/utils/tw-dark-fix";
 
 import type { games } from "@/types/filters";
 
-const settings = settingsStore();
+const settings_store = settingsStore();
 const isApp = import.meta.env.IS_APP;
-const repoUrl = "https://github.com/" + import.meta.env.REPO_URL;
+const repoUrl = `https://github.com/${import.meta.env.REPO_URL}`;
 
 TailwindDarkFix();
 
@@ -58,18 +58,18 @@ const navigation = [
 const gameOptions = [
   {
     label: "Pathfinder 2e",
-    value: "pf",
-    src: "/imgs/logos/pf2e-logo.webp"
+    src: "/imgs/logos/pf2e-logo.webp",
+    value: "pf"
   },
   {
     label: "Starfinder 2e",
-    value: "sf",
-    src: "/imgs/logos/sf2e-logo.webp"
+    src: "/imgs/logos/sf2e-logo.webp",
+    value: "sf"
   }
 ];
 
 function changeGame(value: games) {
-  settings.setGame(value);
+  settings_store.setGame(value);
   if (value === "sf") {
     const routeData = router.resolve({
       path: route.path,
@@ -89,17 +89,20 @@ const $q = useQuasar();
 const theme = ref(localStorage.getItem("theme"));
 
 switch (theme.value) {
-  case "dark":
+  case "dark": {
     $q.dark.set(true);
     break;
-  case "light":
+  }
+  case "light": {
     $q.dark.set(false);
     break;
+  }
 
-  default:
+  default: {
     localStorage.setItem("theme", "dark");
     $q.dark.set(true);
     break;
+  }
 }
 
 if (theme.value === "dark") {
@@ -117,8 +120,8 @@ const themeSwitch = () => {
   }
 };
 
-const unhide = debounce(function () {
-  settings.setHiddenNav(!settings.hidden_nav);
+const unhide = debounce(() => {
+  settings_store.setHiddenNav(!settings_store.hidden_nav);
 }, 50);
 </script>
 
@@ -189,7 +192,7 @@ const unhide = debounce(function () {
         <q-select
           v-if="currentPath !== '/download'"
           class="tw:ml-6"
-          v-model="settings.game"
+          v-model="settings_store.game"
           :options="gameOptions"
           :readonly="
             currentPath === '/bestiary' ||
@@ -240,8 +243,8 @@ const unhide = debounce(function () {
         id="navbar-collapse"
         class="tw:grow tw:lg:block"
         :class="{
-          'tw:hidden': settings.hidden_nav,
-          'overflow-hidden': settings.hidden_nav
+          'tw:hidden': settings_store.hidden_nav,
+          'overflow-hidden': settings_store.hidden_nav
         }"
       >
         <div class="tw:flex tw:flex-col tw:lg:flex-row">
@@ -326,7 +329,7 @@ const unhide = debounce(function () {
               class="tw:text-gray-800! tw:dark:text-gray-200!"
               aria-label="Start help tour"
               @click="
-                settings.setHiddenNav(true);
+                settings_store.setHiddenNav(true);
                 switch (currentPath) {
                   case '/encounter':
                     createTourEncounter().start();

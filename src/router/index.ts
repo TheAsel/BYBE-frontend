@@ -29,8 +29,8 @@ export default defineRouter((/* { store, ssrContext } */) => {
     routes,
 
     // Leave this as is and make changes in quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
+    // Quasar.conf.js -> build -> vueRouterMode
+    // Quasar.conf.js -> build -> publicPath
     history: createHistory(import.meta.env.QUASAR_VUE_ROUTER_BASE)
   });
 

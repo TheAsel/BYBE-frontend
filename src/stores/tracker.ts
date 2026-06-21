@@ -4,50 +4,28 @@ import type { creature } from "@/types/creature";
 import type { hazard } from "@/types/hazard";
 import type { min_tracker, tracker_list } from "@/types/tracker";
 
-export const trackerStore = defineStore("tracker", {
-  state: (): {
-    selectedCreature: creature | null;
-    selectedHazard: hazard | null;
-    trackerList: tracker_list;
-    running: boolean;
-    round: number;
-  } => ({
-    selectedCreature: null,
-    selectedHazard: null,
-    trackerList: { list: [], active_index: 0 },
-    running: false,
-    round: 0
-  }),
+export const trackerStore = defineStore("tracker_store", {
   actions: {
-    setSelectedCreature(newSelectedCreature: creature) {
-      this.selectedHazard = null;
-      this.selectedCreature = newSelectedCreature;
-    },
-    setSelectedHazard(newSelectedHazard: hazard) {
-      this.selectedCreature = null;
-      this.selectedHazard = newSelectedHazard;
-    },
-    removeSelectedCreature() {
-      this.selectedCreature = null;
-    },
-    removeSelectedHazard() {
-      this.selectedHazard = null;
-    },
     addPlayer() {
       this.trackerList.list.push({
         element: "Player",
-        is_player: true,
         health: 1,
-        max_health: 1,
         initiative: null,
+        is_player: true,
+        max_health: 1,
         perception: 0
       });
     },
-    removeFromTracker(index: number) {
-      this.trackerList.list.splice(index, 1);
+    nextRound() {
+      this.round++;
+      this.trackerList.active_index = 0;
     },
-    updateTracker(newTracker: min_tracker[]) {
-      this.trackerList.list = newTracker;
+    nextTurn() {
+      this.trackerList.active_index++;
+      if (this.trackerList.active_index >= this.trackerList.list.length) {
+        this.trackerList.active_index = 0;
+        this.nextRound();
+      }
     },
     prevRound() {
       this.round--;
@@ -58,10 +36,6 @@ export const trackerStore = defineStore("tracker", {
         this.trackerList.active_index = this.trackerList.list.length - 1;
       }
     },
-    nextRound() {
-      this.round++;
-      this.trackerList.active_index = 0;
-    },
     prevTurn() {
       this.trackerList.active_index--;
       if (this.trackerList.active_index < 0) {
@@ -69,19 +43,14 @@ export const trackerStore = defineStore("tracker", {
         this.prevRound();
       }
     },
-    nextTurn() {
-      this.trackerList.active_index++;
-      if (this.trackerList.active_index >= this.trackerList.list.length) {
-        this.trackerList.active_index = 0;
-        this.nextRound();
-      }
+    removeFromTracker(index: number) {
+      this.trackerList.list.splice(index, 1);
     },
-    sortList() {
-      this.trackerList.list.sort((a, b) => {
-        if (a.initiative == null) return 1;
-        if (b.initiative == null) return -1;
-        return b.initiative - a.initiative;
-      });
+    removeSelectedCreature() {
+      this.selectedCreature = null;
+    },
+    removeSelectedHazard() {
+      this.selectedHazard = null;
     },
     resetTracker() {
       this.trackerList.active_index = 0;
@@ -91,6 +60,41 @@ export const trackerStore = defineStore("tracker", {
         item.health = item.max_health;
         item.initiative = null;
       });
+    },
+    setSelectedCreature(newSelectedCreature: creature) {
+      this.selectedHazard = null;
+      this.selectedCreature = newSelectedCreature;
+    },
+    setSelectedHazard(newSelectedHazard: hazard) {
+      this.selectedCreature = null;
+      this.selectedHazard = newSelectedHazard;
+    },
+    sortList() {
+      this.trackerList.list.sort((a, b) => {
+        if (a.initiative == null) {
+          return 1;
+        }
+        if (b.initiative == null) {
+          return -1;
+        }
+        return b.initiative - a.initiative;
+      });
+    },
+    updateTracker(newTracker: min_tracker[]) {
+      this.trackerList.list = newTracker;
     }
-  }
+  },
+  state: (): {
+    selectedCreature: creature | null;
+    selectedHazard: hazard | null;
+    trackerList: tracker_list;
+    running: boolean;
+    round: number;
+  } => ({
+    round: 0,
+    running: false,
+    selectedCreature: null,
+    selectedHazard: null,
+    trackerList: { active_index: 0, list: [] }
+  })
 });

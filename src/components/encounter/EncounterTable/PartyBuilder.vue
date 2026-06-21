@@ -15,33 +15,33 @@ import type { party } from "@/types/party";
 
 const $q = useQuasar();
 
-const party = partyStore();
+const party_store = partyStore();
 
 // Upgrade legacy parties
-if (party.parties[party.activeParty]!.advanced === undefined) {
-  const legacyParties = party.parties;
+if (party_store.parties[party_store.activeParty]!.advanced === undefined) {
+  const legacyParties = party_store.parties;
   for (let i = 0; i < legacyParties.length; i++) {
     legacyParties[i] = {
-      name: legacyParties[i]!.name,
-      size: party.parties[party.activeParty]!.members.length,
-      level: party.parties[party.activeParty]!.members[0],
       advanced: true,
-      members: [...legacyParties[i]!.members]
+      level: party_store.parties[party_store.activeParty]!.members[0],
+      members: [...legacyParties[i]!.members],
+      name: legacyParties[i]!.name,
+      size: party_store.parties[party_store.activeParty]!.members.length
     };
   }
-  party.updateParties(legacyParties);
-  localStorage.setItem("parties", JSON.stringify(party.parties));
+  party_store.updateParties(legacyParties);
+  localStorage.setItem("parties", JSON.stringify(party_store.parties));
 }
 
 const tmpParty = ref<party>({
-  name: party.parties[party.activeParty]!.name,
-  size: party.parties[party.activeParty]!.size,
-  level: party.parties[party.activeParty]!.level,
-  advanced: party.parties[party.activeParty]!.advanced,
-  members: [...party.parties[party.activeParty]!.members]
+  advanced: party_store.parties[party_store.activeParty]!.advanced,
+  level: party_store.parties[party_store.activeParty]!.level,
+  members: [...party_store.parties[party_store.activeParty]!.members],
+  name: party_store.parties[party_store.activeParty]!.name,
+  size: party_store.parties[party_store.activeParty]!.size
 });
-const parties = ref(party.parties.map(party => party.name));
-const selectedParty = ref(party.parties[party.activeParty]!.name);
+const parties = ref(party_store.parties.map(party => party.name));
+const selectedParty = ref(party_store.parties[party_store.activeParty]!.name);
 
 const dialog = ref(false);
 
@@ -54,11 +54,11 @@ const removePartyDialog = ref(false);
 const restoreParty = () => {
   dialog.value = true;
   tmpParty.value = {
-    name: party.parties[party.activeParty]!.name,
-    size: party.parties[party.activeParty]!.size,
-    level: party.parties[party.activeParty]!.level,
-    advanced: party.parties[party.activeParty]!.advanced,
-    members: [...party.parties[party.activeParty]!.members]
+    advanced: party_store.parties[party_store.activeParty]!.advanced,
+    level: party_store.parties[party_store.activeParty]!.level,
+    members: [...party_store.parties[party_store.activeParty]!.members],
+    name: party_store.parties[party_store.activeParty]!.name,
+    size: party_store.parties[party_store.activeParty]!.size
   };
 };
 
@@ -123,10 +123,10 @@ const updateAdvanced = () => {
 const addPlayer = () => {
   if (tmpParty.value.members.length >= 20) {
     $q.notify({
-      progress: true,
-      type: "warning",
+      icon: matPriorityHigh,
       message: "Maximum player number reached",
-      icon: matPriorityHigh
+      progress: true,
+      type: "warning"
     });
     return;
   }
@@ -148,15 +148,15 @@ const closeDialog = () => {
 const addParty = () => {
   partyNameInput.value.validate();
   if (!partyNameInput.value.hasError) {
-    party.addParty(newPartyName.value);
+    party_store.addParty(newPartyName.value);
     selectedParty.value = newPartyName.value;
-    parties.value = party.parties.map(party => party.name);
+    parties.value = party_store.parties.map(party => party.name);
     tmpParty.value = {
-      name: party.parties[party.activeParty]!.name,
-      size: party.parties[party.activeParty]!.size,
-      level: party.parties[party.activeParty]!.level,
-      advanced: party.parties[party.activeParty]!.advanced,
-      members: [...party.parties[party.activeParty]!.members]
+      advanced: party_store.parties[party_store.activeParty]!.advanced,
+      level: party_store.parties[party_store.activeParty]!.level,
+      members: [...party_store.parties[party_store.activeParty]!.members],
+      name: party_store.parties[party_store.activeParty]!.name,
+      size: party_store.parties[party_store.activeParty]!.size
     };
     saveChanges();
     newPartyName.value = "";
@@ -165,28 +165,28 @@ const addParty = () => {
 };
 
 const removeParty = () => {
-  party.removeParty();
-  selectedParty.value = party.parties[party.activeParty]!.name;
-  parties.value = party.parties.map(party => party.name);
+  party_store.removeParty();
+  selectedParty.value = party_store.parties[party_store.activeParty]!.name;
+  parties.value = party_store.parties.map(party => party.name);
   tmpParty.value = {
-    name: party.parties[party.activeParty]!.name,
-    size: party.parties[party.activeParty]!.size,
-    level: party.parties[party.activeParty]!.level,
-    advanced: party.parties[party.activeParty]!.advanced,
-    members: [...party.parties[party.activeParty]!.members]
+    advanced: party_store.parties[party_store.activeParty]!.advanced,
+    level: party_store.parties[party_store.activeParty]!.level,
+    members: [...party_store.parties[party_store.activeParty]!.members],
+    name: party_store.parties[party_store.activeParty]!.name,
+    size: party_store.parties[party_store.activeParty]!.size
   };
   saveChanges();
   removePartyDialog.value = false;
 };
 
 const changeActiveParty = (selected: string) => {
-  party.changeActiveParty(party.getPartyIndex(selected));
+  party_store.changeActiveParty(party_store.getPartyIndex(selected));
   tmpParty.value = {
-    name: party.parties[party.activeParty]!.name,
-    size: party.parties[party.activeParty]!.size,
-    level: party.parties[party.activeParty]!.level,
-    advanced: party.parties[party.activeParty]!.advanced,
-    members: [...party.parties[party.activeParty]!.members]
+    advanced: party_store.parties[party_store.activeParty]!.advanced,
+    level: party_store.parties[party_store.activeParty]!.level,
+    members: [...party_store.parties[party_store.activeParty]!.members],
+    name: party_store.parties[party_store.activeParty]!.name,
+    size: party_store.parties[party_store.activeParty]!.size
   };
 };
 
@@ -201,8 +201,8 @@ const saveChanges = () => {
   } else {
     tmpParty.value.members = [1, 1, 1, 1];
   }
-  party.updateParty(tmpParty.value);
-  localStorage.setItem("parties", JSON.stringify(party.parties));
+  party_store.updateParty(tmpParty.value);
+  localStorage.setItem("parties", JSON.stringify(party_store.parties));
 };
 </script>
 

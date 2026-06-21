@@ -28,10 +28,10 @@ import type { template } from "@/types/template";
 
 const $q = useQuasar();
 
-const settings = settingsStore();
-const filters = filtersStore();
-const items = itemsStore();
-const template = templateStore();
+const settings_store = settingsStore();
+const filters_store = filtersStore();
+const items_store = itemsStore();
+const template_store = templateStore();
 
 const dialog = ref(false);
 const tab = ref("General");
@@ -42,14 +42,14 @@ const selectedTraits = ref<
 const traitOptions = ref<
   { label: string; value: string; state: boolean | null }[]
 >(
-  filters.itemFilters.traits.map(trait => ({
+  filters_store.itemFilters.traits.map(trait => ({
     label: trait.label,
-    value: trait.value,
-    state: null
+    state: null,
+    value: trait.value
   }))
 );
 
-const sourceFilter = filters.itemFilters.sources;
+const sourceFilter = filters_store.itemFilters.sources;
 const traitFilter = traitOptions.value;
 
 const newTemplateDialog = ref(false);
@@ -61,17 +61,17 @@ const editNameInput = ref();
 const editTraitSelect = ref();
 
 const newTemplate = ref<template>({
+  armor_percentage: 0,
   default: false,
-  name: "",
   description: "",
+  equipment_percentage: 0,
+  name: "",
+  rarity_filter: [],
+  shield_percentage: 0,
   source_filter: [],
   trait_blacklist_filter: [],
   trait_whitelist_filter: [],
-  rarity_filter: [],
   type_filter: [],
-  armor_percentage: 0,
-  equipment_percentage: 0,
-  shield_percentage: 0,
   weapon_percentage: 0
 });
 const removeTemplateDialog = ref(false);
@@ -86,39 +86,39 @@ const weaponOn = ref(true);
 
 const diceSelect = [
   {
+    icon: "img:/imgs/dices/d4.webp",
     label: "D4",
-    value: 4,
-    icon: "img:/imgs/dices/d4.webp"
+    value: 4
   },
   {
+    icon: "img:/imgs/dices/d6.webp",
     label: "D6",
-    value: 6,
-    icon: "img:/imgs/dices/d6.webp"
+    value: 6
   },
   {
+    icon: "img:/imgs/dices/d8.webp",
     label: "D8",
-    value: 8,
-    icon: "img:/imgs/dices/d8.webp"
+    value: 8
   },
   {
+    icon: "img:/imgs/dices/d10.webp",
     label: "D10",
-    value: 10,
-    icon: "img:/imgs/dices/d10.webp"
+    value: 10
   },
   {
+    icon: "img:/imgs/dices/d12.webp",
     label: "D12",
-    value: 12,
-    icon: "img:/imgs/dices/d12.webp"
+    value: 12
   },
   {
+    icon: "img:/imgs/dices/d20.webp",
     label: "D20",
-    value: 20,
-    icon: "img:/imgs/dices/d20.webp"
+    value: 20
   }
 ];
 
 const template_list = ref<string[]>(
-  template.templates.map(template => template.name)
+  template_store.templates.map(template => template.name)
 );
 
 const consumable_dices = ref({
@@ -129,13 +129,15 @@ const equippable_dices = ref({
   dice_size: { label: "D4", value: 4 },
   n_of_dices: 3
 });
-const levels = ref({ min: 0, max: 25 });
+const levels = ref({ max: 25, min: 0 });
 
 const tmpFilters = ref({
   consumable_dices: consumable_dices.value,
   equippable_dices: equippable_dices.value,
   levels: levels.value,
-  shop_template: cloneDeep(template.templates[template.activeTemplate])
+  shop_template: cloneDeep(
+    template_store.templates[template_store.activeTemplate]
+  )
 });
 
 const restoreSettings = () => {
@@ -156,40 +158,40 @@ const restoreSettings = () => {
   };
   tmpFilters.value.levels = levels.value;
   tmpFilters.value.shop_template = cloneDeep(
-    template.templates[template.activeTemplate]
+    template_store.templates[template_store.activeTemplate]
   );
 };
 
-const generateShop = debounce(async function () {
-  items.setGenerating(true);
+const generateShop = debounce(async () => {
+  items_store.setGenerating(true);
   saveChanges();
-  const game_version = settings.game_version;
+  const { game_version } = settings_store;
 
   const body: shop_data = {
-    source_filter: null,
-    trait_blacklist_filter: null,
-    trait_whitelist_filter: null,
-    rarity_filter: null,
-    type_filter: null,
     armor_percentage: null,
-    equipment_percentage: null,
-    shield_percentage: null,
-    weapon_percentage: null,
     consumable_dices: [
       {
         dice_size: tmpFilters.value.consumable_dices.dice_size.value,
         n_of_dices: tmpFilters.value.consumable_dices.n_of_dices
       }
     ],
+    equipment_percentage: null,
     equippable_dices: [
       {
         dice_size: tmpFilters.value.equippable_dices.dice_size.value,
         n_of_dices: tmpFilters.value.equippable_dices.n_of_dices
       }
     ],
-    min_level: tmpFilters.value.levels.min,
+    game_system_version: game_version,
     max_level: tmpFilters.value.levels.max,
-    game_system_version: game_version
+    min_level: tmpFilters.value.levels.min,
+    rarity_filter: null,
+    shield_percentage: null,
+    source_filter: null,
+    trait_blacklist_filter: null,
+    trait_whitelist_filter: null,
+    type_filter: null,
+    weapon_percentage: null
   };
   if (fixedConsumableDice.value) {
     body.consumable_dices = [
@@ -236,42 +238,41 @@ const generateShop = debounce(async function () {
     }
   }
   try {
-    const randomShop = await shopGenerator(settings.game, body);
-    if (randomShop === undefined) {
+    const randomShop = await shopGenerator(settings_store.game, body);
+    if (!randomShop) {
       throw new TypeError("Error generating random shop");
     }
     if (randomShop.count > 0 && randomShop.results) {
-      items.clearShop();
+      items_store.clearShop();
       for (let i = 0; i < randomShop.count; i++) {
         const min_item: min_item = {
+          archive_link: `https://2e.${getGameAonLink(
+            settings_store.game
+          )}.com/search?q=${encodeURIComponent(
+            randomShop.results[i]!.core_item.name
+          )}&type=eqs`,
           game: randomShop.results[i]!.game,
           id: randomShop.results[i]!.core_item.id,
-          archive_link:
-            "https://2e." +
-            getGameAonLink(settings.game) +
-            ".com/search?q=" +
-            encodeURIComponent(randomShop.results[i]!.core_item.name) +
-            "&type=eqs",
-          name: randomShop.results[i]!.core_item.name,
           level: randomShop.results[i]!.core_item.level,
-          type: randomShop.results[i]!.core_item.item_type,
+          name: randomShop.results[i]!.core_item.name,
           price: randomShop.results[i]!.core_item.price,
-          quantity: randomShop.results[i]!.core_item.quantity
+          quantity: randomShop.results[i]!.core_item.quantity,
+          type: randomShop.results[i]!.core_item.item_type
         };
-        items.addToShop(min_item);
+        items_store.addToShop(min_item);
       }
     } else {
       $q.notify({
-        progress: true,
-        type: "warning",
+        icon: matPriorityHigh,
         message: "No shop could be generated from the current filters",
-        icon: matPriorityHigh
+        progress: true,
+        type: "warning"
       });
     }
   } catch (error) {
     console.error(error);
   }
-  items.setGenerating(false);
+  items_store.setGenerating(false);
 }, 300);
 
 const validateNumber = (consumables: boolean) => {
@@ -302,17 +303,17 @@ const validateNumber = (consumables: boolean) => {
 
 const resetTemplateDialog = () => {
   newTemplate.value = {
+    armor_percentage: 0,
     default: false,
-    name: "",
     description: "",
+    equipment_percentage: 0,
+    name: "",
+    rarity_filter: [],
+    shield_percentage: 0,
     source_filter: [],
     trait_blacklist_filter: [],
     trait_whitelist_filter: [],
-    rarity_filter: [],
     type_filter: [],
-    armor_percentage: 0,
-    equipment_percentage: 0,
-    shield_percentage: 0,
     weapon_percentage: 0
   };
   for (const trait of selectedTraits.value) {
@@ -331,20 +332,24 @@ const addTemplate = async () => {
     newNameInput.value.validate();
     if (newNameInput.value.hasError) {
       tab.value = "General";
-      await nextTick(() => {
+      await nextTick().then(() => {
         newNameInput.value.validate();
+        return;
       });
     } else {
       for (const trait of selectedTraits.value) {
         switch (trait.state) {
-          case true:
+          case true: {
             newTemplate.value.trait_whitelist_filter?.push(trait.value);
             break;
-          case false:
+          }
+          case false: {
             newTemplate.value.trait_blacklist_filter?.push(trait.value);
             break;
-          default:
+          }
+          default: {
             break;
+          }
         }
       }
       if (armorOn.value) {
@@ -360,10 +365,12 @@ const addTemplate = async () => {
         newTemplate.value.type_filter?.push("Weapon");
       }
       newTemplate.value.type_filter?.push("Consumable");
-      template.addTemplate(newTemplate.value);
-      template_list.value = template.templates.map(template => template.name);
+      template_store.addTemplate(newTemplate.value);
+      template_list.value = template_store.templates.map(
+        template => template.name
+      );
       tmpFilters.value.shop_template = cloneDeep(
-        template.templates[template.activeTemplate]
+        template_store.templates[template_store.activeTemplate]
       );
       saveChanges();
       newTemplateDialog.value = false;
@@ -380,14 +387,16 @@ const duplicateTemplate = () => {
     if (!duplicateNameInput.value.hasError) {
       const newName = newTemplate.value.name;
       newTemplate.value = cloneDeep(
-        template.templates[template.activeTemplate]!
+        template_store.templates[template_store.activeTemplate]!
       );
       newTemplate.value.name = newName;
       newTemplate.value.default = false;
-      template.addTemplate(newTemplate.value);
-      template_list.value = template.templates.map(template => template.name);
+      template_store.addTemplate(newTemplate.value);
+      template_list.value = template_store.templates.map(
+        template => template.name
+      );
       tmpFilters.value.shop_template = cloneDeep(
-        template.templates[template.activeTemplate]
+        template_store.templates[template_store.activeTemplate]
       );
       saveChanges();
       duplicateTemplateDialog.value = false;
@@ -399,7 +408,9 @@ const duplicateTemplate = () => {
 };
 
 const openEditDialog = async () => {
-  newTemplate.value = cloneDeep(template.templates[template.activeTemplate]!);
+  newTemplate.value = cloneDeep(
+    template_store.templates[template_store.activeTemplate]!
+  );
   armorOn.value = newTemplate.value.type_filter!.includes("Armor");
   equipmentOn.value = newTemplate.value.type_filter!.includes("Equipment");
   shieldOn.value = newTemplate.value.type_filter!.includes("Shield");
@@ -415,8 +426,8 @@ const openEditDialog = async () => {
         .map(str => capitalize(str))
         .join(" ")
         .replace("Additive", "Additive "),
-      value: trait,
-      state: false
+      state: false,
+      value: trait
     });
   }
   for (const trait of newTemplate.value.trait_whitelist_filter ?? []) {
@@ -426,12 +437,12 @@ const openEditDialog = async () => {
         .map(str => capitalize(str))
         .join(" ")
         .replace("Additive", "Additive "),
-      value: trait,
-      state: true
+      state: true,
+      value: trait
     });
   }
   editTemplateDialog.value = true;
-  await nextTick(() => {
+  await nextTick().then(() => {
     for (const trait of selectedTraits.value) {
       for (const opt of editTraitSelect.value.options) {
         if (opt.label === trait.label) {
@@ -439,6 +450,7 @@ const openEditDialog = async () => {
         }
       }
     }
+    return;
   });
 };
 
@@ -447,22 +459,26 @@ const editTemplate = async () => {
     editNameInput.value.validate();
     if (editNameInput.value.hasError) {
       tab.value = "General";
-      await nextTick(() => {
+      await nextTick().then(() => {
         editNameInput.value.validate();
+        return;
       });
     } else {
       const newWhitelist: string[] = [];
       const newBlacklist: string[] = [];
       for (const trait of selectedTraits.value) {
         switch (trait.state) {
-          case true:
+          case true: {
             newWhitelist.push(trait.value);
             break;
-          case false:
+          }
+          case false: {
             newBlacklist.push(trait.value);
             break;
-          default:
+          }
+          default: {
             break;
+          }
         }
       }
       newTemplate.value.trait_whitelist_filter = newWhitelist;
@@ -482,13 +498,15 @@ const editTemplate = async () => {
       }
       newTypes.push("Consumable");
       newTemplate.value.type_filter = newTypes;
-      template.updateTemplate(
-        template.templates[template.activeTemplate]!.name,
+      template_store.updateTemplate(
+        template_store.templates[template_store.activeTemplate]!.name,
         newTemplate.value
       );
-      template_list.value = template.templates.map(template => template.name);
+      template_list.value = template_store.templates.map(
+        template => template.name
+      );
       tmpFilters.value.shop_template = cloneDeep(
-        template.templates[template.activeTemplate]
+        template_store.templates[template_store.activeTemplate]
       );
       saveChanges();
       editTemplateDialog.value = false;
@@ -500,10 +518,10 @@ const editTemplate = async () => {
 };
 
 const removeTemplate = () => {
-  template.removeTemplate();
-  template_list.value = template.templates.map(template => template.name);
+  template_store.removeTemplate();
+  template_list.value = template_store.templates.map(template => template.name);
   tmpFilters.value.shop_template = cloneDeep(
-    template.templates[template.activeTemplate]
+    template_store.templates[template_store.activeTemplate]
   );
   saveChanges();
   removeTemplateDialog.value = false;
@@ -511,9 +529,11 @@ const removeTemplate = () => {
 };
 
 const changeActiveTemplate = (selected: string) => {
-  template.changeActiveTemplate(template.getTemplateIndex(selected));
+  template_store.changeActiveTemplate(
+    template_store.getTemplateIndex(selected)
+  );
   tmpFilters.value.shop_template = cloneDeep(
-    template.templates[template.activeTemplate]
+    template_store.templates[template_store.activeTemplate]
   );
 };
 
@@ -521,10 +541,10 @@ const saveChanges = () => {
   consumable_dices.value = tmpFilters.value.consumable_dices;
   equippable_dices.value = tmpFilters.value.equippable_dices;
   levels.value = tmpFilters.value.levels;
-  template.changeActiveTemplate(
-    template.getTemplateIndex(tmpFilters.value.shop_template!.name)
+  template_store.changeActiveTemplate(
+    template_store.getTemplateIndex(tmpFilters.value.shop_template!.name)
   );
-  const customTemplates = template.templates.filter(
+  const customTemplates = template_store.templates.filter(
     template => template.default === false
   );
   localStorage.setItem("templates", JSON.stringify(customTemplates));
@@ -550,7 +570,7 @@ const toggleTraits = (opt: {
 const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     const filter = val.toLowerCase();
-    filters.itemFilters.sources = sourceFilter.filter(v =>
+    filters_store.itemFilters.sources = sourceFilter.filter(v =>
       v.toLowerCase().includes(filter)
     );
   });
@@ -832,7 +852,9 @@ defineExpose({ generateShop });
                         outlined
                         clearable
                         options-dense
-                        :options="Object.freeze(filters.itemFilters.sources)"
+                        :options="
+                          Object.freeze(filters_store.itemFilters.sources)
+                        "
                         use-input
                         input-debounce="0"
                         label="Source"
@@ -1265,8 +1287,9 @@ defineExpose({ generateShop });
                               name =>
                                 name.toLowerCase() === val.toLowerCase() &&
                                 newTemplate.name !==
-                                  template.templates[template.activeTemplate]!
-                                    .name
+                                  template_store.templates[
+                                    template_store.activeTemplate
+                                  ]!.name
                             ) || 'This template already exists'
                         ]"
                       />
@@ -1288,7 +1311,9 @@ defineExpose({ generateShop });
                         outlined
                         clearable
                         options-dense
-                        :options="Object.freeze(filters.itemFilters.sources)"
+                        :options="
+                          Object.freeze(filters_store.itemFilters.sources)
+                        "
                         use-input
                         input-debounce="0"
                         label="Source"
@@ -1404,8 +1429,9 @@ defineExpose({ generateShop });
                               name =>
                                 name.toLowerCase() === val.toLowerCase() &&
                                 newTemplate.name !==
-                                  template.templates[template.activeTemplate]!
-                                    .name
+                                  template_store.templates[
+                                    template_store.activeTemplate
+                                  ]!.name
                             ) || 'This template already exists'
                         ]"
                       />

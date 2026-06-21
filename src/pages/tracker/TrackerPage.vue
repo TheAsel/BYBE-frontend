@@ -6,13 +6,13 @@ import TrackerDashboard from "@/components/tracker/TrackerDashboard.vue";
 import TrackerList from "@/components/tracker/TrackerList.vue";
 
 useHead({
-  title: "Tracker - BYBE",
   link: [
     {
-      rel: "canonical",
-      href: "https://bybe.app/tracker"
+      href: "https://bybe.app/tracker",
+      rel: "canonical"
     }
-  ]
+  ],
+  title: "Tracker - BYBE"
 });
 </script>
 
