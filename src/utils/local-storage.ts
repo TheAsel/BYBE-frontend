@@ -14,7 +14,7 @@ import type { template } from "@/types/template";
 export function updateLocalStorageParties(): void {
   const party_store = partyStore();
   const localParty = localStorage.getItem("parties");
-  if (localParty) {
+  if (localParty !== null) {
     try {
       const parsedParties = JSON.parse(localParty);
       if (Array.isArray(parsedParties)) {
@@ -60,7 +60,7 @@ export function updateLocalStorageParties(): void {
 export function updateLocalStorageEncounters(): void {
   const encounter_store = encounterStore();
   const localEncounters = localStorage.getItem("encounters");
-  if (localEncounters) {
+  if (localEncounters !== null) {
     try {
       const parsedEncounters = JSON.parse(localEncounters);
       if (Array.isArray(parsedEncounters)) {
@@ -92,7 +92,7 @@ export function updateLocalStorageEncounters(): void {
 export function updateLocalStorageShops(): void {
   const items_store = itemsStore();
   const localShops = localStorage.getItem("shops");
-  if (localShops) {
+  if (localShops !== null) {
     try {
       const parsedShops = JSON.parse(localShops);
       if (Array.isArray(parsedShops)) {
@@ -124,7 +124,7 @@ export function updateLocalStorageShops(): void {
 export function updateLocalStorageTemplates(): void {
   const template_store = templateStore();
   const localTemplates = localStorage.getItem("templates");
-  if (localTemplates) {
+  if (localTemplates !== null) {
     try {
       const parsedTemplates = JSON.parse(localTemplates);
       if (Array.isArray(parsedTemplates)) {
@@ -160,7 +160,7 @@ export function updateLocalStorageNpcs(): void {
   const settings_store = settingsStore();
 
   const localNpcs = localStorage.getItem("npcs");
-  if (localNpcs) {
+  if (localNpcs !== null) {
     try {
       const parsedNpcs = JSON.parse(localNpcs);
       if (Array.isArray(parsedNpcs)) {

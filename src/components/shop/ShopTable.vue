@@ -20,7 +20,7 @@ import {
   mdiSword,
   mdiTshirtCrew
 } from "@quasar/extras/mdi-v7";
-import { capitalize, debounce, isNull } from "lodash-es";
+import { capitalize, debounce } from "lodash-es";
 import { useQuasar } from "quasar";
 import { onMounted, onUnmounted, ref, toRaw, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -43,7 +43,7 @@ import type { QTableProps } from "quasar";
 import type { item_columns, item_filters, rarities } from "@/types/filters";
 import type { item, min_item } from "@/types/item";
 
-const props = defineProps({ sheetVisible: Boolean, toggleSheetView: Function });
+const props = defineProps({ sheetVisible: Boolean, toggleSheetView: Function }); // oxlint-disable-line max-props
 
 const $q = useQuasar();
 const settings_store = settingsStore();
@@ -306,7 +306,7 @@ const addItem = debounce((item: item) => {
 const showItem = debounce(async (item: item) => {
   try {
     const itemData = await requestItemId(item.game, item.core_item.id);
-    if (!itemData) {
+    if (itemData === null) {
       console.error("Missing item ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -486,11 +486,9 @@ function onGlobalKey(evt: KeyboardEvent): void {
   if (isTextInput(evt.target)) {
     return;
   }
-  if (evt.key.toLowerCase() === "b") {
-    if (evt.ctrlKey || evt.metaKey) {
-      evt.preventDefault();
-      props.toggleSheetView!();
-    }
+  if (evt.key.toLowerCase() === "b" && (evt.ctrlKey || evt.metaKey)) {
+    evt.preventDefault();
+    props.toggleSheetView!();
   }
 }
 

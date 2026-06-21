@@ -107,32 +107,32 @@ const generateParameterNpc = debounce(
           switch (parameter) {
             case "ancestry": {
               npc_store.npcs[npc_store.activeNpc]!.npc.ancestry =
-                newParameter.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+                newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "culture": {
               npc_store.npcs[npc_store.activeNpc]!.npc.culture =
-                newParameter.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+                newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "class": {
               npc_store.npcs[npc_store.activeNpc]!.npc.class =
-                newParameter.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+                newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "gender": {
               npc_store.npcs[npc_store.activeNpc]!.npc.gender =
-                newParameter.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+                newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "job": {
               npc_store.npcs[npc_store.activeNpc]!.npc.job =
-                newParameter.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+                newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "nickname": {
               npc_store.npcs[npc_store.activeNpc]!.npc.nickname =
-                newParameter.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+                newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
 
@@ -296,16 +296,10 @@ const saveChanges = (): void => {
 };
 
 const addCustomField = (): void => {
-  if (!npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields) {
-    npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields = [
-      { body: "", name: "" }
-    ];
-  } else {
-    npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields.push({
-      body: "",
-      name: ""
-    });
-  }
+  npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields.push({
+    body: "",
+    name: ""
+  });
 };
 
 const removeCustomField = (index: number): void => {
@@ -461,9 +455,10 @@ const importNpc = (): void => {
       languages: null,
       level: importNpcData.value?.npcs_data[0].level,
       name: importNpcData.value?.npcs_data[0].name,
-      nickname: !importNpcData.value.npcs_data[0].nickname
-        ? ""
-        : importNpcData.value.npcs_data[0].nickname,
+      nickname:
+        importNpcData.value.npcs_data[0].nickname === undefined
+          ? ""
+          : importNpcData.value.npcs_data[0].nickname,
       personality: null,
       quirk: null,
       relationships: null

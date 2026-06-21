@@ -347,7 +347,7 @@ const addTemplate = async (): Promise<void> => {
       tab.value = "General";
       await nextTick().then(() => {
         newNameInput.value.validate();
-        return;
+        return; // oxlint-disable-line no-useless-return
       });
     } else {
       for (const trait of selectedTraits.value) {
@@ -463,7 +463,7 @@ const openEditDialog = async (): Promise<void> => {
         }
       }
     }
-    return;
+    return; // oxlint-disable-line no-useless-return
   });
 };
 
@@ -474,7 +474,7 @@ const editTemplate = async (): Promise<void> => {
       tab.value = "General";
       await nextTick().then(() => {
         editNameInput.value.validate();
-        return;
+        return; // oxlint-disable-line no-useless-return
       });
     } else {
       const newWhitelist: string[] = [];

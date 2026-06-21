@@ -99,7 +99,7 @@ const loadKofiWidget = (): Promise<void> =>
     kofiWidget.addEventListener("error", () => {
       reject(new Error("Failed to load script"));
     });
-    document.body.appendChild(kofiWidget);
+    document.body.append(kofiWidget);
   });
 
 if (!hideSupport.value) {

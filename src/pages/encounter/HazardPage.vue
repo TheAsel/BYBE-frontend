@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { matPrint, matPriorityHigh } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
-import { isNull } from "lodash-es";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -37,7 +36,7 @@ let hazardData: hazard | null;
 try {
   if (hazardId && !Number.isNaN(hazardId)) {
     hazardData = await requestHazardId(settings_store.game, hazardId);
-    if (!hazardData) {
+    if (hazardData === null) {
       console.error("Missing hazard ID");
       $q.notify({
         icon: matPriorityHigh,

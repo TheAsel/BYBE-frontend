@@ -38,7 +38,7 @@ export const encounterStore = defineStore("encounter_store", {
         );
       } else {
         const newCreature = { ...creature };
-        newCreature.quantity = 1;
+        newCreature.quantity = newCreature.quantity ?? 1;
         this.encounters[this.activeEncounter]!.creatures.push(newCreature);
       }
     },
@@ -59,10 +59,7 @@ export const encounterStore = defineStore("encounter_store", {
       this.encounters[this.activeEncounter]!.creatures.splice(index, 1);
     },
     clearEncounter() {
-      this.encounters[this.activeEncounter]!.creatures.splice(
-        0,
-        this.encounters[this.activeEncounter]!.creatures.length
-      );
+      this.encounters[this.activeEncounter]!.creatures.splice(0);
     },
     getEncounterIndex(encounterName: string): number {
       return this.encounters

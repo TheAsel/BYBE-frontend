@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { matPrint, matPriorityHigh } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
-import { isNull } from "lodash-es";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -102,25 +101,22 @@ try {
             b.weapon_data.damage_data[0].dice?.dice_size -
             a.weapon_data.damage_data[0].dice?.dice_size
           );
-        } else {
-          return 0;
         }
+        return 0;
       });
       creatureData?.combat_data?.weapons.sort((a, b) => {
         if (a.weapon_data?.to_hit_bonus && b.weapon_data?.to_hit_bonus) {
           return b.weapon_data.to_hit_bonus - a.weapon_data.to_hit_bonus;
-        } else {
-          return 0;
         }
+        return 0;
       });
       creatureData?.combat_data?.weapons.sort((a, b) => {
         if (a.weapon_data?.weapon_type && b.weapon_data?.weapon_type) {
           return a.weapon_data.weapon_type.localeCompare(
             b.weapon_data.weapon_type
           );
-        } else {
-          return 0;
         }
+        return 0;
       });
     }
   } else {

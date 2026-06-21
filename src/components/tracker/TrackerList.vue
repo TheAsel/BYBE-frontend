@@ -16,7 +16,7 @@ import {
   mdiPlus,
   mdiSwordCross
 } from "@quasar/extras/mdi-v7";
-import { debounce, isNull } from "lodash-es";
+import { debounce } from "lodash-es";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -193,7 +193,7 @@ async function initializeTracker(): Promise<void> {
   isGenerating.value = false;
 }
 
-initializeTracker();
+initializeTracker(); // oxlint-disable-line prefer-top-level-await
 
 const showItem = debounce(async (item: min_tracker) => {
   if (!item.is_player && item.element && typeof item.element !== "string") {
@@ -203,7 +203,7 @@ const showItem = debounce(async (item: min_tracker) => {
           item.element.game,
           item.element.id
         );
-        if (!itemData) {
+        if (itemData === null) {
           console.error("Missing hazard ID");
           $q.notify({
             icon: matPriorityHigh,
@@ -225,7 +225,7 @@ const showItem = debounce(async (item: min_tracker) => {
           item.element.variant!,
           settings_store.is_pwl_on
         );
-        if (!itemData) {
+        if (itemData === null) {
           console.error("Missing creature ID");
           $q.notify({
             icon: matPriorityHigh,

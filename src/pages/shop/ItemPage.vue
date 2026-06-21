@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { matPrint, matPriorityHigh } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
-import { isNull } from "lodash-es";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -37,7 +36,7 @@ let itemData: item | null;
 try {
   if (itemId && !Number.isNaN(itemId)) {
     itemData = await requestItemId(settings_store.game, itemId);
-    if (!itemData) {
+    if (itemData === null) {
       console.error("Missing item ID");
       $q.notify({
         icon: matPriorityHigh,

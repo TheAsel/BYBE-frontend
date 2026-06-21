@@ -99,7 +99,7 @@ const handleResize = (): void => {
 };
 
 onMounted(() => {
-  pageRef.value = document.getElementById("pageRef")!;
+  pageRef.value = document.querySelector("#pageRef")!;
   pageRef.value.addEventListener("scroll", scrollDirection);
   globalThis.addEventListener("resize", handleResize);
 });

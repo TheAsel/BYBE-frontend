@@ -45,20 +45,24 @@ const backgroundStyle = computed(() => {
   };
 });
 
-try {
-  if (import.meta.env.REPO_URL) {
-    const repoInfo = await requestRepoInfo(import.meta.env.REPO_URL);
-    if (repoInfo) {
-      newestVersion.value = repoInfo.name.substring(1);
+async function fetchLatestVersion(): Promise<void> {
+  try {
+    if (import.meta.env.REPO_URL) {
+      const repoInfo = await requestRepoInfo(import.meta.env.REPO_URL);
+      if (repoInfo) {
+        newestVersion.value = repoInfo.name.slice(1);
+      } else {
+        throw new Error("Error fetching repository info");
+      }
     } else {
-      throw new Error("Error fetching repository info");
+      throw new Error(".env variable REPO_URL not set");
     }
-  } else {
-    throw new Error(".env variable REPO_URL not set");
+  } catch (error) {
+    console.error(error);
   }
-} catch (error) {
-  console.error(error);
 }
+
+fetchLatestVersion(); // oxlint-disable-line prefer-top-level-await
 
 // Open external links in default browser on portable
 if (import.meta.env.IS_APP) {

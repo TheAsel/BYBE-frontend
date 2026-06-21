@@ -36,31 +36,28 @@ export function getGameAonLink(game: games): "aonsrd" | "aonprd" {
 export function addPlus(value: number): string {
   if (value >= 0) {
     return `+${value}`;
-  } else {
-    return String(value);
   }
+  return String(value);
 }
 
 export function cleanSymbols(description: string): string {
   let newDescription = description;
-  const symbolsRegex = /<span class="action-glyph">(\w)<\/span>/g;
+  const symbolsRegex = /<span class="action-glyph">(\w)<\/span>/gu;
 
   const symbol = newDescription.matchAll(symbolsRegex);
   for (const i of symbol) {
-    if (i) {
-      newDescription = newDescription.replaceAll(
-        i[0],
-        `<span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl">${
-          i[1]
-        }</span>`
-      );
-    }
+    newDescription = newDescription.replaceAll(
+      i[0],
+      `<span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl">${
+        i[1]
+      }</span>`
+    );
   }
   return newDescription;
 }
 
 export function cleanDescription(description: string): string {
-  const cleanRegex = /@Localize\[.+\]/g;
+  const cleanRegex = /@Localize\[.+\]/gu;
 
   let finalString = cleanSymbols(description);
 

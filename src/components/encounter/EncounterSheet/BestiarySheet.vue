@@ -118,7 +118,7 @@ const perceptionString = computed(() => {
         finalString +=
           encounter_store.selectedCreature?.extra_data?.perception_detail;
       } else {
-        finalString = finalString.substring(0, finalString.length - 2);
+        finalString = finalString.slice(0, finalString.length - 2);
       }
     } else if (
       encounter_store.selectedCreature?.extra_data?.perception_detail
@@ -141,13 +141,13 @@ const languageString = computed(() => {
         finalString += `${upperFirst(language)}, `;
       }
     }
-    finalString = finalString.substring(0, finalString.length - 2);
+    finalString = finalString.slice(0, finalString.length - 2);
     finalString += "; ";
     if (encounter_store.selectedCreature?.extra_data?.language_detail) {
       finalString +=
         encounter_store.selectedCreature?.extra_data?.language_detail;
     } else {
-      finalString = finalString.substring(0, finalString.length - 2);
+      finalString = finalString.slice(0, finalString.length - 2);
     }
   }
   return finalString;
@@ -166,7 +166,7 @@ const skillString = computed(() => {
       }
     }
   }
-  return finalString.substring(0, finalString.length - 2);
+  return finalString.slice(0, finalString.length - 2);
 });
 
 const itemString = computed(() => {
@@ -251,42 +251,42 @@ const itemString = computed(() => {
     if (armors.length > 0) {
       for (const armor of armors) {
         let armorString = "";
-        if (armor.armor_data) {
-          if (
-            armor.armor_data.n_of_potency_runes > 0 ||
+        if (
+          armor.armor_data &&
+          (armor.armor_data.n_of_potency_runes > 0 ||
             armor.armor_data.n_of_resilient_runes > 0 ||
-            armor.armor_data.property_runes.length > 0
-          ) {
-            if (armor.armor_data.n_of_potency_runes > 0) {
-              armorString += `${addPlus(armor.armor_data.n_of_potency_runes)} `;
+            armor.armor_data.property_runes.length > 0)
+        ) {
+          if (armor.armor_data.n_of_potency_runes > 0) {
+            armorString += `${addPlus(armor.armor_data.n_of_potency_runes)} `;
+          }
+          switch (armor.armor_data.n_of_resilient_runes) {
+            case 1: {
+              armorString += "resilient ";
+              break;
             }
-            switch (armor.armor_data.n_of_resilient_runes) {
-              case 1: {
-                armorString += "resilient ";
-                break;
-              }
-              case 2: {
-                armorString += "greater resilient ";
-                break;
-              }
-              case 3: {
-                armorString += "major resilient ";
-                break;
-              }
-              default: {
-                break;
-              }
+            case 2: {
+              armorString += "greater resilient ";
+              break;
             }
-            if (armor.armor_data.property_runes.length > 0) {
-              for (const rune of armor.armor_data.property_runes) {
-                armorString += `${rune} `;
-              }
+            case 3: {
+              armorString += "major resilient ";
+              break;
             }
-            if (armor.item_core.material_type) {
-              armorString += `${armor.item_core.material_type} `;
+            default: {
+              break;
             }
           }
+          if (armor.armor_data.property_runes.length > 0) {
+            for (const rune of armor.armor_data.property_runes) {
+              armorString += `${rune} `;
+            }
+          }
+          if (armor.item_core.material_type) {
+            armorString += `${armor.item_core.material_type} `;
+          }
         }
+
         armorString += armor.item_core.name.toLowerCase();
 
         if (armorString !== "") {
@@ -300,9 +300,8 @@ const itemString = computed(() => {
   }
   if (droppedItems.length === 0) {
     return "";
-  } else {
-    return finalString.substring(0, finalString.length - 2);
   }
+  return finalString.slice(0, finalString.length - 2);
 });
 
 const defenceString = computed(() => {
@@ -352,7 +351,7 @@ const defenceString = computed(() => {
           finalString += `${action.core_action.name.toLowerCase()}, `;
         }
       }
-      finalString = finalString.substring(0, finalString.length - 2);
+      finalString = finalString.slice(0, finalString.length - 2);
     }
   }
   return finalString;
@@ -369,7 +368,7 @@ const immunityString = (): string => {
       }
     }
   }
-  return finalString.substring(0, finalString.length - 2);
+  return finalString.slice(0, finalString.length - 2);
 };
 
 const resistanceString = (): string => {
@@ -391,13 +390,13 @@ const resistanceString = (): string => {
           resistance.double_vs.length > 0
         ) {
           if (resistance.exception_vs.length > 0) {
-            finalString = finalString.substring(0, finalString.length - 2);
+            finalString = finalString.slice(0, finalString.length - 2);
             finalString += " (except ";
             for (const exception of resistance.exception_vs) {
               finalString += `${exception.replaceAll("-", " ")}, `;
             }
             finalString += "";
-            finalString = finalString.substring(0, finalString.length - 2);
+            finalString = finalString.slice(0, finalString.length - 2);
           }
 
           if (resistance.double_vs.length > 0) {
@@ -409,7 +408,7 @@ const resistanceString = (): string => {
               finalString += `${double.replaceAll("-", " ")}, `;
             }
             finalString += "";
-            finalString = finalString.substring(0, finalString.length - 2);
+            finalString = finalString.slice(0, finalString.length - 2);
           }
 
           finalString += ")  ";
@@ -417,7 +416,7 @@ const resistanceString = (): string => {
       }
     }
   }
-  return finalString.substring(0, finalString.length - 2);
+  return finalString.slice(0, finalString.length - 2);
 };
 
 const weaknessString = (): string => {
@@ -436,7 +435,7 @@ const weaknessString = (): string => {
       }
     }
   }
-  return finalString.substring(0, finalString.length - 2);
+  return finalString.slice(0, finalString.length - 2);
 };
 
 const healthString = computed(() => {
@@ -445,7 +444,10 @@ const healthString = computed(() => {
     const hp = coreCreature.value.essential.hp;
     const hpDetail = extraData.value.hp_detail;
 
-    finalString += `<strong>HP&nbsp;</strong>${variantStyle(hp)}, ${hpDetail}`;
+    finalString += `<strong>HP&nbsp;</strong>${variantStyle(hp)}`;
+    if (hpDetail !== "") {
+      finalString += `, ${hpDetail}`;
+    }
 
     if (combatData.value.immunities.length > 0) {
       finalString += `;<br><strong>Immunities</strong>&nbsp;${immunityString()}`;
@@ -484,7 +486,7 @@ const speedString = computed(() => {
       }
     }
   }
-  return finalString.substring(0, finalString.length - 2);
+  return finalString.slice(0, finalString.length - 2);
 });
 
 const ordinalSuffix = (n: number): string => {
@@ -546,7 +548,7 @@ const spellString = computed(() => {
     finalString += "; ";
     entry.spells.sort((a, b) => b.slot - a.slot);
     if (entry.spellcaster_data.type_of_spellcaster === "focus") {
-      finalString = finalString.substring(0, finalString.length - 2);
+      finalString = finalString.slice(0, finalString.length - 2);
       finalString += `;&nbsp;<strong>${ordinalSuffix(
         entry.spellcaster_data.heighten_level
       )}</strong>&nbsp;`;
@@ -557,22 +559,20 @@ const spellString = computed(() => {
       for (const spell of entry.spells) {
         if (spell.slot === 0 && !spellLevels[0]) {
           spellLevels[0] = true;
-          finalString = finalString.substring(0, finalString.length - 2);
+          finalString = finalString.slice(0, finalString.length - 2);
           finalString += `;&nbsp;<strong>Cantrips (${ordinalSuffix(
             entry.spellcaster_data.heighten_level
           )})</strong>&nbsp;`;
         } else if (!spellLevels[spell.slot]) {
           spellLevels[spell.slot] = true;
-          finalString = finalString.substring(0, finalString.length - 2);
+          finalString = finalString.slice(0, finalString.length - 2);
           finalString += `;&nbsp;<strong>${ordinalSuffix(spell.slot)}</strong>&nbsp;`;
         }
         finalString += `${spell.name.toLowerCase()}, `;
       }
     }
 
-    finalStrings.push(
-      `${finalString.substring(0, finalString.length - 2)}<br>`
-    );
+    finalStrings.push(`${finalString.slice(0, finalString.length - 2)}<br>`);
   }
   return finalStrings;
 });
@@ -601,9 +601,8 @@ const rangeTraits = (
       display_name: `range ${weapon.weapon_data?.range?.max} feet`,
       name: `range ${weapon.weapon_data?.range?.max} feet`
     });
-  } else {
-    return weapon.item_core.traits;
   }
+  return weapon.item_core.traits;
 };
 </script>
 

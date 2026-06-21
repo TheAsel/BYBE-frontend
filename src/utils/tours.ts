@@ -18,14 +18,14 @@ function firstButtons(tour: Tour): (
   return [
     {
       async action(): Promise<void> {
-        return tour.cancel();
+        await tour.cancel();
       },
       secondary: true,
       text: "CLOSE"
     },
     {
       action(): void {
-        return tour.next();
+        tour.next();
       },
       text: "NEXT"
     }
@@ -47,14 +47,14 @@ function lastButtons(tour: Tour): (
   return [
     {
       action(): void {
-        return tour.back();
+        tour.back();
       },
       secondary: true,
       text: "PREVIOUS"
     },
     {
       action(): void {
-        return tour.complete();
+        tour.complete();
       },
       text: "FINISH"
     }
@@ -75,7 +75,8 @@ function defaultButtons(tour: Tour): (
 )[] {
   return [
     {
-      async action(): Promise<void> {
+      async action(): // oxlint-disable-line require-await
+      Promise<void> {
         return tour.cancel();
       },
       secondary: true,
@@ -83,13 +84,13 @@ function defaultButtons(tour: Tour): (
     },
     {
       action(): void {
-        return tour.back();
+        tour.back();
       },
       text: "PREVIOUS"
     },
     {
       action(): void {
-        return tour.next();
+        tour.next();
       },
       text: "NEXT"
     }

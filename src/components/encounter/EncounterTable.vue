@@ -21,7 +21,7 @@ import {
 } from "@quasar/extras/fontawesome-v7";
 import { matPriorityHigh, matWarning } from "@quasar/extras/material-icons";
 import { mdiBowArrow, mdiMagicStaff, mdiSword } from "@quasar/extras/mdi-v7";
-import { capitalize, debounce, isNull } from "lodash-es";
+import { capitalize, debounce } from "lodash-es";
 import { useQuasar } from "quasar";
 import { onMounted, onUnmounted, ref, toRaw, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -60,7 +60,7 @@ import type {
 } from "@/types/filters";
 import type { hazard } from "@/types/hazard";
 
-const props = defineProps({ sheetVisible: Boolean, toggleSheetView: Function });
+const props = defineProps({ sheetVisible: Boolean, toggleSheetView: Function }); // oxlint-disable-line max-props
 
 const $q = useQuasar();
 const settings_store = settingsStore();
@@ -929,7 +929,7 @@ const showCreature = debounce(async (creature: creature) => {
       "Base",
       settings_store.is_pwl_on
     );
-    if (!creatureData) {
+    if (creatureData === null) {
       console.error("Missing creature ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -948,25 +948,22 @@ const showCreature = debounce(async (creature: creature) => {
               b.weapon_data.damage_data[0].dice?.dice_size -
               a.weapon_data.damage_data[0].dice?.dice_size
             );
-          } else {
-            return 0;
           }
+          return 0;
         });
         creatureData?.combat_data?.weapons.sort((a, b) => {
           if (a.weapon_data?.to_hit_bonus && b.weapon_data?.to_hit_bonus) {
             return b.weapon_data.to_hit_bonus - a.weapon_data.to_hit_bonus;
-          } else {
-            return 0;
           }
+          return 0;
         });
         creatureData?.combat_data?.weapons.sort((a, b) => {
           if (a.weapon_data?.weapon_type && b.weapon_data?.weapon_type) {
             return a.weapon_data.weapon_type.localeCompare(
               b.weapon_data.weapon_type
             );
-          } else {
-            return 0;
           }
+          return 0;
         });
       }
       encounter_store.setSelectedCreature(creatureData);
@@ -982,7 +979,7 @@ const showHazard = debounce(async (hazard: hazard) => {
       hazard.game,
       hazard.core_hazard.essential.id
     );
-    if (!hazardData) {
+    if (hazardData === null) {
       console.error("Missing hazard ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -1198,11 +1195,9 @@ function onGlobalKey(evt: KeyboardEvent): void {
   if (isTextInput(evt.target)) {
     return;
   }
-  if (evt.key.toLowerCase() === "b") {
-    if (evt.ctrlKey || evt.metaKey) {
-      evt.preventDefault();
-      props.toggleSheetView!();
-    }
+  if ((evt.key.toLowerCase() === "b" && evt.ctrlKey) || evt.metaKey) {
+    evt.preventDefault();
+    props.toggleSheetView!();
   }
 }
 

@@ -75,11 +75,7 @@ const validateLevel = (index: number): void => {
 };
 
 const validateSimpleParty = (): void => {
-  if (
-    typeof tmpParty.value.size !== "number" ||
-    tmpParty.value.size < 1 ||
-    tmpParty.value.size === 0
-  ) {
+  if (typeof tmpParty.value.size !== "number" || tmpParty.value.size === 0) {
     tmpParty.value.size = 1;
   } else if (tmpParty.value.size > 20) {
     tmpParty.value.size = 20;
@@ -104,7 +100,11 @@ const validateSimpleParty = (): void => {
 
 const updateAdvanced = (): void => {
   if (tmpParty.value.advanced) {
-    if (tmpParty.value.size && tmpParty.value.level) {
+    if (
+      tmpParty.value.size !== undefined &&
+      tmpParty.value.size > 0 &&
+      tmpParty.value.level
+    ) {
       tmpParty.value.members = Array.from<number>({
         length: tmpParty.value.size
       }).fill(tmpParty.value.level);
@@ -151,7 +151,11 @@ const saveChanges = (): void => {
   if (tmpParty.value.advanced) {
     tmpParty.value.size = tmpParty.value.members.length;
     tmpParty.value.level = tmpParty.value.members[0];
-  } else if (tmpParty.value.size && tmpParty.value.level) {
+  } else if (
+    tmpParty.value.size !== undefined &&
+    tmpParty.value.size > 0 &&
+    tmpParty.value.level
+  ) {
     tmpParty.value.members = Array.from<number>({
       length: tmpParty.value.size
     }).fill(tmpParty.value.level);

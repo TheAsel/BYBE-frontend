@@ -33,7 +33,7 @@ onMounted(async () => {
   try {
     const repoInfo = await requestRepoInfo("RakuJa/BYBE-Portable");
     if (repoInfo) {
-      latestVersion.value = repoInfo.name.substring(1);
+      latestVersion.value = repoInfo.name.slice(1);
       latestTag.value = repoInfo.tag_name;
     } else {
       throw new Error("Error fetching repository info");

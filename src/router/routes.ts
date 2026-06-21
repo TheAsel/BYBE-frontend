@@ -1,5 +1,7 @@
 import type { RouteRecordRaw } from "vue-router";
 
+/* oxlint-disable require-await */
+
 const routes: RouteRecordRaw[] = [
   {
     children: [
@@ -99,3 +101,5 @@ const routes: RouteRecordRaw[] = [
 ];
 
 export default routes;
+
+/* oxlint-enable require-await */

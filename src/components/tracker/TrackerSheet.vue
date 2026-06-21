@@ -9,7 +9,7 @@ import { trackerStore } from "@/stores/tracker";
 const encounter_store = encounterStore();
 const tracker_store = trackerStore();
 
-watch(tracker_store, async () => {
+watch(tracker_store, () => {
   encounter_store.selectedCreature = tracker_store.selectedCreature;
   encounter_store.selectedHazard = tracker_store.selectedHazard;
 });

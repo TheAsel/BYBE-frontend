@@ -207,31 +207,34 @@ const generateNpc = debounce(async () => {
     // Regex: adds spaces between words
     if (!npc_store.locks.gender) {
       randomNpc.gender = randomNpc.gender!.replaceAll(
-        /([a-z])([A-Z])/g,
+        /([a-z])([A-Z])/gu,
         "$1 $2"
       );
       npc_store.npcs[npc_store.activeNpc]!.npc.gender = randomNpc.gender;
     }
     if (!npc_store.locks.ancestry) {
       randomNpc.ancestry = randomNpc.ancestry!.replaceAll(
-        /([a-z])([A-Z])/g,
+        /([a-z])([A-Z])/gu,
         "$1 $2"
       );
       npc_store.npcs[npc_store.activeNpc]!.npc.ancestry = randomNpc.ancestry;
     }
     if (settings_store.game === "pf" && !npc_store.locks.culture) {
       randomNpc.culture = randomNpc.culture!.replaceAll(
-        /([a-z])([A-Z])/g,
+        /([a-z])([A-Z])/gu,
         "$1 $2"
       );
       npc_store.npcs[npc_store.activeNpc]!.npc.culture = randomNpc.culture;
     }
     if (!npc_store.locks.class) {
-      randomNpc.class = randomNpc.class!.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+      randomNpc.class = randomNpc.class!.replaceAll(
+        /([a-z])([A-Z])/gu,
+        "$1 $2"
+      );
       npc_store.npcs[npc_store.activeNpc]!.npc.class = randomNpc.class;
     }
     if (!npc_store.locks.job) {
-      randomNpc.job = randomNpc.job!.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+      randomNpc.job = randomNpc.job!.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
       npc_store.npcs[npc_store.activeNpc]!.npc.job = randomNpc.job;
     }
     if (!npc_store.locks.level) {

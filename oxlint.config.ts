@@ -9,6 +9,7 @@ export default defineConfig({
     "quasar.config.*.temporary.compiled*",
     ".quasar/",
     "env.d.ts",
+    "quasar.config.ts",
     "src-cordova/",
     "src-capacitor/",
     "src/router/typed-router.d.ts"
@@ -25,18 +26,29 @@ export default defineConfig({
   categories: {
     correctness: "error",
     // style: "error",
-    // pedantic: "warn",
+    pedantic: "warn",
     suspicious: "error",
     perf: "error",
     restriction: "error"
   },
 
   rules: {
+    complexity: "off",
+    "import/max-dependencies": "off",
     "import/no-default-export": "off",
+    "max-depth": "off",
+    "max-lines": "off",
+    "max-lines-per-function": "off",
     "no-console": "off",
+    "no-undefined": "off",
     "typescript/no-non-null-assertion": "off",
-    "vue/max-props": ["error", { maxProps: 2 }],
-    complexity: ["warn", { max: 50 }]
+    "typescript/no-unsafe-argument": "off",
+    "typescript/no-unsafe-assignment": "off",
+    "typescript/no-unsafe-call": "off",
+    "typescript/no-unsafe-member-access": "off",
+    "typescript/no-unsafe-return": "off",
+    "typescript/prefer-readonly-parameter-types": "off",
+    "typescript/strict-boolean-expressions": "off"
   },
 
   env: {

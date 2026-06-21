@@ -16,7 +16,7 @@ import {
   mdiSword,
   mdiTshirtCrew
 } from "@quasar/extras/mdi-v7";
-import { debounce, isNull } from "lodash-es";
+import { debounce } from "lodash-es";
 import { copyToClipboard, useQuasar } from "quasar";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -345,7 +345,7 @@ const changeActiveShop = (selected: string): void => {
 const showItem = debounce(async (item: min_item) => {
   try {
     const itemData = await requestItemId(item.game, item.id);
-    if (!itemData) {
+    if (itemData === null) {
       console.error("Missing item ID");
       $q.notify({
         icon: matPriorityHigh,

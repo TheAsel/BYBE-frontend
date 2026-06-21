@@ -52,10 +52,7 @@ export const itemsStore = defineStore("items_store", {
       this.shops[this.activeShop]!.items.splice(index, 1);
     },
     clearShop() {
-      this.shops[this.activeShop]!.items.splice(
-        0,
-        this.shops[this.activeShop]!.items.length
-      );
+      this.shops[this.activeShop]!.items.splice(0);
     },
     getFormattedBulk(bulk: number) {
       switch (bulk) {
@@ -99,26 +96,26 @@ export const itemsStore = defineStore("items_store", {
                 const copper = Number.parseFloat(decimal) * 10;
                 if (Math.trunc(silver) === 0) {
                   return `${Math.trunc(newPrice)} gp, ${copper} cp`;
-                } else {
-                  return `${Math.trunc(newPrice)} gp, ${Math.trunc(silver)} sp, ${
-                    copper
-                  } cp`;
                 }
+                return `${Math.trunc(newPrice)} gp, ${Math.trunc(silver)} sp, ${
+                  copper
+                } cp`;
               }
               return `${Math.trunc(newPrice)} gp, ${silver / 10} sp`;
             }
             return `${newPrice} gp`;
           }
+          break;
         }
 
-        default: {
-          return "";
-        }
+        default:
+          break;
       }
+      return "";
     },
     getFormattedUsage(usage: string) {
       let newUsage = usage.replaceAll("-", " ");
-      const worn = new RegExp(/(worn)([a-z]+)/).exec(newUsage);
+      const worn = new RegExp("/(worn)([a-z]+)/", "u").exec(newUsage);
       if (worn) {
         newUsage = newUsage.replace(worn[0], `${worn[1]} ${worn[2]}`);
       }

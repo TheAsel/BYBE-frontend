@@ -11,7 +11,7 @@ import {
 } from "@quasar/extras/bootstrap-icons";
 import { fasDragon, fasLandMineOn } from "@quasar/extras/fontawesome-v7";
 import { matPriorityHigh } from "@quasar/extras/material-icons";
-import { debounce, isNull } from "lodash-es";
+import { debounce } from "lodash-es";
 import { copyToClipboard, useQuasar } from "quasar";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -541,7 +541,7 @@ const showItem = debounce(async (item: min_creature_hazard) => {
   if (item.is_hazard) {
     try {
       const itemData = await requestHazardId(item.game, item.id);
-      if (!itemData) {
+      if (itemData === null) {
         console.error("Missing hazard ID");
         $q.notify({
           icon: matPriorityHigh,
@@ -563,7 +563,7 @@ const showItem = debounce(async (item: min_creature_hazard) => {
         item.variant!,
         settings_store.is_pwl_on
       );
-      if (!itemData) {
+      if (itemData === null) {
         console.error("Missing creature ID");
         $q.notify({
           icon: matPriorityHigh,
