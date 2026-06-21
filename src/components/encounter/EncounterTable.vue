@@ -1444,7 +1444,7 @@ onMounted(async () => {
             <span v-if="!fullscreen">
               <q-btn
                 v-if="props.sheetVisible"
-                id="shepherd-12"
+                id="shepherd-13"
                 flat
                 round
                 dense
@@ -1465,7 +1465,7 @@ onMounted(async () => {
               </q-btn>
               <q-btn
                 v-else
-                id="shepherd-12"
+                id="shepherd-13"
                 flat
                 round
                 dense
@@ -2520,7 +2520,7 @@ onMounted(async () => {
             <span v-if="!fullscreen">
               <q-btn
                 v-if="props.sheetVisible"
-                id="shepherd-12"
+                id="shepherd-13"
                 flat
                 round
                 dense
@@ -2541,7 +2541,7 @@ onMounted(async () => {
               </q-btn>
               <q-btn
                 v-else
-                id="shepherd-12"
+                id="shepherd-13"
                 flat
                 round
                 dense

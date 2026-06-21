@@ -339,7 +339,7 @@ const downloadData = () => {
 
 <template>
   <q-btn
-    id="shepherd-13"
+    id="shepherd-14"
     flat
     round
     size="sm"
@@ -445,7 +445,11 @@ const downloadData = () => {
               round
               size="sm"
               :icon="biQuestionCircle"
-              href="https://2e.aonprd.com/rules?id=2762"
+              :href="
+                settings.game === 'sf'
+                  ? 'https://2e.aonsrd.com/rules/839-proficiency-without-level'
+                  : 'https://2e.aonprd.com/rules?id=2762'
+              "
               target="_blank"
               rel="noopener"
               aria-label="Link to explanation for proficiency without level"

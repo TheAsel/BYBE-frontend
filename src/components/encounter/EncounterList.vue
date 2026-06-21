@@ -1107,6 +1107,7 @@ const startTracker = () => {
       >
         <div class="tw:flex tw:mx-4 tw:my-1.5">
           <q-btn
+            id="shepherd-12"
             class="tw:w-48!"
             :icon-right="biPlayFill"
             color="positive"

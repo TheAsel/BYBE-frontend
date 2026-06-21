@@ -151,12 +151,18 @@ export function createTourEncounter() {
     },
     {
       attachTo: { element: "#shepherd-12", on: "auto" },
+      title: "Tracker",
+      text: "This button starts the encounter tracker with the currently active party and encounter.",
+      buttons: defaultButtons(tour)
+    },
+    {
+      attachTo: { element: "#shepherd-13", on: "auto" },
       title: "Show / Hide Sheet",
       text: "Click here to show or hide the selected item's description.",
       buttons: defaultButtons(tour)
     },
     {
-      attachTo: { element: "#shepherd-13", on: "auto" },
+      attachTo: { element: "#shepherd-14", on: "auto" },
       title: "Settings",
       text: 'You can enable the variant rule for Proficiency without Level by clicking here and going to the "Encounter" tab.',
       buttons: lastButtons(tour)

@@ -858,7 +858,7 @@ const rangeTraits = (
     >
       <a
         class="tw:text-white! tw:decoration-2 tw:hover:underline"
-        href="https://2e.aonprd.com/Rules.aspx?ID=95"
+        href="https://2e.aonprd.com/rules?id=95&NoRedirect=1"
         target="_blank"
         rel="noopener"
       >
@@ -873,7 +873,7 @@ const rangeTraits = (
         :href="
           settings.game === 'sf'
             ? 'https://2e.aonsrd.com/rules/407-size-space-and-reach'
-            : 'https://2e.aonprd.com/Rules.aspx?ID=2359'
+            : 'https://2e.aonprd.com/rules?id=2359'
         "
         target="_blank"
         rel="noopener"
