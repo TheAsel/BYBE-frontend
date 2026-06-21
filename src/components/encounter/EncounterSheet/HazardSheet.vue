@@ -58,7 +58,7 @@ const settings = settingsStore();
       </q-btn>
     </div>
     <a
-      v-if="settings.is_aon_links_on && encounter.selectedHazard"
+      v-if="encounter.selectedHazard"
       class="tw:my-auto"
       :href="
         'https://2e.' +
@@ -81,15 +81,6 @@ const settings = settingsStore();
         {{ encounter.selectedHazard?.core_hazard.essential.name }}
       </h1>
     </a>
-    <h1
-      v-else
-      :class="
-        getGameFontSize(encounter.selectedHazard?.game ?? settings.game) +
-        ' tw:mr-4 tw:leading-8 tw:my-auto'
-      "
-    >
-      {{ encounter.selectedHazard?.core_hazard.essential.name }}
-    </h1>
     <q-space />
     <div class="tw:my-1 tw:text-2xl!">
       Hazard

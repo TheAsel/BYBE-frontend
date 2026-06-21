@@ -55,7 +55,6 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
       </q-btn>
     </div>
     <a
-      v-if="settings.is_aon_links_on"
       class="tw:my-auto"
       :href="
         'https://2e.' +
@@ -76,12 +75,6 @@ const game = computed(() => selectedItem.value?.game ?? settings.game);
         {{ coreItem.name }}
       </h1>
     </a>
-    <h1
-      v-else
-      :class="getGameFontSize(game) + ' tw:mr-4 tw:leading-8 tw:my-auto'"
-    >
-      {{ coreItem.name }}
-    </h1>
     <q-space />
     <div class="tw:my-1 tw:text-2xl!">Item {{ coreItem.level }}</div>
     <div class="tw:my-auto!">

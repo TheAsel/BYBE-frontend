@@ -197,7 +197,6 @@ const showItem = debounce(async function (item: min_tracker) {
             icon: matPriorityHigh
           });
         } else {
-          tracker.removeSelectedCreature();
           tracker.setSelectedHazard(itemData);
         }
       } catch (error) {
@@ -224,7 +223,6 @@ const showItem = debounce(async function (item: min_tracker) {
             query: { game: item.element.game }
           });
         } else {
-          tracker.removeSelectedHazard();
           tracker.setSelectedCreature(itemData);
         }
       } catch (error) {
@@ -348,7 +346,7 @@ const validateNumber = (newValue: unknown) => {
             "
           >
             <div
-              class="tw:flex tw:flex-row tw:flex-wrap tw:item-center tw:my-1 tw:ml-2"
+              class="tw:flex tw:flex-row tw:flex-wrap tw:justify-center tw:my-1 tw:ml-2"
             >
               <q-btn
                 class="tw:my-auto! tw:mr-2! tw:max-h-[33.15px]!"
@@ -370,13 +368,17 @@ const validateNumber = (newValue: unknown) => {
                 </q-tooltip>
               </q-btn>
               <div
-                v-if="item.element && typeof item.element !== 'string'"
-                class="tw:flex-1 tw:my-auto tw:mx-1"
+                v-if="
+                  item.element &&
+                  !item.is_player &&
+                  typeof item.element !== 'string'
+                "
+                class="tw:flex-1 tw:my-auto tw:mx-1 cursor-pointer"
                 style="min-width: 100px"
                 @click="showItem(item)"
               >
                 <q-chip
-                  v-if="item.element.is_hazard === false && !item.is_player"
+                  v-if="item.element.is_hazard === false"
                   text-color="white"
                   clickable
                   :ripple="false"
@@ -403,7 +405,7 @@ const validateNumber = (newValue: unknown) => {
                   </q-avatar>
                 </q-chip>
                 <q-chip
-                  v-if="item.element.is_hazard === true && !item.is_player"
+                  v-if="item.element.is_hazard === true"
                   text-color="white"
                   clickable
                   :ripple="false"
@@ -432,12 +434,9 @@ const validateNumber = (newValue: unknown) => {
                     </q-tooltip>
                   </q-avatar>
                 </q-chip>
-                <span
-                  v-if="item.element && !item.is_player"
-                  class="tw:align-middle"
-                >
+                <span class="tw:align-middle">
                   <a
-                    v-if="item.element.archive_link && settings.is_aon_links_on"
+                    v-if="item.element.archive_link"
                     :href="
                       item.element.archive_link +
                       '&Weak=' +
@@ -471,18 +470,15 @@ const validateNumber = (newValue: unknown) => {
                         : ''
                     "
                     >{{
-                      item.element.variant !== "Base"
+                      item.element.variant === "Elite" ||
+                      item.element.variant === "Weak"
                         ? item.element.variant + " "
                         : ""
                     }}{{ item.element.name }}</span
                   >
                 </span>
               </div>
-              <div
-                v-else
-                class="tw:flex tw:grow tw:my-auto tw:mx-1"
-                style="min-width: 100px"
-              >
+              <div v-else class="tw:flex tw:grow tw:my-auto tw:mx-1">
                 <q-chip
                   v-if="item.is_player"
                   text-color="white"
@@ -501,10 +497,10 @@ const validateNumber = (newValue: unknown) => {
                   </q-avatar>
                 </q-chip>
                 <q-input
-                  v-if="item.is_player"
+                  v-if="item.is_player && typeof item.element === 'string'"
                   v-model="item.element"
                   dense
-                  class="tw:shrink tw:align-middle"
+                  class="tw:align-middle tw:max-w-18! tw:2xl:max-w-64!"
                   :input-class="
                     item.health !== null && item.health === 0
                       ? 'tw:line-through! tw:text-red-600! tw:dark:text-red-400!'

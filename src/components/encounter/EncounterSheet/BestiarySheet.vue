@@ -675,9 +675,7 @@ const rangeTraits = (
     </a>
     <a
       v-else-if="
-        settings.is_aon_links_on &&
-        encounter.selectedCreature &&
-        encounter.selectedCreature.game === 'sf'
+        encounter.selectedCreature && encounter.selectedCreature.game === 'sf'
       "
       class="tw:my-auto"
       :href="

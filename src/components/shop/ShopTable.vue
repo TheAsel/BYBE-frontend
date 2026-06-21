@@ -332,7 +332,6 @@ const showItem = debounce(async function (item: item) {
         icon: matPriorityHigh
       });
     } else {
-      items.removeSelectedItem();
       items.setSelectedItem(itemData);
     }
   } catch (error) {
@@ -1094,7 +1093,6 @@ onMounted(async () => {
               :name="biCaretRight"
             />
             <a
-              v-if="settings.is_aon_links_on"
               :href="
                 'https://2e.' +
                 getGameAonLink(settings.game) +
@@ -1111,9 +1109,6 @@ onMounted(async () => {
                 >{{ name.row.core_item.name }}</span
               >
             </a>
-            <span v-else class="tw:align-middle">{{
-              name.row.core_item.name
-            }}</span>
             <q-chip
               v-if="settings.game === 'pf' && settings.game_version === 'Any'"
               dense

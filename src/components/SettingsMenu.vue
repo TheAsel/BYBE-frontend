@@ -125,38 +125,6 @@ const toggleSupport = () => {
   globalThis.location.reload();
 };
 
-const all_experimentals = ref(false);
-const localExperimentals = ref(localStorage.getItem("all_experimentals"));
-
-switch (localExperimentals.value) {
-  case "true":
-    all_experimentals.value = true;
-    break;
-  case "false":
-    all_experimentals.value = false;
-    break;
-  default:
-    all_experimentals.value = false;
-    localStorage.setItem("all_experimentals", "false");
-    break;
-}
-
-settings.setExperimentalFeatures(all_experimentals.value);
-
-const toggleAllExperimental = () => {
-  is_aon_links_on.value = all_experimentals.value;
-  localStorage.setItem(
-    "is_aon_links_on",
-    JSON.stringify(all_experimentals.value)
-  );
-  settings.setAonLinks(all_experimentals.value);
-  localStorage.setItem(
-    "all_experimentals",
-    JSON.stringify(all_experimentals.value)
-  );
-  settings.setExperimentalFeatures(all_experimentals.value);
-};
-
 const is_pwl_on = ref(false);
 const localPwl = ref(localStorage.getItem("is_pwl_on"));
 
@@ -178,35 +146,6 @@ settings.setPwL(is_pwl_on.value);
 const togglePwL = () => {
   localStorage.setItem("is_pwl_on", JSON.stringify(is_pwl_on.value));
   settings.setPwL(is_pwl_on.value);
-};
-
-const is_aon_links_on = ref(false);
-const localAonLinks = ref(localStorage.getItem("is_aon_links_on"));
-
-switch (localAonLinks.value) {
-  case "true":
-    is_aon_links_on.value = true;
-    break;
-  case "false":
-    is_aon_links_on.value = false;
-    break;
-  default:
-    is_aon_links_on.value = false;
-    localStorage.setItem("is_aon_links_on", "false");
-    break;
-}
-
-settings.setAonLinks(is_aon_links_on.value);
-
-const toggleAonLinks = () => {
-  localStorage.setItem(
-    "is_aon_links_on",
-    JSON.stringify(is_aon_links_on.value)
-  );
-  settings.setAonLinks(is_aon_links_on.value);
-  if (!is_aon_links_on.value) {
-    all_experimentals.value = false;
-  }
 };
 
 const uploadData = () => {
@@ -368,16 +307,6 @@ const validateData = (result: string) => {
             throw new Error("Invalid loaded hide support value");
           }
           break;
-        case "is_aon_links_on":
-          if (parsedData[key] !== "true" && parsedData[key] !== "false") {
-            throw new Error("Invalid loaded aon links value");
-          }
-          break;
-        case "all_experimentals":
-          if (parsedData[key] !== "true" && parsedData[key] !== "false") {
-            throw new Error("Invalid loaded all experimentals value");
-          }
-          break;
         default:
           throw new Error("Unknown loaded key: " + key);
       }
@@ -421,7 +350,7 @@ const downloadData = () => {
     @click="settingsDialog = true"
   />
   <q-dialog v-model="settingsDialog" aria-label="Settings dialog">
-    <q-card flat bordered style="min-height: 451px; min-width: 270px">
+    <q-card flat bordered style="min-height: 410px; min-width: 260px">
       <q-card-section>
         <div class="row">
           <div class="text-h6 tw:mr-4 tw:my-auto">Settings</div>
@@ -448,7 +377,6 @@ const downloadData = () => {
       >
         <q-tab name="General" label="General" />
         <q-tab name="Encounter" label="Encounter" />
-        <q-tab name="Links" label="Links" />
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="General" class="tw:space-y-3!">
@@ -482,7 +410,7 @@ const downloadData = () => {
           </q-card-actions>
           <q-separator />
           <q-card-actions>
-            <div class="q-gutter-y-sm column tw:mx-auto">
+            <div class="q-gutter-y-md tw:mx-auto">
               <q-select
                 v-model="gameVersion"
                 outlined
@@ -491,13 +419,6 @@ const downloadData = () => {
                 :options="['Any', 'Legacy', 'Remaster']"
                 label="Game Version"
                 @update:model-value="toggleGameVersion"
-              />
-              <q-toggle
-                v-model="all_experimentals"
-                class="tw:w-52 tw:text-wrap"
-                label="Enable all experimental features"
-                aria-label="Toggle all experimental features"
-                @update:model-value="toggleAllExperimental"
               />
               <q-toggle
                 v-model="hideSupport"
@@ -538,41 +459,6 @@ const downloadData = () => {
                 Click to learn more
               </q-tooltip>
             </q-btn>
-          </q-card-actions>
-        </q-tab-panel>
-        <q-tab-panel name="Links" class="tw:space-y-3">
-          <q-card-actions>
-            <div class="tw:mx-auto">
-              <q-icon :name="fasFlaskVial" size="sm" class="tw:mr-2" />
-              Experimental features
-            </div>
-          </q-card-actions>
-          <q-card-actions>
-            <q-toggle
-              v-model="is_aon_links_on"
-              label="AoN item links"
-              aria-label="Toggle experimental item links"
-              @update:model-value="toggleAonLinks"
-            >
-            </q-toggle>
-            <q-space />
-            <q-icon
-              flat
-              round
-              size="xs"
-              :name="biQuestionCircle"
-              class="tw:mr-1.5"
-            >
-              <q-tooltip
-                class="text-caption text-center tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                anchor="top middle"
-                self="bottom middle"
-              >
-                <strong>Adds external links to the items</strong>
-                <br />
-                It will try to search the item on Archives of Nethys
-              </q-tooltip>
-            </q-icon>
           </q-card-actions>
         </q-tab-panel>
       </q-tab-panels>

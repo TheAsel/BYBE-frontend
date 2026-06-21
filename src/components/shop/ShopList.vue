@@ -868,7 +868,7 @@ const showItem = debounce(async function (item: min_item) {
                   <span class="tw:align-middle">
                     {{ item.quantity }}
                     <a
-                      v-if="item.archive_link && settings.is_aon_links_on"
+                      v-if="item.archive_link"
                       :href="item.archive_link"
                       target="_blank"
                       rel="noopener"

@@ -978,7 +978,6 @@ const showCreature = debounce(async function (creature: creature) {
           }
         });
       }
-      encounter.removeSelectedCreature();
       encounter.setSelectedCreature(creatureData);
     }
   } catch (error) {
@@ -1001,7 +1000,6 @@ const showHazard = debounce(async function (hazard: hazard) {
         icon: matPriorityHigh
       });
     } else {
-      encounter.removeSelectedHazard();
       encounter.setSelectedHazard(hazardData);
     }
   } catch (error) {
@@ -2240,7 +2238,7 @@ onMounted(async () => {
               >
             </a>
             <a
-              v-else-if="settings.game === 'sf' && settings.is_aon_links_on"
+              v-else-if="settings.game === 'sf'"
               :href="
                 'https://2e.' +
                 getGameAonLink(settings.game) +
@@ -3353,7 +3351,6 @@ onMounted(async () => {
               :name="biCaretRight"
             />
             <a
-              v-if="settings.is_aon_links_on"
               :href="
                 'https://2e.' +
                 getGameAonLink(settings.game) +
@@ -3370,7 +3367,6 @@ onMounted(async () => {
                 >{{ name.value }}</span
               >
             </a>
-            <span v-else class="tw:align-middle">{{ name.value }}</span>
             <q-chip
               v-if="settings.game === 'pf' && settings.game_version === 'Any'"
               dense

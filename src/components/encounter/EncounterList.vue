@@ -484,7 +484,6 @@ const showItem = debounce(async function (item: min_creature_hazard) {
           icon: matPriorityHigh
         });
       } else {
-        encounter.removeSelectedCreature();
         encounter.setSelectedHazard(itemData);
       }
     } catch (error) {
@@ -508,7 +507,6 @@ const showItem = debounce(async function (item: min_creature_hazard) {
         });
         await router.push({ name: "encounter", query: { game: item.game } });
       } else {
-        encounter.removeSelectedHazard();
         encounter.setSelectedCreature(itemData);
       }
     } catch (error) {
@@ -990,7 +988,7 @@ const startTracker = () => {
                   <span class="tw:align-middle">
                     {{ item.quantity }}
                     <a
-                      v-if="item.archive_link && settings.is_aon_links_on"
+                      v-if="item.archive_link"
                       :href="
                         item.archive_link +
                         '&Weak=' +
