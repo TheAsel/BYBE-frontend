@@ -118,7 +118,7 @@ const perceptionString = computed(() => {
         finalString +=
           encounter_store.selectedCreature?.extra_data?.perception_detail;
       } else {
-        finalString = finalString.slice(0, finalString.length - 2);
+        finalString = finalString.slice(0, -2);
       }
     } else if (
       encounter_store.selectedCreature?.extra_data?.perception_detail
@@ -141,13 +141,13 @@ const languageString = computed(() => {
         finalString += `${upperFirst(language)}, `;
       }
     }
-    finalString = finalString.slice(0, finalString.length - 2);
+    finalString = finalString.slice(0, -2);
     finalString += "; ";
     if (encounter_store.selectedCreature?.extra_data?.language_detail) {
       finalString +=
         encounter_store.selectedCreature?.extra_data?.language_detail;
     } else {
-      finalString = finalString.slice(0, finalString.length - 2);
+      finalString = finalString.slice(0, -2);
     }
   }
   return finalString;
@@ -166,7 +166,7 @@ const skillString = computed(() => {
       }
     }
   }
-  return finalString.slice(0, finalString.length - 2);
+  return finalString.slice(0, -2);
 });
 
 const itemString = computed(() => {
@@ -301,7 +301,7 @@ const itemString = computed(() => {
   if (droppedItems.length === 0) {
     return "";
   }
-  return finalString.slice(0, finalString.length - 2);
+  return finalString.slice(0, -2);
 });
 
 const defenceString = computed(() => {
@@ -351,7 +351,7 @@ const defenceString = computed(() => {
           finalString += `${action.core_action.name.toLowerCase()}, `;
         }
       }
-      finalString = finalString.slice(0, finalString.length - 2);
+      finalString = finalString.slice(0, -2);
     }
   }
   return finalString;
@@ -368,7 +368,7 @@ const immunityString = (): string => {
       }
     }
   }
-  return finalString.slice(0, finalString.length - 2);
+  return finalString.slice(0, -2);
 };
 
 const resistanceString = (): string => {
@@ -390,13 +390,13 @@ const resistanceString = (): string => {
           resistance.double_vs.length > 0
         ) {
           if (resistance.exception_vs.length > 0) {
-            finalString = finalString.slice(0, finalString.length - 2);
+            finalString = finalString.slice(0, -2);
             finalString += " (except ";
             for (const exception of resistance.exception_vs) {
               finalString += `${exception.replaceAll("-", " ")}, `;
             }
             finalString += "";
-            finalString = finalString.slice(0, finalString.length - 2);
+            finalString = finalString.slice(0, -2);
           }
 
           if (resistance.double_vs.length > 0) {
@@ -408,7 +408,7 @@ const resistanceString = (): string => {
               finalString += `${double.replaceAll("-", " ")}, `;
             }
             finalString += "";
-            finalString = finalString.slice(0, finalString.length - 2);
+            finalString = finalString.slice(0, -2);
           }
 
           finalString += ")  ";
@@ -416,7 +416,7 @@ const resistanceString = (): string => {
       }
     }
   }
-  return finalString.slice(0, finalString.length - 2);
+  return finalString.slice(0, -2);
 };
 
 const weaknessString = (): string => {
@@ -435,7 +435,7 @@ const weaknessString = (): string => {
       }
     }
   }
-  return finalString.slice(0, finalString.length - 2);
+  return finalString.slice(0, -2);
 };
 
 const healthString = computed(() => {
@@ -486,7 +486,7 @@ const speedString = computed(() => {
       }
     }
   }
-  return finalString.slice(0, finalString.length - 2);
+  return finalString.slice(0, -2);
 });
 
 const ordinalSuffix = (n: number): string => {
@@ -548,7 +548,7 @@ const spellString = computed(() => {
     finalString += "; ";
     entry.spells.sort((a, b) => b.slot - a.slot);
     if (entry.spellcaster_data.type_of_spellcaster === "focus") {
-      finalString = finalString.slice(0, finalString.length - 2);
+      finalString = finalString.slice(0, -2);
       finalString += `;&nbsp;<strong>${ordinalSuffix(
         entry.spellcaster_data.heighten_level
       )}</strong>&nbsp;`;
@@ -559,20 +559,20 @@ const spellString = computed(() => {
       for (const spell of entry.spells) {
         if (spell.slot === 0 && !spellLevels[0]) {
           spellLevels[0] = true;
-          finalString = finalString.slice(0, finalString.length - 2);
+          finalString = finalString.slice(0, -2);
           finalString += `;&nbsp;<strong>Cantrips (${ordinalSuffix(
             entry.spellcaster_data.heighten_level
           )})</strong>&nbsp;`;
         } else if (!spellLevels[spell.slot]) {
           spellLevels[spell.slot] = true;
-          finalString = finalString.slice(0, finalString.length - 2);
+          finalString = finalString.slice(0, -2);
           finalString += `;&nbsp;<strong>${ordinalSuffix(spell.slot)}</strong>&nbsp;`;
         }
         finalString += `${spell.name.toLowerCase()}, `;
       }
     }
 
-    finalStrings.push(`${finalString.slice(0, finalString.length - 2)}<br>`);
+    finalStrings.push(`${finalString.slice(0, -2)}<br>`);
   }
   return finalStrings;
 });

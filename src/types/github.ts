@@ -1,4 +1,4 @@
-export interface repo_info {
+export type repo_info = {
   url: string;
   assets_url: string;
   upload_url: string;
@@ -48,4 +48,4 @@ export interface repo_info {
     rocket: number;
     eyes: number;
   };
-}
+};

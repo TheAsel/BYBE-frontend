@@ -11,7 +11,7 @@ import type {
 } from "@/types/filters";
 import type { hazard } from "@/types/hazard";
 
-export interface encounter {
+export type encounter = {
   experience: number;
   challenge: challenges;
   encounter_exp_levels: {
@@ -23,9 +23,9 @@ export interface encounter {
     Impossible: number;
   };
   color?: "lime" | "green" | "amber" | "orange" | "red" | "purple-10";
-}
+};
 
-export interface encounter_data {
+export type encounter_data = {
   challenge?: challenges;
   adventure_group?: adventure_groups;
   creature_percentage?: number;
@@ -70,18 +70,18 @@ export interface encounter_data {
     game_system_version: string;
   };
   party_levels: number[];
-}
+};
 
-export interface random_encounter {
+export type random_encounter = {
   count: number;
   encounter_info: encounter;
   results?: {
     creatures: creature[];
     hazards: hazard[];
   };
-}
+};
 
-export interface min_creature_hazard {
+export type min_creature_hazard = {
   game: games;
   id: number;
   archive_link: string;
@@ -91,14 +91,14 @@ export interface min_creature_hazard {
   variant?: variants | undefined;
   complexity?: complexities;
   is_hazard: boolean;
-}
+};
 
-export interface encounter_list {
+export type encounter_list = {
   name: string;
   creatures: min_creature_hazard[];
-}
+};
 
-export interface encounter_info {
+export type encounter_info = {
   creatures_params: {
     enemy_levels: number[];
     is_pwl_on: boolean;
@@ -110,7 +110,7 @@ export interface encounter_info {
     }[];
   };
   party_levels: number[];
-}
+};
 
 export type adventure_groups =
   | "BossAndLackeys"
@@ -121,7 +121,7 @@ export type adventure_groups =
   | "Troop"
   | "MookSquad";
 
-export interface shareable_encounter {
+export type shareable_encounter = {
   encounter_name: string;
   creatures_data: {
     id: number;
@@ -134,4 +134,4 @@ export interface shareable_encounter {
     qty: number;
     game: games;
   }[];
-}
+};

@@ -11,7 +11,7 @@ import type { item } from "@/types/item";
 
 type KeyValue = Record<string, number>;
 
-export interface creature {
+export type creature = {
   game: games;
   combat_data?: {
     ac: number;
@@ -165,11 +165,11 @@ export interface creature {
     level: number;
     variant: variants;
   };
-}
+};
 
-export interface creature_response {
+export type creature_response = {
   count: number;
   total: number;
   next: string;
   results: creature[];
-}
+};

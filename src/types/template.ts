@@ -1,6 +1,6 @@
 import type { rarities } from "@/types/filters";
 
-export interface template {
+export type template = {
   default: boolean;
   name: string;
   description?: string;
@@ -13,9 +13,9 @@ export interface template {
   equipment_percentage: number | null;
   shield_percentage: number | null;
   weapon_percentage: number | null;
-}
+};
 
-export interface template_data {
+export type template_data = {
   name: string;
   description: string;
   item_types?: string[];
@@ -26,4 +26,4 @@ export interface template_data {
   equipment_percentage?: number;
   shield_percentage?: number;
   weapon_percentage?: number;
-}
+};

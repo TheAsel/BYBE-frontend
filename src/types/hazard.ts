@@ -1,7 +1,7 @@
 import type { complexities, games, rarities, sizes } from "@/types/filters";
 import type { action, trait } from "@/types/generic";
 
-export interface hazard {
+export type hazard = {
   game: games;
   core_hazard: {
     actions: action[];
@@ -32,11 +32,11 @@ export interface hazard {
     game_system: games;
     traits: trait[];
   };
-}
+};
 
-export interface hazard_response {
+export type hazard_response = {
   count: number;
   total: number;
   next: string;
   results: hazard[];
-}
+};

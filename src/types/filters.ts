@@ -61,7 +61,7 @@ export type creature_columns =
   | "attack"
   | "role";
 
-export interface creature_filters {
+export type creature_filters = {
   source_filter?: string[];
   name_filter?: string;
   min_level_filter?: number;
@@ -83,7 +83,7 @@ export interface creature_filters {
   role_filter?: roles[];
   role_threshold: number;
   game_system_version: string;
-}
+};
 
 export type hazard_columns =
   | "id"
@@ -102,7 +102,7 @@ export type hazard_columns =
   | "will"
   | "hardness";
 
-export interface hazard_filters {
+export type hazard_filters = {
   source_filter?: string[];
   name_filter?: string;
   min_level_filter?: number;
@@ -127,7 +127,7 @@ export interface hazard_filters {
   min_hardness_filter?: number;
   max_hardness_filter?: number;
   game_system_version: string;
-}
+};
 
 export type item_columns =
   | "id"
@@ -138,7 +138,7 @@ export type item_columns =
   | "type"
   | "source";
 
-export interface item_filters {
+export type item_filters = {
   name_filter?: string;
   min_level_filter?: number;
   max_level_filter?: number;
@@ -147,18 +147,18 @@ export interface item_filters {
   type_filter?: string[];
   source_filter?: string[];
   game_system_version: string;
-}
+};
 
-export interface bestiary_ranges {
+export type bestiary_ranges = {
   min_level: number;
   max_level: number;
   min_hp: number;
   max_hp: number;
   min_focus_points: number;
   max_focus_points: number;
-}
+};
 
-export interface hazard_ranges {
+export type hazard_ranges = {
   min_level: number;
   max_level: number;
   min_hp: number;
@@ -175,9 +175,9 @@ export interface hazard_ranges {
   max_reflex: number;
   min_hardness: number;
   max_hardness: number;
-}
+};
 
-export interface shop_ranges {
+export type shop_ranges = {
   min_level: number;
   max_level: number;
   min_hp: number;
@@ -190,4 +190,4 @@ export interface shop_ranges {
   max_bulk: number;
   min_number_of_uses: number;
   max_number_of_uses: number;
-}
+};

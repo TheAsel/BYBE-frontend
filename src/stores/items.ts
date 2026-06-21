@@ -115,7 +115,7 @@ export const itemsStore = defineStore("items_store", {
     },
     getFormattedUsage(usage: string) {
       let newUsage = usage.replaceAll("-", " ");
-      const worn = new RegExp("/(worn)([a-z]+)/", "u").exec(newUsage);
+      const worn = /(worn)([a-z]+)/u.exec(newUsage);
       if (worn) {
         newUsage = newUsage.replace(worn[0], `${worn[1]} ${worn[2]}`);
       }
