@@ -70,15 +70,6 @@ tmpShop.value = {
   name: items_store.shops[items_store.activeShop]!.name
 };
 
-// Save on shop list change
-watch(items_store, () => {
-  tmpShop.value = {
-    items: items_store.shops[items_store.activeShop]!.items,
-    name: items_store.shops[items_store.activeShop]!.name
-  };
-  saveChanges();
-});
-
 // Read the "share" query and decode it
 const shareQuery =
   String(route.query.share) === "undefined" ||
@@ -87,7 +78,7 @@ const shareQuery =
     : String(route.query.share);
 const encodedData = ref(shareQuery);
 
-const decodeData = async () => {
+const decodeData = async (): Promise<void> => {
   if (encodedData.value !== "") {
     isGenerating.value = true;
     importShopDialog.value = true;
@@ -114,9 +105,25 @@ const decodeData = async () => {
 };
 await decodeData();
 
+const closeDialog = (): void => {
+  importShopDialog.value = false;
+  shareDialog.value = false;
+  newShopDialog.value = false;
+  renameShopDialog.value = false;
+  removeShopDialog.value = false;
+  importShopName.value = "";
+  newShopName.value = "";
+  newShopRename.value = "";
+};
+
+const saveChanges = (): void => {
+  items_store.updateShop(tmpShop.value.name, tmpShop.value.items);
+  localStorage.setItem("shops", JSON.stringify(items_store.shops));
+};
+
 // Clean and check the link for manual app import
 const sharedLink = ref("");
-const cleanLink = async () => {
+const cleanLink = async (): Promise<void> => {
   try {
     const parsedUrl = new URL(sharedLink.value);
     const path = parsedUrl.pathname;
@@ -156,7 +163,7 @@ await router.replace({
 });
 
 // Open the share dialog and generate the shareable link
-const openShare = async () => {
+const openShare = async (): Promise<void> => {
   isGenerating.value = true;
   shareDialog.value = true;
   const shopList = items_store.shops[items_store.activeShop]!.items;
@@ -217,7 +224,7 @@ const openShare = async () => {
   isGenerating.value = false;
 };
 
-const importShop = async () => {
+const importShop = async (): Promise<void> => {
   importNameInput.value.validate();
   if (!importNameInput.value.hasError) {
     const tmp_items: min_item[] = [];
@@ -286,18 +293,7 @@ const importShop = async () => {
   }
 };
 
-const closeDialog = () => {
-  importShopDialog.value = false;
-  shareDialog.value = false;
-  newShopDialog.value = false;
-  renameShopDialog.value = false;
-  removeShopDialog.value = false;
-  importShopName.value = "";
-  newShopName.value = "";
-  newShopRename.value = "";
-};
-
-const addShop = () => {
+const addShop = (): void => {
   shopNameInput.value.validate();
   if (!shopNameInput.value.hasError) {
     items_store.addShop(newShopName.value);
@@ -312,7 +308,7 @@ const addShop = () => {
   }
 };
 
-const renameShop = () => {
+const renameShop = (): void => {
   shopRenameInput.value.validate();
   if (!shopRenameInput.value.hasError) {
     items_store.shops[items_store.activeShop]!.name = newShopRename.value;
@@ -327,7 +323,7 @@ const renameShop = () => {
   }
 };
 
-const removeShop = () => {
+const removeShop = (): void => {
   items_store.removeShop();
   shops.value = items_store.shops.map(shop => shop.name);
   tmpShop.value = {
@@ -338,7 +334,7 @@ const removeShop = () => {
   removeShopDialog.value = false;
 };
 
-const changeActiveShop = (selected: string) => {
+const changeActiveShop = (selected: string): void => {
   items_store.changeActiveShop(items_store.getShopIndex(selected));
   tmpShop.value = {
     items: [...items_store.shops[items_store.activeShop]!.items],
@@ -346,15 +342,10 @@ const changeActiveShop = (selected: string) => {
   };
 };
 
-const saveChanges = () => {
-  items_store.updateShop(tmpShop.value.name, tmpShop.value.items);
-  localStorage.setItem("shops", JSON.stringify(items_store.shops));
-};
-
 const showItem = debounce(async (item: min_item) => {
   try {
     const itemData = await requestItemId(item.game, item.id);
-    if (isNull(itemData) || itemData === undefined) {
+    if (!itemData) {
       console.error("Missing item ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -369,6 +360,15 @@ const showItem = debounce(async (item: min_item) => {
     console.error(error);
   }
 }, 300);
+
+// Save on shop list change
+watch(items_store, () => {
+  tmpShop.value = {
+    items: items_store.shops[items_store.activeShop]!.items,
+    name: items_store.shops[items_store.activeShop]!.name
+  };
+  saveChanges();
+});
 </script>
 
 <template>

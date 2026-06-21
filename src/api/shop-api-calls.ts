@@ -13,7 +13,7 @@ import type { template_data } from "@/types/template";
 export async function requestFilters(
   game: games,
   filter: "sources" | "traits"
-) {
+): Promise<string[] | null> {
   try {
     return await apiFetch<string[]>(
       buildUrl(import.meta.env.API_URL, [game, "shop", filter])
@@ -24,7 +24,9 @@ export async function requestFilters(
   }
 }
 
-export async function requestTemplates(game: games) {
+export async function requestTemplates(
+  game: games
+): Promise<template_data[] | null> {
   try {
     return await apiFetch<template_data[]>(
       buildUrl(import.meta.env.API_URL, [game, "shop", "templates_data"])
@@ -42,7 +44,7 @@ export async function requestItems(
   sort_by: item_columns,
   order_by: "ascending" | "descending",
   body: item_filters
-) {
+): Promise<item_response | null> {
   try {
     const url = buildUrl(import.meta.env.API_URL, [game, "shop", "list"], {
       cursor: String(cursor),
@@ -64,7 +66,9 @@ export async function requestItems(
   }
 }
 
-export async function requestShopRanges(game: games) {
+export async function requestShopRanges(
+  game: games
+): Promise<shop_ranges | null> {
   try {
     return await apiFetch<shop_ranges>(
       buildUrl(import.meta.env.API_URL, [game, "shop", "ranges"])
@@ -75,7 +79,10 @@ export async function requestShopRanges(game: games) {
   }
 }
 
-export async function requestItemId(game: games, item_id: number) {
+export async function requestItemId(
+  game: games,
+  item_id: number
+): Promise<item | null> {
   try {
     const data = await apiFetch<{ results: item }>(
       buildUrl(import.meta.env.API_URL, [game, "shop", "item", String(item_id)])
@@ -87,7 +94,10 @@ export async function requestItemId(game: games, item_id: number) {
   }
 }
 
-export async function shopGenerator(game: games, body: shop_data) {
+export async function shopGenerator(
+  game: games,
+  body: shop_data
+): Promise<item_response | null> {
   try {
     return await apiFetch<item_response>(
       buildUrl(import.meta.env.API_URL, [game, "shop", "generator"]),
@@ -106,7 +116,9 @@ export async function shopGenerator(game: games, body: shop_data) {
   }
 }
 
-export async function generateShopLink(body: shareable_shop) {
+export async function generateShopLink(
+  body: shareable_shop
+): Promise<string | null> {
   try {
     return await apiFetchText(
       buildUrl(import.meta.env.API_URL, ["shareable", "shop", "encode"]),
@@ -125,7 +137,9 @@ export async function generateShopLink(body: shareable_shop) {
   }
 }
 
-export async function decodeShopLink(encoded_data: string) {
+export async function decodeShopLink(
+  encoded_data: string
+): Promise<shareable_shop | null> {
   try {
     return await apiFetch<shareable_shop>(
       buildUrl(import.meta.env.API_URL, [

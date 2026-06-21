@@ -40,7 +40,7 @@ export function buildUrl(
 
   if (searchParams) {
     for (const [key, value] of Object.entries(searchParams)) {
-      if (value !== undefined && value !== null) {
+      if (value !== null) {
         url.searchParams.append(key, String(value));
       }
     }

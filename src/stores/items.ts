@@ -5,6 +5,28 @@ import type { item, min_item } from "@/types/item";
 import type { shop_list } from "@/types/shop";
 
 export const itemsStore = defineStore("items_store", {
+  state: (): {
+    selectedItem: item | null;
+    shops: shop_list[];
+    activeShop: number;
+    generating: boolean;
+  } => ({
+    activeShop: 0,
+    generating: false,
+    selectedItem: null,
+    shops: [{ items: [], name: "Default" }]
+  }),
+  getters: {
+    getTotalCost: state => {
+      let cost = 0;
+      for (const item of state.shops[state.activeShop]!.items) {
+        for (let i = 0; i < item.quantity; i += 1) {
+          cost += item.price;
+        }
+      }
+      return cost;
+    }
+  },
   actions: {
     addShop(shopName: string) {
       this.shops.push({ items: [], name: shopName });
@@ -12,7 +34,7 @@ export const itemsStore = defineStore("items_store", {
     },
     addToShop(item: min_item, index?: number) {
       if (index! >= 0) {
-        item.quantity++;
+        item.quantity += 1;
         this.shops[this.activeShop]!.items.splice(index!, 1, item);
       } else {
         this.shops[this.activeShop]!.items.push(item);
@@ -55,36 +77,37 @@ export const itemsStore = defineStore("items_store", {
         }
 
         case "pf": {
-          if (price < 10) {
-            return `${price} cp`;
-          } else if (price < 100) {
-            price /= 10;
-            if (!Number.isInteger(price)) {
-              const decimal = (price - Math.floor(price)).toFixed(1);
+          let newPrice = price;
+          if (newPrice < 10) {
+            return `${newPrice} cp`;
+          } else if (newPrice < 100) {
+            newPrice /= 10;
+            if (!Number.isInteger(newPrice)) {
+              const decimal = (newPrice - Math.floor(newPrice)).toFixed(1);
               const copper = Number.parseFloat(decimal) * 10;
-              return `${Math.trunc(price)} sp, ${copper} cp`;
+              return `${Math.trunc(newPrice)} sp, ${copper} cp`;
             }
-            return `${price} sp`;
-          } else if (price >= 100) {
-            price /= 100;
-            if (!Number.isInteger(price)) {
-              let decimal = (price - Math.floor(price)).toFixed(2);
+            return `${newPrice} sp`;
+          } else if (newPrice >= 100) {
+            newPrice /= 100;
+            if (!Number.isInteger(newPrice)) {
+              let decimal = (newPrice - Math.floor(newPrice)).toFixed(2);
               let silver = Number.parseFloat(decimal) * 100;
               if (!Number.isInteger(silver / 10)) {
                 silver /= 10;
                 decimal = (silver - Math.floor(silver)).toFixed(1);
                 const copper = Number.parseFloat(decimal) * 10;
                 if (Math.trunc(silver) === 0) {
-                  return `${Math.trunc(price)} gp, ${copper} cp`;
+                  return `${Math.trunc(newPrice)} gp, ${copper} cp`;
                 } else {
-                  return `${Math.trunc(price)} gp, ${Math.trunc(silver)} sp, ${
+                  return `${Math.trunc(newPrice)} gp, ${Math.trunc(silver)} sp, ${
                     copper
                   } cp`;
                 }
               }
-              return `${Math.trunc(price)} gp, ${silver / 10} sp`;
+              return `${Math.trunc(newPrice)} gp, ${silver / 10} sp`;
             }
-            return `${price} gp`;
+            return `${newPrice} gp`;
           }
         }
 
@@ -94,19 +117,19 @@ export const itemsStore = defineStore("items_store", {
       }
     },
     getFormattedUsage(usage: string) {
-      usage = usage.replaceAll("-", " ");
-      const worn = new RegExp(/(worn)([a-z]+)/).exec(usage);
+      let newUsage = usage.replaceAll("-", " ");
+      const worn = new RegExp(/(worn)([a-z]+)/).exec(newUsage);
       if (worn) {
-        usage = usage.replace(worn[0], `${worn[1]} ${worn[2]}`);
+        newUsage = newUsage.replace(worn[0], `${worn[1]} ${worn[2]}`);
       }
-      return usage;
+      return newUsage;
     },
     getShopIndex(shopName: string): number {
       return this.shops.map(shop => shop.name).indexOf(shopName);
     },
     removeFromShop(index: number) {
       if (this.shops[this.activeShop]!.items[index]!.quantity > 1) {
-        this.shops[this.activeShop]!.items[index]!.quantity--;
+        this.shops[this.activeShop]!.items[index]!.quantity -= 1;
       } else {
         this.shops[this.activeShop]!.items.splice(index, 1);
       }
@@ -139,27 +162,5 @@ export const itemsStore = defineStore("items_store", {
     updateShops(newShops: shop_list[]) {
       this.shops = newShops;
     }
-  },
-  getters: {
-    getTotalCost: state => {
-      let cost = 0;
-      for (const item of state.shops[state.activeShop]!.items) {
-        for (let i = 0; i < item.quantity; i++) {
-          cost += item.price;
-        }
-      }
-      return cost;
-    }
-  },
-  state: (): {
-    selectedItem: item | null;
-    shops: shop_list[];
-    activeShop: number;
-    generating: boolean;
-  } => ({
-    activeShop: 0,
-    generating: false,
-    selectedItem: null,
-    shops: [{ items: [], name: "Default" }]
-  })
+  }
 });

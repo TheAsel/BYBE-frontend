@@ -37,7 +37,7 @@ let hazardData: hazard | null;
 try {
   if (hazardId && !Number.isNaN(hazardId)) {
     hazardData = await requestHazardId(settings_store.game, hazardId);
-    if (isNull(hazardData) || hazardData === undefined) {
+    if (!hazardData) {
       console.error("Missing hazard ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -70,7 +70,7 @@ try {
   console.error(error);
 }
 
-const printPage = () => {
+const printPage = (): void => {
   globalThis.print();
 };
 </script>

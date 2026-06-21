@@ -6,7 +6,7 @@ import type { npc, shareable_npc, valid_genders } from "@/types/npcs";
 export async function requestParameters(
   game: games,
   parameter: "genders" | "classes" | "jobs" | "cultures"
-) {
+): Promise<string[] | null> {
   try {
     return await apiFetch<string[]>(
       buildUrl(import.meta.env.API_URL, [game, "npc", parameter])
@@ -17,7 +17,9 @@ export async function requestParameters(
   }
 }
 
-export async function requestAncestries(game: games) {
+export async function requestAncestries(
+  game: games
+): Promise<valid_genders[] | null> {
   try {
     return await apiFetch<valid_genders[]>(
       buildUrl(import.meta.env.API_URL, [game, "npc", "ancestries"])
@@ -44,7 +46,7 @@ export async function npcGenerator(
     };
     generate_nickname: boolean;
   }
-) {
+): Promise<npc | null> {
   try {
     return await apiFetch<npc>(
       buildUrl(import.meta.env.API_URL, [game, "npc", "generator"]),
@@ -73,7 +75,7 @@ export async function npcParametersGenerator(
     | "nickname"
     | "level"
     | "culture"
-) {
+): Promise<string | null> {
   try {
     return await apiFetch<string>(
       buildUrl(import.meta.env.API_URL, [game, "npc", "generator", parameter]),
@@ -91,7 +93,7 @@ export async function npcParametersGenerator(
   }
 }
 
-export async function npcLevelGenerator(game: games) {
+export async function npcLevelGenerator(game: games): Promise<number | null> {
   try {
     return await apiFetch<number>(
       buildUrl(import.meta.env.API_URL, [game, "npc", "generator", "level"]),
@@ -118,7 +120,7 @@ export async function npcNamesGenerator(
       FromCulture?: string | undefined;
     };
   }
-) {
+): Promise<string[] | null> {
   try {
     return await apiFetch<string[]>(
       buildUrl(import.meta.env.API_URL, [game, "npc", "generator", "names"]),
@@ -137,7 +139,9 @@ export async function npcNamesGenerator(
   }
 }
 
-export async function generateNpcLink(body: shareable_npc) {
+export async function generateNpcLink(
+  body: shareable_npc
+): Promise<string | null> {
   try {
     return await apiFetchText(
       buildUrl(import.meta.env.API_URL, ["shareable", "npc", "encode"]),
@@ -156,7 +160,9 @@ export async function generateNpcLink(body: shareable_npc) {
   }
 }
 
-export async function decodeNpcLink(encoded_data: string) {
+export async function decodeNpcLink(
+  encoded_data: string
+): Promise<shareable_npc | null> {
   try {
     return await apiFetch<shareable_npc>(
       buildUrl(import.meta.env.API_URL, [

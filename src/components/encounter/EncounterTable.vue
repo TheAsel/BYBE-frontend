@@ -522,7 +522,7 @@ const columnHazards: {
 
 // Waits for the table pagination to load
 let resolveWhenLoaded: (() => void) | null = null;
-const waitForPageLoad = () =>
+const waitForPageLoad = (): Promise<void> =>
   new Promise<void>(resolve => {
     resolveWhenLoaded = resolve;
   });
@@ -543,56 +543,48 @@ const fetchFromServer = debounce(
         body.name_filter = creatureFilters.value.name_filter;
       }
       if (
-        creatureFilters.value.trait_filter !== undefined &&
         creatureFilters.value.trait_filter !== null &&
         creatureFilters.value.trait_filter.length > 0
       ) {
         body.trait_whitelist_filter = creatureFilters.value.trait_filter;
       }
       if (
-        creatureFilters.value.alignment_filter !== undefined &&
         creatureFilters.value.alignment_filter !== null &&
         creatureFilters.value.alignment_filter.length > 0
       ) {
         body.alignment_filter = creatureFilters.value.alignment_filter;
       }
       if (
-        creatureFilters.value.size_filter !== undefined &&
         creatureFilters.value.size_filter !== null &&
         creatureFilters.value.size_filter.length > 0
       ) {
         body.size_filter = creatureFilters.value.size_filter;
       }
       if (
-        creatureFilters.value.rarity_filter !== undefined &&
         creatureFilters.value.rarity_filter !== null &&
         creatureFilters.value.rarity_filter.length > 0
       ) {
         body.rarity_filter = creatureFilters.value.rarity_filter;
       }
       if (
-        creatureFilters.value.family_filter !== undefined &&
         creatureFilters.value.family_filter !== null &&
         creatureFilters.value.family_filter.length > 0
       ) {
         body.family_filter = creatureFilters.value.family_filter;
       }
       if (
-        creatureFilters.value.type_filter !== undefined &&
         creatureFilters.value.type_filter !== null &&
         creatureFilters.value.type_filter.length > 0
       ) {
         body.type_filter = creatureFilters.value.type_filter;
       }
       if (
-        creatureFilters.value.role_filter !== undefined &&
         creatureFilters.value.role_filter !== null &&
         creatureFilters.value.role_filter.length > 0
       ) {
         body.role_filter = creatureFilters.value.role_filter;
       }
       if (
-        creatureFilters.value.source_filter !== undefined &&
         creatureFilters.value.source_filter !== null &&
         creatureFilters.value.source_filter.length > 0
       ) {
@@ -694,35 +686,30 @@ const fetchFromServer = debounce(
         body.name_filter = hazardFilters.value.name_filter;
       }
       if (
-        hazardFilters.value.trait_filter !== undefined &&
         hazardFilters.value.trait_filter !== null &&
         hazardFilters.value.trait_filter.length > 0
       ) {
         body.trait_whitelist_filter = hazardFilters.value.trait_filter;
       }
       if (
-        hazardFilters.value.complexity_filter !== undefined &&
         hazardFilters.value.complexity_filter !== null &&
         hazardFilters.value.complexity_filter.length > 0
       ) {
         body.complexity_filter = hazardFilters.value.complexity_filter;
       }
       if (
-        hazardFilters.value.size_filter !== undefined &&
         hazardFilters.value.size_filter !== null &&
         hazardFilters.value.size_filter.length > 0
       ) {
         body.size_filter = hazardFilters.value.size_filter;
       }
       if (
-        hazardFilters.value.rarity_filter !== undefined &&
         hazardFilters.value.rarity_filter !== null &&
         hazardFilters.value.rarity_filter.length > 0
       ) {
         body.rarity_filter = hazardFilters.value.rarity_filter;
       }
       if (
-        hazardFilters.value.source_filter !== undefined &&
         hazardFilters.value.source_filter !== null &&
         hazardFilters.value.source_filter.length > 0
       ) {
@@ -762,7 +749,7 @@ const fetchFromServer = debounce(
 
 async function onRequest(
   table_props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
-) {
+): Promise<void> {
   const { page, rowsPerPage } = table_props.pagination;
 
   loading.value = true;
@@ -776,7 +763,7 @@ async function onRequest(
 }
 
 // ---- Reset filters functions
-const resetCreatureFilters = () => {
+const resetCreatureFilters = (): void => {
   creatureFilters.value = {
     alignment_filter: [],
     attack_data_filter: {
@@ -805,7 +792,7 @@ const resetCreatureFilters = () => {
   };
 };
 
-const resetHazardFilters = () => {
+const resetHazardFilters = (): void => {
   hazardFilters.value = {
     ac_filter: {
       max: filters_store.hazardRanges.max_ac,
@@ -869,7 +856,7 @@ const visibleHazardColumns = ref([
 ]);
 
 // ---- Creatures column sort function
-const sortCreatures = (col: creature_columns) => {
+const sortCreatures = (col: creature_columns): void => {
   if (creatureFilters.value.sort_by === col) {
     if (creatureFilters.value.order_by === "ascending") {
       creatureFilters.value.order_by = "descending";
@@ -883,7 +870,7 @@ const sortCreatures = (col: creature_columns) => {
 };
 
 // ---- Hazards column sort function
-const sortHazards = (col: hazard_columns) => {
+const sortHazards = (col: hazard_columns): void => {
   if (hazardFilters.value.sort_by === col) {
     if (hazardFilters.value.order_by === "ascending") {
       hazardFilters.value.order_by = "descending";
@@ -942,7 +929,7 @@ const showCreature = debounce(async (creature: creature) => {
       "Base",
       settings_store.is_pwl_on
     );
-    if (isNull(creatureData) || creatureData === undefined) {
+    if (!creatureData) {
       console.error("Missing creature ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -995,7 +982,7 @@ const showHazard = debounce(async (hazard: hazard) => {
       hazard.game,
       hazard.core_hazard.essential.id
     );
-    if (isNull(hazardData) || hazardData === undefined) {
+    if (!hazardData) {
       console.error("Missing hazard ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -1011,11 +998,11 @@ const showHazard = debounce(async (hazard: hazard) => {
   }
 }, 50);
 
-const activateNavigation = () => {
+const activateNavigation = (): void => {
   navigationActive.value = true;
 };
 
-const deactivateNavigation = () => {
+const deactivateNavigation = (): void => {
   navigationActive.value = false;
 };
 
@@ -1028,7 +1015,7 @@ function isTextInput(target: EventTarget | null): boolean {
 }
 
 // Table shortcuts
-async function onTableKey(evt: KeyboardEvent) {
+async function onTableKey(evt: KeyboardEvent): Promise<void> {
   if (isTextInput(evt.target)) {
     return;
   }
@@ -1201,11 +1188,13 @@ async function onTableKey(evt: KeyboardEvent) {
       encounterTable.value.scrollTo(index);
       break;
     }
+    default:
+      break;
   }
 }
 
 // Global shortcuts
-function onGlobalKey(evt: KeyboardEvent) {
+function onGlobalKey(evt: KeyboardEvent): void {
   if (isTextInput(evt.target)) {
     return;
   }
@@ -1225,7 +1214,7 @@ onUnmounted(() => {
   globalThis.removeEventListener("keydown", onGlobalKey);
 });
 
-const toggleFullscreen = () => {
+const toggleFullscreen = (): void => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
     tableOpacity.value = "opacity: 1";
@@ -1237,7 +1226,7 @@ const toggleFullscreen = () => {
 const filterCreatureSourcesFn = (
   val: string,
   update: (fn: () => void) => void
-) => {
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.creatureFilters.sources = sourceCreatureFilter.value.filter(
@@ -1249,7 +1238,7 @@ const filterCreatureSourcesFn = (
 const filterCreatureTraitsFn = (
   val: string,
   update: (fn: () => void) => void
-) => {
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.creatureFilters.traits = traitCreatureFilter.value.filter(v =>
@@ -1261,7 +1250,7 @@ const filterCreatureTraitsFn = (
 const filterCreatureFamiliesFn = (
   val: string,
   update: (fn: () => void) => void
-) => {
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.creatureFilters.families = familyCreatureFilter.value.filter(
@@ -1273,7 +1262,7 @@ const filterCreatureFamiliesFn = (
 const filterHazardSourcesFn = (
   val: string,
   update: (fn: () => void) => void
-) => {
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.hazardFilters.sources = sourceHazardFilter.value.filter(v =>
@@ -1285,7 +1274,7 @@ const filterHazardSourcesFn = (
 const filterHazardTraitsFn = (
   val: string,
   update: (fn: () => void) => void
-) => {
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.hazardFilters.traits = traitHazardFilter.value.filter(v =>

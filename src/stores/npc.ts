@@ -3,6 +3,58 @@ import { defineStore } from "pinia";
 import type { npc, npc_list } from "@/types/npcs";
 
 export const npcStore = defineStore("npc_store", {
+  state: (): {
+    npcs: npc_list[];
+    activeNpc: number;
+    generating: boolean;
+    locks: {
+      name: boolean;
+      nickname: boolean;
+      gender: boolean;
+      ancestry: boolean;
+      culture: boolean;
+      class: boolean;
+      job: boolean;
+      level: boolean;
+    };
+  } => ({
+    activeNpc: 0,
+    generating: false,
+    locks: {
+      ancestry: false,
+      class: false,
+      culture: false,
+      gender: false,
+      job: false,
+      level: false,
+      name: false,
+      nickname: false
+    },
+    npcs: [
+      {
+        culture: false,
+        name: "Default",
+        npc: {
+          ancestry: "",
+          class: "",
+          culture: "",
+          custom_fields: [{ name: "", body: "" }],
+          description: "",
+          game: "pf",
+          gender: "",
+          ideology: "",
+          job: "",
+          languages: "",
+          level: -1,
+          name: "",
+          nickname: "",
+          personality: "",
+          quirk: "",
+          relationships: ""
+        }
+      }
+    ]
+  }),
   actions: {
     addNpc(npcName: string) {
       this.npcs.push({
@@ -105,57 +157,5 @@ export const npcStore = defineStore("npc_store", {
     updateNpcs(newNpcs: npc_list[]) {
       this.npcs = newNpcs;
     }
-  },
-  state: (): {
-    npcs: npc_list[];
-    activeNpc: number;
-    generating: boolean;
-    locks: {
-      name: boolean;
-      nickname: boolean;
-      gender: boolean;
-      ancestry: boolean;
-      culture: boolean;
-      class: boolean;
-      job: boolean;
-      level: boolean;
-    };
-  } => ({
-    activeNpc: 0,
-    generating: false,
-    locks: {
-      ancestry: false,
-      class: false,
-      culture: false,
-      gender: false,
-      job: false,
-      level: false,
-      name: false,
-      nickname: false
-    },
-    npcs: [
-      {
-        culture: false,
-        name: "Default",
-        npc: {
-          ancestry: "",
-          class: "",
-          culture: "",
-          custom_fields: [{ name: "", body: "" }],
-          description: "",
-          game: "pf",
-          gender: "",
-          ideology: "",
-          job: "",
-          languages: "",
-          level: -1,
-          name: "",
-          nickname: "",
-          personality: "",
-          quirk: "",
-          relationships: ""
-        }
-      }
-    ]
-  })
+  }
 });

@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
   <q-page class="tw:h-full">
     <div

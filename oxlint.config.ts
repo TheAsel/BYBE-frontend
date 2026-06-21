@@ -8,6 +8,7 @@ export default defineConfig({
     "dist/",
     "quasar.config.*.temporary.compiled*",
     ".quasar/",
+    "env.d.ts",
     "src-cordova/",
     "src-capacitor/",
     "src/router/typed-router.d.ts"
@@ -26,11 +27,17 @@ export default defineConfig({
     // style: "error",
     // pedantic: "warn",
     suspicious: "error",
-    perf: "error"
-    // restriction: "error"
+    perf: "error",
+    restriction: "error"
   },
 
-  rules: {},
+  rules: {
+    "import/no-default-export": "off",
+    "no-console": "off",
+    "typescript/no-non-null-assertion": "off",
+    "vue/max-props": ["error", { maxProps: 2 }],
+    complexity: ["warn", { max: 50 }]
+  },
 
   env: {
     builtin: true

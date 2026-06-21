@@ -6,13 +6,13 @@ export interface valid_genders {
 }
 
 export interface npc {
-  level: number | undefined;
-  gender: string | undefined;
-  ancestry: string | undefined;
-  culture: string | undefined;
-  class: string | undefined;
-  job: string | undefined;
-  name: string | undefined;
+  level: number;
+  gender: string;
+  ancestry: string;
+  culture: string;
+  class: string;
+  job: string;
+  name: string;
   nickname: string | null;
   languages: string | null;
   description: string | null;

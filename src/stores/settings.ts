@@ -3,6 +3,17 @@ import { defineStore } from "pinia";
 import type { games } from "@/types/filters";
 
 export const settingsStore = defineStore("settings_store", {
+  state: (): {
+    hidden_nav: boolean;
+    is_pwl_on: boolean;
+    game_version: string;
+    game: games;
+  } => ({
+    game: "pf",
+    game_version: "Any",
+    hidden_nav: true,
+    is_pwl_on: false
+  }),
   actions: {
     setGame(newGame: games) {
       this.game = newGame;
@@ -16,16 +27,5 @@ export const settingsStore = defineStore("settings_store", {
     setPwL(newPwl: boolean) {
       this.is_pwl_on = newPwl;
     }
-  },
-  state: (): {
-    hidden_nav: boolean;
-    is_pwl_on: boolean;
-    game_version: string;
-    game: games;
-  } => ({
-    game: "pf",
-    game_version: "Any",
-    hidden_nav: true,
-    is_pwl_on: false
-  })
+  }
 });

@@ -66,20 +66,20 @@ Shepherd.on("start", () => {
   }
 });
 
-["complete", "cancel"].forEach(event =>
+for (const event of ["complete", "cancel"]) {
   Shepherd.on(event, () => {
     npc_store.removeNpc();
-  })
-);
+  });
+}
 
 const pageRef = ref<HTMLElement>();
 
-function scrollDirection() {
+function scrollDirection(): void {
   scroll.getVerticalScrollPosition(pageRef.value!);
   scrollUp.value = scroll.getVerticalScrollPosition(pageRef.value!) > 0;
 }
 
-function scrollPage() {
+function scrollPage(): void {
   settings_store.setHiddenNav(true);
   setTimeout(() => {
     if (scrollUp.value) {
@@ -94,7 +94,7 @@ function scrollPage() {
   }, 10);
 }
 
-const handleResize = () => {
+const handleResize = (): void => {
   screenWidth.value = screen.width;
 };
 

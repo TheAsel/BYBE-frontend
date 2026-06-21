@@ -3,6 +3,15 @@ import { defineStore } from "pinia";
 import type { template, template_data } from "@/types/template";
 
 export const templateStore = defineStore("template_store", {
+  state: (): {
+    templates: template[];
+    activeTemplate: number;
+    defaultTemplates: number;
+  } => ({
+    activeTemplate: 0,
+    defaultTemplates: 0,
+    templates: []
+  }),
   actions: {
     addDefaultTemplates(defaultTemplates: template_data[]) {
       const newTemplates: template[] = [];
@@ -60,14 +69,5 @@ export const templateStore = defineStore("template_store", {
     updateTemplates(newTemplates: template[]) {
       this.templates = newTemplates;
     }
-  },
-  state: (): {
-    templates: template[];
-    activeTemplate: number;
-    defaultTemplates: number;
-  } => ({
-    activeTemplate: 0,
-    defaultTemplates: 0,
-    templates: []
-  })
+  }
 });

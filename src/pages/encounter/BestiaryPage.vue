@@ -71,7 +71,7 @@ try {
         break;
       }
     }
-    if (isNull(creatureData) || creatureData === undefined) {
+    if (!creatureData) {
       console.error("Missing creature ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -140,7 +140,7 @@ try {
   console.error(error);
 }
 
-const printPage = () => {
+const printPage = (): void => {
   globalThis.print();
 };
 </script>

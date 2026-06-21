@@ -117,20 +117,20 @@ Shepherd.on("start", () => {
   }
 });
 
-["complete", "cancel"].forEach(event =>
+for (const event of ["complete", "cancel"]) {
   Shepherd.on(event, () => {
     encounter_store.removeEncounter();
-  })
-);
+  });
+}
 
 const pageRef = ref<HTMLElement>();
 
-function scrollDirection() {
+function scrollDirection(): void {
   scroll.getVerticalScrollPosition(pageRef.value!);
   scrollUp.value = scroll.getVerticalScrollPosition(pageRef.value!) > 0;
 }
 
-function scrollPage() {
+function scrollPage(): void {
   settings_store.setHiddenNav(true);
   setTimeout(() => {
     if (scrollUp.value) {
@@ -145,7 +145,7 @@ function scrollPage() {
   }, 10);
 }
 
-const handleResize = () => {
+const handleResize = (): void => {
   screenWidth.value = screen.width;
 };
 
@@ -164,7 +164,7 @@ const sheetVisible = ref(true);
 const sheetWidth = ref("tw:md:w-[27%] tw:p-4!");
 const tableWidth = ref("tw:md:w-[46%] tw:pl-4! tw:md:pl-0!");
 
-const toggleSheetView = () => {
+const toggleSheetView = (): void => {
   sheetVisible.value = !sheetVisible.value;
   if (sheetVisible.value) {
     sheetWidth.value = "tw:md:w-[27%] tw:p-4!";

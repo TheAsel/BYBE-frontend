@@ -37,7 +37,7 @@ let itemData: item | null;
 try {
   if (itemId && !Number.isNaN(itemId)) {
     itemData = await requestItemId(settings_store.game, itemId);
-    if (isNull(itemData) || itemData === undefined) {
+    if (!itemData) {
       console.error("Missing item ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -64,7 +64,7 @@ try {
   console.error(error);
 }
 
-const printPage = () => {
+const printPage = (): void => {
   globalThis.print();
 };
 </script>

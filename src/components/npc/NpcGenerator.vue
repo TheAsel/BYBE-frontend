@@ -250,7 +250,7 @@ const generateNpc = debounce(async () => {
   npc_store.setGenerating(false);
 }, 300);
 
-const resetParameters = () => {
+const resetParameters = (): void => {
   parameters.value.genders = [];
   parameters.value.ancestries = [];
   parameters.value.cultures = [];
@@ -260,7 +260,10 @@ const resetParameters = () => {
   nickname.value = false;
 };
 
-const filterGendersFn = (val: string, update: (fn: () => void) => void) => {
+const filterGendersFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     npc_parameters_store.npcParameters.genders = genderFilter.value.filter(v =>
@@ -269,7 +272,10 @@ const filterGendersFn = (val: string, update: (fn: () => void) => void) => {
   });
 };
 
-const filterAncestriesFn = (val: string, update: (fn: () => void) => void) => {
+const filterAncestriesFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     npc_parameters_store.npcParameters.ancestries = ancestryFilter.value.filter(
@@ -278,7 +284,10 @@ const filterAncestriesFn = (val: string, update: (fn: () => void) => void) => {
   });
 };
 
-const filterCulturesFn = (val: string, update: (fn: () => void) => void) => {
+const filterCulturesFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     npc_parameters_store.npcParameters.cultures = culturesFilter.value.filter(
@@ -287,7 +296,10 @@ const filterCulturesFn = (val: string, update: (fn: () => void) => void) => {
   });
 };
 
-const filterClassesFn = (val: string, update: (fn: () => void) => void) => {
+const filterClassesFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     npc_parameters_store.npcParameters.classes = classFilter.value.filter(v =>
@@ -296,7 +308,7 @@ const filterClassesFn = (val: string, update: (fn: () => void) => void) => {
   });
 };
 
-const filterJobsFn = (val: string, update: (fn: () => void) => void) => {
+const filterJobsFn = (val: string, update: (fn: () => void) => void): void => {
   update(() => {
     const filter = val.toLowerCase();
     npc_parameters_store.npcParameters.jobs = jobFilter.value.filter(v =>

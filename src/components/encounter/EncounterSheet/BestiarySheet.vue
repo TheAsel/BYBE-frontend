@@ -18,13 +18,20 @@ import {
 
 import type { creature } from "@/types/creature";
 import type { variants } from "@/types/filters";
+import type { trait } from "@/types/generic";
 
 const route = useRoute();
 const router = useRouter();
 const encounter_store = encounterStore();
 const settings_store = settingsStore();
 
-const changeVariant = (variant: variants) => {
+const selectedCreature = computed(() => encounter_store.selectedCreature);
+const coreCreature = computed(() => selectedCreature.value?.core_data);
+const combatData = computed(() => selectedCreature.value?.combat_data);
+const extraData = computed(() => selectedCreature.value?.extra_data);
+const spellData = computed(() => selectedCreature.value?.spellcaster_data);
+
+const changeVariant = (variant: variants): void => {
   if (encounter_store.selectedCreature?.variant_data?.variant === "Base") {
     const routeData = router.resolve({
       name: "bestiary",
@@ -47,7 +54,7 @@ const changeVariant = (variant: variants) => {
   }
 };
 
-const variantStyle = (value: string | number | undefined) => {
+const variantStyle = (value: string | number): string | number => {
   if (
     value &&
     encounter_store.selectedCreature?.variant_data?.variant !== "Base"
@@ -59,217 +66,232 @@ const variantStyle = (value: string | number | undefined) => {
 };
 
 const perceptionString = computed(() => {
-  const perception = encounter_store.selectedCreature?.extra_data?.perception;
-  const senses = encounter_store.selectedCreature?.extra_data?.senses;
-  const spells =
-    encounter_store.selectedCreature?.spellcaster_data?.spellcaster_entries
-      .flatMap(entry => Object.values(entry.spells))
-      .flatMap(spell => spell.name);
   let finalString = "";
-  if (perception !== undefined) {
-    finalString += `<strong>Perception&nbsp;</strong>${variantStyle(
-      addPlus(perception)
-    )}; `;
-  }
-  if (senses !== undefined && senses.length > 0) {
-    for (const sense of senses) {
-      let found = false;
-      for (const action of encounter_store.selectedCreature?.extra_data
-        ?.actions ?? []) {
-        if (action.core_action.slug === sense.name) {
-          finalString += `${action.core_action.name.toLowerCase()}, `;
-          found = true;
-        }
-      }
-      if (!found) {
-        finalString += sense.name;
-        if (sense.acuity) {
-          finalString += ` (${sense.acuity})`;
-        }
-        if (sense.range?.value) {
-          finalString += ` ${sense.range.value} feet`;
-        }
-        finalString += ", ";
-      }
+  if (extraData.value) {
+    const perception = extraData.value.perception;
+    const senses = extraData.value.senses;
+    if (perception) {
+      finalString += `<strong>Perception&nbsp;</strong>${variantStyle(
+        addPlus(perception)
+      )}; `;
     }
-    if (
-      spells !== undefined &&
-      spells.length > 0 &&
-      senses.every(sense => sense.name !== "truesight")
+    if (senses.length > 0) {
+      for (const sense of senses) {
+        let found = false;
+        for (const action of encounter_store.selectedCreature?.extra_data
+          ?.actions ?? []) {
+          if (action.core_action.slug === sense.name) {
+            finalString += `${action.core_action.name.toLowerCase()}, `;
+            found = true;
+          }
+        }
+        if (!found) {
+          finalString += sense.name;
+          if (sense.acuity) {
+            finalString += ` (${sense.acuity})`;
+          }
+          if (sense.range?.value) {
+            finalString += ` ${sense.range.value} feet`;
+          }
+          finalString += ", ";
+        }
+      }
+      if (spellData.value) {
+        const spells = spellData.value.spellcaster_entries
+          .flatMap(entry => Object.values(entry.spells))
+          .flatMap(spell => spell.name);
+        if (
+          spells.length > 0 &&
+          senses.every(sense => sense.name !== "truesight")
+        ) {
+          for (const spell of spells) {
+            if (spell === "True Seeing (Constant)") {
+              finalString += "truesight, ";
+            }
+          }
+        }
+      }
+      if (!encounter_store.selectedCreature?.extra_data?.has_vision) {
+        finalString += "no vision, ";
+      }
+      if (encounter_store.selectedCreature?.extra_data?.perception_detail) {
+        finalString +=
+          encounter_store.selectedCreature?.extra_data?.perception_detail;
+      } else {
+        finalString = finalString.substring(0, finalString.length - 2);
+      }
+    } else if (
+      encounter_store.selectedCreature?.extra_data?.perception_detail
     ) {
-      for (const spell of spells) {
-        if (spell === "True Seeing (Constant)") {
-          finalString += "truesight, ";
-        }
-      }
-    }
-    if (!encounter_store.selectedCreature?.extra_data?.has_vision) {
-      finalString += "no vision, ";
-    }
-    if (encounter_store.selectedCreature?.extra_data?.perception_detail) {
       finalString +=
         encounter_store.selectedCreature?.extra_data?.perception_detail;
-    } else {
-      finalString = finalString.substring(0, finalString.length - 2);
     }
-  } else if (encounter_store.selectedCreature?.extra_data?.perception_detail) {
-    finalString +=
-      encounter_store.selectedCreature?.extra_data?.perception_detail;
   }
   return finalString;
 });
 
 const languageString = computed(() => {
-  const languages = encounter_store.selectedCreature?.extra_data?.languages;
-  languages?.sort();
   let finalString = "";
-  if (languages !== undefined && languages.length > 0) {
-    finalString += "<strong>Languages&nbsp;</strong>";
-    for (const language of languages) {
-      finalString += `${upperFirst(language)}, `;
+  if (extraData.value) {
+    const languages = extraData.value.languages;
+    languages?.sort();
+    if (languages.length > 0) {
+      finalString += "<strong>Languages&nbsp;</strong>";
+      for (const language of languages) {
+        finalString += `${upperFirst(language)}, `;
+      }
     }
-  }
-  finalString = finalString.substring(0, finalString.length - 2);
-  finalString += "; ";
-  if (encounter_store.selectedCreature?.extra_data?.language_detail) {
-    finalString +=
-      encounter_store.selectedCreature?.extra_data?.language_detail;
-  } else {
     finalString = finalString.substring(0, finalString.length - 2);
+    finalString += "; ";
+    if (encounter_store.selectedCreature?.extra_data?.language_detail) {
+      finalString +=
+        encounter_store.selectedCreature?.extra_data?.language_detail;
+    } else {
+      finalString = finalString.substring(0, finalString.length - 2);
+    }
   }
   return finalString;
 });
 
 const skillString = computed(() => {
-  const skills = encounter_store.selectedCreature?.extra_data?.skills;
   let finalString = "";
-  if (skills !== undefined && skills.length > 0) {
-    finalString += "<strong>Skills&nbsp;</strong>";
-    for (const skill of skills) {
-      finalString += `${upperFirst(skill.name)} ${variantStyle(
-        addPlus(skill.modifier)
-      )}, `;
+  if (extraData.value) {
+    const skills = extraData.value.skills;
+    if (skills.length > 0) {
+      finalString += "<strong>Skills&nbsp;</strong>";
+      for (const skill of skills) {
+        finalString += `${upperFirst(skill.name)} ${variantStyle(
+          addPlus(skill.modifier)
+        )}, `;
+      }
     }
   }
   return finalString.substring(0, finalString.length - 2);
 });
 
 const itemString = computed(() => {
-  const weapons = encounter_store.selectedCreature?.combat_data?.weapons;
-  const items = encounter_store.selectedCreature?.extra_data?.items;
-  const armors = encounter_store.selectedCreature?.combat_data?.armors;
   let finalString = "";
-  finalString += "<strong>Items&nbsp;</strong>";
   const droppedItems: string[] = [];
-  if (weapons !== undefined && weapons.length > 0) {
-    for (const weapon of weapons) {
-      if (weapon.weapon_data && weapon.weapon_data.weapon_type === "Generic") {
-        let weaponString = "";
-        if (
-          weapon.weapon_data.n_of_potency_runes > 0 ||
-          weapon.weapon_data.n_of_striking_runes > 0 ||
-          weapon.weapon_data.property_runes.length > 0
-        ) {
-          if (weapon.weapon_data.n_of_potency_runes > 0) {
-            weaponString += `${addPlus(weapon.weapon_data.n_of_potency_runes)} `;
-          }
-          switch (weapon.weapon_data.n_of_striking_runes) {
-            case 1: {
-              weaponString += "striking ";
-              break;
-            }
-            case 2: {
-              weaponString += "greater striking ";
-              break;
-            }
-            case 3: {
-              weaponString += "major striking ";
-              break;
-            }
-            default: {
-              break;
-            }
-          }
-          if (weapon.weapon_data.property_runes.length > 0) {
-            for (const rune of weapon.weapon_data.property_runes) {
-              weaponString += `${rune} `;
-            }
-          }
-          if (weapon.item_core.material_type) {
-            weaponString += `${weapon.item_core.material_type} `;
-          }
-          weaponString += weapon.item_core.name.toLowerCase();
-        } else if (weapon.item_core.quantity === 1) {
-          weaponString += weapon.item_core.name.toLowerCase();
-        } else if (weapon.item_core.quantity > 1) {
-          weaponString += `${
-            weapon.item_core.quantity
-          } ${weapon.item_core.name.toLowerCase()}`;
-        }
-        if (weaponString !== "") {
-          droppedItems.push(weaponString);
-        }
-      }
-    }
-  }
-  if (items !== undefined && items.length > 0) {
-    for (const item of items) {
-      if (item.item_type === "Consumable" || item.item_type === "Equipment") {
-        let tmpString = "";
-        if (item.quantity === 1) {
-          tmpString += item.name.toLowerCase();
-        } else if (item.quantity > 1) {
-          tmpString += `${item.quantity} ${item.name.toLowerCase()}`;
-        }
-        if (tmpString !== "") {
-          droppedItems.push(tmpString);
-        }
-      }
-    }
-  }
-  if (armors !== undefined && armors.length > 0) {
-    for (const armor of armors) {
-      let armorString = "";
-      if (armor.armor_data) {
-        if (
-          armor.armor_data.n_of_potency_runes > 0 ||
-          armor.armor_data.n_of_resilient_runes > 0 ||
-          armor.armor_data.property_runes.length > 0
-        ) {
-          if (armor.armor_data.n_of_potency_runes > 0) {
-            armorString += `${addPlus(armor.armor_data.n_of_potency_runes)} `;
-          }
-          switch (armor.armor_data.n_of_resilient_runes) {
-            case 1: {
-              armorString += "resilient ";
-              break;
-            }
-            case 2: {
-              armorString += "greater resilient ";
-              break;
-            }
-            case 3: {
-              armorString += "major resilient ";
-              break;
-            }
-            default: {
-              break;
-            }
-          }
-          if (armor.armor_data.property_runes.length > 0) {
-            for (const rune of armor.armor_data.property_runes) {
-              armorString += `${rune} `;
-            }
-          }
-          if (armor.item_core.material_type) {
-            armorString += `${armor.item_core.material_type} `;
-          }
-        }
-      }
-      armorString += armor.item_core.name.toLowerCase();
 
-      if (armorString !== "") {
-        droppedItems.push(armorString);
+  if (combatData.value && extraData.value) {
+    const weapons = combatData.value.weapons;
+    const armors = combatData.value.armors;
+    const items = extraData.value.items;
+    finalString += "<strong>Items&nbsp;</strong>";
+
+    if (weapons.length > 0) {
+      for (const weapon of weapons) {
+        if (
+          weapon.weapon_data &&
+          weapon.weapon_data.weapon_type === "Generic"
+        ) {
+          let weaponString = "";
+          if (
+            weapon.weapon_data.n_of_potency_runes > 0 ||
+            weapon.weapon_data.n_of_striking_runes > 0 ||
+            weapon.weapon_data.property_runes.length > 0
+          ) {
+            if (weapon.weapon_data.n_of_potency_runes > 0) {
+              weaponString += `${addPlus(weapon.weapon_data.n_of_potency_runes)} `;
+            }
+            switch (weapon.weapon_data.n_of_striking_runes) {
+              case 1: {
+                weaponString += "striking ";
+                break;
+              }
+              case 2: {
+                weaponString += "greater striking ";
+                break;
+              }
+              case 3: {
+                weaponString += "major striking ";
+                break;
+              }
+              default: {
+                break;
+              }
+            }
+            if (weapon.weapon_data.property_runes.length > 0) {
+              for (const rune of weapon.weapon_data.property_runes) {
+                weaponString += `${rune} `;
+              }
+            }
+            if (weapon.item_core.material_type) {
+              weaponString += `${weapon.item_core.material_type} `;
+            }
+            weaponString += weapon.item_core.name.toLowerCase();
+          } else if (weapon.item_core.quantity === 1) {
+            weaponString += weapon.item_core.name.toLowerCase();
+          } else if (weapon.item_core.quantity > 1) {
+            weaponString += `${
+              weapon.item_core.quantity
+            } ${weapon.item_core.name.toLowerCase()}`;
+          }
+          if (weaponString !== "") {
+            droppedItems.push(weaponString);
+          }
+        }
+      }
+    }
+    if (items.length > 0) {
+      for (const item of items) {
+        if (item.item_type === "Consumable" || item.item_type === "Equipment") {
+          let tmpString = "";
+          if (item.quantity === 1) {
+            tmpString += item.name.toLowerCase();
+          } else if (item.quantity > 1) {
+            tmpString += `${item.quantity} ${item.name.toLowerCase()}`;
+          }
+          if (tmpString !== "") {
+            droppedItems.push(tmpString);
+          }
+        }
+      }
+    }
+    if (armors.length > 0) {
+      for (const armor of armors) {
+        let armorString = "";
+        if (armor.armor_data) {
+          if (
+            armor.armor_data.n_of_potency_runes > 0 ||
+            armor.armor_data.n_of_resilient_runes > 0 ||
+            armor.armor_data.property_runes.length > 0
+          ) {
+            if (armor.armor_data.n_of_potency_runes > 0) {
+              armorString += `${addPlus(armor.armor_data.n_of_potency_runes)} `;
+            }
+            switch (armor.armor_data.n_of_resilient_runes) {
+              case 1: {
+                armorString += "resilient ";
+                break;
+              }
+              case 2: {
+                armorString += "greater resilient ";
+                break;
+              }
+              case 3: {
+                armorString += "major resilient ";
+                break;
+              }
+              default: {
+                break;
+              }
+            }
+            if (armor.armor_data.property_runes.length > 0) {
+              for (const rune of armor.armor_data.property_runes) {
+                armorString += `${rune} `;
+              }
+            }
+            if (armor.item_core.material_type) {
+              armorString += `${armor.item_core.material_type} `;
+            }
+          }
+        }
+        armorString += armor.item_core.name.toLowerCase();
+
+        if (armorString !== "") {
+          droppedItems.push(armorString);
+        }
       }
     }
   }
@@ -284,169 +306,156 @@ const itemString = computed(() => {
 });
 
 const defenceString = computed(() => {
-  const actions = encounter_store.selectedCreature?.extra_data?.actions;
   let finalString = "";
-  if (encounter_store.selectedCreature?.combat_data?.ac) {
-    finalString += `<strong>AC&nbsp;</strong>${variantStyle(
-      encounter_store.selectedCreature?.combat_data?.ac
-    )}`;
-    if (encounter_store.selectedCreature?.extra_data?.ac_detail) {
-      finalString += ` ${encounter_store.selectedCreature?.extra_data?.ac_detail}`;
-    }
-    finalString += ";&nbsp;";
-  }
-  if (encounter_store.selectedCreature?.combat_data?.saving_throws.fortitude) {
-    finalString += `<strong>Fort&nbsp;</strong>${variantStyle(
-      addPlus(
-        encounter_store.selectedCreature?.combat_data?.saving_throws.fortitude
-      )
-    )};&nbsp;`;
-  }
-  if (encounter_store.selectedCreature?.combat_data?.saving_throws.reflex) {
-    finalString += `<strong>Ref&nbsp;</strong>${variantStyle(
-      addPlus(
-        encounter_store.selectedCreature?.combat_data?.saving_throws.reflex
-      )
-    )};&nbsp;`;
-  }
-  if (encounter_store.selectedCreature?.combat_data?.saving_throws.will) {
-    finalString += `<strong>Will&nbsp;</strong>${variantStyle(
-      addPlus(encounter_store.selectedCreature?.combat_data?.saving_throws.will)
-    )}`;
-  }
-  if (actions !== undefined && actions.length > 0) {
-    finalString += "; ";
-    for (const action of actions) {
-      if (
-        action.core_action.action_type === "passive" &&
-        action.core_action.category === "defensive" &&
-        action.core_action.description === ""
-      ) {
-        finalString += `${action.core_action.name.toLowerCase()}, `;
+  if (extraData.value) {
+    const actions = extraData.value.actions;
+    if (encounter_store.selectedCreature?.combat_data?.ac) {
+      finalString += `<strong>AC&nbsp;</strong>${variantStyle(
+        encounter_store.selectedCreature?.combat_data?.ac
+      )}`;
+      if (encounter_store.selectedCreature?.extra_data?.ac_detail) {
+        finalString += ` ${encounter_store.selectedCreature?.extra_data?.ac_detail}`;
       }
+      finalString += ";&nbsp;";
     }
-    finalString = finalString.substring(0, finalString.length - 2);
+    if (
+      encounter_store.selectedCreature?.combat_data?.saving_throws.fortitude
+    ) {
+      finalString += `<strong>Fort&nbsp;</strong>${variantStyle(
+        addPlus(
+          encounter_store.selectedCreature?.combat_data?.saving_throws.fortitude
+        )
+      )};&nbsp;`;
+    }
+    if (encounter_store.selectedCreature?.combat_data?.saving_throws.reflex) {
+      finalString += `<strong>Ref&nbsp;</strong>${variantStyle(
+        addPlus(
+          encounter_store.selectedCreature?.combat_data?.saving_throws.reflex
+        )
+      )};&nbsp;`;
+    }
+    if (encounter_store.selectedCreature?.combat_data?.saving_throws.will) {
+      finalString += `<strong>Will&nbsp;</strong>${variantStyle(
+        addPlus(
+          encounter_store.selectedCreature?.combat_data?.saving_throws.will
+        )
+      )}`;
+    }
+    if (actions.length > 0) {
+      finalString += "; ";
+      for (const action of actions) {
+        if (
+          action.core_action.action_type === "passive" &&
+          action.core_action.category === "defensive" &&
+          action.core_action.description === ""
+        ) {
+          finalString += `${action.core_action.name.toLowerCase()}, `;
+        }
+      }
+      finalString = finalString.substring(0, finalString.length - 2);
+    }
   }
   return finalString;
 });
 
-const immunityString = () => {
-  const immunities = encounter_store.selectedCreature?.combat_data?.immunities;
-  immunities?.sort();
+const immunityString = (): string => {
   let finalString = "";
-  if (immunities !== undefined && immunities.length > 0) {
-    for (const immunity of immunities) {
-      finalString += `${immunity.toLowerCase().replaceAll("-", " ")}, `;
-    }
-  }
-  return finalString.substring(0, finalString.length - 2);
-};
-
-const resistanceString = () => {
-  const resistances =
-    encounter_store.selectedCreature?.combat_data?.resistances;
-  resistances?.sort();
-  let finalString = "";
-
-  if (resistances !== undefined && resistances.length > 0) {
-    for (const resistance of resistances) {
-      finalString +=
-        `${resistance.core.name.replaceAll("-", " ")}` +
-        " " +
-        `${resistance.core.value}` +
-        ", ";
-
-      if (
-        (resistance.exception_vs !== undefined &&
-          resistance.exception_vs.length > 0) ||
-        (resistance.double_vs !== undefined && resistance.double_vs.length > 0)
-      ) {
-        if (
-          resistance.exception_vs !== undefined &&
-          resistance.exception_vs.length > 0
-        ) {
-          finalString = finalString.substring(0, finalString.length - 2);
-          finalString += " (except ";
-          for (const exception of resistance.exception_vs) {
-            finalString += `${exception.replaceAll("-", " ")}, `;
-          }
-          finalString += "";
-          finalString = finalString.substring(0, finalString.length - 2);
-        }
-
-        if (
-          resistance.double_vs !== undefined &&
-          resistance.double_vs.length > 0
-        ) {
-          if (
-            resistance.exception_vs !== undefined &&
-            resistance.exception_vs.length > 0
-          ) {
-            finalString += ";";
-          }
-          finalString += " double resistance against ";
-          for (const double of resistance.double_vs) {
-            finalString += `${double.replaceAll("-", " ")}, `;
-          }
-          finalString += "";
-          finalString = finalString.substring(0, finalString.length - 2);
-        }
-
-        finalString += ")  ";
+  if (combatData.value) {
+    const immunities = combatData.value.immunities;
+    immunities?.sort();
+    if (immunities.length > 0) {
+      for (const immunity of immunities) {
+        finalString += `${immunity.toLowerCase().replaceAll("-", " ")}, `;
       }
     }
   }
   return finalString.substring(0, finalString.length - 2);
 };
 
-const weaknessString = () => {
-  const weaknesses = encounter_store.selectedCreature?.combat_data?.weaknesses;
-  const weakKeys = Object.keys(weaknesses!);
-  weakKeys.sort();
+const resistanceString = (): string => {
   let finalString = "";
-  if (weakKeys.length > 0) {
-    for (const weakness of weakKeys) {
-      finalString +=
-        `${weakness.replaceAll("-", " ")}` +
-        " " +
-        `${encounter_store.selectedCreature?.combat_data?.weaknesses[weakness]}` +
-        ", ";
+  if (combatData.value) {
+    const resistances = combatData.value.resistances;
+    resistances?.sort();
+
+    if (resistances.length > 0) {
+      for (const resistance of resistances) {
+        finalString +=
+          `${resistance.core.name.replaceAll("-", " ")}` +
+          " " +
+          `${resistance.core.value}` +
+          ", ";
+
+        if (
+          resistance.exception_vs.length > 0 ||
+          resistance.double_vs.length > 0
+        ) {
+          if (resistance.exception_vs.length > 0) {
+            finalString = finalString.substring(0, finalString.length - 2);
+            finalString += " (except ";
+            for (const exception of resistance.exception_vs) {
+              finalString += `${exception.replaceAll("-", " ")}, `;
+            }
+            finalString += "";
+            finalString = finalString.substring(0, finalString.length - 2);
+          }
+
+          if (resistance.double_vs.length > 0) {
+            if (resistance.exception_vs.length > 0) {
+              finalString += ";";
+            }
+            finalString += " double resistance against ";
+            for (const double of resistance.double_vs) {
+              finalString += `${double.replaceAll("-", " ")}, `;
+            }
+            finalString += "";
+            finalString = finalString.substring(0, finalString.length - 2);
+          }
+
+          finalString += ")  ";
+        }
+      }
+    }
+  }
+  return finalString.substring(0, finalString.length - 2);
+};
+
+const weaknessString = (): string => {
+  let finalString = "";
+  if (combatData.value) {
+    const weaknesses = combatData.value.weaknesses;
+    const weakKeys = Object.keys(weaknesses!);
+    weakKeys.sort();
+    if (weakKeys.length > 0) {
+      for (const weakness of weakKeys) {
+        finalString +=
+          `${weakness.replaceAll("-", " ")}` +
+          " " +
+          `${encounter_store.selectedCreature?.combat_data?.weaknesses[weakness]}` +
+          ", ";
+      }
     }
   }
   return finalString.substring(0, finalString.length - 2);
 };
 
 const healthString = computed(() => {
-  const hp = encounter_store.selectedCreature?.core_data.essential.hp;
-  const hpDetail = encounter_store.selectedCreature?.extra_data?.hp_detail;
   let finalString = "";
-  if (hp !== undefined) {
-    finalString += `<strong>HP&nbsp;</strong>${variantStyle(
-      encounter_store.selectedCreature?.core_data.essential.hp
-    )}`;
-    if (hpDetail) {
-      finalString += `, ${hpDetail}`;
+  if (coreCreature.value && extraData.value && combatData.value) {
+    const hp = coreCreature.value.essential.hp;
+    const hpDetail = extraData.value.hp_detail;
+
+    finalString += `<strong>HP&nbsp;</strong>${variantStyle(hp)}, ${hpDetail}`;
+
+    if (combatData.value.immunities.length > 0) {
+      finalString += `;<br><strong>Immunities</strong>&nbsp;${immunityString()}`;
     }
-  }
-  if (
-    encounter_store.selectedCreature?.combat_data?.immunities !== undefined &&
-    encounter_store.selectedCreature?.combat_data?.immunities.length > 0
-  ) {
-    finalString += `;<br><strong>Immunities</strong>&nbsp;${immunityString()}`;
-  }
-  if (
-    encounter_store.selectedCreature?.combat_data?.resistances !== undefined &&
-    Object.keys(encounter_store.selectedCreature?.combat_data?.resistances)
-      .length > 0
-  ) {
-    finalString += `;<br><strong>Resistances</strong>&nbsp;${resistanceString()}`;
-  }
-  if (
-    encounter_store.selectedCreature?.combat_data?.weaknesses !== undefined &&
-    Object.keys(encounter_store.selectedCreature?.combat_data?.weaknesses)
-      .length > 0
-  ) {
-    finalString += `;<br><strong>Weaknesess</strong>&nbsp;${weaknessString()};`;
+    if (Object.keys(combatData.value.resistances).length > 0) {
+      finalString += `;<br><strong>Resistances</strong>&nbsp;${resistanceString()}`;
+    }
+    if (Object.keys(combatData.value.weaknesses).length > 0) {
+      finalString += `;<br><strong>Weaknesess</strong>&nbsp;${weaknessString()};`;
+    }
   }
   return finalString;
 });
@@ -478,7 +487,7 @@ const speedString = computed(() => {
   return finalString.substring(0, finalString.length - 2);
 });
 
-const ordinalSuffix = (n: number) => {
+const ordinalSuffix = (n: number): string => {
   const j = n % 10,
     k = n % 100;
   if (j === 1 && k !== 11) {
@@ -570,7 +579,7 @@ const spellString = computed(() => {
 
 const rangeTraits = (
   weapon: NonNullable<creature["combat_data"]>["weapons"][number]
-) => {
+): trait[] => {
   if (weapon.weapon_data?.range?.value) {
     return weapon.item_core.traits.concat({
       description:
@@ -966,45 +975,22 @@ const rangeTraits = (
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="skillString"
     ></div>
-    <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
+    <div
+      v-if="extraData"
+      class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+    >
       <strong>Str</strong>
-      {{
-        addPlus(
-          encounter_store.selectedCreature?.extra_data?.ability_scores.strength
-        )
-      }},
+      {{ addPlus(extraData.ability_scores.strength) }},
       <strong>Dex</strong>
-      {{
-        addPlus(
-          encounter_store.selectedCreature?.extra_data?.ability_scores.dexterity
-        )
-      }},
+      {{ addPlus(extraData.ability_scores.dexterity) }},
       <strong>Con</strong>
-      {{
-        addPlus(
-          encounter_store.selectedCreature?.extra_data?.ability_scores
-            .constitution
-        )
-      }},
+      {{ addPlus(extraData.ability_scores.constitution) }},
       <strong>Int</strong>
-      {{
-        addPlus(
-          encounter_store.selectedCreature?.extra_data?.ability_scores
-            .intelligence
-        )
-      }},
+      {{ addPlus(extraData.ability_scores.intelligence) }},
       <strong>Wis</strong>
-      {{
-        addPlus(
-          encounter_store.selectedCreature?.extra_data?.ability_scores.wisdom
-        )
-      }},
+      {{ addPlus(extraData.ability_scores.wisdom) }},
       <strong>Cha</strong>
-      {{
-        addPlus(
-          encounter_store.selectedCreature?.extra_data?.ability_scores.charisma
-        )
-      }}
+      {{ addPlus(extraData.ability_scores.charisma) }}
     </div>
     <template
       v-for="item in encounter_store.selectedCreature?.extra_data?.actions"

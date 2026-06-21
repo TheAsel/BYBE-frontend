@@ -11,7 +11,7 @@ import type { party } from "@/types/party";
 import type { shop_list } from "@/types/shop";
 import type { template } from "@/types/template";
 
-export function updateLocalStorageParties() {
+export function updateLocalStorageParties(): void {
   const party_store = partyStore();
   const localParty = localStorage.getItem("parties");
   if (localParty) {
@@ -57,7 +57,7 @@ export function updateLocalStorageParties() {
   }
 }
 
-export function updateLocalStorageEncounters() {
+export function updateLocalStorageEncounters(): void {
   const encounter_store = encounterStore();
   const localEncounters = localStorage.getItem("encounters");
   if (localEncounters) {
@@ -89,7 +89,7 @@ export function updateLocalStorageEncounters() {
   }
 }
 
-export function updateLocalStorageShops() {
+export function updateLocalStorageShops(): void {
   const items_store = itemsStore();
   const localShops = localStorage.getItem("shops");
   if (localShops) {
@@ -121,7 +121,7 @@ export function updateLocalStorageShops() {
   }
 }
 
-export function updateLocalStorageTemplates() {
+export function updateLocalStorageTemplates(): void {
   const template_store = templateStore();
   const localTemplates = localStorage.getItem("templates");
   if (localTemplates) {
@@ -155,7 +155,7 @@ export function updateLocalStorageTemplates() {
   }
 }
 
-export function updateLocalStorageNpcs() {
+export function updateLocalStorageNpcs(): void {
   const npc_store = npcStore();
   const settings_store = settingsStore();
 

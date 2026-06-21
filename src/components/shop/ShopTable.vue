@@ -53,16 +53,6 @@ const filters_store = filtersStore();
 const shopBuilderRef = ref();
 const router = useRouter();
 
-watch(
-  () => filters_store.shopRanges,
-  ranges => {
-    activeFilters.value.level_filter = {
-      max: ranges.max_level,
-      min: ranges.min_level
-    };
-  }
-);
-
 const itemTable = ref();
 const navigationActive = ref(false);
 const selected = ref<item[]>([]);
@@ -180,7 +170,7 @@ const columns: {
 
 // Waits for the table pagination to load
 let resolveWhenLoaded: (() => void) | null = null;
-const waitForPageLoad = () =>
+const waitForPageLoad = (): Promise<void> =>
   new Promise<void>(resolve => {
     resolveWhenLoaded = resolve;
   });
@@ -196,28 +186,24 @@ const fetchFromServer = debounce(
       body.name_filter = activeFilters.value.name_filter;
     }
     if (
-      activeFilters.value.trait_filter !== undefined &&
       activeFilters.value.trait_filter !== null &&
       activeFilters.value.trait_filter.length > 0
     ) {
       body.trait_whitelist_filter = activeFilters.value.trait_filter;
     }
     if (
-      activeFilters.value.rarity_filter !== undefined &&
       activeFilters.value.rarity_filter !== null &&
       activeFilters.value.rarity_filter.length > 0
     ) {
       body.rarity_filter = activeFilters.value.rarity_filter;
     }
     if (
-      activeFilters.value.type_filter !== undefined &&
       activeFilters.value.type_filter !== null &&
       activeFilters.value.type_filter.length > 0
     ) {
       body.type_filter = activeFilters.value.type_filter;
     }
     if (
-      activeFilters.value.source_filter !== undefined &&
       activeFilters.value.source_filter !== null &&
       activeFilters.value.source_filter.length > 0
     ) {
@@ -256,7 +242,7 @@ const fetchFromServer = debounce(
 
 async function onRequest(
   table_props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
-) {
+): Promise<void> {
   const { page, rowsPerPage } = table_props.pagination;
 
   loading.value = true;
@@ -269,7 +255,7 @@ async function onRequest(
   await fetchFromServer(startRow, pagination.value.rowsPerPage);
 }
 
-const resetFilters = () => {
+const resetFilters = (): void => {
   activeFilters.value = {
     level_filter: {
       max: filters_store.shopRanges.max_level,
@@ -287,7 +273,7 @@ const resetFilters = () => {
 
 const visibleColumns = ref(["name", "level", "type", "rarity"]);
 
-const sort = (col: item_columns) => {
+const sort = (col: item_columns): void => {
   if (activeFilters.value.sort_by === col) {
     if (activeFilters.value.order_by === "ascending") {
       activeFilters.value.order_by = "descending";
@@ -320,7 +306,7 @@ const addItem = debounce((item: item) => {
 const showItem = debounce(async (item: item) => {
   try {
     const itemData = await requestItemId(item.game, item.core_item.id);
-    if (isNull(itemData) || itemData === undefined) {
+    if (!itemData) {
       console.error("Missing item ID");
       $q.notify({
         icon: matPriorityHigh,
@@ -336,11 +322,11 @@ const showItem = debounce(async (item: item) => {
   }
 }, 50);
 
-const activateNavigation = () => {
+const activateNavigation = (): void => {
   navigationActive.value = true;
 };
 
-const deactivateNavigation = () => {
+const deactivateNavigation = (): void => {
   navigationActive.value = false;
 };
 
@@ -353,7 +339,7 @@ function isTextInput(target: EventTarget | null): boolean {
 }
 
 // Table shortcuts
-async function onTableKey(evt: KeyboardEvent) {
+async function onTableKey(evt: KeyboardEvent): Promise<void> {
   if (isTextInput(evt.target)) {
     return;
   }
@@ -490,11 +476,13 @@ async function onTableKey(evt: KeyboardEvent) {
       itemTable.value.scrollTo(index);
       break;
     }
+    default:
+      break;
   }
 }
 
 // Global shortcuts
-function onGlobalKey(evt: KeyboardEvent) {
+function onGlobalKey(evt: KeyboardEvent): void {
   if (isTextInput(evt.target)) {
     return;
   }
@@ -514,7 +502,7 @@ onUnmounted(() => {
   globalThis.removeEventListener("keydown", onGlobalKey);
 });
 
-const toggleFullscreen = () => {
+const toggleFullscreen = (): void => {
   fullscreen.value = !fullscreen.value;
   if (fullscreen.value) {
     tableOpacity.value = "opacity: 1";
@@ -523,7 +511,10 @@ const toggleFullscreen = () => {
   }
 };
 
-const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
+const filterSourcesFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.itemFilters.sources = sourceFilter.value.filter(v =>
@@ -532,7 +523,10 @@ const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
   });
 };
 
-const filterTraitsFn = (val: string, update: (fn: () => void) => void) => {
+const filterTraitsFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.itemFilters.traits = traitFilter.value.filter(v =>
@@ -584,6 +578,16 @@ onMounted(async () => {
     });
   }
 });
+
+watch(
+  () => filters_store.shopRanges,
+  ranges => {
+    activeFilters.value.level_filter = {
+      max: ranges.max_level,
+      min: ranges.min_level
+    };
+  }
+);
 </script>
 
 <template>

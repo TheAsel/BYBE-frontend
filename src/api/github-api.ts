@@ -2,7 +2,7 @@ import { apiFetch } from "@/utils/fetch";
 
 import type { repo_info } from "@/types/github";
 
-export async function requestRepoInfo(repo: string) {
+export async function requestRepoInfo(repo: string): Promise<repo_info | null> {
   try {
     return await apiFetch<repo_info>(
       `https://api.github.com/repos/${repo}/releases/latest`

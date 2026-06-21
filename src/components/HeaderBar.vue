@@ -68,7 +68,7 @@ const gameOptions = [
   }
 ];
 
-function changeGame(value: games) {
+function changeGame(value: games): void {
   settings_store.setGame(value);
   if (value === "sf") {
     const routeData = router.resolve({
@@ -109,7 +109,7 @@ if (theme.value === "dark") {
   $q.dark.set(true);
 }
 
-const themeSwitch = () => {
+const themeSwitch = (): void => {
   $q.dark.toggle();
   if ($q.dark.isActive) {
     theme.value = "dark";

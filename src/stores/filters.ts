@@ -8,59 +8,6 @@ import type {
 } from "@/types/filters";
 
 export const filtersStore = defineStore("filters_store", {
-  actions: {
-    updateAlignments(newAlignments: string[]) {
-      this.creatureFilters.alignments = newAlignments;
-    },
-    updateCreatureType(newCreatureType: string[]) {
-      this.creatureFilters.creature_types = newCreatureType;
-    },
-    updateFamilies(newFamilies: string[]) {
-      this.creatureFilters.families = newFamilies;
-    },
-    updateHazardRarities(newRarities: string[]) {
-      this.hazardFilters.rarities = newRarities;
-    },
-    updateHazardSizes(newSizes: string[]) {
-      newSizes.reverse();
-      this.hazardFilters.sizes = newSizes;
-    },
-    updateHazardSources(newSources: string[]) {
-      this.hazardFilters.sources = newSources;
-    },
-    updateHazardTraits(newTraits: string[]) {
-      this.hazardFilters.traits = newTraits.map(trait => capitalize(trait));
-    },
-    updateItemSources(newSources: string[]) {
-      this.itemFilters.sources = newSources;
-    },
-    updateItemTraits(newTraits: string[]) {
-      this.itemFilters.traits = newTraits.map(trait => ({
-        label: trait
-          .split("-")
-          .map(str => capitalize(str))
-          .join(" ")
-          .replace("Additive", "Additive "),
-        value: trait
-      }));
-    },
-    updateRarities(newRarities: string[]) {
-      this.creatureFilters.rarities = newRarities;
-    },
-    updateRoles(newRoles: string[]) {
-      this.creatureFilters.creature_roles = newRoles;
-    },
-    updateSizes(newSizes: string[]) {
-      newSizes.reverse();
-      this.creatureFilters.sizes = newSizes;
-    },
-    updateSources(newSources: string[]) {
-      this.creatureFilters.sources = newSources;
-    },
-    updateTraits(newTraits: string[]) {
-      this.creatureFilters.traits = newTraits.map(trait => capitalize(trait));
-    }
-  },
   state: (): {
     creatureFilters: {
       traits: string[];
@@ -151,5 +98,58 @@ export const filtersStore = defineStore("filters_store", {
       min_price: 0,
       min_quantity: 0
     }
-  })
+  }),
+  actions: {
+    updateAlignments(newAlignments: string[]) {
+      this.creatureFilters.alignments = newAlignments;
+    },
+    updateCreatureType(newCreatureType: string[]) {
+      this.creatureFilters.creature_types = newCreatureType;
+    },
+    updateFamilies(newFamilies: string[]) {
+      this.creatureFilters.families = newFamilies;
+    },
+    updateHazardRarities(newRarities: string[]) {
+      this.hazardFilters.rarities = newRarities;
+    },
+    updateHazardSizes(newSizes: string[]) {
+      newSizes.reverse();
+      this.hazardFilters.sizes = newSizes;
+    },
+    updateHazardSources(newSources: string[]) {
+      this.hazardFilters.sources = newSources;
+    },
+    updateHazardTraits(newTraits: string[]) {
+      this.hazardFilters.traits = newTraits.map(trait => capitalize(trait));
+    },
+    updateItemSources(newSources: string[]) {
+      this.itemFilters.sources = newSources;
+    },
+    updateItemTraits(newTraits: string[]) {
+      this.itemFilters.traits = newTraits.map(trait => ({
+        label: trait
+          .split("-")
+          .map(str => capitalize(str))
+          .join(" ")
+          .replace("Additive", "Additive "),
+        value: trait
+      }));
+    },
+    updateRarities(newRarities: string[]) {
+      this.creatureFilters.rarities = newRarities;
+    },
+    updateRoles(newRoles: string[]) {
+      this.creatureFilters.creature_roles = newRoles;
+    },
+    updateSizes(newSizes: string[]) {
+      newSizes.reverse();
+      this.creatureFilters.sizes = newSizes;
+    },
+    updateSources(newSources: string[]) {
+      this.creatureFilters.sources = newSources;
+    },
+    updateTraits(newTraits: string[]) {
+      this.creatureFilters.traits = newTraits.map(trait => capitalize(trait));
+    }
+  }
 });

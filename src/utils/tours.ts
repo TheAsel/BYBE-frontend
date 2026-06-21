@@ -3,17 +3,28 @@ import { useShepherd } from "vue-shepherd";
 
 import type { StepOptions, Tour } from "shepherd.js";
 
-function firstButtons(tour: Tour) {
+function firstButtons(tour: Tour): (
+  | {
+      action(): Promise<void>;
+      secondary: boolean;
+      text: string;
+    }
+  | {
+      action(): void;
+      text: string;
+      secondary?: never;
+    }
+)[] {
   return [
     {
-      action() {
+      async action(): Promise<void> {
         return tour.cancel();
       },
       secondary: true,
       text: "CLOSE"
     },
     {
-      action() {
+      action(): void {
         return tour.next();
       },
       text: "NEXT"
@@ -21,17 +32,28 @@ function firstButtons(tour: Tour) {
   ];
 }
 
-function lastButtons(tour: Tour) {
+function lastButtons(tour: Tour): (
+  | {
+      action(): void;
+      secondary: boolean;
+      text: string;
+    }
+  | {
+      action(): void;
+      text: string;
+      secondary?: never;
+    }
+)[] {
   return [
     {
-      action() {
+      action(): void {
         return tour.back();
       },
       secondary: true,
       text: "PREVIOUS"
     },
     {
-      action() {
+      action(): void {
         return tour.complete();
       },
       text: "FINISH"
@@ -39,23 +61,34 @@ function lastButtons(tour: Tour) {
   ];
 }
 
-function defaultButtons(tour: Tour) {
+function defaultButtons(tour: Tour): (
+  | {
+      action(): Promise<void>;
+      secondary: boolean;
+      text: string;
+    }
+  | {
+      action(): void;
+      text: string;
+      secondary?: never;
+    }
+)[] {
   return [
     {
-      action() {
+      async action(): Promise<void> {
         return tour.cancel();
       },
       secondary: true,
       text: "CLOSE"
     },
     {
-      action() {
+      action(): void {
         return tour.back();
       },
       text: "PREVIOUS"
     },
     {
-      action() {
+      action(): void {
         return tour.next();
       },
       text: "NEXT"
@@ -63,7 +96,7 @@ function defaultButtons(tour: Tour) {
   ];
 }
 
-export function createTourEncounter() {
+export function createTourEncounter(): Tour {
   const tour: Tour = useShepherd({
     defaultStepOptions: {
       floatingUIOptions: {
@@ -174,7 +207,7 @@ export function createTourEncounter() {
   return tour;
 }
 
-export function createTourShop() {
+export function createTourShop(): Tour {
   const tour = useShepherd({
     defaultStepOptions: {
       floatingUIOptions: {
@@ -237,7 +270,7 @@ export function createTourShop() {
   return tour;
 }
 
-export function createTourNpc() {
+export function createTourNpc(): Tour {
   const tour = useShepherd({
     defaultStepOptions: {
       floatingUIOptions: {

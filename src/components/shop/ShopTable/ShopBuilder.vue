@@ -140,7 +140,7 @@ const tmpFilters = ref({
   )
 });
 
-const restoreSettings = () => {
+const restoreSettings = (): void => {
   dialog.value = true;
   tmpFilters.value.consumable_dices = {
     dice_size: {
@@ -160,6 +160,19 @@ const restoreSettings = () => {
   tmpFilters.value.shop_template = cloneDeep(
     template_store.templates[template_store.activeTemplate]
   );
+};
+
+const saveChanges = (): void => {
+  consumable_dices.value = tmpFilters.value.consumable_dices;
+  equippable_dices.value = tmpFilters.value.equippable_dices;
+  levels.value = tmpFilters.value.levels;
+  template_store.changeActiveTemplate(
+    template_store.getTemplateIndex(tmpFilters.value.shop_template!.name)
+  );
+  const customTemplates = template_store.templates.filter(
+    template => template.default === false
+  );
+  localStorage.setItem("templates", JSON.stringify(customTemplates));
 };
 
 const generateShop = debounce(async () => {
@@ -244,7 +257,7 @@ const generateShop = debounce(async () => {
     }
     if (randomShop.count > 0 && randomShop.results) {
       items_store.clearShop();
-      for (let i = 0; i < randomShop.count; i++) {
+      for (let i = 0; i < randomShop.count; i += 1) {
         const min_item: min_item = {
           archive_link: `https://2e.${getGameAonLink(
             settings_store.game
@@ -275,7 +288,7 @@ const generateShop = debounce(async () => {
   items_store.setGenerating(false);
 }, 300);
 
-const validateNumber = (consumables: boolean) => {
+const validateNumber = (consumables: boolean): void => {
   if (consumables) {
     const value = tmpFilters.value.consumable_dices.n_of_dices;
     if (value < 0) {
@@ -301,7 +314,7 @@ const validateNumber = (consumables: boolean) => {
   }
 };
 
-const resetTemplateDialog = () => {
+const resetTemplateDialog = (): void => {
   newTemplate.value = {
     armor_percentage: 0,
     default: false,
@@ -327,7 +340,7 @@ const resetTemplateDialog = () => {
   tab.value = "General";
 };
 
-const addTemplate = async () => {
+const addTemplate = async (): Promise<void> => {
   try {
     newNameInput.value.validate();
     if (newNameInput.value.hasError) {
@@ -381,7 +394,7 @@ const addTemplate = async () => {
   }
 };
 
-const duplicateTemplate = () => {
+const duplicateTemplate = (): void => {
   try {
     duplicateNameInput.value.validate();
     if (!duplicateNameInput.value.hasError) {
@@ -407,7 +420,7 @@ const duplicateTemplate = () => {
   }
 };
 
-const openEditDialog = async () => {
+const openEditDialog = async (): Promise<void> => {
   newTemplate.value = cloneDeep(
     template_store.templates[template_store.activeTemplate]!
   );
@@ -454,7 +467,7 @@ const openEditDialog = async () => {
   });
 };
 
-const editTemplate = async () => {
+const editTemplate = async (): Promise<void> => {
   try {
     editNameInput.value.validate();
     if (editNameInput.value.hasError) {
@@ -517,7 +530,7 @@ const editTemplate = async () => {
   }
 };
 
-const removeTemplate = () => {
+const removeTemplate = (): void => {
   template_store.removeTemplate();
   template_list.value = template_store.templates.map(template => template.name);
   tmpFilters.value.shop_template = cloneDeep(
@@ -528,7 +541,7 @@ const removeTemplate = () => {
   resetTemplateDialog();
 };
 
-const changeActiveTemplate = (selected: string) => {
+const changeActiveTemplate = (selected: string): void => {
   template_store.changeActiveTemplate(
     template_store.getTemplateIndex(selected)
   );
@@ -537,24 +550,11 @@ const changeActiveTemplate = (selected: string) => {
   );
 };
 
-const saveChanges = () => {
-  consumable_dices.value = tmpFilters.value.consumable_dices;
-  equippable_dices.value = tmpFilters.value.equippable_dices;
-  levels.value = tmpFilters.value.levels;
-  template_store.changeActiveTemplate(
-    template_store.getTemplateIndex(tmpFilters.value.shop_template!.name)
-  );
-  const customTemplates = template_store.templates.filter(
-    template => template.default === false
-  );
-  localStorage.setItem("templates", JSON.stringify(customTemplates));
-};
-
 const toggleTraits = (opt: {
   label: string;
   value: string;
   state: boolean | null;
-}) => {
+}): void => {
   const index = selectedTraits.value.findIndex(
     trait => trait.label === opt.label
   );
@@ -567,7 +567,10 @@ const toggleTraits = (opt: {
   }
 };
 
-const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
+const filterSourcesFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.itemFilters.sources = sourceFilter.filter(v =>
@@ -576,7 +579,10 @@ const filterSourcesFn = (val: string, update: (fn: () => void) => void) => {
   });
 };
 
-const filterTraitsFn = (val: string, update: (fn: () => void) => void) => {
+const filterTraitsFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
   const filter = val.toLowerCase();
   const filtered = traitFilter.filter(v =>
     v.label.toLowerCase().includes(filter)

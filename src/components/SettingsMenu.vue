@@ -50,7 +50,7 @@ switch (localGameVersion.value?.toLowerCase()) {
 
 settings_store.setGameVersion(gameVersion.value);
 
-const toggleGameVersion = () => {
+const toggleGameVersion = (): void => {
   localStorage.setItem("game_version", gameVersion.value);
   globalThis.location.reload();
 };
@@ -85,7 +85,7 @@ interface Widget {
 }
 declare let kofiWidgetOverlay: Widget;
 
-const loadKofiWidget = () =>
+const loadKofiWidget = (): Promise<void> =>
   new Promise<void>((resolve, reject) => {
     const kofiWidget = document.createElement("script");
     kofiWidget.src = "https://storage.ko-fi.com/cdn/scripts/overlay-widget.js";
@@ -125,7 +125,7 @@ if (!hideSupport.value) {
   }
 }
 
-const toggleSupport = () => {
+const toggleSupport = (): void => {
   localStorage.setItem("hide_support", JSON.stringify(hideSupport.value));
   globalThis.location.reload();
 };
@@ -151,26 +151,12 @@ switch (localPwl.value) {
 
 settings_store.setPwL(is_pwl_on.value);
 
-const togglePwL = () => {
+const togglePwL = (): void => {
   localStorage.setItem("is_pwl_on", JSON.stringify(is_pwl_on.value));
   settings_store.setPwL(is_pwl_on.value);
 };
 
-const uploadData = () => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".json";
-  input.addEventListener("change", async event => {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      const arrayBuffer = await file.text();
-      validateData(arrayBuffer);
-    }
-  });
-  input.click();
-};
-
-const validateData = (result: string) => {
+const validateData = (result: string): void => {
   const parsedData = JSON.parse(result);
   try {
     for (const key of Object.keys(parsedData)) {
@@ -334,7 +320,21 @@ const validateData = (result: string) => {
   }
 };
 
-const downloadData = () => {
+const uploadData = (): void => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json";
+  input.addEventListener("change", async event => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const arrayBuffer = await file.text();
+      validateData(arrayBuffer);
+    }
+  });
+  input.click();
+};
+
+const downloadData = (): void => {
   const localStorageData = { ...localStorage };
   const jsonData = JSON.stringify(localStorageData, null, "\t");
   const blob = new Blob([jsonData], { type: "application/json" });

@@ -45,7 +45,7 @@ if (Number.isNaN(npcId) || npcId < 0 || npcId >= npc_store.npcs.length) {
   npc_store.setActiveNpc(npcId);
 }
 
-const printPage = () => {
+const printPage = (): void => {
   globalThis.print();
 };
 </script>

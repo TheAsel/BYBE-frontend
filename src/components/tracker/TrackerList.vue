@@ -67,7 +67,7 @@ if (sessionData) {
   }
 }
 
-async function initializeTracker() {
+async function initializeTracker(): Promise<void> {
   if (
     trackerData.value === null ||
     trackerData.value.encounter_list === null ||
@@ -178,7 +178,7 @@ async function initializeTracker() {
 
   const explodedPlayerList: min_tracker[] = [];
 
-  for (let i = 0; i < trackerData.value.party.members.length; i++) {
+  for (let i = 0; i < trackerData.value.party.members.length; i += 1) {
     explodedPlayerList.push({
       element: `Player ${String(i + 1)}`,
       health: 1,
@@ -203,7 +203,7 @@ const showItem = debounce(async (item: min_tracker) => {
           item.element.game,
           item.element.id
         );
-        if (isNull(itemData) || itemData === undefined) {
+        if (!itemData) {
           console.error("Missing hazard ID");
           $q.notify({
             icon: matPriorityHigh,
@@ -225,7 +225,7 @@ const showItem = debounce(async (item: min_tracker) => {
           item.element.variant!,
           settings_store.is_pwl_on
         );
-        if (isNull(itemData) || itemData === undefined) {
+        if (!itemData) {
           console.error("Missing creature ID");
           $q.notify({
             icon: matPriorityHigh,
@@ -247,7 +247,7 @@ const showItem = debounce(async (item: min_tracker) => {
   }
 }, 300);
 
-const rollInitiative = (index: number) => {
+const rollInitiative = (index: number): void => {
   const rollDice = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
   if (tracker_store.trackerList.list[index]) {
     tracker_store.trackerList.list[index]!.initiative =
@@ -255,15 +255,15 @@ const rollInitiative = (index: number) => {
   }
 };
 
-const rollAll = () => {
-  for (let i = 0; i < tracker_store.trackerList.list.length; i++) {
+const rollAll = (): void => {
+  for (let i = 0; i < tracker_store.trackerList.list.length; i += 1) {
     rollInitiative(i);
   }
   tracker_store.sortList();
 };
 
-const rollAllNpcs = () => {
-  for (let i = 0; i < tracker_store.trackerList.list.length; i++) {
+const rollAllNpcs = (): void => {
+  for (let i = 0; i < tracker_store.trackerList.list.length; i += 1) {
     if (!tracker_store.trackerList.list[i]?.is_player) {
       rollInitiative(i);
     }
@@ -271,7 +271,7 @@ const rollAllNpcs = () => {
   tracker_store.sortList();
 };
 
-const validateNumber = (newValue: unknown) => {
+const validateNumber = (newValue: unknown): number => {
   const val = Number(newValue);
   if (Number.isNaN(val) || val < 0) {
     return 0;

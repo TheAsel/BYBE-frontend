@@ -27,7 +27,7 @@ export async function requestCreatures(
   sort_by: creature_columns,
   order_by: "ascending" | "descending",
   body: creature_filters
-) {
+): Promise<creature_response | null> {
   try {
     const url = buildUrl(import.meta.env.API_URL, [game, "bestiary", "list"], {
       cursor: String(cursor),
@@ -56,7 +56,7 @@ export async function requestHazards(
   sort_by: hazard_columns,
   order_by: "ascending" | "descending",
   body: hazard_filters
-) {
+): Promise<hazard_response | null> {
   try {
     const url = buildUrl(import.meta.env.API_URL, [game, "hazard", "list"], {
       cursor: String(cursor),
@@ -89,7 +89,7 @@ export async function requestFilters(
     | "creature_types"
     | "sources"
     | "creature_roles"
-) {
+): Promise<string[] | null> {
   try {
     return await apiFetch<string[]>(
       buildUrl(import.meta.env.API_URL, [game, "bestiary", filter])
@@ -103,7 +103,7 @@ export async function requestFilters(
 export async function requestHazardFilters(
   game: games,
   filter: "traits" | "sizes" | "rarities" | "sources"
-) {
+): Promise<string[] | null> {
   try {
     return await apiFetch<string[]>(
       buildUrl(import.meta.env.API_URL, [game, "hazard", filter])
@@ -114,7 +114,9 @@ export async function requestHazardFilters(
   }
 }
 
-export async function requestCreatureRanges(game: games) {
+export async function requestCreatureRanges(
+  game: games
+): Promise<bestiary_ranges | null> {
   try {
     return await apiFetch<bestiary_ranges>(
       buildUrl(import.meta.env.API_URL, [game, "bestiary", "ranges"])
@@ -125,7 +127,9 @@ export async function requestCreatureRanges(game: games) {
   }
 }
 
-export async function requestHazardRanges(game: games) {
+export async function requestHazardRanges(
+  game: games
+): Promise<hazard_ranges | null> {
   try {
     return await apiFetch<hazard_ranges>(
       buildUrl(import.meta.env.API_URL, [game, "hazard", "ranges"])
@@ -141,7 +145,7 @@ export async function requestCreatureId(
   creature_id: number,
   variant: variants,
   is_pwl_on: boolean
-) {
+): Promise<creature | null> {
   try {
     const data = await apiFetch<{ results: creature }>(
       buildUrl(
@@ -162,7 +166,10 @@ export async function requestCreatureId(
   }
 }
 
-export async function requestHazardId(game: games, hazard_id: number) {
+export async function requestHazardId(
+  game: games,
+  hazard_id: number
+): Promise<hazard | null> {
   try {
     const data = await apiFetch<{ results: hazard }>(
       buildUrl(import.meta.env.API_URL, [game, "hazard", String(hazard_id)])
@@ -174,7 +181,10 @@ export async function requestHazardId(game: games, hazard_id: number) {
   }
 }
 
-export async function encounterInfo(game: games, encounter: encounter_info) {
+export async function encounterInfo(
+  game: games,
+  encounter: encounter_info
+): Promise<encounter | null> {
   try {
     return await apiFetch<encounter>(
       buildUrl(import.meta.env.API_URL, [game, "encounter", "info"]),
@@ -193,7 +203,10 @@ export async function encounterInfo(game: games, encounter: encounter_info) {
   }
 }
 
-export async function encounterGenerator(game: games, body: encounter_data) {
+export async function encounterGenerator(
+  game: games,
+  body: encounter_data
+): Promise<random_encounter | null> {
   try {
     return await apiFetch<random_encounter>(
       buildUrl(import.meta.env.API_URL, [game, "encounter", "generator"]),
@@ -212,7 +225,9 @@ export async function encounterGenerator(game: games, body: encounter_data) {
   }
 }
 
-export async function generateEncounterLink(body: shareable_encounter) {
+export async function generateEncounterLink(
+  body: shareable_encounter
+): Promise<string | null> {
   try {
     return await apiFetchText(
       buildUrl(import.meta.env.API_URL, ["shareable", "encounter", "encode"]),
@@ -231,7 +246,9 @@ export async function generateEncounterLink(body: shareable_encounter) {
   }
 }
 
-export async function decodeEncounterLink(encoded_data: string) {
+export async function decodeEncounterLink(
+  encoded_data: string
+): Promise<shareable_encounter | null> {
   try {
     return await apiFetch<shareable_encounter>(
       buildUrl(import.meta.env.API_URL, [

@@ -3,6 +3,18 @@ import { defineStore } from "pinia";
 import type { party } from "@/types/party";
 
 export const partyStore = defineStore("party_store", {
+  state: (): { parties: party[]; activeParty: number } => ({
+    activeParty: 0,
+    parties: [
+      {
+        name: "Default",
+        size: 4,
+        level: 1,
+        advanced: false,
+        members: [1, 1, 1, 1]
+      }
+    ]
+  }),
   actions: {
     addParty(partyName: string) {
       this.parties.push({
@@ -48,17 +60,5 @@ export const partyStore = defineStore("party_store", {
         this.parties[partyIndex] = newParty;
       }
     }
-  },
-  state: (): { parties: party[]; activeParty: number } => ({
-    activeParty: 0,
-    parties: [
-      {
-        advanced: false,
-        level: 1,
-        members: [1, 1, 1, 1],
-        name: "Default",
-        size: 4
-      }
-    ]
-  })
+  }
 });

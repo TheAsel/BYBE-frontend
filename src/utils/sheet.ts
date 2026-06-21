@@ -7,7 +7,7 @@ export function openSheet(
   game: games,
   id: number,
   variant?: variants
-) {
+): void {
   const routeData = router.resolve({
     name: page,
     query: { game, id, variant: variant?.toLowerCase() }
@@ -19,33 +19,36 @@ export function openSheet(
   }
 }
 
-export function getGameFont(game: games) {
+export function getGameFont(
+  game: games
+): "Orbitron Bold" | "Good Pro Condensed" {
   return game === "sf" ? "Orbitron Bold" : "Good Pro Condensed";
 }
 
-export function getGameFontSize(game: games) {
+export function getGameFontSize(game: games): "tw:text-2xl!" | "tw:text-3xl!" {
   return game === "sf" ? "tw:text-2xl!" : "tw:text-3xl!";
 }
 
-export function getGameAonLink(game: games) {
+export function getGameAonLink(game: games): "aonsrd" | "aonprd" {
   return game === "sf" ? "aonsrd" : "aonprd";
 }
 
-export function addPlus(value: number | undefined) {
-  if (value !== undefined && value >= 0) {
+export function addPlus(value: number): string {
+  if (value >= 0) {
     return `+${value}`;
   } else {
-    return value;
+    return String(value);
   }
 }
 
-export function cleanSymbols(description: string) {
+export function cleanSymbols(description: string): string {
+  let newDescription = description;
   const symbolsRegex = /<span class="action-glyph">(\w)<\/span>/g;
 
-  const symbol = description.matchAll(symbolsRegex);
+  const symbol = newDescription.matchAll(symbolsRegex);
   for (const i of symbol) {
     if (i) {
-      description = description.replaceAll(
+      newDescription = newDescription.replaceAll(
         i[0],
         `<span style="font-family: Pathfinder2eActions, sans-serif" class="tw:text-2xl">${
           i[1]
@@ -53,10 +56,10 @@ export function cleanSymbols(description: string) {
       );
     }
   }
-  return description;
+  return newDescription;
 }
 
-export function cleanDescription(description: string) {
+export function cleanDescription(description: string): string {
   const cleanRegex = /@Localize\[.+\]/g;
 
   let finalString = cleanSymbols(description);
@@ -87,7 +90,7 @@ export function cleanDescription(description: string) {
   return finalString.replaceAll(cleanRegex, "");
 }
 
-export function pfActionSymbol(num: number | null, action: string) {
+export function pfActionSymbol(num: number | null, action: string): number {
   if (num === 1 || num === 2 || num === 3) {
     return num;
   }

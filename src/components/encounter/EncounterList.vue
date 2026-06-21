@@ -57,6 +57,7 @@ const importEncounterData = ref<shareable_encounter>();
 
 const shareDialog = ref(false);
 const shareUrl = ref("");
+const sharedLink = ref("");
 const isGenerating = ref(false);
 
 const newEncounterDialog = ref(false);
@@ -88,7 +89,7 @@ const debouncedCall = debounce(async () => {
   const creatureLevels: number[] = [];
   const hazardLevels: { complexity: complexities; level: number }[] = [];
   for (const item of encounterList) {
-    for (let j = 0; j < item.quantity!; j++) {
+    for (let j = 0; j < item.quantity!; j += 1) {
       if (item.is_hazard === false) {
         switch (item.variant) {
           case "Weak": {
@@ -158,32 +159,28 @@ const debouncedCall = debounce(async () => {
   }
 }, 300);
 
-// Get info on creature list change
-watch(
-  [
-    () => encounter_store.encounters,
-    () => encounter_store.activeEncounter,
-    () => settings_store.is_pwl_on
-  ],
-  async () => {
-    tmpEncounter.value = {
-      creatures:
-        encounter_store.encounters[encounter_store.activeEncounter]!.creatures,
-      name: encounter_store.encounters[encounter_store.activeEncounter]!.name
-    };
-    saveChanges();
-    await debouncedCall();
-  },
-  { deep: true }
-);
+const closeDialog = (): void => {
+  importEncounterDialog.value = false;
+  shareDialog.value = false;
+  newEncounterDialog.value = false;
+  renameEncounterDialog.value = false;
+  removeEncounterDialog.value = false;
+  sharedLink.value = "";
+  importEncounterName.value = "";
+  newEncounterName.value = "";
+  newEncounterRename.value = "";
+};
 
-// Get info on party change
-watch(party_store, async () => {
-  await debouncedCall();
-});
-
-// Get info on page load
-await debouncedCall();
+const saveChanges = (): void => {
+  encounter_store.updateEncounter(
+    tmpEncounter.value.name,
+    tmpEncounter.value.creatures
+  );
+  localStorage.setItem(
+    "encounters",
+    JSON.stringify(encounter_store.encounters)
+  );
+};
 
 // Read the "share" query and decode it
 const shareQuery =
@@ -193,7 +190,7 @@ const shareQuery =
     : String(route.query.share);
 const encodedData = ref(shareQuery);
 
-const decodeData = async () => {
+const decodeData = async (): Promise<void> => {
   if (encodedData.value !== "") {
     isGenerating.value = true;
     importEncounterDialog.value = true;
@@ -221,8 +218,7 @@ const decodeData = async () => {
 await decodeData();
 
 // Clean and check the link for manual app import
-const sharedLink = ref("");
-const cleanLink = async () => {
+const cleanLink = async (): Promise<void> => {
   try {
     const parsedUrl = new URL(sharedLink.value);
     const path = parsedUrl.pathname;
@@ -262,7 +258,7 @@ await router.replace({
 });
 
 // Open the share dialog and generate the shareable link
-const openShare = async () => {
+const openShare = async (): Promise<void> => {
   isGenerating.value = true;
   shareDialog.value = true;
   const encounterList =
@@ -339,7 +335,7 @@ const openShare = async () => {
   isGenerating.value = false;
 };
 
-const importEncounter = async () => {
+const importEncounter = async (): Promise<void> => {
   importNameInput.value.validate();
   if (!importNameInput.value.hasError) {
     const tmp_encounter: min_creature_hazard[] = [];
@@ -473,19 +469,7 @@ const importEncounter = async () => {
   }
 };
 
-const closeDialog = () => {
-  importEncounterDialog.value = false;
-  shareDialog.value = false;
-  newEncounterDialog.value = false;
-  renameEncounterDialog.value = false;
-  removeEncounterDialog.value = false;
-  sharedLink.value = "";
-  importEncounterName.value = "";
-  newEncounterName.value = "";
-  newEncounterRename.value = "";
-};
-
-const addEncounter = () => {
+const addEncounter = (): void => {
   encounterNameInput.value.validate();
   if (!encounterNameInput.value.hasError) {
     encounter_store.addEncounter(newEncounterName.value);
@@ -505,7 +489,7 @@ const addEncounter = () => {
   }
 };
 
-const renameEncounter = () => {
+const renameEncounter = (): void => {
   encounterRenameInput.value.validate();
   if (!encounterRenameInput.value.hasError) {
     encounter_store.encounters[encounter_store.activeEncounter]!.name =
@@ -526,7 +510,7 @@ const renameEncounter = () => {
   }
 };
 
-const removeEncounter = () => {
+const removeEncounter = (): void => {
   encounter_store.removeEncounter();
   encounters.value = encounter_store.encounters.map(
     encounter => encounter.name
@@ -541,7 +525,7 @@ const removeEncounter = () => {
   removeEncounterDialog.value = false;
 };
 
-const changeActiveEncounter = (selected: string) => {
+const changeActiveEncounter = (selected: string): void => {
   encounter_store.changeActiveEncounter(
     encounter_store.getEncounterIndex(selected)
   );
@@ -553,22 +537,11 @@ const changeActiveEncounter = (selected: string) => {
   };
 };
 
-const saveChanges = () => {
-  encounter_store.updateEncounter(
-    tmpEncounter.value.name,
-    tmpEncounter.value.creatures
-  );
-  localStorage.setItem(
-    "encounters",
-    JSON.stringify(encounter_store.encounters)
-  );
-};
-
 const showItem = debounce(async (item: min_creature_hazard) => {
   if (item.is_hazard) {
     try {
       const itemData = await requestHazardId(item.game, item.id);
-      if (isNull(itemData) || itemData === undefined) {
+      if (!itemData) {
         console.error("Missing hazard ID");
         $q.notify({
           icon: matPriorityHigh,
@@ -590,7 +563,7 @@ const showItem = debounce(async (item: min_creature_hazard) => {
         item.variant!,
         settings_store.is_pwl_on
       );
-      if (isNull(itemData) || itemData === undefined) {
+      if (!itemData) {
         console.error("Missing creature ID");
         $q.notify({
           icon: matPriorityHigh,
@@ -608,7 +581,7 @@ const showItem = debounce(async (item: min_creature_hazard) => {
   }
 }, 300);
 
-const startTracker = () => {
+const startTracker = (): void => {
   const trackerId = crypto.randomUUID();
 
   const routeData = router.resolve({
@@ -631,6 +604,33 @@ const startTracker = () => {
     globalThis.open(routeData.href, "_blank");
   }
 };
+
+// Get info on creature list change
+watch(
+  [
+    (): encounter_list[] => encounter_store.encounters,
+    (): number => encounter_store.activeEncounter,
+    (): boolean => settings_store.is_pwl_on
+  ],
+  async () => {
+    tmpEncounter.value = {
+      creatures:
+        encounter_store.encounters[encounter_store.activeEncounter]!.creatures,
+      name: encounter_store.encounters[encounter_store.activeEncounter]!.name
+    };
+    saveChanges();
+    await debouncedCall();
+  },
+  { deep: true }
+);
+
+// Get info on party change
+watch(party_store, async () => {
+  await debouncedCall();
+});
+
+// Get info on page load
+await debouncedCall();
 </script>
 
 <template>

@@ -7,6 +7,25 @@ function splitPascalCase(input: string): string {
 }
 
 export const npcParametersStore = defineStore("npc_parameters_store", {
+  state: (): {
+    npcParameters: {
+      genders: string[];
+      ancestries: string[];
+      cultures: string[];
+      valid_genders: valid_genders[];
+      classes: string[];
+      jobs: string[];
+    };
+  } => ({
+    npcParameters: {
+      ancestries: [],
+      classes: [],
+      cultures: [],
+      genders: [],
+      jobs: [],
+      valid_genders: []
+    }
+  }),
   actions: {
     updateAncestries(newAncestries: string[]) {
       this.npcParameters.ancestries = newAncestries.map(splitPascalCase);
@@ -30,24 +49,5 @@ export const npcParametersStore = defineStore("npc_parameters_store", {
     updateValidGenders(newValidGenders: valid_genders[]) {
       this.npcParameters.valid_genders = newValidGenders;
     }
-  },
-  state: (): {
-    npcParameters: {
-      genders: string[];
-      ancestries: string[];
-      cultures: string[];
-      valid_genders: valid_genders[];
-      classes: string[];
-      jobs: string[];
-    };
-  } => ({
-    npcParameters: {
-      ancestries: [],
-      classes: [],
-      cultures: [],
-      genders: [],
-      jobs: [],
-      valid_genders: []
-    }
-  })
+  }
 });

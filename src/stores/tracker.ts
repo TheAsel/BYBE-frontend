@@ -5,6 +5,19 @@ import type { hazard } from "@/types/hazard";
 import type { min_tracker, tracker_list } from "@/types/tracker";
 
 export const trackerStore = defineStore("tracker_store", {
+  state: (): {
+    selectedCreature: creature | null;
+    selectedHazard: hazard | null;
+    trackerList: tracker_list;
+    running: boolean;
+    round: number;
+  } => ({
+    round: 0,
+    running: false,
+    selectedCreature: null,
+    selectedHazard: null,
+    trackerList: { active_index: 0, list: [] }
+  }),
   actions: {
     addPlayer() {
       this.trackerList.list.push({
@@ -17,18 +30,18 @@ export const trackerStore = defineStore("tracker_store", {
       });
     },
     nextRound() {
-      this.round++;
+      this.round += 1;
       this.trackerList.active_index = 0;
     },
     nextTurn() {
-      this.trackerList.active_index++;
+      this.trackerList.active_index += 1;
       if (this.trackerList.active_index >= this.trackerList.list.length) {
         this.trackerList.active_index = 0;
         this.nextRound();
       }
     },
     prevRound() {
-      this.round--;
+      this.round -= 1;
       if (this.round <= 0) {
         this.round = 1;
         this.trackerList.active_index = 0;
@@ -37,7 +50,7 @@ export const trackerStore = defineStore("tracker_store", {
       }
     },
     prevTurn() {
-      this.trackerList.active_index--;
+      this.trackerList.active_index -= 1;
       if (this.trackerList.active_index < 0) {
         this.trackerList.active_index = this.trackerList.list.length - 1;
         this.prevRound();
@@ -56,10 +69,10 @@ export const trackerStore = defineStore("tracker_store", {
       this.trackerList.active_index = 0;
       this.running = false;
       this.round = 0;
-      this.trackerList.list.forEach(item => {
+      for (const item of this.trackerList.list) {
         item.health = item.max_health;
         item.initiative = null;
-      });
+      }
     },
     setSelectedCreature(newSelectedCreature: creature) {
       this.selectedHazard = null;
@@ -71,10 +84,10 @@ export const trackerStore = defineStore("tracker_store", {
     },
     sortList() {
       this.trackerList.list.sort((a, b) => {
-        if (a.initiative == null) {
+        if (a.initiative === null) {
           return 1;
         }
-        if (b.initiative == null) {
+        if (b.initiative === null) {
           return -1;
         }
         return b.initiative - a.initiative;
@@ -83,18 +96,5 @@ export const trackerStore = defineStore("tracker_store", {
     updateTracker(newTracker: min_tracker[]) {
       this.trackerList.list = newTracker;
     }
-  },
-  state: (): {
-    selectedCreature: creature | null;
-    selectedHazard: hazard | null;
-    trackerList: tracker_list;
-    running: boolean;
-    round: number;
-  } => ({
-    round: 0,
-    running: false,
-    selectedCreature: null,
-    selectedHazard: null,
-    trackerList: { active_index: 0, list: [] }
-  })
+  }
 });

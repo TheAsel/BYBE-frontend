@@ -6,6 +6,19 @@ import type { variants } from "@/types/filters";
 import type { hazard } from "@/types/hazard";
 
 export const encounterStore = defineStore("encounter_store", {
+  state: (): {
+    selectedCreature: creature | null;
+    selectedHazard: hazard | null;
+    encounters: encounter_list[];
+    activeEncounter: number;
+    generating: boolean;
+  } => ({
+    activeEncounter: 0,
+    encounters: [{ creatures: [], name: "Default" }],
+    generating: false,
+    selectedCreature: null,
+    selectedHazard: null
+  }),
   actions: {
     addEncounter(encounterName: string) {
       this.encounters.push({ creatures: [], name: encounterName });
@@ -14,7 +27,7 @@ export const encounterStore = defineStore("encounter_store", {
     addToEncounter(creature: min_creature_hazard, index?: number) {
       if (index! >= 0) {
         if (creature.quantity) {
-          creature.quantity++;
+          creature.quantity += 1;
         } else {
           creature.quantity = 1;
         }
@@ -67,7 +80,7 @@ export const encounterStore = defineStore("encounter_store", {
       if (
         this.encounters[this.activeEncounter]!.creatures[index]!.quantity! > 1
       ) {
-        this.encounters[this.activeEncounter]!.creatures[index]!.quantity!--;
+        this.encounters[this.activeEncounter]!.creatures[index]!.quantity! -= 1;
       } else {
         this.encounters[this.activeEncounter]!.creatures.splice(index, 1);
       }
@@ -101,18 +114,5 @@ export const encounterStore = defineStore("encounter_store", {
     updateEncounters(newEncounters: encounter_list[]) {
       this.encounters = newEncounters;
     }
-  },
-  state: (): {
-    selectedCreature: creature | null;
-    selectedHazard: hazard | null;
-    encounters: encounter_list[];
-    activeEncounter: number;
-    generating: boolean;
-  } => ({
-    activeEncounter: 0,
-    encounters: [{ creatures: [], name: "Default" }],
-    generating: false,
-    selectedCreature: null,
-    selectedHazard: null
-  })
+  }
 });

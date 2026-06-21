@@ -42,16 +42,6 @@ const currentRules = ref(
     : "https://2e.aonprd.com/rules?id=2717"
 );
 
-watch(
-  () => filters_store.hazardRanges,
-  ranges => {
-    hazardStealth.value = {
-      max: ranges.max_stealth,
-      min: ranges.min_stealth
-    };
-  }
-);
-
 const creatureHazardRatio = ref<number>(100);
 
 const creatureTraits = ref<string[]>();
@@ -153,7 +143,7 @@ const tmpFilters = ref({
   }
 });
 
-const restoreSettings = () => {
+const restoreSettings = (): void => {
   dialog.value = true;
 
   tmpFilters.value.creature_hazard_ratio = creatureHazardRatio.value;
@@ -180,6 +170,33 @@ const restoreSettings = () => {
   tmpFilters.value.hazards.size = hazardSize.value;
   tmpFilters.value.hazards.sources = hazardSources.value;
   tmpFilters.value.hazards.stealth = hazardStealth.value;
+};
+
+const saveChanges = (): void => {
+  creatureHazardRatio.value = tmpFilters.value.creature_hazard_ratio;
+  challenge.value = tmpFilters.value.challenge;
+  adventure_group_toggle.value = tmpFilters.value.adventure_group_toggle;
+  adventure_group.value = tmpFilters.value.adventure_group;
+
+  creature_number.value = tmpFilters.value.creatures.number;
+  creatureTraits.value = tmpFilters.value.creatures.traits;
+  alignment.value = tmpFilters.value.creatures.alignment;
+  creatureRarity.value = tmpFilters.value.creatures.rarity;
+  creatureSize.value = tmpFilters.value.creatures.size;
+  family.value = tmpFilters.value.creatures.family;
+  creature_type.value = tmpFilters.value.creatures.creature_type;
+  creature_roles.value = tmpFilters.value.creatures.creature_roles;
+  creatureSources.value = tmpFilters.value.creatures.sources;
+  allow_weak_variants.value = tmpFilters.value.creatures.allow_weak_variants;
+  allow_elite_variants.value = tmpFilters.value.creatures.allow_elite_variants;
+
+  hazard_number.value = tmpFilters.value.hazards.number;
+  hazardTraits.value = tmpFilters.value.hazards.traits;
+  complexity.value = tmpFilters.value.hazards.complexity;
+  hazardRarity.value = tmpFilters.value.hazards.rarity;
+  hazardSize.value = tmpFilters.value.hazards.size;
+  hazardSources.value = tmpFilters.value.hazards.sources;
+  hazardStealth.value = tmpFilters.value.hazards.stealth;
 };
 
 const generateEncounter = debounce(async () => {
@@ -231,7 +248,7 @@ const generateEncounter = debounce(async () => {
   }
   try {
     const randomEncounter = await encounterGenerator(settings_store.game, body);
-    if (randomEncounter === undefined) {
+    if (!randomEncounter) {
       throw new TypeError("Error generating random encounter");
     }
     if (
@@ -298,37 +315,10 @@ const generateEncounter = debounce(async () => {
   encounter_store.setGenerating(false);
 }, 300);
 
-const saveChanges = () => {
-  creatureHazardRatio.value = tmpFilters.value.creature_hazard_ratio;
-  challenge.value = tmpFilters.value.challenge;
-  adventure_group_toggle.value = tmpFilters.value.adventure_group_toggle;
-  adventure_group.value = tmpFilters.value.adventure_group;
-
-  creature_number.value = tmpFilters.value.creatures.number;
-  creatureTraits.value = tmpFilters.value.creatures.traits;
-  alignment.value = tmpFilters.value.creatures.alignment;
-  creatureRarity.value = tmpFilters.value.creatures.rarity;
-  creatureSize.value = tmpFilters.value.creatures.size;
-  family.value = tmpFilters.value.creatures.family;
-  creature_type.value = tmpFilters.value.creatures.creature_type;
-  creature_roles.value = tmpFilters.value.creatures.creature_roles;
-  creatureSources.value = tmpFilters.value.creatures.sources;
-  allow_weak_variants.value = tmpFilters.value.creatures.allow_weak_variants;
-  allow_elite_variants.value = tmpFilters.value.creatures.allow_elite_variants;
-
-  hazard_number.value = tmpFilters.value.hazards.number;
-  hazardTraits.value = tmpFilters.value.hazards.traits;
-  complexity.value = tmpFilters.value.hazards.complexity;
-  hazardRarity.value = tmpFilters.value.hazards.rarity;
-  hazardSize.value = tmpFilters.value.hazards.size;
-  hazardSources.value = tmpFilters.value.hazards.sources;
-  hazardStealth.value = tmpFilters.value.hazards.stealth;
-};
-
 const filterCreatureTraitsFn = (
   val: string,
   update: (fn: () => void) => void
-) => {
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.creatureFilters.traits = creatureTraitsOptions.value.filter(
@@ -337,7 +327,10 @@ const filterCreatureTraitsFn = (
   });
 };
 
-const filterFamiliesFn = (val: string, update: (fn: () => void) => void) => {
+const filterFamiliesFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.creatureFilters.families = familiesOptions.filter(v =>
@@ -349,7 +342,7 @@ const filterFamiliesFn = (val: string, update: (fn: () => void) => void) => {
 const filterCreatureSourcesFn = (
   val: string,
   update: (fn: () => void) => void
-) => {
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.creatureFilters.sources = creatureSourcesOptions.value.filter(
@@ -361,7 +354,7 @@ const filterCreatureSourcesFn = (
 const filterHazardTraitsFn = (
   val: string,
   update: (fn: () => void) => void
-) => {
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.hazardFilters.traits = hazardTraitsOptions.value.filter(v =>
@@ -373,7 +366,7 @@ const filterHazardTraitsFn = (
 const filterHazardSourcesFn = (
   val: string,
   update: (fn: () => void) => void
-) => {
+): void => {
   update(() => {
     const filter = val.toLowerCase();
     filters_store.hazardFilters.sources = hazardSourcesOptions.value.filter(v =>
@@ -381,6 +374,16 @@ const filterHazardSourcesFn = (
     );
   });
 };
+
+watch(
+  () => filters_store.hazardRanges,
+  ranges => {
+    hazardStealth.value = {
+      max: ranges.max_stealth,
+      min: ranges.min_stealth
+    };
+  }
+);
 
 defineExpose({ generateEncounter });
 </script>

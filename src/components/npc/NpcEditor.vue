@@ -66,16 +66,6 @@ tmpNpc.value = {
   npc: npc_store.npcs[npc_store.activeNpc]!.npc
 };
 
-// Save on npc change
-watch(npc_store, () => {
-  tmpNpc.value = {
-    culture: npc_store.npcs[npc_store.activeNpc]!.culture,
-    name: npc_store.npcs[npc_store.activeNpc]!.name,
-    npc: npc_store.npcs[npc_store.activeNpc]!.npc
-  };
-  saveChanges();
-});
-
 const generateParameterNpc = debounce(
   async (
     parameter:
@@ -172,7 +162,7 @@ let namesList: string[] = [];
 let tmpGender: string;
 let tmpAncestry: string;
 let tmpCulture: string;
-const generateNamesNpc = debounce(async () => {
+const generateNamesNpc = debounce(async (): Promise<void> => {
   if (!npc_store.locks.name) {
     npc_store.setGenerating(true);
 
@@ -270,7 +260,7 @@ const generateNamesNpc = debounce(async () => {
         }
         namesIndex = 0;
         namesList = newNames;
-        npc_store.npcs[npc_store.activeNpc]!.npc.name = namesList[namesIndex];
+        npc_store.npcs[npc_store.activeNpc]!.npc.name = namesList[namesIndex]!;
       } catch (error) {
         console.error(error);
         $q.notify({
@@ -281,16 +271,32 @@ const generateNamesNpc = debounce(async () => {
         });
       }
     } else {
-      namesIndex++;
-      npc_store.npcs[npc_store.activeNpc]!.npc.name = namesList[namesIndex];
+      namesIndex += 1;
+      npc_store.npcs[npc_store.activeNpc]!.npc.name = namesList[namesIndex]!;
     }
 
     npc_store.setGenerating(false);
   }
 }, 300);
 
-const addCustomField = () => {
-  if (npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields === undefined) {
+const closeDialog = (): void => {
+  importNpcDialog.value = false;
+  shareDialog.value = false;
+  newNpcDialog.value = false;
+  renameNpcDialog.value = false;
+  npcNameInput.value = false;
+  importNpcName.value = "";
+  newNpcName.value = "";
+  newNpcRename.value = "";
+};
+
+const saveChanges = (): void => {
+  npc_store.updateNpc(tmpNpc.value.name, tmpNpc.value.npc);
+  localStorage.setItem("npcs", JSON.stringify(npc_store.npcs));
+};
+
+const addCustomField = (): void => {
+  if (!npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields) {
     npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields = [
       { body: "", name: "" }
     ];
@@ -302,7 +308,7 @@ const addCustomField = () => {
   }
 };
 
-const removeCustomField = (index: number) => {
+const removeCustomField = (index: number): void => {
   npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields.splice(index, 1);
   if (npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields.length === 0) {
     npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields = [
@@ -319,7 +325,7 @@ const shareQuery =
     : String(route.query.share);
 const encodedData = ref(shareQuery);
 
-const decodeData = async () => {
+const decodeData = async (): Promise<void> => {
   if (encodedData.value !== "") {
     isGenerating.value = true;
     importNpcDialog.value = true;
@@ -348,7 +354,7 @@ await decodeData();
 
 // Clean and check the link for manual app import
 const sharedLink = ref("");
-const cleanLink = async () => {
+const cleanLink = async (): Promise<void> => {
   try {
     const parsedUrl = new URL(sharedLink.value);
     const path = parsedUrl.pathname;
@@ -388,7 +394,7 @@ await router.replace({
 });
 
 // Open the share dialog and generate the shareable link
-const openShare = async () => {
+const openShare = async (): Promise<void> => {
   isGenerating.value = true;
   shareDialog.value = true;
   const currentNpc = npc_store.npcs[npc_store.activeNpc]!.npc;
@@ -400,14 +406,14 @@ const openShare = async () => {
   };
 
   body.npcs_data.push({
-    ancestry: currentNpc.ancestry === undefined ? "" : currentNpc.ancestry,
-    class: currentNpc.class === undefined ? "" : currentNpc.class,
-    culture: currentNpc.culture === undefined ? "" : currentNpc.culture,
+    ancestry: currentNpc.ancestry,
+    class: currentNpc.class,
+    culture: currentNpc.culture,
     game: settings_store.game,
-    gender: currentNpc.gender === undefined ? "" : currentNpc.gender,
-    job: currentNpc.job === undefined ? "" : currentNpc.job,
-    level: currentNpc.level === undefined ? 1 : currentNpc.level,
-    name: currentNpc.name === undefined ? "" : currentNpc.name,
+    gender: currentNpc.gender,
+    job: currentNpc.job,
+    level: currentNpc.level,
+    name: currentNpc.name,
     nickname: currentNpc.nickname === null ? "" : currentNpc.nickname
   });
 
@@ -439,47 +445,25 @@ const openShare = async () => {
   isGenerating.value = false;
 };
 
-const importNpc = () => {
+const importNpc = (): void => {
   importNameInput.value.validate();
   if (!importNameInput.value.hasError && importNpcData.value?.npcs_data[0]) {
     const tmp_npc: npc = {
-      ancestry:
-        importNpcData.value?.npcs_data[0].ancestry === undefined
-          ? ""
-          : importNpcData.value?.npcs_data[0].ancestry,
-      class:
-        importNpcData.value?.npcs_data[0].class === undefined
-          ? ""
-          : importNpcData.value?.npcs_data[0].class,
-      culture:
-        importNpcData.value?.npcs_data[0].culture === undefined
-          ? ""
-          : importNpcData.value?.npcs_data[0].culture,
+      ancestry: importNpcData.value?.npcs_data[0].ancestry,
+      class: importNpcData.value?.npcs_data[0].class,
+      culture: importNpcData.value?.npcs_data[0].culture,
       custom_fields: [{ body: "", name: "" }],
       description: null,
-      game:
-        importNpcData.value?.npcs_data[0].game === undefined
-          ? settings_store.game
-          : importNpcData.value?.npcs_data[0].game,
-      gender:
-        importNpcData.value?.npcs_data[0].gender === undefined
-          ? ""
-          : importNpcData.value?.npcs_data[0].gender,
+      game: importNpcData.value?.npcs_data[0].game,
+      gender: importNpcData.value?.npcs_data[0].gender,
       ideology: null,
-      job:
-        importNpcData.value?.npcs_data[0].job === undefined
-          ? ""
-          : importNpcData.value?.npcs_data[0].job,
+      job: importNpcData.value?.npcs_data[0].job,
       languages: null,
-      level:
-        importNpcData.value?.npcs_data[0].level === undefined
-          ? -1
-          : importNpcData.value?.npcs_data[0].level,
+      level: importNpcData.value?.npcs_data[0].level,
       name: importNpcData.value?.npcs_data[0].name,
-      nickname:
-        importNpcData.value.npcs_data[0].nickname === undefined
-          ? ""
-          : importNpcData.value.npcs_data[0].nickname,
+      nickname: !importNpcData.value.npcs_data[0].nickname
+        ? ""
+        : importNpcData.value.npcs_data[0].nickname,
       personality: null,
       quirk: null,
       relationships: null
@@ -499,18 +483,7 @@ const importNpc = () => {
   }
 };
 
-const closeDialog = () => {
-  importNpcDialog.value = false;
-  shareDialog.value = false;
-  newNpcDialog.value = false;
-  renameNpcDialog.value = false;
-  npcNameInput.value = false;
-  importNpcName.value = "";
-  newNpcName.value = "";
-  newNpcRename.value = "";
-};
-
-const addNpc = () => {
+const addNpc = (): void => {
   npcNameInput.value.validate();
   if (!npcNameInput.value.hasError) {
     npc_store.addNpc(newNpcName.value);
@@ -526,7 +499,7 @@ const addNpc = () => {
   }
 };
 
-const renameNpc = () => {
+const renameNpc = (): void => {
   npcRenameInput.value.validate();
   if (!npcRenameInput.value.hasError) {
     npc_store.npcs[npc_store.activeNpc]!.name = newNpcRename.value;
@@ -542,7 +515,7 @@ const renameNpc = () => {
   }
 };
 
-const removeNpc = () => {
+const removeNpc = (): void => {
   npc_store.removeNpc();
   npcList.value = npc_store.npcs.map(npc => npc.name);
   tmpNpc.value = {
@@ -554,7 +527,7 @@ const removeNpc = () => {
   removeNpcDialog.value = false;
 };
 
-const changeActiveNpc = (selected: string) => {
+const changeActiveNpc = (selected: string): void => {
   npc_store.changeActiveNpc(npc_store.getNpcIndex(selected));
   tmpNpc.value = {
     culture: npc_store.npcs[npc_store.activeNpc]!.culture,
@@ -563,10 +536,15 @@ const changeActiveNpc = (selected: string) => {
   };
 };
 
-const saveChanges = () => {
-  npc_store.updateNpc(tmpNpc.value.name, tmpNpc.value.npc);
-  localStorage.setItem("npcs", JSON.stringify(npc_store.npcs));
-};
+// Save on npc change
+watch(npc_store, () => {
+  tmpNpc.value = {
+    culture: npc_store.npcs[npc_store.activeNpc]!.culture,
+    name: npc_store.npcs[npc_store.activeNpc]!.name,
+    npc: npc_store.npcs[npc_store.activeNpc]!.npc
+  };
+  saveChanges();
+});
 </script>
 
 <template>
