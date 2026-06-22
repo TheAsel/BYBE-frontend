@@ -55,11 +55,11 @@ export const itemsStore = defineStore("items_store", {
       this.shops[this.activeShop]!.items.splice(0);
     },
     getFormattedBulk(bulk: number) {
-      switch (bulk) {
-        case 0.1: {
+      switch (bulk.toString()) {
+        case "0.1": {
           return "L";
         }
-        case 0: {
+        case "0": {
           return "—";
         }
         default: {
