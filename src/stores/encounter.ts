@@ -50,8 +50,11 @@ export const encounterStore = defineStore("encounter_store", {
       }
     },
     changeVariant(index: number, variant: variants) {
-      this.encounters[this.activeEncounter]!.creatures[index]!.variant =
-        variant;
+      const element = this.encounters[this.activeEncounter]!.creatures[index];
+      if (element && !element.is_hazard) {
+        element.variant = variant;
+        this.encounters[this.activeEncounter]!.creatures[index] = element;
+      }
     },
     clearCreature(creature: min_creature_hazard) {
       const index =

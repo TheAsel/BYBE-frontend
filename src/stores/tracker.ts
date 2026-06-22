@@ -11,12 +11,14 @@ export const trackerStore = defineStore("tracker_store", {
     trackerList: tracker_list;
     running: boolean;
     round: number;
+    lockSheet: boolean;
   } => ({
     round: 0,
     running: false,
     selectedCreature: null,
     selectedHazard: null,
-    trackerList: { active_index: 0, list: [] }
+    trackerList: { active_index: 0, detail_index: 0, list: [] },
+    lockSheet: false
   }),
   actions: {
     addPlayer() {
@@ -30,10 +32,16 @@ export const trackerStore = defineStore("tracker_store", {
       });
     },
     nextRound() {
+      if (!this.running) {
+        return;
+      }
       this.round += 1;
       this.trackerList.active_index = 0;
     },
     nextTurn() {
+      if (!this.running) {
+        return;
+      }
       this.trackerList.active_index += 1;
       if (this.trackerList.active_index >= this.trackerList.list.length) {
         this.trackerList.active_index = 0;
@@ -41,6 +49,9 @@ export const trackerStore = defineStore("tracker_store", {
       }
     },
     prevRound() {
+      if (!this.running) {
+        return;
+      }
       this.round -= 1;
       if (this.round <= 0) {
         this.round = 1;
@@ -50,6 +61,9 @@ export const trackerStore = defineStore("tracker_store", {
       }
     },
     prevTurn() {
+      if (!this.running) {
+        return;
+      }
       this.trackerList.active_index -= 1;
       if (this.trackerList.active_index < 0) {
         this.trackerList.active_index = this.trackerList.list.length - 1;
@@ -83,6 +97,7 @@ export const trackerStore = defineStore("tracker_store", {
       this.selectedHazard = newSelectedHazard;
     },
     sortList() {
+      const old_detail = this.trackerList.list[this.trackerList.detail_index];
       this.trackerList.list.sort((a, b) => {
         if (a.initiative === null) {
           return 1;
@@ -92,6 +107,10 @@ export const trackerStore = defineStore("tracker_store", {
         }
         return b.initiative - a.initiative;
       });
+      if (old_detail) {
+        this.trackerList.detail_index =
+          this.trackerList.list.indexOf(old_detail);
+      }
     },
     updateTracker(newTracker: min_tracker[]) {
       this.trackerList.list = newTracker;

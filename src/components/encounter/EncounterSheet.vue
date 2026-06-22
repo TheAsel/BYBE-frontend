@@ -53,6 +53,9 @@ const encounter_store = encounterStore();
 <style lang="scss">
 .encounter-sheet {
   font-family: "Good Pro", sans-serif;
+  .tracker-page-element {
+    display: none !important;
+  }
 }
 
 .encounter-page {

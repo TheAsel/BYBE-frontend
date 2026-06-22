@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { biBoxArrowUpRight, biXLg } from "@quasar/extras/bootstrap-icons";
+import {
+  biBoxArrowUpRight,
+  biLock,
+  biUnlock,
+  biXLg
+} from "@quasar/extras/bootstrap-icons";
 import { upperFirst } from "lodash-es";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -7,6 +12,7 @@ import { useRoute, useRouter } from "vue-router";
 import TraitsList from "@/components/generic/TraitsList.vue";
 import { encounterStore } from "@/stores/encounter";
 import { settingsStore } from "@/stores/settings";
+import { trackerStore } from "@/stores/tracker";
 import {
   addPlus,
   cleanDescription,
@@ -24,6 +30,7 @@ const route = useRoute();
 const router = useRouter();
 const encounter_store = encounterStore();
 const settings_store = settingsStore();
+const tracker_store = trackerStore();
 
 const selectedCreature = computed(() => encounter_store.selectedCreature);
 const coreCreature = computed(() => selectedCreature.value?.core_data);
@@ -619,6 +626,31 @@ const rangeTraits = (
   >
     <div class="tw:my-auto!">
       <q-btn
+        :icon="tracker_store.lockSheet ? biLock : biUnlock"
+        flat
+        round
+        dense
+        size="md"
+        padding="sm"
+        class="tw:mr-1 tw:my-auto only-screen tracker-page-element"
+        :aria-label="
+          (tracker_store.lockSheet ? 'Unlock' : 'Lock') + ' creature sheet'
+        "
+        @click="tracker_store.lockSheet = !tracker_store.lockSheet"
+      >
+        <q-tooltip
+          class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+          anchor="top middle"
+          self="bottom middle"
+        >
+          {{
+            (tracker_store.lockSheet ? "Unlock" : "Lock") + " creature sheet"
+          }}
+        </q-tooltip>
+      </q-btn>
+    </div>
+    <div class="tw:my-auto!">
+      <q-btn
         :icon="biBoxArrowUpRight"
         flat
         round
@@ -779,7 +811,10 @@ const rangeTraits = (
         round
         dense
         aria-label="Remove selected creature"
-        @click="encounter_store.removeSelectedCreature()"
+        @click="
+          encounter_store.removeSelectedCreature();
+          tracker_store.removeSelectedCreature();
+        "
       />
     </div>
   </div>

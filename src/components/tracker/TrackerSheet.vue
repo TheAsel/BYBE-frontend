@@ -16,7 +16,7 @@ watch(tracker_store, () => {
 </script>
 
 <template>
-  <div class="encounter-sheet tw:h-full">
+  <div class="tracker-sheet tw:h-full">
     <div
       class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:items-center tw:text-left tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700 hide-print"
     >
@@ -60,14 +60,8 @@ watch(tracker_store, () => {
 </style>
 
 <style lang="scss">
-.encounter-sheet {
+.tracker-sheet {
   font-family: "Good Pro", sans-serif;
-}
-
-.encounter-page {
-  .encounter-page-element {
-    display: none !important;
-  }
 }
 
 table.pf2e,

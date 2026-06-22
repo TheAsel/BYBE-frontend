@@ -582,15 +582,13 @@ const showItem = debounce(async (item: min_creature_hazard) => {
 }, 300);
 
 const startTracker = (): void => {
-  const trackerId = crypto.randomUUID();
-
   const routeData = router.resolve({
     name: "tracker",
-    query: { game: settings_store.game, tid: trackerId }
+    query: { game: settings_store.game }
   });
-
-  localStorage.setItem(
-    `tracker:${trackerId}`,
+  sessionStorage.removeItem("tracker_data");
+  sessionStorage.setItem(
+    "tracker_data",
     JSON.stringify({
       encounter_list:
         encounter_store.encounters[encounter_store.activeEncounter],
@@ -603,6 +601,7 @@ const startTracker = (): void => {
   } else {
     globalThis.open(routeData.href, "_blank");
   }
+  sessionStorage.removeItem("tracker_data");
 };
 
 // Get info on creature list change
@@ -1085,10 +1084,12 @@ await debouncedCall();
                       v-if="item.archive_link"
                       :href="
                         item.archive_link +
-                        '&Weak=' +
-                        (item.variant === 'Weak') +
-                        '&Elite=' +
-                        (item.variant === 'Elite')
+                        (!item.is_hazard
+                          ? '&Weak=' +
+                            (item.variant === 'Weak') +
+                            '&Elite=' +
+                            (item.variant === 'Elite')
+                          : '')
                       "
                       target="_blank"
                       rel="noopener"

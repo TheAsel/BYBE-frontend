@@ -87,7 +87,10 @@ export function cleanDescription(description: string): string {
   return finalString.replaceAll(cleanRegex, "");
 }
 
-export function pfActionSymbol(num: number | null, action: string): number {
+export function pfActionSymbol(
+  num: number | null,
+  action: string
+): number | null {
   if (num === 1 || num === 2 || num === 3) {
     return num;
   }
@@ -97,5 +100,5 @@ export function pfActionSymbol(num: number | null, action: string): number {
   if (action === "reaction") {
     return 5;
   }
-  return 0;
+  return null;
 }

@@ -6,6 +6,7 @@ import {
   fasDragon,
   fasForward,
   fasLandMineOn,
+  fasMagnifyingGlass,
   fasUser
 } from "@quasar/extras/fontawesome-v7";
 import { matPriorityHigh } from "@quasar/extras/material-icons";
@@ -16,55 +17,56 @@ import {
   mdiPlus,
   mdiSwordCross
 } from "@quasar/extras/mdi-v7";
-import { debounce } from "lodash-es";
 import { useQuasar } from "quasar";
-import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onMounted, onUnmounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 import { requestCreatureId, requestHazardId } from "@/api/encounter-api-calls";
 import { settingsStore } from "@/stores/settings";
-import { trackerStore } from "@/stores/tracker";
 import { openSheet } from "@/utils/sheet";
+import { trackerStore } from "@/stores/tracker";
 
+import type { creature } from "@/types/creature";
 import type { encounter_list } from "@/types/encounter";
+import type { hazard } from "@/types/hazard";
 import type { party } from "@/types/party";
 import type { min_tracker } from "@/types/tracker";
 
-const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 
 const settings_store = settingsStore();
 const tracker_store = trackerStore();
 
-const { game } = route.query;
-const { tid } = route.query;
-const storageKey = tid ? `tracker:${tid}` : null;
-
 const sessionData = sessionStorage.getItem("tracker_data");
+
+const isGenerating = ref(false);
+
 const trackerData = ref<{
   party: party | null;
   encounter_list: encounter_list | null;
 }>({ encounter_list: null, party: null });
-const isGenerating = ref(false);
+
+const creature_list: creature[] = [];
+const hazard_list: hazard[] = [];
 
 if (sessionData) {
   trackerData.value = JSON.parse(sessionData) as {
     party: party | null;
     encounter_list: encounter_list | null;
   };
-} else if (storageKey) {
-  const transferedData = localStorage.getItem(storageKey);
-
-  if (transferedData) {
-    trackerData.value = JSON.parse(transferedData) as {
-      party: party | null;
-      encounter_list: encounter_list | null;
-    };
-
-    sessionStorage.setItem("tracker_data", transferedData);
-    localStorage.removeItem(storageKey);
-  }
+} else {
+  console.error("Failed to start tracker");
+  $q.notify({
+    icon: matPriorityHigh,
+    message: "Failed to start tracker",
+    progress: true,
+    type: "warning"
+  });
+  await router.push({
+    name: "encounter",
+    query: { game: settings_store.game }
+  });
 }
 
 async function initializeTracker(): Promise<void> {
@@ -73,7 +75,6 @@ async function initializeTracker(): Promise<void> {
     trackerData.value.encounter_list === null ||
     trackerData.value.party === null
   ) {
-    localStorage.removeItem("tracker_data");
     console.error("Invalid tracker data");
     $q.notify({
       icon: matPriorityHigh,
@@ -103,6 +104,7 @@ async function initializeTracker(): Promise<void> {
               console.error("Missing hazard ID");
               return { success: false };
             }
+            hazard_list.push(itemData);
             return {
               item: {
                 element: item,
@@ -125,6 +127,7 @@ async function initializeTracker(): Promise<void> {
             console.error("Missing creature ID");
             return { success: false };
           }
+          creature_list.push(itemData);
           return {
             item: {
               element: item,
@@ -166,8 +169,8 @@ async function initializeTracker(): Promise<void> {
 
   const explodedCreatureList: min_tracker[] = tmpTrackerList.flatMap(
     ({ element, ...rest }) => {
-      if (!rest.is_player && element && typeof element !== "string") {
-        return Array.from({ length: element?.quantity ?? 1 }, () => ({
+      if (!rest.is_player && typeof element !== "string") {
+        return Array.from({ length: element.quantity ?? 1 }, () => ({
           element,
           ...rest
         }));
@@ -195,57 +198,34 @@ async function initializeTracker(): Promise<void> {
 
 initializeTracker(); // oxlint-disable-line prefer-top-level-await
 
-const showItem = debounce(async (item: min_tracker) => {
-  if (!item.is_player && item.element && typeof item.element !== "string") {
+const showItem = (item: min_tracker): void => {
+  if (
+    !item.is_player &&
+    (!tracker_store.lockSheet ||
+      (tracker_store.selectedCreature === null &&
+        tracker_store.selectedHazard === null))
+  ) {
     if (item.element.is_hazard) {
-      try {
-        const itemData = await requestHazardId(
-          item.element.game,
-          item.element.id
-        );
-        if (itemData === null) {
-          console.error("Missing hazard ID");
-          $q.notify({
-            icon: matPriorityHigh,
-            message: "Missing hazard ID",
-            progress: true,
-            type: "warning"
-          });
-        } else {
-          tracker_store.setSelectedHazard(itemData);
-        }
-      } catch (error) {
-        console.error(error);
+      const found_hazard = hazard_list.find(
+        hazard => hazard.core_hazard.essential.id === item.element.id
+      );
+      if (found_hazard) {
+        tracker_store.setSelectedHazard(found_hazard);
       }
     } else {
-      try {
-        const itemData = await requestCreatureId(
-          item.element.game,
-          item.element.id,
-          item.element.variant!,
-          settings_store.is_pwl_on
-        );
-        if (itemData === null) {
-          console.error("Missing creature ID");
-          $q.notify({
-            icon: matPriorityHigh,
-            message: "Missing creature ID",
-            progress: true,
-            type: "warning"
-          });
-          await router.push({
-            name: "encounter",
-            query: { game: item.element.game }
-          });
-        } else {
-          tracker_store.setSelectedCreature(itemData);
-        }
-      } catch (error) {
-        console.error(error);
+      const found_creature = creature_list.find(
+        creature => creature.core_data.essential.id === item.element.id
+      );
+      if (found_creature) {
+        tracker_store.setSelectedCreature(found_creature);
       }
     }
   }
-}, 300);
+};
+
+function showDetails(index: number): void {
+  tracker_store.trackerList.detail_index = index;
+}
 
 const rollInitiative = (index: number): void => {
   const rollDice = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
@@ -278,6 +258,70 @@ const validateNumber = (newValue: unknown): number => {
   }
   return val;
 };
+
+const setSheetFromIndex = (index: number): void => {
+  const element = tracker_store.trackerList.list[index];
+  if (element && !element.is_player) {
+    showItem(element);
+  }
+};
+
+// Checks if typing to prevent stealing shortcuts
+function isTextInput(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  return Boolean(
+    el?.closest('input, textarea, [contenteditable="true"], .q-editor')
+  );
+}
+
+// Global shortcuts
+function onGlobalKey(evt: KeyboardEvent): void {
+  if (isTextInput(evt.target) || !tracker_store.running) {
+    return;
+  }
+  switch (evt.key) {
+    case " ": {
+      tracker_store.running = !tracker_store.running;
+      if (tracker_store.running) {
+        tracker_store.round = 1;
+        setSheetFromIndex(tracker_store.trackerList.active_index);
+      } else {
+        tracker_store.resetTracker();
+      }
+      break;
+    }
+    case "ArrowLeft": {
+      tracker_store.prevRound();
+      setSheetFromIndex(tracker_store.trackerList.active_index);
+      break;
+    }
+    case "ArrowUp": {
+      tracker_store.prevTurn();
+      setSheetFromIndex(tracker_store.trackerList.active_index);
+      break;
+    }
+    case "ArrowRight": {
+      tracker_store.nextRound();
+      setSheetFromIndex(tracker_store.trackerList.active_index);
+      break;
+    }
+    case "ArrowDown": {
+      tracker_store.nextTurn();
+      setSheetFromIndex(tracker_store.trackerList.active_index);
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+onMounted(() => {
+  globalThis.addEventListener("keydown", onGlobalKey);
+});
+
+onUnmounted(() => {
+  globalThis.removeEventListener("keydown", onGlobalKey);
+});
 </script>
 
 <template>
@@ -388,11 +432,7 @@ const validateNumber = (newValue: unknown): number => {
                 </q-tooltip>
               </q-btn>
               <div
-                v-if="
-                  item.element &&
-                  !item.is_player &&
-                  typeof item.element !== 'string'
-                "
+                v-if="!item.is_player"
                 class="tw:flex-1 tw:my-auto tw:mx-1 cursor-pointer"
                 style="min-width: 100px"
                 @click="showItem(item)"
@@ -459,10 +499,12 @@ const validateNumber = (newValue: unknown): number => {
                     v-if="item.element.archive_link"
                     :href="
                       item.element.archive_link +
-                      '&Weak=' +
-                      (item.element.variant === 'Weak') +
-                      '&Elite=' +
-                      (item.element.variant === 'Elite')
+                      (!item.element.is_hazard
+                        ? '&Weak=' +
+                          (item.element.variant === 'Weak') +
+                          '&Elite=' +
+                          (item.element.variant === 'Elite')
+                        : '')
                     "
                     target="_blank"
                     rel="noopener"
@@ -475,8 +517,9 @@ const validateNumber = (newValue: unknown): number => {
                           : ''
                       "
                       >{{
-                        item.element.variant === "Elite" ||
-                        item.element.variant === "Weak"
+                        !item.element.is_hazard &&
+                        (item.element.variant === "Elite" ||
+                          item.element.variant === "Weak")
                           ? item.element.variant + " "
                           : ""
                       }}{{ item.element.name }}</span
@@ -490,20 +533,21 @@ const validateNumber = (newValue: unknown): number => {
                         : ''
                     "
                     >{{
-                      item.element.variant === "Elite" ||
-                      item.element.variant === "Weak"
+                      !item.element.is_hazard &&
+                      (item.element.variant === "Elite" ||
+                        item.element.variant === "Weak")
                         ? item.element.variant + " "
                         : ""
                     }}{{ item.element.name }}</span
                   >
                 </span>
               </div>
-              <div v-else class="tw:flex tw:grow tw:my-auto tw:mx-1">
+              <div v-else class="tw:flex tw:grow tw:mx-1">
                 <q-chip
                   v-if="item.is_player"
                   text-color="white"
                   :ripple="false"
-                  class="tw:p-1! tw:invisible"
+                  class="tw:p-1! tw:my-auto! tw:invisible"
                   aria-label="Player type"
                 >
                   <q-avatar class="tw:visible" :icon="fasUser" color="green">
@@ -517,7 +561,7 @@ const validateNumber = (newValue: unknown): number => {
                   </q-avatar>
                 </q-chip>
                 <q-input
-                  v-if="item.is_player && typeof item.element === 'string'"
+                  v-if="item.is_player"
                   v-model="item.element"
                   dense
                   class="tw:align-middle tw:max-w-18! tw:2xl:max-w-64!"
@@ -547,7 +591,7 @@ const validateNumber = (newValue: unknown): number => {
                   flat
                   round
                   dense
-                  class="tw:my-2 tw:p-2!"
+                  class="tw:p-2.25!"
                   size="md"
                   aria-label="Random encounter"
                   @click="
@@ -605,6 +649,24 @@ const validateNumber = (newValue: unknown): number => {
                   "
                   @blur="tracker_store.sortList()"
                 />
+                <q-btn
+                  class="tw:my-auto! tw:mr-2! tw:p-2.25!"
+                  :icon="fasMagnifyingGlass"
+                  size="sm"
+                  flat
+                  round
+                  dense
+                  aria-label="Show details"
+                  @click="showDetails(index)"
+                >
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Show details
+                  </q-tooltip>
+                </q-btn>
               </div>
             </div>
             <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
@@ -633,7 +695,10 @@ const validateNumber = (newValue: unknown): number => {
                 class="tw:px-4!"
                 :icon="fasBackward"
                 aria-label="Previous round"
-                @click="tracker_store.prevRound()"
+                @click="
+                  tracker_store.prevRound();
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                "
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -648,7 +713,10 @@ const validateNumber = (newValue: unknown): number => {
                 class="tw:px-4!"
                 :icon="fasAngleLeft"
                 aria-label="Previous turn"
-                @click="tracker_store.prevTurn()"
+                @click="
+                  tracker_store.prevTurn();
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                "
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -668,10 +736,11 @@ const validateNumber = (newValue: unknown): number => {
               aria-label="Toggle tracker running"
               @click="
                 tracker_store.running = !tracker_store.running;
-                if (!tracker_store.running) {
-                  tracker_store.resetTracker();
-                } else {
+                if (tracker_store.running) {
                   tracker_store.round = 1;
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                } else {
+                  tracker_store.resetTracker();
                 }
               "
             />
@@ -681,7 +750,10 @@ const validateNumber = (newValue: unknown): number => {
                 class="tw:px-4!"
                 :icon="fasAngleRight"
                 aria-label="Next round"
-                @click="tracker_store.nextTurn()"
+                @click="
+                  tracker_store.nextTurn();
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                "
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -696,7 +768,10 @@ const validateNumber = (newValue: unknown): number => {
                 class="tw:px-4!"
                 :icon="fasForward"
                 aria-label="Previous turn"
-                @click="tracker_store.nextRound()"
+                @click="
+                  tracker_store.nextRound();
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                "
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"

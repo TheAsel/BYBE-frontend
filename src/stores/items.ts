@@ -81,7 +81,7 @@ export const itemsStore = defineStore("items_store", {
             newPrice /= 10;
             if (!Number.isInteger(newPrice)) {
               const decimal = (newPrice - Math.floor(newPrice)).toFixed(1);
-              const copper = Number.parseFloat(decimal) * 10;
+              const copper = Number(decimal) * 10;
               return `${Math.trunc(newPrice)} sp, ${copper} cp`;
             }
             return `${newPrice} sp`;
@@ -89,11 +89,11 @@ export const itemsStore = defineStore("items_store", {
             newPrice /= 100;
             if (!Number.isInteger(newPrice)) {
               let decimal = (newPrice - Math.floor(newPrice)).toFixed(2);
-              let silver = Number.parseFloat(decimal) * 100;
+              let silver = Number(decimal) * 100;
               if (!Number.isInteger(silver / 10)) {
                 silver /= 10;
                 decimal = (silver - Math.floor(silver)).toFixed(1);
-                const copper = Number.parseFloat(decimal) * 10;
+                const copper = Number(decimal) * 10;
                 if (Math.trunc(silver) === 0) {
                   return `${Math.trunc(newPrice)} gp, ${copper} cp`;
                 }

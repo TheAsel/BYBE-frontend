@@ -269,7 +269,7 @@ const generateEncounter = debounce(async () => {
             is_hazard: false,
             level: creature.core_data.essential.base_level,
             name: creature.core_data.essential.name,
-            variant: creature.variant_data?.variant
+            variant: creature.variant_data?.variant ?? "Base"
           };
           encounter_store.addToEncounter(min_creature);
         }

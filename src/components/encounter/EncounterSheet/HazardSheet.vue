@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { biBoxArrowUpRight, biXLg } from "@quasar/extras/bootstrap-icons";
+import {
+  biBoxArrowUpRight,
+  biLock,
+  biUnlock,
+  biXLg
+} from "@quasar/extras/bootstrap-icons";
 import { useRouter } from "vue-router";
 
 import TraitsList from "@/components/generic/TraitsList.vue";
 import { encounterStore } from "@/stores/encounter";
 import { settingsStore } from "@/stores/settings";
+import { trackerStore } from "@/stores/tracker";
 import {
   cleanDescription,
   getGameAonLink,
@@ -18,6 +24,7 @@ const router = useRouter();
 
 const encounter_store = encounterStore();
 const settings_store = settingsStore();
+const tracker_store = trackerStore();
 </script>
 
 <template>
@@ -29,6 +36,29 @@ const settings_store = settingsStore();
       ', sans-serif; font-variant-caps: small-caps'
     "
   >
+    <div class="tw:my-auto!">
+      <q-btn
+        :icon="tracker_store.lockSheet ? biLock : biUnlock"
+        flat
+        round
+        dense
+        size="md"
+        padding="sm"
+        class="tw:mr-1 tw:my-auto only-screen tracker-page-element"
+        :aria-label="
+          (tracker_store.lockSheet ? 'Unlock' : 'Lock') + ' hazard sheet'
+        "
+        @click="tracker_store.lockSheet = !tracker_store.lockSheet"
+      >
+        <q-tooltip
+          class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+          anchor="top middle"
+          self="bottom middle"
+        >
+          {{ (tracker_store.lockSheet ? "Unlock" : "Lock") + " hazard sheet" }}
+        </q-tooltip>
+      </q-btn>
+    </div>
     <div class="tw:my-auto!">
       <q-btn
         :icon="biBoxArrowUpRight"
@@ -102,7 +132,10 @@ const settings_store = settingsStore();
         round
         dense
         aria-label="Remove selected hazard"
-        @click="encounter_store.removeSelectedHazard()"
+        @click="
+          encounter_store.removeSelectedHazard();
+          tracker_store.removeSelectedHazard();
+        "
       />
     </div>
   </div>
