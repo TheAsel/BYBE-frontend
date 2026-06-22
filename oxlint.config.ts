@@ -40,7 +40,6 @@ export default defineConfig({
     "max-lines": "off",
     "max-lines-per-function": "off",
     "no-console": ["warn", { allow: ["error"] }],
-    "no-undefined": "off",
     "promise/always-return": ["warn", { ignoreLastCallback: true }],
     "typescript/no-non-null-assertion": "off",
     "typescript/no-unsafe-argument": "off",

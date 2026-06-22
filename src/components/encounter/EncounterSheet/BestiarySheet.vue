@@ -994,18 +994,12 @@ const rangeTraits = (
       v-html="perceptionString"
     ></div>
     <div
-      v-if="
-        encounter_store.selectedCreature?.extra_data?.languages !== undefined &&
-        encounter_store.selectedCreature?.extra_data?.languages.length > 0
-      "
+      v-if="extraData && extraData.languages.length > 0"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="languageString"
     ></div>
     <div
-      v-if="
-        encounter_store.selectedCreature?.extra_data?.skills !== undefined &&
-        encounter_store.selectedCreature?.extra_data?.skills.length > 0
-      "
+      v-if="extraData && extraData.skills.length > 0"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="skillString"
     ></div>
@@ -1053,11 +1047,7 @@ const rangeTraits = (
       </div>
     </template>
     <div
-      v-if="
-        encounter_store.selectedCreature?.combat_data?.weapons !== undefined &&
-        encounter_store.selectedCreature?.combat_data?.weapons.length > 0 &&
-        itemString !== ''
-      "
+      v-if="combatData && combatData.weapons.length > 0 && itemString !== ''"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="itemString"
     ></div>
@@ -1114,11 +1104,7 @@ const rangeTraits = (
   />
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
     <div
-      v-if="
-        encounter_store.selectedCreature?.extra_data?.speeds !== undefined &&
-        Object.keys(encounter_store.selectedCreature?.extra_data?.speeds)
-          .length > 0
-      "
+      v-if="extraData && Object.keys(extraData.speeds).length > 0"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
     >
       <strong>Speed</strong>

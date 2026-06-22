@@ -1,7 +1,7 @@
 import { apiFetch, apiFetchText, buildUrl } from "@/utils/fetch";
 
 import type { games } from "@/types/filters";
-import type { npc, shareable_npc, valid_genders } from "@/types/npcs";
+import type { npc, npc_data, shareable_npc, valid_genders } from "@/types/npc";
 
 export async function requestParameters(
   game: games,
@@ -32,20 +32,7 @@ export async function requestAncestries(
 
 export async function npcGenerator(
   game: games,
-  body: {
-    gender_filter?: string[] | undefined;
-    name_origin_filter?: {
-      FromAncestry?: string[] | undefined;
-      FromCulture?: string[] | undefined;
-    };
-    class_filter?: string[] | undefined;
-    job_filter?: string[] | undefined;
-    level_filter?: {
-      min_level: number | undefined;
-      max_level: number | undefined;
-    };
-    generate_nickname: boolean;
-  }
+  body: npc_data
 ): Promise<npc | null> {
   try {
     return await apiFetch<npc>(
@@ -114,10 +101,10 @@ export async function npcLevelGenerator(game: games): Promise<number | null> {
 export async function npcNamesGenerator(
   game: games,
   body: {
-    gender?: string | undefined;
+    gender?: string;
     origin?: {
-      FromAncestry?: string | undefined;
-      FromCulture?: string | undefined;
+      FromAncestry?: string;
+      FromCulture?: string;
     };
   }
 ): Promise<string[] | null> {

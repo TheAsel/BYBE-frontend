@@ -14,6 +14,8 @@ import { npcStore } from "@/stores/npc";
 import { npcParametersStore } from "@/stores/npc_parameters";
 import { settingsStore } from "@/stores/settings";
 
+import type { npc_data } from "@/types/npc";
+
 const $q = useQuasar();
 
 const npc_parameters_store = npcParametersStore();
@@ -115,20 +117,7 @@ onMounted(async () => {
 const generateNpc = debounce(async () => {
   npc_store.setGenerating(true);
 
-  const body: {
-    gender_filter?: string[] | undefined;
-    name_origin_filter?: {
-      FromAncestry?: string[];
-      FromCulture?: string[];
-    };
-    class_filter?: string[] | undefined;
-    job_filter?: string[] | undefined;
-    level_filter?: {
-      min_level: number | undefined;
-      max_level: number | undefined;
-    };
-    generate_nickname: boolean;
-  } = {
+  const body: npc_data = {
     generate_nickname: nickname.value
   };
 

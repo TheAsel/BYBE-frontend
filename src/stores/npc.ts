@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-import type { npc, npc_list } from "@/types/npcs";
+import type { npc, npc_list } from "@/types/npc";
 
 export const npcStore = defineStore("npc_store", {
   state: (): {

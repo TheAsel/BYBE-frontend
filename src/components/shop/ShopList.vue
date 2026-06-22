@@ -71,19 +71,14 @@ tmpShop.value = {
 };
 
 // Read the "share" query and decode it
-const shareQuery =
-  String(route.query.share) === "undefined" ||
-  String(route.query.share) === "null"
-    ? ""
-    : String(route.query.share);
-const encodedData = ref(shareQuery);
+const encodedData = ref(route.query.share ?? "");
 
 const decodeData = async (): Promise<void> => {
   if (encodedData.value !== "") {
     isGenerating.value = true;
     importShopDialog.value = true;
     try {
-      const decodedData = await decodeShopLink(encodedData.value);
+      const decodedData = await decodeShopLink(String(encodedData.value));
       if (!decodedData) {
         importShopDialog.value = false;
         throw new TypeError("Error importing shop");

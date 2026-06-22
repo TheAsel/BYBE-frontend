@@ -15,7 +15,7 @@ import { npcStore } from "@/stores/npc";
 import { settingsStore } from "@/stores/settings";
 import { updateLocalStorageNpcs } from "@/utils/local-storage";
 
-import type { npc } from "@/types/npcs";
+import type { npc } from "@/types/npc";
 
 useHead({
   link: [

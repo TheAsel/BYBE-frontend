@@ -47,3 +47,18 @@ export type shareable_npc = {
     game: games;
   }[];
 };
+
+export type npc_data = {
+  gender_filter?: string[];
+  name_origin_filter?: {
+    FromAncestry?: string[];
+    FromCulture?: string[];
+  };
+  class_filter?: string[];
+  job_filter?: string[];
+  level_filter?: {
+    min_level: number;
+    max_level: number;
+  };
+  generate_nickname: boolean;
+};

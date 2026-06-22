@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-import type { valid_genders } from "@/types/npcs";
+import type { valid_genders } from "@/types/npc";
 
 function splitPascalCase(input: string): string {
   return input.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");

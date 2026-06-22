@@ -14,7 +14,7 @@ const detailedElement = computed(
     <div
       class="tw:h-full tw:text-center tw:opacity-85 tw:dark:opacity-90 tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700"
     >
-      <div v-if="detailedElement !== undefined" class="tw:h-full">
+      <div v-if="detailedElement" class="tw:h-full">
         <span v-if="detailedElement.is_player">
           {{ detailedElement.element }}
         </span>

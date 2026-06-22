@@ -208,29 +208,30 @@ const generateEncounter = debounce(async () => {
 
   const body: encounter_data = {
     creature_data: {
-      alignment_filter: tmpFilters.value.creatures.alignment,
-      allow_elite_variants: tmpFilters.value.creatures.allow_elite_variants,
-      allow_weak_variants: tmpFilters.value.creatures.allow_weak_variants,
-      family_filter: tmpFilters.value.creatures.family,
+      alignment_filter: tmpFilters.value.creatures.alignment ?? null,
+      allow_elite_variants:
+        tmpFilters.value.creatures.allow_elite_variants ?? null,
+      allow_weak_variants:
+        tmpFilters.value.creatures.allow_weak_variants ?? null,
+      family_filter: tmpFilters.value.creatures.family ?? null,
+      rarity_filter: tmpFilters.value.creatures.rarity ?? null,
+      role_filter: creature_roles.value ?? null,
+      size_filter: tmpFilters.value.creatures.size ?? null,
+      source_filter: tmpFilters.value.creatures.sources ?? null,
+      trait_whitelist_filter: tmpFilters.value.creatures.traits ?? null,
+      type_filter: tmpFilters.value.creatures.creature_type ?? null,
       game_system_version: game_version,
-      is_pwl_on,
-      party_levels: partyLevels,
-      rarity_filter: tmpFilters.value.creatures.rarity,
-      role_filter: creature_roles.value,
-      size_filter: tmpFilters.value.creatures.size,
-      source_filter: tmpFilters.value.creatures.sources,
-      trait_whitelist_filter: tmpFilters.value.creatures.traits,
-      type_filter: tmpFilters.value.creatures.creature_type
+      is_pwl_on
     },
     hazard_data: {
-      complexity_filter: tmpFilters.value.hazards.complexity,
-      game_system_version: game_version,
-      max_stealth: tmpFilters.value.hazards.stealth.max,
-      min_stealth: tmpFilters.value.hazards.stealth.min,
-      rarity_filter: tmpFilters.value.hazards.rarity,
-      size_filter: tmpFilters.value.hazards.size,
-      source_filter: tmpFilters.value.hazards.sources,
-      trait_whitelist_filter: tmpFilters.value.hazards.traits
+      complexity_filter: tmpFilters.value.hazards.complexity ?? null,
+      max_stealth: tmpFilters.value.hazards.stealth.max ?? null,
+      min_stealth: tmpFilters.value.hazards.stealth.min ?? null,
+      rarity_filter: tmpFilters.value.hazards.rarity ?? null,
+      size_filter: tmpFilters.value.hazards.size ?? null,
+      source_filter: tmpFilters.value.hazards.sources ?? null,
+      trait_whitelist_filter: tmpFilters.value.hazards.traits ?? null,
+      game_system_version: game_version
     },
     party_levels: partyLevels
   };

@@ -183,19 +183,14 @@ const saveChanges = (): void => {
 };
 
 // Read the "share" query and decode it
-const shareQuery =
-  String(route.query.share) === "undefined" ||
-  String(route.query.share) === "null"
-    ? ""
-    : String(route.query.share);
-const encodedData = ref(shareQuery);
+const encodedData = ref(route.query.share ?? "");
 
 const decodeData = async (): Promise<void> => {
   if (encodedData.value !== "") {
     isGenerating.value = true;
     importEncounterDialog.value = true;
     try {
-      const decodedData = await decodeEncounterLink(encodedData.value);
+      const decodedData = await decodeEncounterLink(String(encodedData.value));
       if (!decodedData) {
         importEncounterDialog.value = false;
         throw new TypeError("Error importing encounter");

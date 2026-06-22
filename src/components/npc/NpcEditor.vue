@@ -26,7 +26,7 @@ import { npcStore } from "@/stores/npc";
 import { npcParametersStore } from "@/stores/npc_parameters";
 import { settingsStore } from "@/stores/settings";
 
-import type { npc, npc_list, shareable_npc } from "@/types/npcs";
+import type { npc, npc_list, shareable_npc } from "@/types/npc";
 
 const isApp = import.meta.env.IS_APP;
 
@@ -179,10 +179,10 @@ const generateNamesNpc = debounce(async (): Promise<void> => {
       }
 
       const body: {
-        gender?: string | undefined;
+        gender?: string;
         origin?: {
-          FromAncestry?: string | undefined;
-          FromCulture?: string | undefined;
+          FromAncestry?: string;
+          FromCulture?: string;
         };
       } = {};
 
@@ -312,19 +312,14 @@ const removeCustomField = (index: number): void => {
 };
 
 // Read the "share" query and decode it
-const shareQuery =
-  String(route.query.share) === "undefined" ||
-  String(route.query.share) === "null"
-    ? ""
-    : String(route.query.share);
-const encodedData = ref(shareQuery);
+const encodedData = ref(route.query.share ?? "");
 
 const decodeData = async (): Promise<void> => {
   if (encodedData.value !== "") {
     isGenerating.value = true;
     importNpcDialog.value = true;
     try {
-      const decodedData = await decodeNpcLink(encodedData.value);
+      const decodedData = await decodeNpcLink(String(encodedData.value));
       if (!decodedData) {
         importNpcDialog.value = false;
         throw new TypeError("Error importing npc");
@@ -455,10 +450,7 @@ const importNpc = (): void => {
       languages: null,
       level: importNpcData.value?.npcs_data[0].level,
       name: importNpcData.value?.npcs_data[0].name,
-      nickname:
-        importNpcData.value.npcs_data[0].nickname === undefined
-          ? ""
-          : importNpcData.value.npcs_data[0].nickname,
+      nickname: importNpcData.value.npcs_data[0].nickname ?? "",
       personality: null,
       quirk: null,
       relationships: null

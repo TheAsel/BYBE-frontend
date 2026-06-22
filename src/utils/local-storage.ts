@@ -6,7 +6,7 @@ import { settingsStore } from "@/stores/settings";
 import { templateStore } from "@/stores/template";
 
 import type { encounter_list } from "@/types/encounter";
-import type { npc_list } from "@/types/npcs";
+import type { npc_list } from "@/types/npc";
 import type { party } from "@/types/party";
 import type { shop_list } from "@/types/shop";
 import type { template } from "@/types/template";
