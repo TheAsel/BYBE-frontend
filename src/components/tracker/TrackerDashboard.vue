@@ -2,12 +2,12 @@
 import { settingsStore } from "@/stores/settings";
 import { trackerStore } from "@/stores/tracker";
 import { getGameFont, getGameFontSize, openSheet } from "@/utils/sheet";
+import { biBoxArrowUpRight } from "@quasar/extras/bootstrap-icons";
 import {
-  biBoxArrowUpRight,
-  biDashLg,
-  biPlusLg
-} from "@quasar/extras/bootstrap-icons";
-import { fasPenToSquare } from "@quasar/extras/fontawesome-v7";
+  fasHeart,
+  fasHeartCrack,
+  fasPenToSquare
+} from "@quasar/extras/fontawesome-v7";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -53,7 +53,7 @@ const changeHealth = (newValue: unknown): void => {
 <template>
   <div class="tw:h-full">
     <div
-      class="tw:h-full tw:text-center tw:opacity-85 tw:dark:opacity-90 tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700"
+      class="tw:h-full tw:text-left tw:opacity-85 tw:dark:opacity-90 tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700"
       :class="
         tracker_store.running &&
         tracker_store.trackerList.detail_index ===
@@ -61,28 +61,45 @@ const changeHealth = (newValue: unknown): void => {
           ? 'tw:outline-solid tw:outline-red-600 tw:rounded-md'
           : ''
       "
+      style="
+        font-family:
+          Good Pro,
+          sans-serif;
+      "
     >
       <q-scroll-area class="tw:h-full">
         <div
           v-if="detailedElement"
           class="tw:h-full tw:m-6 tw:text-gray-800 tw:dark:text-white"
-          :style="
-            'font-family: ' +
-            getGameFont(settings_store.game) +
-            ', sans-serif; font-variant-caps: small-caps'
-          "
         >
           <div v-if="detailedElement.is_player" class="tw:flex tw:my-3">
             <h1
               :class="
                 getGameFontSize(settings_store.game) +
-                ' tw:mr-4 tw:leading-8 tw:my-auto'
+                ' tw:mr-4 tw:leading-8 tw:my-auto tw:break-all'
+              "
+              :style="
+                'font-family: ' +
+                getGameFont(settings_store.game) +
+                ', sans-serif; font-variant-caps: small-caps'
               "
             >
               {{ detailedElement.element }}
             </h1>
           </div>
-          <div v-else class="tw:flex tw:my-3">
+          <div
+            v-else
+            class="tw:flex tw:my-3"
+            :style="
+              'font-family: ' +
+              getGameFont(
+                !detailedElement.is_player
+                  ? detailedElement.element.game
+                  : settings_store.game
+              ) +
+              ', sans-serif; font-variant-caps: small-caps'
+            "
+          >
             <q-btn
               :icon="biBoxArrowUpRight"
               flat
@@ -94,7 +111,7 @@ const changeHealth = (newValue: unknown): void => {
               @click="
                 openSheet(
                   router,
-                  'bestiary',
+                  detailedElement.element.is_hazard ? 'hazard' : 'bestiary',
                   detailedElement.element.game ?? settings_store.game,
                   detailedElement.element.id ?? 0,
                   !detailedElement.element.is_hazard
@@ -219,15 +236,15 @@ const changeHealth = (newValue: unknown): void => {
             "
           >
             <b class="tw:flex tw:text-xl tw:mt-3">
-              <span class="tw:mt-auto tw:align-text-bottom!"> HP </span>
+              <span class="tw:mt-1.5"> HP </span>
               <q-space />
               <span class="tw:flex">
                 <q-input
                   :model-value="detailedElement.health"
                   dense
                   borderless
-                  class="tw:max-w-10! tw:max-h-8! tw:text-xl! tw:mr-1"
-                  input-class="tw:text-xl! tw:text-end"
+                  class="tw:max-w-12! tw:max-h-8! tw:text-xl! tw:mr-1"
+                  input-class="tw:text-xl! tw:font-bold! tw:text-end"
                   type="number"
                   @update:model-value="
                     (v: unknown) =>
@@ -239,8 +256,8 @@ const changeHealth = (newValue: unknown): void => {
                   dense
                   borderless
                   prefix="/"
-                  class="tw:max-w-18! tw:max-h-8! tw:text-xl!"
-                  input-class="tw:text-xl!"
+                  class="tw:max-w-20! tw:max-h-8! tw:text-xl!"
+                  input-class="tw:text-xl! tw:font-bold!"
                   type="number"
                   @update:model-value="
                     (v: unknown) =>
@@ -270,7 +287,7 @@ const changeHealth = (newValue: unknown): void => {
             />
             <div class="tw:flex tw:justify-center">
               <q-btn
-                :icon="biDashLg"
+                :icon="fasHeartCrack"
                 unelevated
                 round
                 dense
@@ -293,14 +310,14 @@ const changeHealth = (newValue: unknown): void => {
                 standout
                 stack-label
                 type="number"
-                class="tw:mx-4 tw:max-w-14"
-                label="Damage"
+                class="tw:mx-4 tw:max-w-15"
+                label="Amount"
                 @update:model-value="
                   (v: unknown) => (changeHealthInput = validateNumber(v))
                 "
               />
               <q-btn
-                :icon="biPlusLg"
+                :icon="fasHeart"
                 unelevated
                 dense
                 round
