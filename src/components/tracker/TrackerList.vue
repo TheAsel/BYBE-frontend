@@ -120,7 +120,11 @@ async function initializeTracker(): Promise<void> {
                 max_health: itemData.core_hazard.essential.has_health
                   ? itemData.core_hazard.essential.hp
                   : null,
-                perception: itemData.core_hazard.essential.stealth ?? 0
+                perception: itemData.core_hazard.essential.stealth ?? 0,
+                ac: itemData.core_hazard.essential.ac ?? null,
+                fortitude: itemData.core_hazard.essential.fortitude ?? null,
+                reflex: itemData.core_hazard.essential.reflex ?? null,
+                will: itemData.core_hazard.essential.will ?? null
               },
               success: true
             };
@@ -144,7 +148,11 @@ async function initializeTracker(): Promise<void> {
               initiative: null,
               is_player: false,
               max_health: itemData.core_data.essential.hp,
-              perception: itemData.extra_data?.perception ?? 0
+              perception: itemData.extra_data?.perception ?? 0,
+              ac: itemData.combat_data?.ac ?? null,
+              fortitude: itemData.combat_data?.saving_throws.fortitude ?? null,
+              reflex: itemData.combat_data?.saving_throws.reflex ?? null,
+              will: itemData.combat_data?.saving_throws.will ?? null
             },
             success: true
           };
@@ -198,7 +206,11 @@ async function initializeTracker(): Promise<void> {
       initiative: null,
       is_player: true,
       max_health: 1,
-      perception: 0
+      perception: 0,
+      ac: 0,
+      fortitude: 0,
+      reflex: 0,
+      will: 0
     });
   }
 
@@ -618,9 +630,10 @@ onUnmounted(() => {
                   v-if="item.max_health !== null"
                   :model-value="item.health"
                   dense
-                  borderless
+                  filled
+                  outlined
                   stack-label
-                  class="tw:w-11 tw:pr-2"
+                  class="tw:w-17 tw:pr-2"
                   type="number"
                   label="Health"
                   @update:model-value="

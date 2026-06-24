@@ -28,7 +28,11 @@ export const trackerStore = defineStore("tracker_store", {
         initiative: null,
         is_player: true,
         max_health: 1,
-        perception: 0
+        perception: 0,
+        ac: null,
+        fortitude: null,
+        reflex: null,
+        will: null
       });
     },
     findNextValidIndex(startIndex: number, direction: 1 | -1 = 1): number {

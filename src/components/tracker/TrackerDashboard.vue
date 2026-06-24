@@ -4,9 +4,13 @@ import { trackerStore } from "@/stores/tracker";
 import { getGameFont, getGameFontSize, openSheet } from "@/utils/sheet";
 import { biBoxArrowUpRight } from "@quasar/extras/bootstrap-icons";
 import {
+  fasBrain,
+  fasDumbbell,
   fasHeart,
   fasHeartCrack,
-  fasPenToSquare
+  fasPenToSquare,
+  fasPersonRunning,
+  fasShield
 } from "@quasar/extras/fontawesome-v7";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -30,6 +34,28 @@ const validateNumber = (newValue: unknown): number => {
     return 0;
   } else if (val > 999) {
     return 999;
+  }
+  return Math.round(val);
+};
+
+const validateSmallNumber = (newValue: unknown): number => {
+  const val = Number(newValue);
+  if (Number.isNaN(val) || val < 0) {
+    return 0;
+  } else if (val > 99) {
+    return 99;
+  }
+  return Math.round(val);
+};
+
+const validateSmallNegativeNumber = (newValue: unknown): number => {
+  const val = Number(newValue);
+  if (Number.isNaN(val)) {
+    return 0;
+  } else if (val < -99) {
+    return -99;
+  } else if (val > 99) {
+    return 99;
   }
   return Math.round(val);
 };
@@ -77,7 +103,7 @@ const rollInitiative = (index: number): void => {
           sans-serif;
       "
     >
-      <q-scroll-area class="tw:h-full">
+      <q-scroll-area v-if="tracker_store.running" class="tw:h-full">
         <div
           v-if="detailedElement"
           class="tw:h-full tw:m-4 tw:text-gray-800 tw:dark:text-white"
@@ -243,6 +269,20 @@ const rollInitiative = (index: number): void => {
               </h1>
             </span>
             <q-space />
+            <q-input
+              v-if="detailedElement.is_player"
+              :model-value="detailedElement.perception"
+              dense
+              standout
+              stack-label
+              type="number"
+              class="tw:mr-4 tw:my-auto tw:w-16 tw:min-w-16"
+              label="Initiative"
+              @update:model-value="
+                (v: unknown) =>
+                  (detailedElement!.perception = validateSmallNegativeNumber(v))
+              "
+            />
             <q-btn
               color="primary tw:my-auto!"
               round
@@ -266,21 +306,21 @@ const rollInitiative = (index: number): void => {
               </q-tooltip>
             </q-btn>
           </div>
-          <q-separator class="tw:my-2!" style="height: 2px" />
           <div
             v-if="
               detailedElement.is_player || detailedElement.max_health !== null
             "
           >
-            <b class="tw:flex tw:text-xl tw:mt-3">
-              <span class="tw:mt-1.5"> HP </span>
+            <q-separator class="tw:my-2!" style="height: 2px" />
+            <b class="tw:flex tw:text-xl">
+              <span class="tw:my-2"> HP </span>
               <q-space />
               <span class="tw:flex">
                 <q-input
                   :model-value="detailedElement.health"
                   dense
-                  borderless
-                  class="tw:max-w-8! tw:max-h-8! tw:text-xl! tw:mr-1"
+                  standout
+                  class="tw:max-w-14! tw:max-h-8! tw:text-xl!"
                   input-class="tw:text-xl! tw:font-bold! tw:text-end"
                   type="number"
                   @update:model-value="
@@ -288,13 +328,13 @@ const rollInitiative = (index: number): void => {
                       (detailedElement!.health = validateNumber(v))
                   "
                 />
+                <b class="tw:text-xl! tw:mx-1 tw:pt-1.5">/</b>
                 <q-input
                   :model-value="detailedElement.max_health"
                   dense
-                  borderless
-                  prefix="/"
-                  class="tw:max-w-18! tw:max-h-8! tw:text-xl!"
-                  input-class="tw:text-xl! tw:font-bold!"
+                  standout
+                  class="tw:max-w-20! tw:max-h-8! tw:text-xl!"
+                  input-class="tw:text-xl! tw:font-bold! tw:text-start"
                   type="number"
                   @update:model-value="
                     (v: unknown) =>
@@ -322,7 +362,7 @@ const rollInitiative = (index: number): void => {
               :min="0"
               :max="detailedElement.max_health ?? 1"
             />
-            <div class="tw:flex tw:justify-center">
+            <div class="tw:flex tw:justify-center tw:mb-4!">
               <q-btn
                 :icon="fasHeartCrack"
                 unelevated
@@ -373,8 +413,193 @@ const rollInitiative = (index: number): void => {
               </q-btn>
             </div>
           </div>
+          <div
+            v-if="
+              detailedElement.is_player ||
+              detailedElement.ac ||
+              detailedElement.fortitude ||
+              detailedElement.reflex ||
+              detailedElement.will
+            "
+          >
+            <q-separator class="tw:my-2!" style="height: 2px" />
+            <div
+              class="tw:flex tw:flex-wrap tw:gap-4 tw:justify-items-center tw:my-4"
+            >
+              <div
+                v-if="detailedElement.is_player || detailedElement.ac"
+                class="tw:flex tw:grow tw:flex-col"
+              >
+                <q-icon
+                  :name="fasShield"
+                  size="md"
+                  class="tw:min-h-11 tw:mx-auto tw:pb-2 tw:text-gray-800 tw:dark:text-white"
+                >
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Armor Class
+                  </q-tooltip>
+                </q-icon>
+                <b
+                  v-if="!detailedElement.is_player"
+                  class="tw:text-xl tw:mx-auto tw:my-1.5"
+                  >{{ detailedElement.ac }}
+                </b>
+                <q-input
+                  v-else
+                  :model-value="detailedElement.ac"
+                  dense
+                  standout
+                  class="tw:max-w-18! tw:text-xl! tw:mx-auto"
+                  input-class="tw:text-xl! tw:font-bold! tw:text-center"
+                  type="number"
+                  @update:model-value="
+                    (v: unknown) =>
+                      (detailedElement!.ac = validateSmallNumber(v))
+                  "
+                />
+              </div>
+              <div
+                v-if="detailedElement.is_player || detailedElement.fortitude"
+                class="tw:flex tw:grow tw:flex-col"
+              >
+                <q-icon
+                  :name="fasDumbbell"
+                  size="md"
+                  class="tw:min-h-11 tw:mx-auto tw:pb-2 tw:text-gray-800 tw:dark:text-white"
+                >
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Fortitude Save
+                  </q-tooltip>
+                </q-icon>
+                <span
+                  v-if="!detailedElement.is_player && detailedElement.fortitude"
+                  class="tw:flex tw:mx-auto tw:mt-1.5"
+                >
+                  <b class="tw:text-xl"
+                    >{{
+                      (detailedElement.fortitude >= 0 ? "+" : "") +
+                      detailedElement.fortitude
+                    }}
+                  </b>
+                </span>
+                <q-input
+                  v-else
+                  :model-value="detailedElement.fortitude"
+                  dense
+                  standout
+                  class="tw:max-w-18! tw:text-sm! tw:mx-auto"
+                  input-class="tw:text-xl! tw:font-bold! tw:text-center"
+                  type="number"
+                  @update:model-value="
+                    (v: unknown) =>
+                      (detailedElement!.fortitude =
+                        validateSmallNegativeNumber(v))
+                  "
+                />
+              </div>
+              <div
+                v-if="detailedElement.is_player || detailedElement.reflex"
+                class="tw:flex tw:grow tw:flex-col"
+              >
+                <q-icon
+                  :name="fasPersonRunning"
+                  size="md"
+                  class="tw:min-h-11 tw:mx-auto tw:pb-2 tw:text-gray-800 tw:dark:text-white"
+                >
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Reflex Save
+                  </q-tooltip>
+                </q-icon>
+                <span
+                  v-if="!detailedElement.is_player && detailedElement.reflex"
+                  class="tw:flex tw:mx-auto tw:mt-1.5"
+                >
+                  <b class="tw:text-xl"
+                    >{{
+                      (detailedElement.reflex >= 0 ? "+" : "") +
+                      detailedElement.reflex
+                    }}
+                  </b>
+                </span>
+                <q-input
+                  v-else
+                  :model-value="detailedElement.reflex"
+                  dense
+                  standout
+                  class="tw:max-w-18! tw:text-sm! tw:mx-auto"
+                  input-class="tw:text-xl! tw:font-bold! tw:text-center"
+                  type="number"
+                  @update:model-value="
+                    (v: unknown) =>
+                      (detailedElement!.reflex = validateSmallNegativeNumber(v))
+                  "
+                />
+              </div>
+              <div
+                v-if="detailedElement.is_player || detailedElement.will"
+                class="tw:flex tw:grow tw:flex-col"
+              >
+                <q-icon
+                  :name="fasBrain"
+                  size="md"
+                  class="tw:min-h-11 tw:mx-auto tw:pb-2 tw:text-gray-800 tw:dark:text-white"
+                >
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Will Save
+                  </q-tooltip>
+                </q-icon>
+                <span
+                  v-if="!detailedElement.is_player && detailedElement.will"
+                  class="tw:flex tw:mx-auto tw:mt-1.5"
+                >
+                  <b class="tw:text-xl"
+                    >{{
+                      (detailedElement.will >= 0 ? "+" : "") +
+                      detailedElement.will
+                    }}
+                  </b>
+                </span>
+                <q-input
+                  v-else
+                  :model-value="detailedElement.will"
+                  dense
+                  standout
+                  class="tw:max-w-18! tw:text-sm! tw:mx-auto"
+                  input-class="tw:text-xl! tw:font-bold! tw:text-center"
+                  type="number"
+                  @update:model-value="
+                    (v: unknown) =>
+                      (detailedElement!.will = validateSmallNegativeNumber(v))
+                  "
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <q-separator class="tw:my-2!" style="height: 2px" />
+            CONDITIONS
+          </div>
         </div>
       </q-scroll-area>
+      <div v-else class="tw:text-center tw:text-lg tw:pt-[38vh]">
+        Start the encounter to display its details
+      </div>
     </div>
   </div>
 </template>

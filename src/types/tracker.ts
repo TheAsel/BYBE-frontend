@@ -5,6 +5,10 @@ type tracker_base = {
   max_health: number | null;
   initiative: number | null;
   perception: number;
+  ac: number | null;
+  fortitude: number | null;
+  reflex: number | null;
+  will: number | null;
 };
 
 export type min_tracker =
