@@ -11,10 +11,10 @@ import { useQuasar } from "quasar";
 import { ref } from "vue";
 
 import { settingsStore } from "@/stores/settings";
+import { validateParties } from "@/utils/local-storage";
 
 import type { encounter_list } from "@/types/encounter";
 import type { npc_list } from "@/types/npc";
-import type { party } from "@/types/party";
 import type { shop_list } from "@/types/shop";
 import type { template } from "@/types/template";
 
@@ -252,34 +252,7 @@ const validateData = (result: string): void => {
           break;
         }
         case "parties": {
-          const parsedParties = JSON.parse(parsedData[key]);
-          if (Array.isArray(parsedParties)) {
-            const isCompatible = parsedParties.every(
-              p =>
-                typeof p.name === "string" &&
-                Array.isArray(p.members) &&
-                p.members.every(
-                  (member: undefined) => typeof member === "number"
-                )
-            );
-            if (isCompatible) {
-              const parties: party[] = parsedParties;
-              for (const p of parties) {
-                if (
-                  !p ||
-                  !p.members.every(player => player >= 1 && player <= 20)
-                ) {
-                  throw new Error("Invalid loaded party levels");
-                }
-              }
-              const partyNames = parties.map(p => p.name);
-              if (new Set(partyNames).size !== partyNames.length) {
-                throw new Error("Duplicate loaded party names");
-              }
-            } else {
-              throw new Error("Invalid loaded party format");
-            }
-          } else {
+          if (!validateParties(parsedData[key]).valid) {
             throw new TypeError("Invalid loaded party format");
           }
           break;

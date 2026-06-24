@@ -7,11 +7,16 @@ export const partyStore = defineStore("party_store", {
     activeParty: 0,
     parties: [
       {
-        name: "Default",
-        size: 4,
-        level: 1,
         advanced: false,
-        members: [1, 1, 1, 1]
+        name: "Default",
+        level: 1,
+        size: 4,
+        members: [
+          { level: 1, name: "Player 1" },
+          { level: 1, name: "Player 2" },
+          { level: 1, name: "Player 3" },
+          { level: 1, name: "Player 4" }
+        ]
       }
     ]
   }),
@@ -19,10 +24,15 @@ export const partyStore = defineStore("party_store", {
     addParty(partyName: string) {
       this.parties.push({
         advanced: false,
-        level: 1,
-        members: [1, 1, 1, 1],
         name: partyName,
-        size: 4
+        level: 1,
+        size: 4,
+        members: [
+          { level: 1, name: "Player 1" },
+          { level: 1, name: "Player 2" },
+          { level: 1, name: "Player 3" },
+          { level: 1, name: "Player 4" }
+        ]
       });
       this.activeParty = this.parties.length - 1;
     },
@@ -43,10 +53,15 @@ export const partyStore = defineStore("party_store", {
         this.parties = [
           {
             advanced: false,
-            level: 1,
-            members: [1, 1, 1, 1],
             name: "Default",
-            size: 4
+            level: 1,
+            size: 4,
+            members: [
+              { level: 1, name: "Player 1" },
+              { level: 1, name: "Player 2" },
+              { level: 1, name: "Player 3" },
+              { level: 1, name: "Player 4" }
+            ]
           }
         ];
       }

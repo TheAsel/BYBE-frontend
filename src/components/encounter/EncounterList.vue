@@ -118,7 +118,9 @@ const debouncedCall = debounce(async () => {
       }
     }
   }
-  const partyLevels = party_store.parties[party_store.activeParty]!.members;
+  const partyLevels = party_store.parties[party_store.activeParty]!.members.map(
+    player => player.level
+  );
   const localPwl = ref(localStorage.getItem("is_pwl_on"));
   switch (localPwl.value) {
     case "true": {

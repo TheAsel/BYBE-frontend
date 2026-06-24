@@ -202,7 +202,9 @@ const saveChanges = (): void => {
 const generateEncounter = debounce(async () => {
   encounter_store.setGenerating(true);
   saveChanges();
-  const partyLevels = party_store.parties[party_store.activeParty]!.members;
+  const partyLevels = party_store.parties[party_store.activeParty]!.members.map(
+    player => player.level
+  );
   const { is_pwl_on } = settings_store;
   const { game_version } = settings_store;
 

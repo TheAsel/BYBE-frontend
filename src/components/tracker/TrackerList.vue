@@ -187,7 +187,8 @@ async function initializeTracker(): Promise<void> {
 
   for (let i = 0; i < trackerData.value.party.members.length; i += 1) {
     explodedPlayerList.push({
-      element: `Player ${String(i + 1)}`,
+      element:
+        trackerData.value.party.members[i]?.name ?? `Player ${String(i + 1)}`,
       health: 1,
       initiative: null,
       is_player: true,

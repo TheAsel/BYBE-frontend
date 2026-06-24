@@ -7,53 +7,75 @@ import { templateStore } from "@/stores/template";
 
 import type { encounter_list } from "@/types/encounter";
 import type { npc_list } from "@/types/npc";
-import type { party } from "@/types/party";
 import type { shop_list } from "@/types/shop";
 import type { template } from "@/types/template";
+
+export function validateParties(parties: string): {
+  valid: boolean;
+  result: string;
+} {
+  try {
+    const parsedParties = JSON.parse(parties);
+
+    for (const party of parsedParties) {
+      if (typeof party !== "object" || party === null)
+        throw new Error("Invalid saved party");
+      if (typeof party.advanced !== "boolean")
+        throw new Error("Invalid saved party advanced");
+      if (typeof party.name !== "string")
+        throw new Error("Invalid saved party name");
+      if (typeof party.level !== "number")
+        throw new Error("Invalid saved party level");
+      if (typeof party.size !== "number")
+        throw new Error("Invalid saved party size");
+
+      if (!Array.isArray(party.members))
+        throw new Error("Invalid saved party members");
+
+      // Legacy format: number[]
+      if (party.members.every((level: unknown) => typeof level === "number")) {
+        party.members = party.members.map((level: number, index: number) => ({
+          name: `Player ${index + 1}`,
+          level
+        }));
+      }
+
+      for (const member of party.members) {
+        if (typeof member !== "object" || member === null)
+          throw new Error("Invalid saved party member");
+        if (typeof member.name !== "string")
+          throw new Error("Invalid saved party member name");
+        if (typeof member.level !== "number")
+          throw new Error("Invalid saved party member level");
+      }
+    }
+
+    return { valid: true, result: JSON.stringify(parsedParties) };
+  } catch (error) {
+    console.error(error);
+    const defaultParty = {
+      advanced: false,
+      name: "Default",
+      level: 1,
+      size: 4,
+      members: [
+        { level: 1, name: "Player 1" },
+        { level: 1, name: "Player 2" },
+        { level: 1, name: "Player 3" },
+        { level: 1, name: "Player 4" }
+      ]
+    };
+    return { valid: false, result: JSON.stringify(defaultParty) };
+  }
+}
 
 export function updateLocalStorageParties(): void {
   const party_store = partyStore();
   const localParty = localStorage.getItem("parties");
   if (localParty !== null) {
-    try {
-      const parsedParties = JSON.parse(localParty);
-      if (Array.isArray(parsedParties)) {
-        const isCompatible = parsedParties.every(
-          p =>
-            typeof p.name === "string" &&
-            Array.isArray(p.members) &&
-            p.members.every((member: undefined) => typeof member === "number")
-        );
-        if (isCompatible) {
-          const parties: party[] = parsedParties;
-          for (const party of parties) {
-            if (!party?.members.every(player => player >= 1 && player <= 20)) {
-              throw new Error("Invalid saved party levels");
-            }
-          }
-          const partyNames = parties.map(p => p.name);
-          if (new Set(partyNames).size !== partyNames.length) {
-            throw new Error("Duplicate saved party names");
-          }
-          party_store.updateParties(parties);
-        } else {
-          throw new Error("Invalid saved party format");
-        }
-      } else {
-        throw new TypeError("Invalid saved party format");
-      }
-    } catch (error) {
-      console.error(error);
-      const defaultParty = {
-        advanced: false,
-        level: 1,
-        members: [1, 1, 1, 1],
-        name: "Default",
-        size: 4
-      };
-      localStorage.setItem("parties", JSON.stringify([defaultParty]));
-      party_store.updateParties([defaultParty]);
-    }
+    const validatedParties = validateParties(localParty);
+    party_store.updateParties(JSON.parse(validatedParties.result));
+    localStorage.setItem("parties", validatedParties.result);
   }
 }
 

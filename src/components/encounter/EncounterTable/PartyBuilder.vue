@@ -17,33 +17,21 @@ const $q = useQuasar();
 
 const party_store = partyStore();
 
-// Upgrade legacy parties
-if (
-  typeof party_store.parties[party_store.activeParty]!.advanced !== "boolean"
-) {
-  const legacyParties = party_store.parties;
-  for (let i = 0; i < legacyParties.length; i += 1) {
-    legacyParties[i] = {
-      name: legacyParties[i]?.name ?? "Default " + (i + 1),
-      size: party_store.parties[party_store.activeParty]?.members.length ?? 4,
-      level: party_store.parties[party_store.activeParty]?.members[0] ?? 1,
-      advanced: true,
-      members: [...(legacyParties[i]?.members ?? [1, 1, 1, 1])]
-    };
-  }
-  party_store.updateParties(legacyParties);
-  localStorage.setItem("parties", JSON.stringify(party_store.parties));
-}
-
 const tmpParty = ref<party>({
   advanced: party_store.parties[party_store.activeParty]?.advanced ?? false,
+  name: party_store.parties[party_store.activeParty]?.name ?? "Default",
   level: party_store.parties[party_store.activeParty]?.level ?? 1,
-  members: [
-    ...(party_store.parties[party_store.activeParty]?.members ?? [1, 1, 1, 1])
-  ],
   size: party_store.parties[party_store.activeParty]?.size ?? 4,
-  name: party_store.parties[party_store.activeParty]?.name ?? "Default"
+  members: (
+    party_store.parties[party_store.activeParty]?.members ?? [
+      { level: 1, name: "Player 1" },
+      { level: 1, name: "Player 2" },
+      { level: 1, name: "Player 3" },
+      { level: 1, name: "Player 4" }
+    ]
+  ).map(m => ({ ...m }))
 });
+
 const parties = ref(party_store.parties.map(party => party.name));
 const selectedParty = ref(party_store.parties[party_store.activeParty]!.name);
 
@@ -56,14 +44,25 @@ const newPartyName = ref("");
 const removePartyDialog = ref(false);
 
 const resetParty = (): party => {
+  const activeParty = party_store.parties[party_store.activeParty];
+  if (activeParty) {
+    return {
+      ...activeParty,
+      members: activeParty.members.map(m => ({ ...m }))
+    };
+  }
+
   return {
-    advanced: party_store.parties[party_store.activeParty]?.advanced ?? false,
-    level: party_store.parties[party_store.activeParty]?.level ?? 1,
+    advanced: false,
+    name: "Default",
+    level: 1,
+    size: 4,
     members: [
-      ...(party_store.parties[party_store.activeParty]?.members ?? [1, 1, 1, 1])
-    ],
-    size: party_store.parties[party_store.activeParty]?.size ?? 4,
-    name: party_store.parties[party_store.activeParty]?.name ?? "Default"
+      { level: 1, name: "Player 1" },
+      { level: 1, name: "Player 2" },
+      { level: 1, name: "Player 3" },
+      { level: 1, name: "Player 4" }
+    ]
   };
 };
 
@@ -72,14 +71,14 @@ const restoreParty = (): void => {
   tmpParty.value = resetParty();
 };
 
-const validateLevel = (index: number): void => {
-  const value = tmpParty.value.members[index];
-  if (typeof value !== "number" || value < 1 || value === 0) {
-    tmpParty.value.members[index] = 1;
-  } else if (value > 20) {
-    tmpParty.value.members[index] = 20;
+const validateLevel = (newValue: unknown): number => {
+  const val = Number(newValue);
+  if (Number.isNaN(val) || val < 1) {
+    return 1;
+  } else if (val > 20) {
+    return 20;
   }
-  tmpParty.value.members[index] = Math.round(tmpParty.value.members[index]!);
+  return Math.round(val);
 };
 
 const validateSimpleParty = (): void => {
@@ -101,25 +100,39 @@ const validateSimpleParty = (): void => {
   }
   tmpParty.value.level = Math.round(tmpParty.value.level);
 
-  tmpParty.value.members = Array.from<number>({
-    length: tmpParty.value.size
-  }).fill(tmpParty.value.level);
+  const level = tmpParty.value.level;
+  tmpParty.value.members = Array.from<
+    unknown,
+    {
+      name: string;
+      level: number;
+    }
+  >({ length: tmpParty.value.size }, (_, index) => ({
+    name: `Player ${index + 1}`,
+    level
+  }));
 };
 
 const updateAdvanced = (): void => {
   if (tmpParty.value.advanced) {
-    if (tmpParty.value.level) {
-      tmpParty.value.members = Array.from<number>({
-        length: tmpParty.value.size ?? 4
-      }).fill(tmpParty.value.level);
-    } else {
-      tmpParty.value.members = [1, 1, 1, 1];
-    }
+    const level = tmpParty.value.level;
+    tmpParty.value.members = Array.from<
+      unknown,
+      {
+        name: string;
+        level: number;
+      }
+    >({ length: tmpParty.value.size }, (_, index) => ({
+      name: `Player ${index + 1}`,
+      level
+    }));
   } else if (
-    tmpParty.value.members.every((member, _, arr) => member === arr[0])
+    tmpParty.value.members.every(
+      (member, _, arr) => member.level === arr[0]?.level
+    )
   ) {
     tmpParty.value.size = tmpParty.value.members.length;
-    tmpParty.value.level = tmpParty.value.members[0] ?? 1;
+    tmpParty.value.level = tmpParty.value.members[0]?.level ?? 1;
   } else {
     tmpParty.value.size = 4;
     tmpParty.value.level = 1;
@@ -127,20 +140,25 @@ const updateAdvanced = (): void => {
 };
 
 const addPlayer = (): void => {
-  if (tmpParty.value.members.length >= 20) {
-    $q.notify({
-      icon: matPriorityHigh,
-      message: "Maximum player number reached",
-      progress: true,
-      type: "warning"
+  if (tmpParty.value.advanced) {
+    if (tmpParty.value.members.length >= 20) {
+      $q.notify({
+        icon: matPriorityHigh,
+        message: "Maximum player number reached",
+        progress: true,
+        type: "warning"
+      });
+      return;
+    }
+    tmpParty.value.members.push({
+      level: 1,
+      name: `Player ${tmpParty.value.members.length + 1}`
     });
-    return;
   }
-  tmpParty.value.members.push(1);
 };
 
 const removePlayer = (index: number): void => {
-  if (tmpParty.value.members.length > 1) {
+  if (tmpParty.value.advanced && tmpParty.value.members.length > 1) {
     tmpParty.value.members.splice(index, 1);
   }
 };
@@ -152,16 +170,6 @@ const closeDialog = (): void => {
 };
 
 const saveChanges = (): void => {
-  if (tmpParty.value.advanced) {
-    tmpParty.value.size = tmpParty.value.members.length;
-    tmpParty.value.level = tmpParty.value.members[0] ?? 1;
-  } else if (tmpParty.value.level) {
-    tmpParty.value.members = Array.from<number>({
-      length: tmpParty.value.size ?? 4
-    }).fill(tmpParty.value.level);
-  } else {
-    tmpParty.value.members = [1, 1, 1, 1];
-  }
   party_store.updateParty(tmpParty.value);
   localStorage.setItem("parties", JSON.stringify(party_store.parties));
 };
@@ -346,27 +354,40 @@ const changeActiveParty = (selected: string): void => {
 
       <q-separator />
 
-      <q-card-section
-        v-if="tmpParty.advanced"
-        style="max-height: 60vh"
-        class="scroll"
-      >
+      <q-card-section v-if="tmpParty.advanced" class="scroll tw:max-h-102">
         <div class="tw:space-y-4">
           <div
-            v-for="(_, index) in tmpParty.members"
+            v-for="(member, index) in tmpParty.members"
             :key="index"
             class="row no-wrap items-center"
           >
             <div class="col-grow">
               <q-input
-                v-model.number="tmpParty.members[index]"
+                :model-value="member.name"
+                dense
+                outlined
+                min="1"
+                max="20"
+                label="Name"
+                class="tw:max-w-35"
+                @update:model-value="
+                  (v: unknown) => (member.name = String(v ?? ''))
+                "
+              />
+            </div>
+            <div class="col-shrink">
+              <q-input
+                :model-value="member.level"
                 dense
                 outlined
                 type="number"
                 min="1"
                 max="20"
-                :label="'Player ' + (index + 1)"
-                @update:model-value="validateLevel(index)"
+                label="Level"
+                class="tw:w-13 tw:ml-4"
+                @update:model-value="
+                  (v: unknown) => (member.level = validateLevel(v))
+                "
               />
             </div>
             <div class="col-shrink tw:pl-3">
