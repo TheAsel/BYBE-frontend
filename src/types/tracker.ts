@@ -11,6 +11,7 @@ export type min_tracker =
   | (tracker_base & {
       element: min_creature_hazard;
       is_player: false;
+      disabled: boolean;
     })
   | (tracker_base & {
       element: string;

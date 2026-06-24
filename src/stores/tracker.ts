@@ -31,44 +31,60 @@ export const trackerStore = defineStore("tracker_store", {
         perception: 0
       });
     },
+    findNextValidIndex(startIndex: number, direction: 1 | -1 = 1): number {
+      for (let step = 1; step < this.trackerList.list.length; step += 1) {
+        const candidate =
+          (startIndex + step * direction + this.trackerList.list.length) %
+          this.trackerList.list.length;
+        const entry = this.trackerList.list[candidate];
+        if (!entry) {
+          continue;
+        }
+        if (entry.health !== null && entry.health <= 0) {
+          continue;
+        }
+        if (!entry.is_player && entry.disabled) {
+          continue;
+        }
+        return candidate;
+      }
+      return startIndex;
+    },
     nextRound() {
       if (!this.running) {
         return;
       }
       this.round += 1;
-      this.trackerList.active_index = 0;
+      this.trackerList.active_index = this.findNextValidIndex(-1, 1);
     },
     nextTurn() {
       if (!this.running) {
         return;
       }
-      this.trackerList.active_index += 1;
-      if (this.trackerList.active_index >= this.trackerList.list.length) {
-        this.trackerList.active_index = 0;
-        this.nextRound();
+      const current = this.trackerList.active_index;
+      const next = this.findNextValidIndex(current, 1);
+      if (next <= current) {
+        this.round += 1;
       }
+      this.trackerList.active_index = next;
     },
     prevRound() {
       if (!this.running) {
         return;
       }
-      this.round -= 1;
-      if (this.round <= 0) {
-        this.round = 1;
-        this.trackerList.active_index = 0;
-      } else {
-        this.trackerList.active_index = this.trackerList.list.length - 1;
-      }
+      this.round = Math.max(1, this.round - 1);
+      this.trackerList.active_index = this.findNextValidIndex(0, -1);
     },
     prevTurn() {
       if (!this.running) {
         return;
       }
-      this.trackerList.active_index -= 1;
-      if (this.trackerList.active_index < 0) {
-        this.trackerList.active_index = this.trackerList.list.length - 1;
-        this.prevRound();
+      const current = this.trackerList.active_index;
+      const prev = this.findNextValidIndex(current, -1);
+      if (prev >= current) {
+        this.round = Math.max(1, this.round - 1);
       }
+      this.trackerList.active_index = prev;
     },
     removeFromTracker(index: number) {
       this.trackerList.list.splice(index, 1);
@@ -86,6 +102,9 @@ export const trackerStore = defineStore("tracker_store", {
       for (const item of this.trackerList.list) {
         item.health = item.max_health;
         item.initiative = null;
+        if (!item.is_player) {
+          item.disabled = false;
+        }
       }
     },
     setSelectedCreature(newSelectedCreature: creature) {
@@ -98,15 +117,21 @@ export const trackerStore = defineStore("tracker_store", {
     },
     sortList() {
       const old_detail = this.trackerList.list[this.trackerList.detail_index];
-      this.trackerList.list.sort((a, b) => {
-        if (a.initiative === null) {
-          return 1;
+      const withInit = [];
+      const withoutInit = [];
+      for (const item of this.trackerList.list) {
+        if (item.initiative === null) {
+          withoutInit.push(item);
+        } else {
+          withInit.push(item);
         }
-        if (b.initiative === null) {
-          return -1;
-        }
-        return b.initiative - a.initiative;
+      }
+      withInit.sort((a, b) => {
+        const ai = a.initiative ?? -1;
+        const bi = b.initiative ?? -1;
+        return bi - ai;
       });
+      this.trackerList.list = [...withInit, ...withoutInit];
       if (old_detail) {
         this.trackerList.detail_index =
           this.trackerList.list.indexOf(old_detail);

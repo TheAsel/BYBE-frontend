@@ -14,6 +14,8 @@ import {
   mdiAccountGroup,
   mdiAccountMultipleOutline,
   mdiAccountPlus,
+  mdiBomb,
+  mdiBombOff,
   mdiClose,
   mdiSwordCross
 } from "@quasar/extras/mdi-v7";
@@ -109,6 +111,7 @@ async function initializeTracker(): Promise<void> {
             return {
               item: {
                 element: item,
+                disabled: false,
                 health: itemData.core_hazard.essential.has_health
                   ? itemData.core_hazard.essential.hp
                   : null,
@@ -136,6 +139,7 @@ async function initializeTracker(): Promise<void> {
           return {
             item: {
               element: item,
+              disabled: false,
               health: itemData.core_data.essential.hp,
               initiative: null,
               is_player: false,
@@ -529,7 +533,8 @@ onUnmounted(() => {
                     <span
                       class="tw:text-blue-600! tw:decoration-2 tw:hover:underline tw:dark:text-blue-400!"
                       :class="
-                        item.health !== null && item.health <= 0
+                        (item.health !== null && item.health <= 0) ||
+                        (!item.is_player && item.disabled)
                           ? 'tw:line-through tw:text-red-600! tw:dark:text-red-400!'
                           : ''
                       "
@@ -545,7 +550,8 @@ onUnmounted(() => {
                   <span
                     v-else
                     :class="
-                      item.health !== null && item.health === 0
+                      (item.health !== null && item.health === 0) ||
+                      (!item.is_player && item.disabled)
                         ? 'tw:line-through! tw:text-red-600! tw:dark:text-red-400!'
                         : ''
                     "
@@ -589,6 +595,24 @@ onUnmounted(() => {
                   "
                 />
               </div>
+              <q-btn
+                v-if="!item.is_player && item.element.is_hazard"
+                v-model="item.disabled"
+                :icon="item.disabled ? mdiBombOff : mdiBomb"
+                round
+                unelevated
+                dense
+                class="tw:my-auto! tw:mr-2!"
+                @click="item.disabled = !item.disabled"
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  {{ item.disabled ? "Enable" : "Disable" }}
+                </q-tooltip>
+              </q-btn>
               <div class="tw:flex tw:my-auto">
                 <q-input
                   v-if="item.max_health !== null"
@@ -603,13 +627,12 @@ onUnmounted(() => {
                     (v: unknown) => (item.health = validateNumber(v))
                   "
                 />
-                <div v-else class="tw:w-11 tw:pr-2" />
                 <q-btn
                   v-if="item.initiative === null"
                   flat
                   round
                   dense
-                  class="tw:p-2.25!"
+                  class="tw:p-2.25! tw:mr-1!"
                   size="md"
                   aria-label="Roll initiative"
                   @click="
@@ -633,7 +656,7 @@ onUnmounted(() => {
                   filled
                   outlined
                   stack-label
-                  class="tw:w-18 tw:mr-2"
+                  class="tw:w-18 tw:mr-1!"
                   type="number"
                   label="Initiative"
                   @update:model-value="
