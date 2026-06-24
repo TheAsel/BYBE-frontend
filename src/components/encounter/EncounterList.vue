@@ -739,7 +739,18 @@ await debouncedCall();
                   </div>
                 </template>
               </q-field>
-              <q-btn label="Copy" @click="copyToClipboard(shareUrl)" />
+              <q-btn
+                label="Copy"
+                @click="
+                  copyToClipboard(shareUrl);
+                  $q.notify({
+                    message: 'Link copied to clipboard',
+                    progress: true,
+                    type: 'positive',
+                    timeout: 1000
+                  });
+                "
+              />
             </div>
           </q-card-section>
         </div>
