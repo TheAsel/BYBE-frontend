@@ -108,11 +108,15 @@ async function initializeTracker(): Promise<void> {
             return {
               item: {
                 element: item,
-                health: null,
+                health: itemData.core_hazard.essential.has_health
+                  ? itemData.core_hazard.essential.hp
+                  : null,
                 initiative: null,
                 is_player: false,
-                max_health: null,
-                perception: 0
+                max_health: itemData.core_hazard.essential.has_health
+                  ? itemData.core_hazard.essential.hp
+                  : null,
+                perception: itemData.core_hazard.essential.stealth ?? 0
               },
               success: true
             };
@@ -200,12 +204,14 @@ initializeTracker(); // oxlint-disable-line prefer-top-level-await
 
 const showItem = (item: min_tracker): void => {
   if (
-    !item.is_player &&
-    (!tracker_store.lockSheet ||
-      (tracker_store.selectedCreature === null &&
-        tracker_store.selectedHazard === null))
+    !tracker_store.lockSheet ||
+    (tracker_store.selectedCreature === null &&
+      tracker_store.selectedHazard === null)
   ) {
-    if (item.element.is_hazard) {
+    if (item.is_player) {
+      tracker_store.removeSelectedCreature();
+      tracker_store.removeSelectedHazard();
+    } else if (item.element.is_hazard) {
       const found_hazard = hazard_list.find(
         hazard => hazard.core_hazard.essential.id === item.element.id
       );
@@ -255,13 +261,15 @@ const validateNumber = (newValue: unknown): number => {
   const val = Number(newValue);
   if (Number.isNaN(val) || val < 0) {
     return 0;
+  } else if (val > 9999) {
+    return 9999;
   }
-  return val;
+  return Math.round(val);
 };
 
 const setSheetFromIndex = (index: number): void => {
   const element = tracker_store.trackerList.list[index];
-  if (element && !element.is_player) {
+  if (element) {
     showItem(element);
   }
 };
@@ -325,7 +333,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="tw:p-4 tw:h-full tw:w-full tw:md:w-[27%]">
+  <div class="tw:h-full">
     <q-layout
       view="lHh lpr lFf"
       container
@@ -405,7 +413,7 @@ onUnmounted(() => {
             :class="
               index === tracker_store.trackerList.active_index &&
               tracker_store.running
-                ? 'tw:outline-solid tw:outline-red-600 tw:rounded-md  '
+                ? 'tw:outline-solid tw:outline-red-600 tw:rounded-md'
                 : ''
             "
           >
@@ -424,11 +432,18 @@ onUnmounted(() => {
                 @click="tracker_store.removeFromTracker(index)"
               >
                 <q-tooltip
-                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  class="tw:text-nowrap text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  Remove element
+                  {{
+                    "Remove " +
+                    (item.is_player
+                      ? "player"
+                      : item.element.is_hazard
+                        ? "hazard"
+                        : "creature")
+                  }}
                 </q-tooltip>
               </q-btn>
               <div
@@ -564,7 +579,7 @@ onUnmounted(() => {
                   v-if="item.is_player"
                   v-model="item.element"
                   dense
-                  class="tw:align-middle tw:max-w-18! tw:2xl:max-w-64!"
+                  class="tw:align-middle tw:max-w-18! tw:md:max-w-64!"
                   :input-class="
                     item.health !== null && item.health === 0
                       ? 'tw:line-through! tw:text-red-600! tw:dark:text-red-400!'
@@ -586,6 +601,7 @@ onUnmounted(() => {
                     (v: unknown) => (item.health = validateNumber(v))
                   "
                 />
+                <div v-else class="tw:w-11 tw:pr-2" />
                 <q-btn
                   v-if="item.initiative === null"
                   flat

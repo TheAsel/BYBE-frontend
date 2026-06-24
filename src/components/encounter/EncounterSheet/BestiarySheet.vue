@@ -1020,7 +1020,7 @@ const rangeTraits = (
       <strong>Cha</strong>
       {{ addPlus(extraData.ability_scores.charisma) }}
     </div>
-    <template
+    <span
       v-for="item in encounter_store.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
@@ -1039,13 +1039,13 @@ const rangeTraits = (
             pfActionSymbol(
               item.core_action.n_of_actions,
               item.core_action.action_type
-            )
-          }}{{ " " }}
+            ) + " "
+          }}
         </span>
         <TraitsList :traits="item.traits" />
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>
-    </template>
+    </span>
     <div
       v-if="combatData && combatData.weapons.length > 0 && itemString !== ''"
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
@@ -1066,7 +1066,7 @@ const rangeTraits = (
       class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       v-html="healthString"
     ></div>
-    <template
+    <span
       v-for="item in encounter_store.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
@@ -1088,14 +1088,14 @@ const rangeTraits = (
             pfActionSymbol(
               item.core_action.n_of_actions,
               item.core_action.action_type
-            )
-          }}{{ " " }}
+            ) + " "
+          }}
         </span>
 
         <TraitsList :traits="item.traits" />
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>
-    </template>
+    </span>
   </div>
   <q-separator class="tw:my-2!" style="height: 2px" />
   <hr
@@ -1111,7 +1111,7 @@ const rangeTraits = (
       {{ speedString }}
     </div>
 
-    <template
+    <span
       v-for="(item, index) in encounter_store.selectedCreature?.combat_data
         ?.weapons"
       :key="index"
@@ -1176,7 +1176,7 @@ const rangeTraits = (
           </span>
         </span>
         <span v-if="item.weapon_data?.attack_effects?.length">
-          <template
+          <span
             v-for="action in item.weapon_data.attack_effects"
             :key="action.core_action.id"
           >
@@ -1214,17 +1214,17 @@ const rangeTraits = (
               </q-tooltip>
             </span>
             <span v-else>{{ action.core_action.name }}</span>
-          </template>
+          </span>
         </span>
       </div>
-    </template>
-    <template v-for="entity in spellString" :key="entity">
+    </span>
+    <span v-for="entity in spellString" :key="entity">
       <div
         v-html="entity"
         class="tw:text-base tw:text-gray-800 tw:dark:text-white"
       />
-    </template>
-    <template
+    </span>
+    <span
       v-for="item in encounter_store.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"
     >
@@ -1247,13 +1247,13 @@ const rangeTraits = (
             pfActionSymbol(
               item.core_action.n_of_actions,
               item.core_action.action_type
-            )
-          }}{{ " " }}
+            ) + " "
+          }}
         </span>
         <TraitsList :traits="item.traits" />
         <span v-html="' ' + cleanDescription(item.core_action.description)" />
       </div>
-    </template>
+    </span>
   </div>
 </template>
 

@@ -6,7 +6,7 @@ export function openSheet(
   page: "bestiary" | "hazard" | "item" | "character",
   game: games,
   id: number,
-  variant?: variants
+  variant?: variants | null
 ): void {
   const routeData = router.resolve({
     name: page,
@@ -87,18 +87,15 @@ export function cleanDescription(description: string): string {
   return finalString.replaceAll(cleanRegex, "");
 }
 
-export function pfActionSymbol(
-  num: number | null,
-  action: string
-): number | null {
+export function pfActionSymbol(num: number | null, action: string): string {
   if (num === 1 || num === 2 || num === 3) {
-    return num;
+    return String(num);
   }
   if (action === "free") {
-    return 4;
+    return "4";
   }
   if (action === "reaction") {
-    return 5;
+    return "5";
   }
-  return null;
+  return "";
 }

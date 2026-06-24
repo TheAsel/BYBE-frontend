@@ -21,12 +21,12 @@ useHead({
     id="pageRef"
     class="tw:h-full row items-center justify-between tw:overflow-auto"
   >
-    <TrackerList />
+    <TrackerList class="tw:h-full tw:w-full tw:md:w-[36.5%] tw:p-4" />
     <TrackerDashboard
-      class="tw:md:w-[46%] tw:py-0! tw:md:py-4! tw:pl-4! tw:md:pl-0!"
+      class="tw:h-full tw:w-full tw:md:w-[36.5%] tw:py-0! tw:md:py-4! tw:px-4! tw:md:px-0!"
     />
     <TrackerSheet
-      class="tw:md:w-[27%] tw:p-4! tw:md:px-0 tw:md:py-4 tw:w-full"
+      class="tw:h-full tw:w-full tw:md:w-[27%] tw:p-4! tw:md:px-0 tw:md:py-4"
     />
   </q-page>
 </template>

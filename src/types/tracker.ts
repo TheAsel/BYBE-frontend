@@ -1,22 +1,21 @@
 import type { min_creature_hazard } from "./encounter";
 
+type tracker_base = {
+  health: number | null;
+  max_health: number | null;
+  initiative: number | null;
+  perception: number;
+};
+
 export type min_tracker =
-  | {
+  | (tracker_base & {
       element: min_creature_hazard;
       is_player: false;
-      health: number | null;
-      max_health: number | null;
-      initiative: number | null;
-      perception: number;
-    }
-  | {
+    })
+  | (tracker_base & {
       element: string;
       is_player: true;
-      health: number | null;
-      max_health: number | null;
-      initiative: number | null;
-      perception: number;
-    };
+    });
 
 export type tracker_list = {
   list: min_tracker[];
