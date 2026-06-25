@@ -32,9 +32,9 @@ export const npcStore = defineStore("npc_store", {
     },
     npcs: [
       {
-        culture: false,
+        has_culture: false,
         name: "Default",
-        npc: {
+        core_npc: {
           ancestry: "",
           class: "",
           culture: "",
@@ -58,9 +58,9 @@ export const npcStore = defineStore("npc_store", {
   actions: {
     addNpc(npcName: string) {
       this.npcs.push({
-        culture: false,
+        has_culture: false,
         name: npcName,
-        npc: {
+        core_npc: {
           ancestry: "",
           class: "",
           culture: "",
@@ -107,7 +107,7 @@ export const npcStore = defineStore("npc_store", {
         quirk: "",
         relationships: ""
       };
-      this.npcs[this.activeNpc]!.npc = tmpNpc;
+      this.npcs[this.activeNpc]!.core_npc = tmpNpc;
     },
     getNpcIndex(npcName: string): number {
       return this.npcs.map(npc => npc.name).indexOf(npcName);
@@ -118,9 +118,9 @@ export const npcStore = defineStore("npc_store", {
       if (this.npcs.length <= 0) {
         this.npcs = [
           {
-            culture: false,
+            has_culture: false,
             name: "Default",
-            npc: {
+            core_npc: {
               ancestry: "",
               class: "",
               culture: "",
@@ -151,7 +151,7 @@ export const npcStore = defineStore("npc_store", {
     updateNpc(npcName: string, newNpc: npc) {
       const npcIndex = this.getNpcIndex(npcName);
       if (npcIndex >= 0) {
-        this.npcs[npcIndex]!.npc = newNpc;
+        this.npcs[npcIndex]!.core_npc = newNpc;
       }
     },
     updateNpcs(newNpcs: npc_list[]) {

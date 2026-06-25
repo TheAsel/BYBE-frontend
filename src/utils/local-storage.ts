@@ -2,20 +2,20 @@ import { encounterStore } from "@/stores/encounter";
 import { itemsStore } from "@/stores/items";
 import { npcStore } from "@/stores/npc";
 import { partyStore } from "@/stores/party";
-import { settingsStore } from "@/stores/settings";
 import { templateStore } from "@/stores/template";
+import { encounter_list } from "@/types/encounter";
 
-import type { encounter_list } from "@/types/encounter";
 import type { npc_list } from "@/types/npc";
+import type { party } from "@/types/party";
 import type { shop_list } from "@/types/shop";
-import type { template } from "@/types/template";
 
-export function validateParties(parties: string): {
-  valid: boolean;
-  result: string;
-} {
+export function validateParties(parties: string): boolean {
+  const party_store = partyStore();
   try {
     const parsedParties = JSON.parse(parties);
+
+    if (!Array.isArray(parsedParties))
+      throw new Error("Invalid saved parties format");
 
     for (const party of parsedParties) {
       if (typeof party !== "object" || party === null)
@@ -50,182 +50,399 @@ export function validateParties(parties: string): {
       }
     }
 
-    return { valid: true, result: JSON.stringify(parsedParties) };
+    const partyNames = parsedParties.map(party => party.name);
+    if (new Set(partyNames).size !== partyNames.length) {
+      throw new Error("Duplicate saved party names");
+    }
+
+    party_store.updateParties(parsedParties);
+    localStorage.setItem("parties", JSON.stringify(parsedParties));
+    return true;
   } catch (error) {
     console.error(error);
-    const defaultParty = {
-      advanced: false,
-      name: "Default",
-      level: 1,
-      size: 4,
-      members: [
-        { level: 1, name: "Player 1" },
-        { level: 1, name: "Player 2" },
-        { level: 1, name: "Player 3" },
-        { level: 1, name: "Player 4" }
-      ]
-    };
-    return { valid: false, result: JSON.stringify(defaultParty) };
-  }
-}
-
-export function updateLocalStorageParties(): void {
-  const party_store = partyStore();
-  const localParty = localStorage.getItem("parties");
-  if (localParty !== null) {
-    const validatedParties = validateParties(localParty);
-    party_store.updateParties(JSON.parse(validatedParties.result));
-    localStorage.setItem("parties", validatedParties.result);
-  }
-}
-
-export function updateLocalStorageEncounters(): void {
-  const encounter_store = encounterStore();
-  const localEncounters = localStorage.getItem("encounters");
-  if (localEncounters !== null) {
-    try {
-      const parsedEncounters = JSON.parse(localEncounters);
-      if (Array.isArray(parsedEncounters)) {
-        const isCompatible = parsedEncounters.every(
-          p => typeof p.name === "string" && Array.isArray(p.creatures)
-        );
-        if (isCompatible) {
-          const encounters: encounter_list[] = parsedEncounters;
-          const encounterNames = encounters.map(p => p.name);
-          if (new Set(encounterNames).size !== encounterNames.length) {
-            throw new Error("Duplicate saved encounter names");
-          }
-          encounter_store.updateEncounters(encounters);
-        } else {
-          throw new Error("Invalid saved encounter format");
-        }
-      } else {
-        throw new TypeError("Invalid saved encounter format");
-      }
-    } catch (error) {
-      console.error(error);
-      const defaultEncounter = { creatures: [], name: "Default" };
-      localStorage.setItem("encounters", JSON.stringify([defaultEncounter]));
-      encounter_store.updateEncounters([defaultEncounter]);
-    }
-  }
-}
-
-export function updateLocalStorageShops(): void {
-  const items_store = itemsStore();
-  const localShops = localStorage.getItem("shops");
-  if (localShops !== null) {
-    try {
-      const parsedShops = JSON.parse(localShops);
-      if (Array.isArray(parsedShops)) {
-        const isCompatible = parsedShops.every(
-          p => typeof p.name === "string" && Array.isArray(p.items)
-        );
-        if (isCompatible) {
-          const shops: shop_list[] = parsedShops;
-          const shopNames = shops.map(p => p.name);
-          if (new Set(shopNames).size !== shopNames.length) {
-            throw new Error("Duplicate saved shop names");
-          }
-          items_store.updateShops(shops);
-        } else {
-          throw new Error("Invalid saved shop format");
-        }
-      } else {
-        throw new TypeError("Invalid saved shop format");
-      }
-    } catch (error) {
-      console.error(error);
-      const defaultShop = { items: [], name: "Default" };
-      localStorage.setItem("shops", JSON.stringify([defaultShop]));
-      items_store.updateShops([defaultShop]);
-    }
-  }
-}
-
-export function updateLocalStorageTemplates(): void {
-  const template_store = templateStore();
-  const localTemplates = localStorage.getItem("templates");
-  if (localTemplates !== null) {
-    try {
-      const parsedTemplates = JSON.parse(localTemplates);
-      if (Array.isArray(parsedTemplates)) {
-        const isCompatible = parsedTemplates.every(
-          p => typeof p.name === "string" && typeof p.default === "boolean"
-        );
-        if (isCompatible) {
-          const templates: template[] = parsedTemplates;
-          const templateNames = templates.map(p => p.name);
-          if (new Set(templateNames).size !== templateNames.length) {
-            throw new Error("Duplicate saved template names");
-          }
-          for (const template of templates) {
-            template.default = false;
-          }
-          template_store.updateTemplates(templates);
-        } else {
-          throw new Error("Invalid saved template format");
-        }
-      } else {
-        throw new TypeError("Invalid saved template format");
-      }
-    } catch (error) {
-      console.error(error);
-      localStorage.setItem("shops", JSON.stringify([]));
-      template_store.updateTemplates([]);
-    }
-  }
-}
-
-export function updateLocalStorageNpcs(): void {
-  const npc_store = npcStore();
-  const settings_store = settingsStore();
-
-  const localNpcs = localStorage.getItem("npcs");
-  if (localNpcs !== null) {
-    try {
-      const parsedNpcs = JSON.parse(localNpcs);
-      if (Array.isArray(parsedNpcs)) {
-        const isCompatible = parsedNpcs.every(p => typeof p.name === "string");
-        if (isCompatible) {
-          const npcList: npc_list[] = parsedNpcs;
-          const npcNames = npcList.map(p => p.name);
-          if (new Set(npcNames).size !== npcNames.length) {
-            throw new Error("Duplicate saved npc names");
-          }
-          npc_store.updateNpcs(npcList);
-        } else {
-          throw new Error("Invalid saved npc format");
-        }
-      } else {
-        throw new TypeError("Invalid saved npc format");
-      }
-    } catch (error) {
-      console.error(error);
-      const defaultNpc: npc_list = {
-        culture: false,
+    const defaultParty: party[] = [
+      {
+        advanced: false,
         name: "Default",
-        npc: {
+        level: 1,
+        size: 4,
+        members: [
+          { level: 1, name: "Player 1" },
+          { level: 1, name: "Player 2" },
+          { level: 1, name: "Player 3" },
+          { level: 1, name: "Player 4" }
+        ]
+      }
+    ];
+    party_store.updateParties(defaultParty);
+    localStorage.setItem("parties", JSON.stringify(defaultParty));
+    return false;
+  }
+}
+
+export function validateEncounters(encounters: string): boolean {
+  const encounter_store = encounterStore();
+  try {
+    const parsedEncounters = JSON.parse(encounters);
+
+    if (!Array.isArray(parsedEncounters))
+      throw new Error("Invalid saved encounters format");
+
+    for (const encounter of parsedEncounters) {
+      if (typeof encounter !== "object" || encounter === null)
+        throw new Error("Invalid saved encounter");
+      if (typeof encounter.name !== "string")
+        throw new Error("Invalid saved encounter name");
+
+      if (!Array.isArray(encounter.creatures))
+        throw new Error("Invalid saved encounter creatures");
+
+      for (const creature of encounter.creatures) {
+        if (typeof creature !== "object" || creature === null)
+          throw new Error("Invalid saved encounter creature");
+        if (typeof creature.id !== "number")
+          throw new Error("Invalid saved encounter creature id");
+        if (typeof creature.name !== "string")
+          throw new Error("Invalid saved encounter creature name");
+        if (typeof creature.level !== "number")
+          throw new Error("Invalid saved encounter creature level");
+        if (typeof creature.game !== "string")
+          throw new Error("Invalid saved encounter creature game");
+        if (
+          typeof creature.archive_link !== "string" &&
+          creature.archive_link !== null
+        )
+          throw new Error("Invalid saved encounter creature link");
+        if (typeof creature.quantity !== "number")
+          throw new Error("Invalid saved encounter creature quantity");
+        if (typeof creature.is_hazard !== "boolean")
+          throw new Error("Invalid saved encounter creature is_hazard");
+        if (creature.is_hazard && typeof creature.complexity !== "string")
+          throw new Error("Invalid saved encounter creature complexity");
+        if (!creature.is_hazard && typeof creature.variant !== "string")
+          throw new Error("Invalid saved encounter creature variant");
+      }
+    }
+
+    const encounterNames = parsedEncounters.map(encounter => encounter.name);
+    if (new Set(encounterNames).size !== encounterNames.length) {
+      throw new Error("Duplicate saved encounter names");
+    }
+
+    encounter_store.updateEncounters(parsedEncounters);
+    localStorage.setItem("encounters", JSON.stringify(parsedEncounters));
+    return true;
+  } catch (error) {
+    console.error(error);
+    const defaultEncounter: encounter_list[] = [
+      { creatures: [], name: "Default" }
+    ];
+    encounter_store.updateEncounters(defaultEncounter);
+    localStorage.setItem("encounters", JSON.stringify(defaultEncounter));
+    return false;
+  }
+}
+
+export function validateShops(shops: string): boolean {
+  const item_store = itemsStore();
+  try {
+    const parsedShops = JSON.parse(shops);
+
+    if (!Array.isArray(parsedShops))
+      throw new Error("Invalid saved shops format");
+
+    for (const shop of parsedShops) {
+      if (typeof shop !== "object" || shop === null)
+        throw new Error("Invalid saved shop");
+      if (typeof shop.name !== "string")
+        throw new Error("Invalid saved shop name");
+
+      if (!Array.isArray(shop.items))
+        throw new Error("Invalid saved shop items");
+
+      for (const item of shop.items) {
+        if (typeof item !== "object" || item === null)
+          throw new Error("Invalid saved shop item");
+        if (typeof item.id !== "number")
+          throw new Error("Invalid saved shop item id");
+        if (typeof item.name !== "string")
+          throw new Error("Invalid saved shop item name");
+        if (typeof item.level !== "number")
+          throw new Error("Invalid saved shop item level");
+        if (typeof item.game !== "string")
+          throw new Error("Invalid saved shop item game");
+        if (typeof item.archive_link !== "string")
+          throw new Error("Invalid saved shop item link");
+        if (typeof item.quantity !== "number")
+          throw new Error("Invalid saved shop item quantity");
+        if (typeof item.type !== "string")
+          throw new Error("Invalid saved shop item type");
+        if (typeof item.price !== "number")
+          throw new Error("Invalid saved shop item price");
+      }
+    }
+
+    const shopNames = parsedShops.map(shop => shop.name);
+    if (new Set(shopNames).size !== shopNames.length) {
+      throw new Error("Duplicate saved shop names");
+    }
+
+    item_store.updateShops(parsedShops);
+    localStorage.setItem("shops", JSON.stringify(parsedShops));
+    return true;
+  } catch (error) {
+    console.error(error);
+    const defaultShop: shop_list[] = [{ items: [], name: "Default" }];
+    item_store.updateShops(defaultShop);
+    localStorage.setItem("shops", JSON.stringify(defaultShop));
+    return false;
+  }
+}
+
+export function validateTemplates(templates: string): boolean {
+  const template_store = templateStore();
+  try {
+    const parsedTemplates = JSON.parse(templates);
+
+    if (!Array.isArray(parsedTemplates))
+      throw new Error("Invalid saved templates format");
+
+    for (const template of parsedTemplates) {
+      if (typeof template !== "object" || template === null)
+        throw new Error("Invalid saved template");
+      if (typeof template.name !== "string")
+        throw new Error("Invalid saved template name");
+      if (typeof template.description !== "string")
+        throw new Error("Invalid saved template description");
+      if (typeof template.default !== "boolean")
+        throw new Error("Invalid saved template default");
+      template.default = false;
+
+      if ("source_filter" in template) {
+        template.item_sources = template.source_filter;
+        delete template.source_filter;
+      }
+      if (template.item_sources) {
+        if (!Array.isArray(template.item_sources))
+          throw new Error("Invalid saved template sources format");
+        if (
+          template.item_sources.some(
+            (source: unknown) => typeof source !== "string"
+          )
+        ) {
+          throw new Error("Invalid saved template sources");
+        }
+      }
+
+      if ("rarity_filter" in template) {
+        template.item_rarities = template.rarity_filter;
+        delete template.rarity_filter;
+      }
+      if ("item_rarities" in template) {
+        if (!Array.isArray(template.item_rarities))
+          throw new Error("Invalid saved template rarities format");
+        if (
+          template.item_rarities.some(
+            (rarity: unknown) => typeof rarity !== "string"
+          )
+        ) {
+          throw new Error("Invalid saved template rarities");
+        }
+      }
+
+      if ("trait_blacklist_filter" in template) {
+        template.item_traits_blacklist = template.trait_blacklist_filter;
+        delete template.trait_blacklist_filter;
+      }
+      if (template.item_traits_blacklist) {
+        if (!Array.isArray(template.item_traits_blacklist))
+          throw new Error("Invalid saved template traits blacklist format");
+        if (
+          template.item_traits_blacklist.some(
+            (trait: unknown) => typeof trait !== "string"
+          )
+        ) {
+          throw new Error("Invalid saved template traits blacklist");
+        }
+      }
+
+      if ("trait_whitelist_filter" in template) {
+        template.item_traits_whitelist = template.trait_whitelist_filter;
+        delete template.trait_whitelist_filter;
+      }
+      if ("item_traits_whitelist" in template) {
+        if (!Array.isArray(template.item_traits_whitelist))
+          throw new Error("Invalid saved template traits whitelist format");
+        if (
+          template.item_traits_whitelist.some(
+            (trait: unknown) => typeof trait !== "string"
+          )
+        ) {
+          throw new Error("Invalid saved template traits whitelist");
+        }
+      }
+
+      if ("type_filter" in template) {
+        template.item_types = template.type_filter;
+        delete template.type_filter;
+      }
+      if ("item_types" in template) {
+        if (!Array.isArray(template.item_types))
+          throw new Error("Invalid saved template types format");
+        if (
+          template.item_types.some((type: unknown) => typeof type !== "string")
+        ) {
+          throw new Error("Invalid saved template types");
+        }
+      }
+
+      if (typeof template.armor_percentage !== "number")
+        throw new Error("Invalid saved template armor percentage");
+      if (typeof template.equipment_percentage !== "number")
+        throw new Error("Invalid saved template equipment percentage");
+      if (typeof template.shield_percentage !== "number")
+        throw new Error("Invalid saved template shield percentage");
+      if (typeof template.weapon_percentage !== "number")
+        throw new Error("Invalid saved template weapon percentage");
+    }
+
+    const templateNames = parsedTemplates.map(template => template.name);
+    if (new Set(templateNames).size !== templateNames.length) {
+      throw new Error("Duplicate saved template names");
+    }
+
+    if (
+      templateNames.some(name =>
+        ["General", "Blacksmith", "Alchemist"].includes(name)
+      )
+    )
+      throw new Error("Illegal saved template names");
+
+    template_store.updateTemplates(parsedTemplates);
+    localStorage.setItem("templates", JSON.stringify(parsedTemplates));
+    return true;
+  } catch (error) {
+    console.error(error);
+    template_store.updateTemplates([]);
+    localStorage.setItem("templates", JSON.stringify([]));
+    return false;
+  }
+}
+
+export function validateNpcs(npcs: string): boolean {
+  const npc_store = npcStore();
+  try {
+    const parsedNpcs = JSON.parse(npcs);
+
+    if (!Array.isArray(parsedNpcs))
+      throw new Error("Invalid saved parties format");
+
+    if (parsedNpcs.length === 0) throw new Error("Empty saved npc");
+
+    for (const npc of parsedNpcs) {
+      if (typeof npc !== "object" || npc === null)
+        throw new Error("Invalid saved npc");
+      if (typeof npc.name !== "string")
+        throw new Error("Invalid saved npc list name");
+      if ("culture" in npc) {
+        if (npc.culture === "") {
+          npc.culture = false;
+        }
+        npc.has_culture = npc.culture;
+        delete npc.culture;
+      }
+      if (typeof npc.has_culture !== "boolean")
+        throw new Error("Invalid saved npc has_culture");
+      if ("npc" in npc) {
+        npc.core_npc = npc.npc;
+        delete npc.npc;
+      }
+      if (typeof npc.core_npc !== "object" || npc.npc === null)
+        throw new Error("Invalid saved core_npc");
+      if (typeof npc.core_npc.name !== "string")
+        throw new Error("Invalid saved npc name");
+      if (
+        typeof npc.core_npc.nickname !== "string" &&
+        npc.core_npc.nickname !== null
+      )
+        throw new Error("Invalid saved npc nickname");
+      if (typeof npc.core_npc.gender !== "string")
+        throw new Error("Invalid saved npc gender");
+      if (typeof npc.core_npc.ancestry !== "string")
+        throw new Error("Invalid saved npc ancestry");
+      if (typeof npc.core_npc.culture !== "string")
+        throw new Error("Invalid saved npc culture");
+      if (typeof npc.core_npc.class !== "string")
+        throw new Error("Invalid saved npc class");
+      if (typeof npc.core_npc.job !== "string")
+        throw new Error("Invalid saved npc job");
+      if (typeof npc.core_npc.level !== "number")
+        throw new Error("Invalid saved npc level");
+      if (typeof npc.core_npc.languages !== "string")
+        throw new Error("Invalid saved npc languages");
+      if (typeof npc.core_npc.quirk !== "string")
+        throw new Error("Invalid saved npc quirk");
+      if (typeof npc.core_npc.description !== "string")
+        throw new Error("Invalid saved npc description");
+      if (typeof npc.core_npc.personality !== "string")
+        throw new Error("Invalid saved npc personality");
+      if (typeof npc.core_npc.relationships !== "string")
+        throw new Error("Invalid saved npc relationships");
+      if (typeof npc.core_npc.ideology !== "string")
+        throw new Error("Invalid saved npc ideology");
+
+      if (!Array.isArray(npc.core_npc.custom_fields))
+        throw new Error("Invalid saved custom fields format");
+
+      for (const field of npc.core_npc.custom_fields) {
+        if (typeof field !== "object" || field === null)
+          throw new Error("Invalid saved custom field");
+        if (typeof field.name !== "string")
+          throw new Error("Invalid saved custom field name");
+        if (typeof field.body !== "string")
+          throw new Error("Invalid saved custom field body");
+      }
+
+      if (typeof npc.core_npc.game !== "string")
+        throw new Error("Invalid saved npc game");
+    }
+
+    const npcNames = parsedNpcs.map(npc => npc.name);
+    if (new Set(npcNames).size !== npcNames.length) {
+      throw new Error("Duplicate saved npc names");
+    }
+
+    npc_store.updateNpcs(parsedNpcs);
+    localStorage.setItem("npcs", JSON.stringify(parsedNpcs));
+    return true;
+  } catch (error) {
+    console.error(error);
+    const defaultNpc: npc_list[] = [
+      {
+        has_culture: false,
+        name: "Default",
+        core_npc: {
           ancestry: "",
           class: "",
           culture: "",
           custom_fields: [{ body: "", name: "" }],
           description: "",
-          game: settings_store.game,
+          game: "pf",
           gender: "",
           ideology: "",
           job: "",
           languages: "",
-          level: 0,
+          level: -1,
           name: "",
           nickname: "",
           personality: "",
           quirk: "",
           relationships: ""
         }
-      };
-      localStorage.setItem("npcs", JSON.stringify([defaultNpc]));
-      npc_store.updateNpcs([defaultNpc]);
-    }
+      }
+    ];
+    npc_store.updateNpcs(defaultNpc);
+    localStorage.setItem("npcs", JSON.stringify(defaultNpc));
+    return false;
   }
 }

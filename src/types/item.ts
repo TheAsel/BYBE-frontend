@@ -1,6 +1,13 @@
 import type { games, rarities, sizes } from "@/types/filters";
 import type { action, range, trait } from "@/types/generic";
 
+export type item_type =
+  | "Armor"
+  | "Consumable"
+  | "Equipment"
+  | "Weapon"
+  | "Shield";
+
 export type item = {
   game: games;
   armor_data?: {
@@ -28,7 +35,7 @@ export type item = {
     price: number;
     usage: string | null;
     group: string | null;
-    item_type: "Armor" | "Consumable" | "Equipment" | "Weapon" | "Shield";
+    item_type: item_type;
     material_grade: string | null;
     material_type: string | null;
     number_of_uses: number | null;

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {
   matArrowDownward,
-  matArrowUpward
+  matArrowUpward,
+  matPriorityHigh
 } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
-import { scroll } from "quasar";
+import { scroll, useQuasar } from "quasar";
 import Shepherd from "shepherd.js";
 import { onMounted, onUnmounted, ref } from "vue";
 
@@ -13,10 +14,7 @@ import EncounterSheet from "@/components/encounter/EncounterSheet.vue";
 import EncounterTable from "@/components/encounter/EncounterTable.vue";
 import { encounterStore } from "@/stores/encounter";
 import { settingsStore } from "@/stores/settings";
-import {
-  updateLocalStorageEncounters,
-  updateLocalStorageParties
-} from "@/utils/local-storage";
+import { validateEncounters, validateParties } from "@/utils/local-storage";
 
 import type { min_creature_hazard } from "@/types/encounter";
 
@@ -30,14 +28,34 @@ useHead({
   title: "Encounter Builder - BYBE"
 });
 
-const settings_store = settingsStore();
+const $q = useQuasar();
+
 const encounter_store = encounterStore();
+const settings_store = settingsStore();
+
 const screenWidth = ref(screen.width);
 
-const scrollUp = ref(false);
+const localParty = localStorage.getItem("parties");
+if (localParty !== null && !validateParties(localParty)) {
+  $q.notify({
+    icon: matPriorityHigh,
+    message: "Invalid loaded party format",
+    progress: true,
+    type: "warning"
+  });
+}
 
-updateLocalStorageParties();
-updateLocalStorageEncounters();
+const localEncounters = localStorage.getItem("encounters");
+if (localEncounters !== null && !validateEncounters(localEncounters)) {
+  $q.notify({
+    icon: matPriorityHigh,
+    message: "Invalid loaded encounter format",
+    progress: true,
+    type: "warning"
+  });
+}
+
+const scrollUp = ref(false);
 
 // PF2E encounter
 const tmpKoboldMage: min_creature_hazard = {
@@ -47,7 +65,8 @@ const tmpKoboldMage: min_creature_hazard = {
   is_hazard: false,
   level: 2,
   name: "Kobold Cavern Mage",
-  variant: "Base"
+  variant: "Base",
+  quantity: 1
 };
 const tmpKoboldWarrior: min_creature_hazard = {
   archive_link: "https://2e.aonprd.com/npcs?id=3072",
@@ -56,7 +75,8 @@ const tmpKoboldWarrior: min_creature_hazard = {
   is_hazard: false,
   level: -1,
   name: "Kobold Warrior",
-  variant: "Base"
+  variant: "Base",
+  quantity: 1
 };
 const tmpMirrorDoor: min_creature_hazard = {
   archive_link: "https://2e.aonprd.com/npcs?id=626",
@@ -65,7 +85,8 @@ const tmpMirrorDoor: min_creature_hazard = {
   id: 459,
   is_hazard: true,
   level: -1,
-  name: "Mirror Door"
+  name: "Mirror Door",
+  quantity: 1
 };
 
 //SF2E encounter
@@ -76,7 +97,8 @@ const tmpFerrofluidOoze: min_creature_hazard = {
   is_hazard: false,
   level: 2,
   name: "Ferrofluid Ooze",
-  variant: "Base"
+  variant: "Base",
+  quantity: 1
 };
 const tmpAnaciteWingbot: min_creature_hazard = {
   archive_link: "https://2e.aonsrd.com/creatures/2-anacite-wingbot",
@@ -85,7 +107,8 @@ const tmpAnaciteWingbot: min_creature_hazard = {
   is_hazard: false,
   level: -1,
   name: "Anacite Wingbot",
-  variant: "Base"
+  variant: "Base",
+  quantity: 1
 };
 const tmpAntiGravityPulse: min_creature_hazard = {
   archive_link: "https://2e.aonsrd.com/hazards/5-anti-gravity-pulse",
@@ -94,7 +117,8 @@ const tmpAntiGravityPulse: min_creature_hazard = {
   id: 18,
   is_hazard: true,
   level: 0,
-  name: "Anti-Gravity Pulse"
+  name: "Anti-Gravity Pulse",
+  quantity: 1
 };
 
 Shepherd.on("start", () => {

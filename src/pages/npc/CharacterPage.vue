@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import NpcSheet from "@/components/npc/NpcSheet.vue";
 import { npcStore } from "@/stores/npc";
 import { settingsStore } from "@/stores/settings";
-import { updateLocalStorageNpcs } from "@/utils/local-storage";
+import { validateNpcs } from "@/utils/local-storage";
 
 const title = ref("NPC Sheet - BYBE");
 
@@ -30,7 +30,15 @@ const settings_store = settingsStore();
 
 const npcId = Number(route.query.id);
 
-updateLocalStorageNpcs();
+const localNpc = localStorage.getItem("npcs");
+if (localNpc !== null && !validateNpcs(localNpc)) {
+  $q.notify({
+    icon: matPriorityHigh,
+    message: "Invalid loaded npcs format",
+    progress: true,
+    type: "warning"
+  });
+}
 
 if (Number.isNaN(npcId) || npcId < 0 || npcId >= npc_store.npcs.length) {
   console.error("Missing NPC ID");

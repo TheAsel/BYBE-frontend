@@ -11,12 +11,13 @@ import { useQuasar } from "quasar";
 import { ref } from "vue";
 
 import { settingsStore } from "@/stores/settings";
-import { validateParties } from "@/utils/local-storage";
-
-import type { encounter_list } from "@/types/encounter";
-import type { npc_list } from "@/types/npc";
-import type { shop_list } from "@/types/shop";
-import type { template } from "@/types/template";
+import {
+  validateEncounters,
+  validateNpcs,
+  validateParties,
+  validateShops,
+  validateTemplates
+} from "@/utils/local-storage";
 
 const $q = useQuasar();
 
@@ -157,87 +158,51 @@ const togglePwL = (): void => {
 };
 
 const validateData = (result: string): void => {
-  const parsedData = JSON.parse(result);
   try {
+    const parsedData = JSON.parse(result);
     for (const key of Object.keys(parsedData)) {
       switch (key) {
         case "encounters": {
-          const parsedEncounter = JSON.parse(parsedData[key]);
-          if (Array.isArray(parsedEncounter)) {
-            const isCompatible = parsedEncounter.every(
-              p => typeof p.name === "string" && Array.isArray(p.creatures)
-            );
-            if (isCompatible) {
-              const encounters: encounter_list[] = parsedEncounter;
-              const encounterNames = encounters.map(p => p.name);
-              if (new Set(encounterNames).size !== encounterNames.length) {
-                throw new Error("Duplicate loaded encounter names");
-              }
-            } else {
-              throw new Error("Invalid loaded encounter format");
-            }
-          } else {
-            throw new TypeError("Invalid loaded encounter format");
+          if (!validateEncounters(parsedData[key])) {
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded encounter format",
+              progress: true,
+              type: "warning"
+            });
           }
           break;
         }
         case "shops": {
-          const parsedShop = JSON.parse(parsedData[key]);
-          if (Array.isArray(parsedShop)) {
-            const isCompatible = parsedShop.every(
-              p => typeof p.name === "string" && Array.isArray(p.items)
-            );
-            if (isCompatible) {
-              const shops: shop_list[] = parsedShop;
-              const shopNames = shops.map(p => p.name);
-              if (new Set(shopNames).size !== shopNames.length) {
-                throw new Error("Duplicate loaded shop names");
-              }
-            } else {
-              throw new Error("Invalid loaded shop format");
-            }
-          } else {
-            throw new TypeError("Invalid loaded shop format");
+          if (!validateShops(parsedData[key])) {
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded shop format",
+              progress: true,
+              type: "warning"
+            });
           }
           break;
         }
         case "npcs": {
-          const parsedNpc = JSON.parse(parsedData[key]);
-          if (Array.isArray(parsedNpc)) {
-            const isCompatible = parsedNpc.every(
-              p => typeof p.name === "string"
-            );
-            if (isCompatible) {
-              const npcs: npc_list[] = parsedNpc;
-              const npcNames = npcs.map(p => p.name);
-              if (new Set(npcNames).size !== npcNames.length) {
-                throw new Error("Duplicate loaded npc names");
-              }
-            } else {
-              throw new Error("Invalid loaded npc format");
-            }
-          } else {
-            throw new TypeError("Invalid loaded npc format");
+          if (!validateNpcs(parsedData[key])) {
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded npcs format",
+              progress: true,
+              type: "warning"
+            });
           }
           break;
         }
         case "templates": {
-          const parsedTemplates = JSON.parse(parsedData[key]);
-          if (Array.isArray(parsedTemplates)) {
-            const isCompatible = parsedTemplates.every(
-              p => typeof p.name === "string" && typeof p.default === "boolean"
-            );
-            if (isCompatible) {
-              const templates: template[] = parsedTemplates;
-              const templatesNames = templates.map(p => p.name);
-              if (new Set(templatesNames).size !== templatesNames.length) {
-                throw new Error("Duplicate loaded template names");
-              }
-            } else {
-              throw new Error("Invalid loaded template format");
-            }
-          } else {
-            throw new TypeError("Invalid loaded template format");
+          if (!validateTemplates(parsedData[key])) {
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded template format",
+              progress: true,
+              type: "warning"
+            });
           }
           break;
         }
@@ -247,39 +212,64 @@ const validateData = (result: string): void => {
               parsedData[key].toLowerCase()
             )
           ) {
-            throw new Error("Invalid loaded game version value");
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded game version value",
+              progress: true,
+              type: "warning"
+            });
           }
           break;
         }
         case "parties": {
-          if (!validateParties(parsedData[key]).valid) {
-            throw new TypeError("Invalid loaded party format");
+          if (!validateParties(parsedData[key])) {
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded party format",
+              progress: true,
+              type: "warning"
+            });
           }
           break;
         }
         case "theme": {
           if (parsedData[key] !== "light" && parsedData[key] !== "dark") {
-            throw new Error("Invalid loaded theme value");
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded theme value",
+              progress: true,
+              type: "warning"
+            });
           }
           break;
         }
         case "is_pwl_on": {
           if (parsedData[key] !== "true" && parsedData[key] !== "false") {
-            throw new Error("Invalid loaded pwl value");
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded pwl value",
+              progress: true,
+              type: "warning"
+            });
           }
           break;
         }
         case "hide_support": {
           if (parsedData[key] !== "true" && parsedData[key] !== "false") {
-            throw new Error("Invalid loaded hide support value");
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded hide support value",
+              progress: true,
+              type: "warning"
+            });
           }
           break;
         }
         default: {
-          throw new Error(`Unknown loaded key: ${key}`);
+          console.error(`Unknown loaded key: ${key}`);
+          continue;
         }
       }
-      localStorage.setItem(key, parsedData[key]);
     }
     globalThis.location.reload();
   } catch (error) {

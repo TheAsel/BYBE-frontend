@@ -61,9 +61,9 @@ const tmpNpc = ref<npc_list>(npc_store.npcs[npc_store.activeNpc]!);
 const npcList = ref<string[]>(npc_store.npcs.map(npc => npc.name));
 
 tmpNpc.value = {
-  culture: npc_store.npcs[npc_store.activeNpc]!.culture,
+  has_culture: npc_store.npcs[npc_store.activeNpc]!.has_culture,
   name: npc_store.npcs[npc_store.activeNpc]!.name,
-  npc: npc_store.npcs[npc_store.activeNpc]!.npc
+  core_npc: npc_store.npcs[npc_store.activeNpc]!.core_npc
 };
 
 const generateParameterNpc = debounce(
@@ -94,7 +94,7 @@ const generateParameterNpc = debounce(
           if (!newLevel) {
             throw new TypeError("Error generating npc level");
           }
-          npc_store.npcs[npc_store.activeNpc]!.npc.level = newLevel;
+          npc_store.npcs[npc_store.activeNpc]!.core_npc.level = newLevel;
         } else {
           const newParameter = await npcParametersGenerator(
             settings_store.game,
@@ -106,32 +106,32 @@ const generateParameterNpc = debounce(
           // Regex: adds spaces between words
           switch (parameter) {
             case "ancestry": {
-              npc_store.npcs[npc_store.activeNpc]!.npc.ancestry =
+              npc_store.npcs[npc_store.activeNpc]!.core_npc.ancestry =
                 newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "culture": {
-              npc_store.npcs[npc_store.activeNpc]!.npc.culture =
+              npc_store.npcs[npc_store.activeNpc]!.core_npc.culture =
                 newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "class": {
-              npc_store.npcs[npc_store.activeNpc]!.npc.class =
+              npc_store.npcs[npc_store.activeNpc]!.core_npc.class =
                 newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "gender": {
-              npc_store.npcs[npc_store.activeNpc]!.npc.gender =
+              npc_store.npcs[npc_store.activeNpc]!.core_npc.gender =
                 newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "job": {
-              npc_store.npcs[npc_store.activeNpc]!.npc.job =
+              npc_store.npcs[npc_store.activeNpc]!.core_npc.job =
                 newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
             case "nickname": {
-              npc_store.npcs[npc_store.activeNpc]!.npc.nickname =
+              npc_store.npcs[npc_store.activeNpc]!.core_npc.nickname =
                 newParameter.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
               break;
             }
@@ -168,14 +168,14 @@ const generateNamesNpc = debounce(async (): Promise<void> => {
 
     if (
       namesIndex >= namesList.length - 1 ||
-      tmpGender !== npc_store.npcs[npc_store.activeNpc]!.npc.gender ||
-      tmpAncestry !== npc_store.npcs[npc_store.activeNpc]!.npc.ancestry ||
-      tmpCulture !== npc_store.npcs[npc_store.activeNpc]!.npc.culture
+      tmpGender !== npc_store.npcs[npc_store.activeNpc]!.core_npc.gender ||
+      tmpAncestry !== npc_store.npcs[npc_store.activeNpc]!.core_npc.ancestry ||
+      tmpCulture !== npc_store.npcs[npc_store.activeNpc]!.core_npc.culture
     ) {
-      tmpGender = npc_store.npcs[npc_store.activeNpc]!.npc.gender!;
-      tmpAncestry = npc_store.npcs[npc_store.activeNpc]!.npc.ancestry!;
+      tmpGender = npc_store.npcs[npc_store.activeNpc]!.core_npc.gender!;
+      tmpAncestry = npc_store.npcs[npc_store.activeNpc]!.core_npc.ancestry!;
       if (settings_store.game === "pf") {
-        tmpCulture = npc_store.npcs[npc_store.activeNpc]!.npc.culture!;
+        tmpCulture = npc_store.npcs[npc_store.activeNpc]!.core_npc.culture!;
       }
 
       const body: {
@@ -187,55 +187,55 @@ const generateNamesNpc = debounce(async (): Promise<void> => {
       } = {};
 
       if (
-        npc_store.npcs[npc_store.activeNpc]!.npc.gender &&
+        npc_store.npcs[npc_store.activeNpc]!.core_npc.gender &&
         npc_parameters_store.npcParameters.genders.includes(
-          npc_store.npcs[npc_store.activeNpc]!.npc.gender!
+          npc_store.npcs[npc_store.activeNpc]!.core_npc.gender!
         )
       ) {
         body.gender = npc_store.npcs[
           npc_store.activeNpc
-        ]!.npc.gender!.replaceAll(" ", "");
+        ]!.core_npc.gender!.replaceAll(" ", "");
       }
 
       if (settings_store.game === "sf") {
         if (
-          npc_store.npcs[npc_store.activeNpc]!.npc.ancestry &&
+          npc_store.npcs[npc_store.activeNpc]!.core_npc.ancestry &&
           npc_parameters_store.npcParameters.ancestries.includes(
-            npc_store.npcs[npc_store.activeNpc]!.npc.ancestry!
+            npc_store.npcs[npc_store.activeNpc]!.core_npc.ancestry!
           )
         ) {
           body.origin = {
             FromAncestry: npc_store.npcs[
               npc_store.activeNpc
-            ]!.npc.ancestry!.replaceAll(" ", "")
+            ]!.core_npc.ancestry!.replaceAll(" ", "")
           };
         }
       } else {
         if (
-          !npc_store.npcs[npc_store.activeNpc]!.culture &&
-          npc_store.npcs[npc_store.activeNpc]!.npc.ancestry &&
+          !npc_store.npcs[npc_store.activeNpc]!.has_culture &&
+          npc_store.npcs[npc_store.activeNpc]!.core_npc.ancestry &&
           npc_parameters_store.npcParameters.ancestries.includes(
-            npc_store.npcs[npc_store.activeNpc]!.npc.ancestry!
+            npc_store.npcs[npc_store.activeNpc]!.core_npc.ancestry!
           )
         ) {
           body.origin = {
             FromAncestry: npc_store.npcs[
               npc_store.activeNpc
-            ]!.npc.ancestry!.replaceAll(" ", "")
+            ]!.core_npc.ancestry!.replaceAll(" ", "")
           };
         }
 
         if (
-          npc_store.npcs[npc_store.activeNpc]!.culture &&
-          npc_store.npcs[npc_store.activeNpc]!.npc.culture &&
+          npc_store.npcs[npc_store.activeNpc]!.has_culture &&
+          npc_store.npcs[npc_store.activeNpc]!.core_npc.culture &&
           npc_parameters_store.npcParameters.cultures.includes(
-            npc_store.npcs[npc_store.activeNpc]!.npc.culture!
+            npc_store.npcs[npc_store.activeNpc]!.core_npc.culture!
           )
         ) {
           body.origin = {
             FromCulture: npc_store.npcs[
               npc_store.activeNpc
-            ]!.npc.culture!.replaceAll(" ", "")
+            ]!.core_npc.culture!.replaceAll(" ", "")
           };
         }
 
@@ -260,7 +260,8 @@ const generateNamesNpc = debounce(async (): Promise<void> => {
         }
         namesIndex = 0;
         namesList = newNames;
-        npc_store.npcs[npc_store.activeNpc]!.npc.name = namesList[namesIndex]!;
+        npc_store.npcs[npc_store.activeNpc]!.core_npc.name =
+          namesList[namesIndex]!;
       } catch (error) {
         console.error(error);
         $q.notify({
@@ -272,7 +273,8 @@ const generateNamesNpc = debounce(async (): Promise<void> => {
       }
     } else {
       namesIndex += 1;
-      npc_store.npcs[npc_store.activeNpc]!.npc.name = namesList[namesIndex]!;
+      npc_store.npcs[npc_store.activeNpc]!.core_npc.name =
+        namesList[namesIndex]!;
     }
 
     npc_store.setGenerating(false);
@@ -291,21 +293,23 @@ const closeDialog = (): void => {
 };
 
 const saveChanges = (): void => {
-  npc_store.updateNpc(tmpNpc.value.name, tmpNpc.value.npc);
+  npc_store.updateNpc(tmpNpc.value.name, tmpNpc.value.core_npc);
   localStorage.setItem("npcs", JSON.stringify(npc_store.npcs));
 };
 
 const addCustomField = (): void => {
-  npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields.push({
+  npc_store.npcs[npc_store.activeNpc]!.core_npc.custom_fields.push({
     body: "",
     name: ""
   });
 };
 
 const removeCustomField = (index: number): void => {
-  npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields.splice(index, 1);
-  if (npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields.length === 0) {
-    npc_store.npcs[npc_store.activeNpc]!.npc.custom_fields = [
+  npc_store.npcs[npc_store.activeNpc]!.core_npc.custom_fields.splice(index, 1);
+  if (
+    npc_store.npcs[npc_store.activeNpc]!.core_npc.custom_fields.length === 0
+  ) {
+    npc_store.npcs[npc_store.activeNpc]!.core_npc.custom_fields = [
       { body: "", name: "" }
     ];
   }
@@ -386,7 +390,7 @@ await router.replace({
 const openShare = async (): Promise<void> => {
   isGenerating.value = true;
   shareDialog.value = true;
-  const currentNpc = npc_store.npcs[npc_store.activeNpc]!.npc;
+  const currentNpc = npc_store.npcs[npc_store.activeNpc]!.core_npc;
   const body: shareable_npc = {
     list_name: npc_store.npcs[npc_store.activeNpc]?.name
       ? npc_store.npcs[npc_store.activeNpc]!.name
@@ -442,27 +446,27 @@ const importNpc = (): void => {
       class: importNpcData.value?.npcs_data[0].class,
       culture: importNpcData.value?.npcs_data[0].culture,
       custom_fields: [{ body: "", name: "" }],
-      description: null,
+      description: "",
       game: importNpcData.value?.npcs_data[0].game,
       gender: importNpcData.value?.npcs_data[0].gender,
-      ideology: null,
+      ideology: "",
       job: importNpcData.value?.npcs_data[0].job,
-      languages: null,
+      languages: "",
       level: importNpcData.value?.npcs_data[0].level,
       name: importNpcData.value?.npcs_data[0].name,
       nickname: importNpcData.value.npcs_data[0].nickname ?? "",
-      personality: null,
-      quirk: null,
-      relationships: null
+      personality: "",
+      quirk: "",
+      relationships: ""
     };
 
     npc_store.addNpc(importNpcName.value);
     npcList.value = npc_store.npcs.map(npc => npc.name);
     npc_store.updateNpc(importNpcName.value, tmp_npc);
     tmpNpc.value = {
-      culture: npc_store.npcs[npc_store.activeNpc]!.culture,
+      has_culture: npc_store.npcs[npc_store.activeNpc]!.has_culture,
       name: npc_store.npcs[npc_store.activeNpc]!.name,
-      npc: npc_store.npcs[npc_store.activeNpc]!.npc
+      core_npc: npc_store.npcs[npc_store.activeNpc]!.core_npc
     };
     saveChanges();
     importNpcName.value = "";
@@ -476,9 +480,9 @@ const addNpc = (): void => {
     npc_store.addNpc(newNpcName.value);
     npcList.value = npc_store.npcs.map(npc => npc.name);
     tmpNpc.value = {
-      culture: npc_store.npcs[npc_store.activeNpc]!.culture,
+      has_culture: npc_store.npcs[npc_store.activeNpc]!.has_culture,
       name: npc_store.npcs[npc_store.activeNpc]!.name,
-      npc: npc_store.npcs[npc_store.activeNpc]!.npc
+      core_npc: npc_store.npcs[npc_store.activeNpc]!.core_npc
     };
     saveChanges();
     newNpcName.value = "";
@@ -492,9 +496,9 @@ const renameNpc = (): void => {
     npc_store.npcs[npc_store.activeNpc]!.name = newNpcRename.value;
     npcList.value = npc_store.npcs.map(npc => npc.name);
     tmpNpc.value = {
-      culture: npc_store.npcs[npc_store.activeNpc]!.culture,
+      has_culture: npc_store.npcs[npc_store.activeNpc]!.has_culture,
       name: npc_store.npcs[npc_store.activeNpc]!.name,
-      npc: npc_store.npcs[npc_store.activeNpc]!.npc
+      core_npc: npc_store.npcs[npc_store.activeNpc]!.core_npc
     };
     saveChanges();
     newNpcRename.value = "";
@@ -506,9 +510,9 @@ const removeNpc = (): void => {
   npc_store.removeNpc();
   npcList.value = npc_store.npcs.map(npc => npc.name);
   tmpNpc.value = {
-    culture: npc_store.npcs[npc_store.activeNpc]!.culture,
+    has_culture: npc_store.npcs[npc_store.activeNpc]!.has_culture,
     name: npc_store.npcs[npc_store.activeNpc]!.name,
-    npc: npc_store.npcs[npc_store.activeNpc]!.npc
+    core_npc: npc_store.npcs[npc_store.activeNpc]!.core_npc
   };
   saveChanges();
   removeNpcDialog.value = false;
@@ -517,18 +521,18 @@ const removeNpc = (): void => {
 const changeActiveNpc = (selected: string): void => {
   npc_store.changeActiveNpc(npc_store.getNpcIndex(selected));
   tmpNpc.value = {
-    culture: npc_store.npcs[npc_store.activeNpc]!.culture,
+    has_culture: npc_store.npcs[npc_store.activeNpc]!.has_culture,
     name: npc_store.npcs[npc_store.activeNpc]!.name,
-    npc: npc_store.npcs[npc_store.activeNpc]!.npc
+    core_npc: npc_store.npcs[npc_store.activeNpc]!.core_npc
   };
 };
 
 // Save on npc change
 watch(npc_store, () => {
   tmpNpc.value = {
-    culture: npc_store.npcs[npc_store.activeNpc]!.culture,
+    has_culture: npc_store.npcs[npc_store.activeNpc]!.has_culture,
     name: npc_store.npcs[npc_store.activeNpc]!.name,
-    npc: npc_store.npcs[npc_store.activeNpc]!.npc
+    core_npc: npc_store.npcs[npc_store.activeNpc]!.core_npc
   };
   saveChanges();
 });
@@ -925,7 +929,7 @@ watch(npc_store, () => {
             />
             <q-input
               label="Name"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.name"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.name"
               class="tw:grow"
               stack-label
               dense
@@ -970,7 +974,7 @@ watch(npc_store, () => {
             />
             <q-input
               label="Nickname"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.nickname"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.nickname"
               class="tw:grow"
               stack-label
               dense
@@ -1016,7 +1020,7 @@ watch(npc_store, () => {
             />
             <q-input
               label="Gender"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.gender"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.gender"
               class="tw:grow"
               stack-label
               dense
@@ -1037,7 +1041,7 @@ watch(npc_store, () => {
             <span class="tw:mx-2" />
             <span
               v-if="
-                !npc_store.npcs[npc_store.activeNpc]!.culture ||
+                !npc_store.npcs[npc_store.activeNpc]!.has_culture ||
                 settings_store.game === 'sf'
               "
               class="tw:flex-none tw:my-auto! tw:mr-2!"
@@ -1091,11 +1095,11 @@ watch(npc_store, () => {
             </span>
             <q-input
               v-if="
-                !npc_store.npcs[npc_store.activeNpc]!.culture ||
+                !npc_store.npcs[npc_store.activeNpc]!.has_culture ||
                 settings_store.game === 'sf'
               "
               label="Ancestry"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.ancestry"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.ancestry"
               class="tw:grow"
               stack-label
               dense
@@ -1105,7 +1109,7 @@ watch(npc_store, () => {
             <q-input
               v-else
               label="Culture"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.culture"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.culture"
               class="tw:grow"
               stack-label
               dense
@@ -1114,7 +1118,7 @@ watch(npc_store, () => {
             />
             <q-btn
               v-if="
-                !npc_store.npcs[npc_store.activeNpc]!.culture ||
+                !npc_store.npcs[npc_store.activeNpc]!.has_culture ||
                 settings_store.game === 'sf'
               "
               class="tw:flex-none tw:my-auto! tw:ml-2!"
@@ -1167,7 +1171,7 @@ watch(npc_store, () => {
             />
             <q-input
               label="Class"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.class"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.class"
               class="tw:grow"
               stack-label
               dense
@@ -1212,7 +1216,7 @@ watch(npc_store, () => {
             />
             <q-input
               label="Job"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.job"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.job"
               class="tw:grow"
               stack-label
               multiple
@@ -1262,7 +1266,7 @@ watch(npc_store, () => {
                 @click="npc_store.locks.level = true"
               />
               <q-slider
-                v-model="npc_store.npcs[npc_store.activeNpc]!.npc.level"
+                v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.level"
                 class="tw:mx-1"
                 markers
                 label-always
@@ -1292,7 +1296,7 @@ watch(npc_store, () => {
           <div id="shepherd-5" class="tw:py-1 tw:mr-2">
             <q-input
               label="Languages"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.languages"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.languages"
               class="tw:mx-auto"
               outlined
               dense
@@ -1303,7 +1307,7 @@ watch(npc_store, () => {
           <div class="tw:py-1 tw:ml-2">
             <q-input
               label="Quirks"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.quirk"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.quirk"
               class="tw:mx-auto"
               outlined
               dense
@@ -1313,7 +1317,9 @@ watch(npc_store, () => {
           </div>
           <div class="tw:py-1 tw:mr-2">
             <q-input
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.description"
+              v-model="
+                npc_store.npcs[npc_store.activeNpc]!.core_npc.description
+              "
               class="tw:mx-auto"
               outlined
               dense
@@ -1324,7 +1330,9 @@ watch(npc_store, () => {
           </div>
           <div class="tw:py-1 tw:ml-2">
             <q-input
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.personality"
+              v-model="
+                npc_store.npcs[npc_store.activeNpc]!.core_npc.personality
+              "
               class="tw:mx-auto"
               outlined
               dense
@@ -1336,7 +1344,9 @@ watch(npc_store, () => {
           <div class="tw:py-1 tw:mr-2">
             <q-input
               label="Relationships"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.relationships"
+              v-model="
+                npc_store.npcs[npc_store.activeNpc]!.core_npc.relationships
+              "
               class="tw:mx-auto"
               outlined
               dense
@@ -1347,7 +1357,7 @@ watch(npc_store, () => {
           <div class="tw:py-1 tw:ml-2">
             <q-input
               label="Ideology"
-              v-model="npc_store.npcs[npc_store.activeNpc]!.npc.ideology"
+              v-model="npc_store.npcs[npc_store.activeNpc]!.core_npc.ideology"
               class="tw:mx-auto"
               outlined
               dense
@@ -1359,8 +1369,8 @@ watch(npc_store, () => {
         <q-separator class="tw:my-2! tw:mx-6!" style="height: 2px" />
         <div id="shepherd-6" class="tw:mx-6">
           <div
-            v-for="(item, index) in npc_store.npcs[npc_store.activeNpc]!.npc
-              .custom_fields"
+            v-for="(item, index) in npc_store.npcs[npc_store.activeNpc]!
+              .core_npc.custom_fields"
             :key="index"
           >
             <div class="tw:flex tw:gap-6 tw:my-5">

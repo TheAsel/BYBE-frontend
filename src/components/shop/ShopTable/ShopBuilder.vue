@@ -22,7 +22,7 @@ import { settingsStore } from "@/stores/settings";
 import { templateStore } from "@/stores/template";
 import { getGameAonLink } from "@/utils/sheet";
 
-import type { min_item } from "@/types/item";
+import type { item_type, min_item } from "@/types/item";
 import type { shop_data } from "@/types/shop";
 import type { template } from "@/types/template";
 
@@ -66,12 +66,12 @@ const newTemplate = ref<template>({
   description: "",
   equipment_percentage: 0,
   name: "",
-  rarity_filter: [],
+  item_rarities: [],
   shield_percentage: 0,
-  source_filter: [],
-  trait_blacklist_filter: [],
-  trait_whitelist_filter: [],
-  type_filter: [],
+  item_sources: [],
+  item_traits_blacklist: [],
+  item_traits_whitelist: [],
+  item_types: [],
   weapon_percentage: 0
 });
 const removeTemplateDialog = ref(false);
@@ -226,13 +226,13 @@ const generateShop = debounce(async () => {
     if (tmpFilters.value.shop_template.default) {
       body.shop_template = tmpFilters.value.shop_template.name;
     } else {
-      body.source_filter = tmpFilters.value.shop_template.source_filter;
+      body.source_filter = tmpFilters.value.shop_template.item_sources;
       body.trait_blacklist_filter =
-        tmpFilters.value.shop_template.trait_blacklist_filter;
+        tmpFilters.value.shop_template.item_traits_blacklist;
       body.trait_whitelist_filter =
-        tmpFilters.value.shop_template.trait_whitelist_filter;
-      body.rarity_filter = tmpFilters.value.shop_template.rarity_filter;
-      body.type_filter = tmpFilters.value.shop_template.type_filter;
+        tmpFilters.value.shop_template.item_traits_whitelist;
+      body.rarity_filter = tmpFilters.value.shop_template.item_rarities;
+      body.type_filter = tmpFilters.value.shop_template.item_types;
       if (tmpFilters.value.shop_template.armor_percentage! > 0) {
         body.armor_percentage = tmpFilters.value.shop_template.armor_percentage;
       }
@@ -321,12 +321,12 @@ const resetTemplateDialog = (): void => {
     description: "",
     equipment_percentage: 0,
     name: "",
-    rarity_filter: [],
+    item_rarities: [],
     shield_percentage: 0,
-    source_filter: [],
-    trait_blacklist_filter: [],
-    trait_whitelist_filter: [],
-    type_filter: [],
+    item_sources: [],
+    item_traits_blacklist: [],
+    item_traits_whitelist: [],
+    item_types: [],
     weapon_percentage: 0
   };
   for (const trait of selectedTraits.value) {
@@ -352,11 +352,11 @@ const addTemplate = async (): Promise<void> => {
       for (const trait of selectedTraits.value) {
         switch (trait.state) {
           case true: {
-            newTemplate.value.trait_whitelist_filter?.push(trait.value);
+            newTemplate.value.item_traits_whitelist?.push(trait.value);
             break;
           }
           case false: {
-            newTemplate.value.trait_blacklist_filter?.push(trait.value);
+            newTemplate.value.item_traits_blacklist?.push(trait.value);
             break;
           }
           default: {
@@ -365,18 +365,18 @@ const addTemplate = async (): Promise<void> => {
         }
       }
       if (armorOn.value) {
-        newTemplate.value.type_filter?.push("Armor");
+        newTemplate.value.item_types?.push("Armor");
       }
       if (equipmentOn.value) {
-        newTemplate.value.type_filter?.push("Equipment");
+        newTemplate.value.item_types?.push("Equipment");
       }
       if (shieldOn.value) {
-        newTemplate.value.type_filter?.push("Shield");
+        newTemplate.value.item_types?.push("Shield");
       }
       if (weaponOn.value) {
-        newTemplate.value.type_filter?.push("Weapon");
+        newTemplate.value.item_types?.push("Weapon");
       }
-      newTemplate.value.type_filter?.push("Consumable");
+      newTemplate.value.item_types?.push("Consumable");
       template_store.addTemplate(newTemplate.value);
       template_list.value = template_store.templates.map(
         template => template.name
@@ -423,15 +423,15 @@ const openEditDialog = async (): Promise<void> => {
   newTemplate.value = cloneDeep(
     template_store.templates[template_store.activeTemplate]!
   );
-  armorOn.value = newTemplate.value.type_filter!.includes("Armor");
-  equipmentOn.value = newTemplate.value.type_filter!.includes("Equipment");
-  shieldOn.value = newTemplate.value.type_filter!.includes("Shield");
-  weaponOn.value = newTemplate.value.type_filter!.includes("Weapon");
+  armorOn.value = newTemplate.value.item_types!.includes("Armor");
+  equipmentOn.value = newTemplate.value.item_types!.includes("Equipment");
+  shieldOn.value = newTemplate.value.item_types!.includes("Shield");
+  weaponOn.value = newTemplate.value.item_types!.includes("Weapon");
   for (const trait of selectedTraits.value) {
     trait.state = null;
   }
   selectedTraits.value = [];
-  for (const trait of newTemplate.value.trait_blacklist_filter ?? []) {
+  for (const trait of newTemplate.value.item_traits_blacklist ?? []) {
     selectedTraits.value.push({
       label: trait
         .split("-")
@@ -442,7 +442,7 @@ const openEditDialog = async (): Promise<void> => {
       value: trait
     });
   }
-  for (const trait of newTemplate.value.trait_whitelist_filter ?? []) {
+  for (const trait of newTemplate.value.item_traits_whitelist ?? []) {
     selectedTraits.value.push({
       label: trait
         .split("-")
@@ -491,9 +491,9 @@ const editTemplate = async (): Promise<void> => {
           }
         }
       }
-      newTemplate.value.trait_whitelist_filter = newWhitelist;
-      newTemplate.value.trait_blacklist_filter = newBlacklist;
-      const newTypes: string[] = [];
+      newTemplate.value.item_traits_whitelist = newWhitelist;
+      newTemplate.value.item_traits_blacklist = newBlacklist;
+      const newTypes: item_type[] = [];
       if (armorOn.value) {
         newTypes.push("Armor");
       }
@@ -507,7 +507,7 @@ const editTemplate = async (): Promise<void> => {
         newTypes.push("Weapon");
       }
       newTypes.push("Consumable");
-      newTemplate.value.type_filter = newTypes;
+      newTemplate.value.item_types = newTypes;
       template_store.updateTemplate(
         template_store.templates[template_store.activeTemplate]!.name,
         newTemplate.value
@@ -849,7 +849,7 @@ defineExpose({ generateShop });
                       />
                       <q-separator class="tw:my-4!" />
                       <q-select
-                        v-model="newTemplate.source_filter"
+                        v-model="newTemplate.item_sources"
                         multiple
                         dense
                         outlined
@@ -930,7 +930,7 @@ defineExpose({ generateShop });
                         </template>
                       </q-select>
                       <q-select
-                        v-model="newTemplate.rarity_filter"
+                        v-model="newTemplate.item_rarities"
                         multiple
                         dense
                         outlined
@@ -1308,7 +1308,7 @@ defineExpose({ generateShop });
                       />
                       <q-separator class="tw:my-4!" />
                       <q-select
-                        v-model="newTemplate.source_filter"
+                        v-model="newTemplate.item_sources"
                         multiple
                         dense
                         outlined
@@ -1390,7 +1390,7 @@ defineExpose({ generateShop });
                         </template>
                       </q-select>
                       <q-select
-                        v-model="newTemplate.rarity_filter"
+                        v-model="newTemplate.item_rarities"
                         multiple
                         dense
                         outlined

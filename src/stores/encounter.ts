@@ -78,9 +78,9 @@ export const encounterStore = defineStore("encounter_store", {
     },
     removeFromEncounter(index: number) {
       if (
-        this.encounters[this.activeEncounter]!.creatures[index]!.quantity! > 1
+        this.encounters[this.activeEncounter]!.creatures[index]!.quantity > 1
       ) {
-        this.encounters[this.activeEncounter]!.creatures[index]!.quantity! -= 1;
+        this.encounters[this.activeEncounter]!.creatures[index]!.quantity -= 1;
       } else {
         this.encounters[this.activeEncounter]!.creatures.splice(index, 1);
       }

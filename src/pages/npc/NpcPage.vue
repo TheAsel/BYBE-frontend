@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {
   matArrowDownward,
-  matArrowUpward
+  matArrowUpward,
+  matPriorityHigh
 } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
-import { scroll } from "quasar";
+import { scroll, useQuasar } from "quasar";
 import Shepherd from "shepherd.js";
 import { onMounted, onUnmounted, ref } from "vue";
 
@@ -13,7 +14,7 @@ import NpcGenerator from "@/components/npc/NpcGenerator.vue";
 import NpcSheet from "@/components/npc/NpcSheet.vue";
 import { npcStore } from "@/stores/npc";
 import { settingsStore } from "@/stores/settings";
-import { updateLocalStorageNpcs } from "@/utils/local-storage";
+import { validateNpcs } from "@/utils/local-storage";
 
 import type { npc } from "@/types/npc";
 
@@ -27,6 +28,8 @@ useHead({
   title: "NPC Generator - BYBE"
 });
 
+const $q = useQuasar();
+
 const settings_store = settingsStore();
 const npc_store = npcStore();
 
@@ -34,7 +37,15 @@ const screenWidth = ref(screen.width);
 
 const scrollUp = ref(false);
 
-updateLocalStorageNpcs();
+const localNpc = localStorage.getItem("npcs");
+if (localNpc !== null && !validateNpcs(localNpc)) {
+  $q.notify({
+    icon: matPriorityHigh,
+    message: "Invalid loaded npcs format",
+    progress: true,
+    type: "warning"
+  });
+}
 
 const tmpLanks: npc = {
   ancestry: "Halfling",

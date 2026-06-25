@@ -899,7 +899,8 @@ const addCreature = debounce((creature: creature) => {
     is_hazard: false,
     level: creature.core_data.essential.base_level,
     name: creature.core_data.essential.name,
-    variant: "Base"
+    variant: "Base",
+    quantity: 1
   };
   encounter_store.addToEncounter(min_creature);
 }, 50);
@@ -917,7 +918,8 @@ const addHazard = debounce((hazard: hazard) => {
     id: hazard.core_hazard.essential.id,
     is_hazard: true,
     level: hazard.core_hazard.essential.level,
-    name: hazard.core_hazard.essential.name
+    name: hazard.core_hazard.essential.name,
+    quantity: 1
   };
   encounter_store.addToEncounter(min_hazard);
 }, 50);

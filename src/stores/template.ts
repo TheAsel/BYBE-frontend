@@ -17,18 +17,18 @@ export const templateStore = defineStore("template_store", {
       const newTemplates: template[] = [];
       for (const template of defaultTemplates) {
         newTemplates.push({
-          armor_percentage: template.armor_percentage!,
-          default: true,
-          description: template.description,
-          equipment_percentage: template.equipment_percentage!,
           name: template.name,
-          rarity_filter: template.item_rarities!,
-          shield_percentage: template.shield_percentage!,
-          source_filter: [],
-          trait_blacklist_filter: template.item_traits_blacklist,
-          trait_whitelist_filter: template.item_traits_whitelist,
-          type_filter: template.item_types!,
-          weapon_percentage: template.weapon_percentage!
+          description: template.description,
+          default: true,
+          item_sources: [],
+          item_rarities: template.item_rarities,
+          item_traits_blacklist: template.item_traits_blacklist,
+          item_traits_whitelist: template.item_traits_whitelist,
+          item_types: template.item_types,
+          armor_percentage: template.armor_percentage,
+          equipment_percentage: template.equipment_percentage,
+          shield_percentage: template.shield_percentage,
+          weapon_percentage: template.weapon_percentage
         });
       }
       this.defaultTemplates = newTemplates.length;

@@ -140,7 +140,7 @@ const generateNpc = debounce(async () => {
     }
   } else {
     if (
-      !npc_store.npcs[npc_store.activeNpc]!.culture &&
+      !npc_store.npcs[npc_store.activeNpc]!.has_culture &&
       parameters.value.ancestries &&
       parameters.value.ancestries.length > 0
     ) {
@@ -148,12 +148,12 @@ const generateNpc = debounce(async () => {
         _ancestry.replaceAll(" ", "")
       );
       body.name_origin_filter = { FromAncestry: tmpAncestries };
-    } else if (!npc_store.npcs[npc_store.activeNpc]!.culture) {
+    } else if (!npc_store.npcs[npc_store.activeNpc]!.has_culture) {
       body.name_origin_filter = { FromAncestry: [] };
     }
 
     if (
-      npc_store.npcs[npc_store.activeNpc]!.culture &&
+      npc_store.npcs[npc_store.activeNpc]!.has_culture &&
       parameters.value.cultures &&
       parameters.value.cultures.length > 0
     ) {
@@ -161,7 +161,7 @@ const generateNpc = debounce(async () => {
         _culture.replaceAll(" ", "")
       );
       body.name_origin_filter = { FromCulture: tmpCultures };
-    } else if (npc_store.npcs[npc_store.activeNpc]!.culture) {
+    } else if (npc_store.npcs[npc_store.activeNpc]!.has_culture) {
       body.name_origin_filter = { FromCulture: [] };
     }
   }
@@ -189,10 +189,11 @@ const generateNpc = debounce(async () => {
       throw new TypeError("Error generating random npc");
     }
     if (!npc_store.locks.name) {
-      npc_store.npcs[npc_store.activeNpc]!.npc.name = randomNpc.name;
+      npc_store.npcs[npc_store.activeNpc]!.core_npc.name = randomNpc.name;
     }
     if (!npc_store.locks.nickname) {
-      npc_store.npcs[npc_store.activeNpc]!.npc.nickname = randomNpc.nickname;
+      npc_store.npcs[npc_store.activeNpc]!.core_npc.nickname =
+        randomNpc.nickname;
     }
     // Regex: adds spaces between words
     if (!npc_store.locks.gender) {
@@ -200,35 +201,36 @@ const generateNpc = debounce(async () => {
         /([a-z])([A-Z])/gu,
         "$1 $2"
       );
-      npc_store.npcs[npc_store.activeNpc]!.npc.gender = randomNpc.gender;
+      npc_store.npcs[npc_store.activeNpc]!.core_npc.gender = randomNpc.gender;
     }
     if (!npc_store.locks.ancestry) {
       randomNpc.ancestry = randomNpc.ancestry!.replaceAll(
         /([a-z])([A-Z])/gu,
         "$1 $2"
       );
-      npc_store.npcs[npc_store.activeNpc]!.npc.ancestry = randomNpc.ancestry;
+      npc_store.npcs[npc_store.activeNpc]!.core_npc.ancestry =
+        randomNpc.ancestry;
     }
     if (settings_store.game === "pf" && !npc_store.locks.culture) {
       randomNpc.culture = randomNpc.culture!.replaceAll(
         /([a-z])([A-Z])/gu,
         "$1 $2"
       );
-      npc_store.npcs[npc_store.activeNpc]!.npc.culture = randomNpc.culture;
+      npc_store.npcs[npc_store.activeNpc]!.core_npc.culture = randomNpc.culture;
     }
     if (!npc_store.locks.class) {
       randomNpc.class = randomNpc.class!.replaceAll(
         /([a-z])([A-Z])/gu,
         "$1 $2"
       );
-      npc_store.npcs[npc_store.activeNpc]!.npc.class = randomNpc.class;
+      npc_store.npcs[npc_store.activeNpc]!.core_npc.class = randomNpc.class;
     }
     if (!npc_store.locks.job) {
       randomNpc.job = randomNpc.job!.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
-      npc_store.npcs[npc_store.activeNpc]!.npc.job = randomNpc.job;
+      npc_store.npcs[npc_store.activeNpc]!.core_npc.job = randomNpc.job;
     }
     if (!npc_store.locks.level) {
-      npc_store.npcs[npc_store.activeNpc]!.npc.level = randomNpc.level;
+      npc_store.npcs[npc_store.activeNpc]!.core_npc.level = randomNpc.level;
     }
   } catch (error) {
     console.error(error);
@@ -378,7 +380,7 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void): void => {
             <div class="tw:flex tw:flex-wrap tw:justify-center tw:gap-2">
               <q-select
                 v-if="
-                  npc_store.npcs[npc_store.activeNpc]!.culture &&
+                  npc_store.npcs[npc_store.activeNpc]!.has_culture &&
                   settings_store.game === 'pf'
                 "
                 label="Cultures"
@@ -415,7 +417,7 @@ const filterJobsFn = (val: string, update: (fn: () => void) => void): void => {
               />
               <q-toggle
                 v-if="settings_store.game === 'pf'"
-                v-model="npc_store.npcs[npc_store.activeNpc]!.culture"
+                v-model="npc_store.npcs[npc_store.activeNpc]!.has_culture"
                 label="Use Culture"
                 class="tw:shrink"
                 aria-label="Toggle Culture"

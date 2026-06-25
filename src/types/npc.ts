@@ -6,31 +6,31 @@ export type valid_genders = {
 };
 
 export type npc = {
-  level: number;
+  name: string;
+  nickname: string | null;
   gender: string;
   ancestry: string;
   culture: string;
   class: string;
   job: string;
-  name: string;
-  nickname: string | null;
-  languages: string | null;
-  description: string | null;
-  personality: string | null;
-  quirk: string | null;
-  relationships: string | null;
-  ideology: string | null;
+  level: number;
+  languages: string;
+  quirk: string;
+  description: string;
+  personality: string;
+  relationships: string;
+  ideology: string;
   custom_fields: {
-    name: string | null;
-    body: string | null;
+    name: string;
+    body: string;
   }[];
   game: games;
 };
 
 export type npc_list = {
   name: string;
-  npc: npc;
-  culture: boolean;
+  has_culture: boolean;
+  core_npc: npc;
 };
 
 export type shareable_npc = {

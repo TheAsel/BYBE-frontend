@@ -84,27 +84,24 @@ export type random_encounter = {
   };
 };
 
+type creature_hazard_base = {
+  id: number;
+  name: string;
+  level: number;
+  game: games;
+  archive_link: string | null;
+  quantity: number;
+};
+
 export type min_creature_hazard =
-  | {
+  | (creature_hazard_base & {
       is_hazard: false;
-      game: games;
-      id: number;
-      archive_link: string;
-      name: string;
-      level: number;
       variant: variants;
-      quantity?: number;
-    }
-  | {
+    })
+  | (creature_hazard_base & {
       is_hazard: true;
-      game: games;
-      id: number;
-      archive_link: string;
-      name: string;
-      level: number;
       complexity: complexities;
-      quantity?: number;
-    };
+    });
 
 export type encounter_list = {
   name: string;

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {
   matArrowDownward,
-  matArrowUpward
+  matArrowUpward,
+  matPriorityHigh
 } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
-import { scroll } from "quasar";
+import { scroll, useQuasar } from "quasar";
 import Shepherd from "shepherd.js";
 import { onMounted, onUnmounted, ref } from "vue";
 
@@ -13,10 +14,8 @@ import ShopSheet from "@/components/shop/ShopSheet.vue";
 import ShopTable from "@/components/shop/ShopTable.vue";
 import { itemsStore } from "@/stores/items";
 import { settingsStore } from "@/stores/settings";
-import {
-  updateLocalStorageShops,
-  updateLocalStorageTemplates
-} from "@/utils/local-storage";
+import { templateStore } from "@/stores/template";
+import { validateShops, validateTemplates } from "@/utils/local-storage";
 
 import type { item, min_item } from "@/types/item";
 
@@ -30,15 +29,35 @@ useHead({
   title: "Shop Generator - BYBE"
 });
 
-const settings_store = settingsStore();
+const $q = useQuasar();
+
 const items_store = itemsStore();
+const settings_store = settingsStore();
+const template_store = templateStore();
+
+const localShops = localStorage.getItem("shops");
+if (localShops !== null && !validateShops(localShops)) {
+  $q.notify({
+    icon: matPriorityHigh,
+    message: "Invalid loaded shops format",
+    progress: true,
+    type: "warning"
+  });
+}
+
+const localTemplates = localStorage.getItem("templates");
+if (localTemplates !== null && !validateTemplates(localTemplates)) {
+  $q.notify({
+    icon: matPriorityHigh,
+    message: "Invalid loaded templates format",
+    progress: true,
+    type: "warning"
+  });
+}
 
 const screenWidth = ref(screen.width);
 
 const scrollUp = ref(false);
-
-updateLocalStorageShops();
-updateLocalStorageTemplates();
 
 // PF2E shop
 const tmpCloakFull: item = {
