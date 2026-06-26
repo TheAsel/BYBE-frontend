@@ -756,7 +756,7 @@ await debouncedCall();
         </div>
         <q-inner-loading showing v-else style="z-index: 2">
           <q-spinner-gears
-            class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
+            class="tw:mx-auto tw:mt-8! tw:text-gray-800! tw:dark:text-white!"
             size="5em"
           />
         </q-inner-loading>
@@ -1199,7 +1199,7 @@ await debouncedCall();
       <q-page-container v-else class="tw:flex" style="height: 78vh">
         <div class="tw:m-auto">
           <q-spinner-gears
-            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            class="tw:mx-auto tw:text-gray-800! tw:dark:text-white!"
             size="5em"
           />
         </div>

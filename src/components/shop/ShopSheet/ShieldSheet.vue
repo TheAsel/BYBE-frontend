@@ -12,6 +12,7 @@ import {
   getGameAonLink,
   getGameFont,
   getGameFontSize,
+  getGameFontSizeSmall,
   openSheet
 } from "@/utils/sheet";
 
@@ -29,7 +30,7 @@ const game = computed(() => selectedItem.value?.game ?? settings_store.game);
 <template>
   <div
     v-if="coreItem"
-    class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
+    class="tw:flex tw:font-bold tw:text-gray-800 tw:dark:text-white"
     :style="
       'font-family: ' +
       getGameFont(game) +
@@ -79,10 +80,12 @@ const game = computed(() => selectedItem.value?.game ?? settings_store.game);
       </h1>
     </a>
     <q-space />
-    <div class="tw:my-1 tw:text-2xl!">Shield {{ coreItem.level }}</div>
+    <div class="tw:my-auto" :class="getGameFontSizeSmall(game)"
+      >Shield {{ coreItem.level }}</div
+    >
     <div class="tw:my-auto!">
       <q-btn
-        class="tw:ml-2! only-screen item-page-element"
+        class="only-screen item-page-element"
         :icon="biXLg"
         size="sm"
         padding="sm"

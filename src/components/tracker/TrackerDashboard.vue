@@ -345,7 +345,7 @@ const rollInitiative = (index: number): void => {
                     <q-icon
                       :name="fasPenToSquare"
                       size="xs"
-                      class="tw:my-4 tw:pb-1 tw:text-gray-800 tw:dark:text-white"
+                      class="tw:my-4 tw:pb-1"
                     />
                   </template>
                 </q-input>
@@ -433,7 +433,7 @@ const rollInitiative = (index: number): void => {
                 <q-icon
                   :name="fasShield"
                   size="md"
-                  class="tw:min-h-11 tw:mx-auto tw:pb-2 tw:text-gray-800 tw:dark:text-white"
+                  class="tw:min-h-11 tw:mx-auto tw:pb-2"
                 >
                   <q-tooltip
                     class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -469,7 +469,7 @@ const rollInitiative = (index: number): void => {
                 <q-icon
                   :name="fasDumbbell"
                   size="md"
-                  class="tw:min-h-11 tw:mx-auto tw:pb-2 tw:text-gray-800 tw:dark:text-white"
+                  class="tw:min-h-11 tw:mx-auto tw:pb-2"
                 >
                   <q-tooltip
                     class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -512,7 +512,7 @@ const rollInitiative = (index: number): void => {
                 <q-icon
                   :name="fasPersonRunning"
                   size="md"
-                  class="tw:min-h-11 tw:mx-auto tw:pb-2 tw:text-gray-800 tw:dark:text-white"
+                  class="tw:min-h-11 tw:mx-auto tw:pb-2"
                 >
                   <q-tooltip
                     class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -554,7 +554,7 @@ const rollInitiative = (index: number): void => {
                 <q-icon
                   :name="fasBrain"
                   size="md"
-                  class="tw:min-h-11 tw:mx-auto tw:pb-2 tw:text-gray-800 tw:dark:text-white"
+                  class="tw:min-h-11 tw:mx-auto tw:pb-2"
                 >
                   <q-tooltip
                     class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"

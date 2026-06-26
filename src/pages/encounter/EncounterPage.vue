@@ -5,7 +5,7 @@ import {
   matPriorityHigh
 } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
-import { scroll, useQuasar } from "quasar";
+import { useQuasar } from "quasar";
 import Shepherd from "shepherd.js";
 import { onMounted, onUnmounted, ref } from "vue";
 
@@ -15,6 +15,7 @@ import EncounterTable from "@/components/encounter/EncounterTable.vue";
 import { encounterStore } from "@/stores/encounter";
 import { settingsStore } from "@/stores/settings";
 import { validateEncounters, validateParties } from "@/utils/local-storage";
+import { getScreenWidth, scrollDirection, scrollPage } from "@/utils/screen";
 
 import type { min_creature_hazard } from "@/types/encounter";
 
@@ -33,7 +34,26 @@ const $q = useQuasar();
 const encounter_store = encounterStore();
 const settings_store = settingsStore();
 
-const screenWidth = ref(screen.width);
+const { width } = getScreenWidth();
+const scrollUp = ref(false);
+const pageRef = ref<HTMLElement | null>(null);
+
+const updateScrollUp = (): void => {
+  scrollUp.value = scrollDirection(pageRef.value);
+};
+
+onMounted(() => {
+  pageRef.value = document.querySelector("#pageRef")!;
+  if (pageRef.value !== null) {
+    pageRef.value.addEventListener("scroll", updateScrollUp);
+  }
+});
+
+onUnmounted(() => {
+  if (pageRef.value !== null) {
+    pageRef.value.removeEventListener("scroll", updateScrollUp);
+  }
+});
 
 const localParty = localStorage.getItem("parties");
 if (localParty !== null && !validateParties(localParty)) {
@@ -54,8 +74,6 @@ if (localEncounters !== null && !validateEncounters(localEncounters)) {
     type: "warning"
   });
 }
-
-const scrollUp = ref(false);
 
 // PF2E encounter
 const tmpKoboldMage: min_creature_hazard = {
@@ -147,43 +165,6 @@ for (const event of ["complete", "cancel"]) {
   });
 }
 
-const pageRef = ref<HTMLElement>();
-
-function scrollDirection(): void {
-  scroll.getVerticalScrollPosition(pageRef.value!);
-  scrollUp.value = scroll.getVerticalScrollPosition(pageRef.value!) > 0;
-}
-
-function scrollPage(): void {
-  settings_store.setHiddenNav(true);
-  setTimeout(() => {
-    if (scrollUp.value) {
-      scroll.setVerticalScrollPosition(pageRef.value!, 0, 500);
-    } else {
-      scroll.setVerticalScrollPosition(
-        pageRef.value!,
-        pageRef.value!.scrollHeight,
-        500
-      );
-    }
-  }, 10);
-}
-
-const handleResize = (): void => {
-  screenWidth.value = screen.width;
-};
-
-onMounted(() => {
-  pageRef.value = document.querySelector("#pageRef")!;
-  pageRef.value.addEventListener("scroll", scrollDirection);
-  globalThis.addEventListener("resize", handleResize);
-});
-
-onUnmounted(() => {
-  pageRef.value!.removeEventListener("scroll", scrollDirection);
-  globalThis.removeEventListener("resize", handleResize);
-});
-
 const sheetVisible = ref(true);
 const sheetWidth = ref("tw:md:w-[27%] tw:p-4!");
 const tableWidth = ref("tw:md:w-[46%] tw:pl-4! tw:md:pl-0!");
@@ -191,10 +172,10 @@ const tableWidth = ref("tw:md:w-[46%] tw:pl-4! tw:md:pl-0!");
 const toggleSheetView = (): void => {
   sheetVisible.value = !sheetVisible.value;
   if (sheetVisible.value) {
-    sheetWidth.value = "tw:md:w-[27%] tw:p-4!";
+    sheetWidth.value = "tw:md:w-[27%] tw:px-4!";
     tableWidth.value = "tw:md:w-[46%] tw:pl-4! tw:md:pl-0!";
   } else {
-    sheetWidth.value = "tw:md:w-[0%] tw:p-0! tw:collapse";
+    sheetWidth.value = "tw:md:w-[0%] tw:px-0! tw:collapse";
     tableWidth.value = "tw:md:w-[73%] tw:pl-4!";
   }
 };
@@ -206,7 +187,7 @@ const toggleSheetView = (): void => {
     class="tw:h-full row items-center justify-between tw:overflow-auto"
   >
     <EncounterSheet
-      v-if="screenWidth >= 768"
+      v-if="width >= 768"
       class="tw:py-4 tw:pl-4 tw:w-full tw:transition-all tw:duration-300"
       :class="sheetWidth"
     />
@@ -218,14 +199,14 @@ const toggleSheetView = (): void => {
       :sheet-visible="sheetVisible"
     />
     <EncounterSheet
-      v-if="screenWidth < 768"
+      v-if="width < 768"
       v-show="sheetVisible"
       class="tw:md:px-0 tw:md:py-4 tw:w-full tw:transition-all tw:duration-300"
       :class="sheetWidth"
     />
     <EncounterList id="list" class="tw:p-4 tw:w-full tw:md:w-[27%]" />
     <q-page-sticky
-      v-if="screenWidth < 768"
+      v-if="width < 768"
       position="bottom-right"
       :offset="[18, 18]"
       class="tw:z-10 tw:opacity-85 only-screen"
@@ -235,7 +216,7 @@ const toggleSheetView = (): void => {
         :icon="scrollUp ? matArrowUpward : matArrowDownward"
         padding="sm"
         color="primary"
-        @click="scrollPage"
+        @click="scrollPage(pageRef, scrollUp)"
       />
     </q-page-sticky>
   </q-page>

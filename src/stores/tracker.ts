@@ -29,27 +29,33 @@ export const trackerStore = defineStore("tracker_store", {
         is_player: true,
         max_health: 1,
         perception: 0,
-        ac: null,
-        fortitude: null,
-        reflex: null,
-        will: null
+        ac: 0,
+        fortitude: 0,
+        reflex: 0,
+        will: 0
       });
     },
-    findNextValidIndex(startIndex: number, direction: 1 | -1 = 1): number {
-      for (let step = 1; step < this.trackerList.list.length; step += 1) {
-        const candidate =
-          (startIndex + step * direction + this.trackerList.list.length) %
-          this.trackerList.list.length;
+    findNextValidIndex(
+      startIndex: number,
+      direction: 1 | -1 = 1,
+      wrap = true
+    ): number {
+      const length = this.trackerList.list.length;
+
+      for (let step = 1; step < length; step += 1) {
+        let candidate = startIndex + step * direction;
+
+        if (wrap) {
+          candidate = (candidate + length) % length;
+        } else if (candidate < 0 || candidate >= length) {
+          break;
+        }
+
         const entry = this.trackerList.list[candidate];
-        if (!entry) {
-          continue;
-        }
-        if (entry.health !== null && entry.health <= 0) {
-          continue;
-        }
-        if (!entry.is_player && entry.disabled) {
-          continue;
-        }
+        if (!entry) continue;
+        if (entry.health !== null && entry.health <= 0) continue;
+        if (!entry.is_player && entry.disabled) continue;
+
         return candidate;
       }
       return startIndex;
@@ -76,7 +82,13 @@ export const trackerStore = defineStore("tracker_store", {
       if (!this.running) {
         return;
       }
-      this.round = Math.max(1, this.round - 1);
+
+      if (this.round === 1) {
+        this.trackerList.active_index = this.findNextValidIndex(-1, 1, false);
+        return;
+      }
+
+      this.round -= 1;
       this.trackerList.active_index = this.findNextValidIndex(0, -1);
     },
     prevTurn() {
@@ -84,9 +96,19 @@ export const trackerStore = defineStore("tracker_store", {
         return;
       }
       const current = this.trackerList.active_index;
+
+      if (this.round === 1) {
+        this.trackerList.active_index = this.findNextValidIndex(
+          current,
+          -1,
+          false
+        );
+        return;
+      }
+
       const prev = this.findNextValidIndex(current, -1);
       if (prev >= current) {
-        this.round = Math.max(1, this.round - 1);
+        this.round -= 1;
       }
       this.trackerList.active_index = prev;
     },
@@ -101,6 +123,7 @@ export const trackerStore = defineStore("tracker_store", {
     },
     resetTracker() {
       this.trackerList.active_index = 0;
+      this.trackerList.detail_index = 0;
       this.running = false;
       this.round = 0;
       for (const item of this.trackerList.list) {

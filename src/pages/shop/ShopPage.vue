@@ -5,7 +5,7 @@ import {
   matPriorityHigh
 } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
-import { scroll, useQuasar } from "quasar";
+import { useQuasar } from "quasar";
 import Shepherd from "shepherd.js";
 import { onMounted, onUnmounted, ref } from "vue";
 
@@ -14,8 +14,8 @@ import ShopSheet from "@/components/shop/ShopSheet.vue";
 import ShopTable from "@/components/shop/ShopTable.vue";
 import { itemsStore } from "@/stores/items";
 import { settingsStore } from "@/stores/settings";
-import { templateStore } from "@/stores/template";
 import { validateShops, validateTemplates } from "@/utils/local-storage";
+import { getScreenWidth, scrollDirection, scrollPage } from "@/utils/screen";
 
 import type { item, min_item } from "@/types/item";
 
@@ -33,7 +33,27 @@ const $q = useQuasar();
 
 const items_store = itemsStore();
 const settings_store = settingsStore();
-const template_store = templateStore();
+
+const { width } = getScreenWidth();
+const scrollUp = ref(false);
+const pageRef = ref<HTMLElement | null>(null);
+
+const updateScrollUp = (): void => {
+  scrollUp.value = scrollDirection(pageRef.value);
+};
+
+onMounted(() => {
+  pageRef.value = document.querySelector("#pageRef")!;
+  if (pageRef.value !== null) {
+    pageRef.value.addEventListener("scroll", updateScrollUp);
+  }
+});
+
+onUnmounted(() => {
+  if (pageRef.value !== null) {
+    pageRef.value.removeEventListener("scroll", updateScrollUp);
+  }
+});
 
 const localShops = localStorage.getItem("shops");
 if (localShops !== null && !validateShops(localShops)) {
@@ -54,10 +74,6 @@ if (localTemplates !== null && !validateTemplates(localTemplates)) {
     type: "warning"
   });
 }
-
-const screenWidth = ref(screen.width);
-
-const scrollUp = ref(false);
 
 // PF2E shop
 const tmpCloakFull: item = {
@@ -189,43 +205,6 @@ for (const event of ["complete", "cancel"]) {
   });
 }
 
-const pageRef = ref<HTMLElement>();
-
-function scrollDirection(): void {
-  scroll.getVerticalScrollPosition(pageRef.value!);
-  scrollUp.value = scroll.getVerticalScrollPosition(pageRef.value!) > 0;
-}
-
-function scrollPage(): void {
-  settings_store.setHiddenNav(true);
-  setTimeout(() => {
-    if (scrollUp.value) {
-      scroll.setVerticalScrollPosition(pageRef.value!, 0, 500);
-    } else {
-      scroll.setVerticalScrollPosition(
-        pageRef.value!,
-        pageRef.value!.scrollHeight,
-        500
-      );
-    }
-  }, 10);
-}
-
-const handleResize = (): void => {
-  screenWidth.value = screen.width;
-};
-
-onMounted(() => {
-  pageRef.value = document.querySelector("#pageRef")!;
-  pageRef.value.addEventListener("scroll", scrollDirection);
-  globalThis.addEventListener("resize", handleResize);
-});
-
-onUnmounted(() => {
-  pageRef.value!.removeEventListener("scroll", scrollDirection);
-  globalThis.removeEventListener("resize", handleResize);
-});
-
 const sheetVisible = ref(true);
 const sheetWidth = ref("tw:md:w-[27%] tw:p-4!");
 const tableWidth = ref("tw:md:w-[46%] tw:pl-4! tw:md:pl-0!");
@@ -233,10 +212,10 @@ const tableWidth = ref("tw:md:w-[46%] tw:pl-4! tw:md:pl-0!");
 const toggleSheetView = (): void => {
   sheetVisible.value = !sheetVisible.value;
   if (sheetVisible.value) {
-    sheetWidth.value = "tw:md:w-[27%] tw:p-4!";
+    sheetWidth.value = "tw:md:w-[27%] tw:px-4!";
     tableWidth.value = "tw:md:w-[46%] tw:pl-4! tw:md:pl-0!";
   } else {
-    sheetWidth.value = "tw:md:w-[0%] tw:p-0! tw:collapse tw:none";
+    sheetWidth.value = "tw:md:w-[0%] tw:px-0! tw:collapse tw:none";
     tableWidth.value = "tw:md:w-[73%] tw:pl-4!";
   }
 };
@@ -248,7 +227,7 @@ const toggleSheetView = (): void => {
     class="tw:h-full row items-center justify-between tw:overflow-auto"
   >
     <ShopSheet
-      v-if="screenWidth >= 768"
+      v-if="width >= 768"
       class="tw:py-4 tw:pl-4 tw:w-full tw:transition-all tw:duration-300"
       :class="sheetWidth"
     />
@@ -260,14 +239,14 @@ const toggleSheetView = (): void => {
       :sheet-visible="sheetVisible"
     />
     <ShopSheet
-      v-if="screenWidth < 768"
+      v-if="width < 768"
       v-show="sheetVisible"
       class="tw:md:px-0 tw:md:py-4 tw:w-full tw:transition-all tw:duration-300"
       :class="sheetWidth"
     />
     <ShopList id="list" class="tw:p-4 tw:w-full tw:md:w-[27%]" />
     <q-page-sticky
-      v-if="screenWidth < 768"
+      v-if="width < 768"
       position="bottom-right"
       :offset="[18, 18]"
       class="tw:z-10 tw:opacity-85 only-screen"
@@ -277,7 +256,7 @@ const toggleSheetView = (): void => {
         :icon="scrollUp ? matArrowUpward : matArrowDownward"
         padding="sm"
         color="primary"
-        @click="scrollPage"
+        @click="scrollPage(pageRef, scrollUp)"
       />
     </q-page-sticky>
   </q-page>

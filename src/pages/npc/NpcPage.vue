@@ -5,7 +5,7 @@ import {
   matPriorityHigh
 } from "@quasar/extras/material-icons";
 import { useHead } from "@unhead/vue";
-import { scroll, useQuasar } from "quasar";
+import { useQuasar } from "quasar";
 import Shepherd from "shepherd.js";
 import { onMounted, onUnmounted, ref } from "vue";
 
@@ -15,6 +15,7 @@ import NpcSheet from "@/components/npc/NpcSheet.vue";
 import { npcStore } from "@/stores/npc";
 import { settingsStore } from "@/stores/settings";
 import { validateNpcs } from "@/utils/local-storage";
+import { getScreenWidth, scrollDirection, scrollPage } from "@/utils/screen";
 
 import type { npc } from "@/types/npc";
 
@@ -33,9 +34,26 @@ const $q = useQuasar();
 const settings_store = settingsStore();
 const npc_store = npcStore();
 
-const screenWidth = ref(screen.width);
-
+const { width } = getScreenWidth();
 const scrollUp = ref(false);
+const pageRef = ref<HTMLElement | null>(null);
+
+const updateScrollUp = (): void => {
+  scrollUp.value = scrollDirection(pageRef.value);
+};
+
+onMounted(() => {
+  pageRef.value = document.querySelector("#pageRef")!;
+  if (pageRef.value !== null) {
+    pageRef.value.addEventListener("scroll", updateScrollUp);
+  }
+});
+
+onUnmounted(() => {
+  if (pageRef.value !== null) {
+    pageRef.value.removeEventListener("scroll", updateScrollUp);
+  }
+});
 
 const localNpc = localStorage.getItem("npcs");
 if (localNpc !== null && !validateNpcs(localNpc)) {
@@ -82,43 +100,6 @@ for (const event of ["complete", "cancel"]) {
     npc_store.removeNpc();
   });
 }
-
-const pageRef = ref<HTMLElement>();
-
-function scrollDirection(): void {
-  scroll.getVerticalScrollPosition(pageRef.value!);
-  scrollUp.value = scroll.getVerticalScrollPosition(pageRef.value!) > 0;
-}
-
-function scrollPage(): void {
-  settings_store.setHiddenNav(true);
-  setTimeout(() => {
-    if (scrollUp.value) {
-      scroll.setVerticalScrollPosition(pageRef.value!, 0, 500);
-    } else {
-      scroll.setVerticalScrollPosition(
-        pageRef.value!,
-        pageRef.value!.scrollHeight,
-        500
-      );
-    }
-  }, 10);
-}
-
-const handleResize = (): void => {
-  screenWidth.value = screen.width;
-};
-
-onMounted(() => {
-  pageRef.value = document.querySelector("#pageRef")!;
-  pageRef.value.addEventListener("scroll", scrollDirection);
-  globalThis.addEventListener("resize", handleResize);
-});
-
-onUnmounted(() => {
-  pageRef.value!.removeEventListener("scroll", scrollDirection);
-  globalThis.removeEventListener("resize", handleResize);
-});
 </script>
 
 <template>
@@ -130,7 +111,7 @@ onUnmounted(() => {
     <NpcEditor class="tw:p-4 tw:md:px-0 tw:md:py-4 tw:w-full tw:md:w-[34%]" />
     <NpcSheet id="sheet" class="tw:p-4 tw:md:px-4 tw:w-full tw:md:w-[33%]" />
     <q-page-sticky
-      v-if="screenWidth < 768"
+      v-if="width < 768"
       position="bottom-right"
       :offset="[18, 18]"
       class="tw:z-10 tw:opacity-85 only-screen"
@@ -140,7 +121,7 @@ onUnmounted(() => {
         :icon="scrollUp ? matArrowUpward : matArrowDownward"
         padding="sm"
         color="primary"
-        @click="scrollPage"
+        @click="scrollPage(pageRef, scrollUp)"
       />
     </q-page-sticky>
   </q-page>

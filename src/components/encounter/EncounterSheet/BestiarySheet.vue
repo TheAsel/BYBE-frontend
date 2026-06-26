@@ -18,6 +18,7 @@ import {
   cleanDescription,
   getGameFont,
   getGameFontSize,
+  getGameFontSizeSmall,
   openSheet,
   pfActionSymbol
 } from "@/utils/sheet";
@@ -615,7 +616,7 @@ const rangeTraits = (
 
 <template>
   <div
-    class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
+    class="tw:flex tw:font-bold tw:mt-0! tw:text-gray-800 tw:dark:text-white"
     :style="
       'font-family: ' +
       getGameFont(
@@ -624,13 +625,13 @@ const rangeTraits = (
       ', sans-serif; font-variant-caps: small-caps'
     "
   >
-    <div class="tw:my-auto!">
+    <div class="tw:flex tw:flex-wrap tw:my-auto!">
       <q-btn
         :icon="tracker_store.lockSheet ? biLock : biUnlock"
         flat
         round
         dense
-        size="md"
+        size="sm"
         padding="sm"
         class="tw:mr-1 tw:my-auto only-screen tracker-page-element"
         :aria-label="
@@ -648,8 +649,6 @@ const rangeTraits = (
           }}
         </q-tooltip>
       </q-btn>
-    </div>
-    <div class="tw:my-auto!">
       <q-btn
         :icon="biBoxArrowUpRight"
         flat
@@ -782,16 +781,28 @@ const rangeTraits = (
     <q-select
       v-if="route.path === '/bestiary'"
       v-model="encounter_store.selectedCreature!.variant_data!.variant"
-      class="tw:mx-4 tw:my-auto tw:text-2xl! only-screen"
+      class="tw:mx-4 tw:font-normal tw:text-lg! tw:my-auto only-screen"
+      style="
+        font-family:
+          Open Sans,
+          sans-serif;
+      "
       :options="Object.freeze(['Weak', 'Base', 'Elite'])"
-      borderless
+      standout
       dense
       options-dense
       @update:model-value="
         changeVariant(encounter_store.selectedCreature?.variant_data?.variant!)
       "
     />
-    <div class="tw:my-1 tw:text-2xl!">
+    <div
+      class="tw:my-auto"
+      :class="
+        getGameFontSizeSmall(
+          encounter_store.selectedCreature?.game ?? settings_store.game
+        )
+      "
+    >
       {{ encounter_store.selectedCreature?.core_data.essential.cr_type }}
       <span
         :class="{
@@ -803,7 +814,7 @@ const rangeTraits = (
     </div>
     <div class="tw:my-auto!">
       <q-btn
-        class="tw:ml-2! only-screen encounter-page-element"
+        class="only-screen encounter-page-element"
         :icon="biXLg"
         size="sm"
         padding="sm"

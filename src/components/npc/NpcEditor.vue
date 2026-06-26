@@ -665,7 +665,7 @@ watch(npc_store, () => {
         </div>
         <q-inner-loading showing v-else style="z-index: 2">
           <q-spinner-gears
-            class="tw:mx-auto tw:mt-8! tw:text-black tw:dark:text-white"
+            class="tw:mx-auto tw:mt-8! tw:text-gray-800! tw:dark:text-white!"
             size="5em"
           />
         </q-inner-loading>

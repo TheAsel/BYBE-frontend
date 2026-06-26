@@ -634,7 +634,7 @@ watch(
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
           <q-spinner-gears
-            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            class="tw:mx-auto tw:text-gray-800! tw:dark:text-white!"
             size="5em"
           />
         </q-inner-loading>
@@ -649,7 +649,7 @@ watch(
                 flat
                 round
                 dense
-                class="tw:mr-4! tw:my-2! tw:md:my-0!"
+                class="tw:mr-4! tw:my-2! tw:md:my-0! tw:text-gray-800! tw:dark:text-white!"
                 :icon="biArrowsCollapseVertical"
                 size="md"
                 padding="sm"
@@ -670,7 +670,7 @@ watch(
                 flat
                 round
                 dense
-                class="tw:mr-4! tw:my-2! tw:md:my-0!"
+                class="tw:mr-4! tw:my-2! tw:md:my-0! tw:text-gray-800! tw:dark:text-white!"
                 :icon="biArrowsExpandVertical"
                 size="md"
                 padding="sm"
@@ -852,7 +852,7 @@ watch(
                         v-model="activeFilters.level_filter"
                         label-always
                         :min="filters_store.shopRanges.min_level"
-                        :max="filters_store.shopRanges.min_level"
+                        :max="filters_store.shopRanges.max_level"
                         style="min-width: 200px"
                         aria-label="Filter level"
                         role="menuitem"
@@ -996,7 +996,11 @@ watch(
       </template>
       <template #header-cell-id>
         <q-th>
-          <q-icon :name="biBasketFill" class="tw:mr-1" size="sm"></q-icon>
+          <q-icon
+            :name="biBasketFill"
+            class="tw:mr-1 tw:text-gray-800! tw:dark:text-white!"
+            size="sm"
+          ></q-icon>
         </q-th>
       </template>
       <template #body-selection="selectedItem">
@@ -1126,6 +1130,7 @@ watch(
             :name="mdiTshirtCrew"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -1140,6 +1145,7 @@ watch(
             :name="mdiFoodDrumstick"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -1154,6 +1160,7 @@ watch(
             :name="mdiRing"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -1168,6 +1175,7 @@ watch(
             :name="mdiShield"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -1182,6 +1190,7 @@ watch(
             :name="mdiSword"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"

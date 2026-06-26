@@ -17,6 +17,7 @@ import {
   getGameAonLink,
   getGameFont,
   getGameFontSize,
+  getGameFontSizeSmall,
   openSheet,
   pfActionSymbol
 } from "@/utils/sheet";
@@ -35,20 +36,20 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
 <template>
   <span v-if="selectedHazard && coreHazard">
     <div
-      class="tw:flex tw:font-bold tw:text-2xl tw:text-gray-800 tw:dark:text-white"
+      class="tw:flex tw:font-bold tw:mt-0! tw:text-gray-800 tw:dark:text-white"
       :style="
         'font-family: ' +
         getGameFont(selectedHazard.game ?? settings_store.game) +
         ', sans-serif; font-variant-caps: small-caps'
       "
     >
-      <div class="tw:my-auto!">
+      <div class="tw:flex tw:flex-wrap tw:my-auto!">
         <q-btn
           :icon="tracker_store.lockSheet ? biLock : biUnlock"
           flat
           round
           dense
-          size="md"
+          size="sm"
           padding="sm"
           class="tw:mr-1 tw:my-auto only-screen tracker-page-element"
           :aria-label="
@@ -66,8 +67,6 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
             }}
           </q-tooltip>
         </q-btn>
-      </div>
-      <div class="tw:my-auto!">
         <q-btn
           :icon="biBoxArrowUpRight"
           flat
@@ -119,13 +118,20 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
         </h1>
       </a>
       <q-space />
-      <div class="tw:my-1 tw:text-2xl!">
-        Hazard
+      <div
+        class="tw:my-auto"
+        :class="
+          getGameFontSizeSmall(
+            encounter_store.selectedHazard?.game ?? settings_store.game
+          )
+        "
+      >
+        NPC
         <span>{{ coreHazard.essential.level }}</span>
       </div>
       <div class="tw:my-auto!">
         <q-btn
-          class="tw:ml-2! only-screen encounter-page-element"
+          class="only-screen encounter-page-element"
           :icon="biXLg"
           size="sm"
           padding="sm"

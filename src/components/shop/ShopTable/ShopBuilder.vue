@@ -129,7 +129,10 @@ const equippable_dices = ref({
   dice_size: { label: "D4", value: 4 },
   n_of_dices: 3
 });
-const levels = ref({ max: 25, min: 0 });
+const levels = ref({
+  max: filters_store.shopRanges.max_level,
+  min: filters_store.shopRanges.min_level
+});
 
 const tmpFilters = ref({
   consumable_dices: consumable_dices.value,
@@ -630,12 +633,12 @@ defineExpose({ generateShop });
               class="tw:my-auto! tw:pb-1 tw:text-xs"
             />
           </div>
-          <div class="tw:flex tw:flex-row tw:justify-center">
+          <div class="tw:flex tw:flex-row tw:gap-4 tw:justify-center">
             <q-input
               v-model.number="tmpFilters.equippable_dices.n_of_dices"
               dense
               outlined
-              class="tw:w-32 tw:pr-2"
+              class="tw:basis-1/2 tw:max-w-24"
               type="number"
               label="Number"
               @update:model-value="validateNumber(false)"
@@ -643,16 +646,19 @@ defineExpose({ generateShop });
             <q-select
               v-if="!fixedEquipmentDice"
               v-model="tmpFilters.equippable_dices.dice_size"
-              label="Size"
-              class="tw:w-32 tw:pl-2"
               dense
               outlined
+              class="tw:basis-1/2 tw:max-w-24"
+              label="Size"
               :options="Object.freeze(diceSelect)"
             >
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section avatar>
-                    <q-icon :name="scope.opt.icon" />
+                    <q-icon
+                      :name="scope.opt.icon"
+                      class="tw:invert-80 tw:dark:invert-0"
+                    />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -673,12 +679,12 @@ defineExpose({ generateShop });
               class="tw:my-auto! tw:pb-1 tw:text-xs"
             />
           </div>
-          <div class="tw:flex tw:flex-row tw:justify-center">
+          <div class="tw:flex tw:flex-row tw:gap-4 tw:justify-center">
             <q-input
               v-model.number="tmpFilters.consumable_dices.n_of_dices"
               dense
               outlined
-              class="tw:w-32 tw:pr-2"
+              class="tw:basis-1/2 tw:max-w-24"
               type="number"
               label="Number"
               @update:model-value="validateNumber(true)"
@@ -688,9 +694,9 @@ defineExpose({ generateShop });
               v-model="tmpFilters.consumable_dices.dice_size"
               dense
               outlined
-              :options="Object.freeze(diceSelect)"
+              class="tw:basis-1/2 tw:max-w-24"
               label="Size"
-              class="tw:w-32 tw:pl-2"
+              :options="Object.freeze(diceSelect)"
             >
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
@@ -704,25 +710,26 @@ defineExpose({ generateShop });
               </template>
             </q-select>
           </div>
-          <div class="tw:pb-4">
-            <q-badge outline class="tw:text-sm!"> Level of items: </q-badge>
+          <q-badge outline class="tw:mb-1! tw:text-sm!">
+            Level of items:
+          </q-badge>
+          <div class="tw:px-2 tw:pb-4">
             <q-range
               v-model="tmpFilters.levels"
               label-always
-              :min="0"
-              :max="25"
+              :min="filters_store.shopRanges.min_level"
+              :max="filters_store.shopRanges.max_level"
               markers
               :left-label-value="'Min: ' + tmpFilters.levels.min"
               :right-label-value="'Max: ' + tmpFilters.levels.max"
-              style="max-width: 270px"
-              class="tw:px-3 tw:pt-1"
               aria-label="Items level range"
+              class="tw:px-2"
               role="menuitem"
               switch-label-side
             />
           </div>
           <q-separator class="tw:mt-4! tw:mb-3!" />
-          <div class="tw:flex tw:flex-row tw:mx-3">
+          <div class="tw:flex tw:flex-row tw:px-6">
             <q-select
               v-model="tmpFilters.shop_template!.name"
               dense
@@ -730,7 +737,7 @@ defineExpose({ generateShop });
               options-dense
               :options="template_list"
               label="Shop template"
-              class="tw:w-52 tw:mx-4"
+              class="tw:grow tw:pr-4"
               @update:model-value="
                 changeActiveTemplate(tmpFilters.shop_template!.name)
               "
@@ -750,7 +757,7 @@ defineExpose({ generateShop });
               round
               size="xs"
               :name="biQuestionCircle"
-              class="tw:m-auto tw:mr-2"
+              class="tw:my-auto"
             >
               <q-tooltip
                 class="text-caption text-left tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -767,29 +774,31 @@ defineExpose({ generateShop });
               </q-tooltip>
             </q-icon>
           </div>
-          <div class="tw:flex tw:flex-row tw:justify-center">
-            <q-btn
-              class="tw:m-auto!"
-              :icon="biPlusLg"
-              size="sm"
-              padding="sm"
-              flat
-              round
-              dense
-              aria-label="Add new template"
-              @click="
-                resetTemplateDialog();
-                newTemplateDialog = true;
-              "
-            >
-              <q-tooltip
-                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                anchor="top middle"
-                self="bottom middle"
+          <div class="tw:flex tw:flex-row">
+            <div class="tw:flex tw:justify-center tw:grow">
+              <q-btn
+                class="tw:my-auto!"
+                :icon="biPlusLg"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                aria-label="Add new template"
+                @click="
+                  resetTemplateDialog();
+                  newTemplateDialog = true;
+                "
               >
-                Add new template
-              </q-tooltip>
-            </q-btn>
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Add new template
+                </q-tooltip>
+              </q-btn>
+            </div>
             <q-dialog
               v-model="newTemplateDialog"
               aria-label="New template dialog"
@@ -861,7 +870,6 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Source"
-                        style="max-width: 236px"
                         virtual-scroll-item-size="32"
                         @filter="filterSourcesFn"
                       />
@@ -877,7 +885,6 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Traits"
-                        style="max-width: 236px"
                         :virtual-scroll-slice-size="traitOptions.length"
                         @filter="filterTraitsFn"
                       >
@@ -948,7 +955,6 @@ defineExpose({ generateShop });
                         input-debounce="0"
                         label="Rarity"
                         class="tw:mb-2 tw:pb-0.5"
-                        style="max-width: 236px"
                       />
                     </q-card-section>
                   </q-tab-panel>
@@ -1144,28 +1150,30 @@ defineExpose({ generateShop });
                 </q-card-actions>
               </q-card>
             </q-dialog>
-            <q-btn
-              class="tw:m-auto!"
-              :icon="biCopy"
-              size="sm"
-              padding="sm"
-              flat
-              round
-              dense
-              aria-label="Duplicate current template"
-              @click="
-                duplicateTemplateDialog = true;
-                newTemplate.name = '';
-              "
-            >
-              <q-tooltip
-                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                anchor="top middle"
-                self="bottom middle"
+            <div class="tw:flex tw:justify-center tw:grow">
+              <q-btn
+                class="tw:my-auto!"
+                :icon="biCopy"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                aria-label="Duplicate current template"
+                @click="
+                  duplicateTemplateDialog = true;
+                  newTemplate.name = '';
+                "
               >
-                Duplicate template
-              </q-tooltip>
-            </q-btn>
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Duplicate template
+                </q-tooltip>
+              </q-btn>
+            </div>
             <q-dialog
               v-model="duplicateTemplateDialog"
               aria-label="Duplicate template dialog"
@@ -1215,35 +1223,37 @@ defineExpose({ generateShop });
                 </q-card-actions>
               </q-card>
             </q-dialog>
-            <q-btn
-              class="tw:m-auto!"
-              :icon="biPencilSquare"
-              size="sm"
-              padding="sm"
-              flat
-              round
-              dense
-              :disable="tmpFilters.shop_template!.default"
-              aria-label="Edit current template"
-              @click="openEditDialog()"
-            >
-              <q-tooltip
-                v-if="tmpFilters.shop_template!.default"
-                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                anchor="top middle"
-                self="bottom middle"
+            <div class="tw:flex tw:justify-center tw:grow">
+              <q-btn
+                class="tw:my-auto!"
+                :icon="biPencilSquare"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                :disable="tmpFilters.shop_template!.default"
+                aria-label="Edit current template"
+                @click="openEditDialog()"
               >
-                Can't edit default template
-              </q-tooltip>
-              <q-tooltip
-                v-else
-                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                anchor="top middle"
-                self="bottom middle"
-              >
-                Edit template
-              </q-tooltip>
-            </q-btn>
+                <q-tooltip
+                  v-if="tmpFilters.shop_template!.default"
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Can't edit default template
+                </q-tooltip>
+                <q-tooltip
+                  v-else
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Edit template
+                </q-tooltip>
+              </q-btn>
+            </div>
             <q-dialog
               v-model="editTemplateDialog"
               aria-label="Edit template dialog"
@@ -1320,7 +1330,6 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Source"
-                        style="max-width: 236px"
                         virtual-scroll-item-size="32"
                         @filter="filterSourcesFn"
                       />
@@ -1337,7 +1346,6 @@ defineExpose({ generateShop });
                         use-input
                         input-debounce="0"
                         label="Traits"
-                        style="max-width: 236px"
                         :virtual-scroll-slice-size="traitOptions.length"
                         @filter="filterTraitsFn"
                       >
@@ -1408,7 +1416,6 @@ defineExpose({ generateShop });
                         input-debounce="0"
                         label="Rarity"
                         class="tw:mb-2 tw:pb-0.5"
-                        style="max-width: 236px"
                       />
                     </q-card-section>
                   </q-tab-panel>
@@ -1609,35 +1616,37 @@ defineExpose({ generateShop });
                 </q-card-actions>
               </q-card>
             </q-dialog>
-            <q-btn
-              class="tw:m-auto!"
-              :icon="biTrash"
-              size="sm"
-              padding="sm"
-              flat
-              round
-              dense
-              :disable="tmpFilters.shop_template!.default"
-              aria-label="Remove current template"
-              @click="removeTemplateDialog = true"
-            >
-              <q-tooltip
-                v-if="tmpFilters.shop_template!.default"
-                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                anchor="top middle"
-                self="bottom middle"
+            <div class="tw:flex tw:justify-center tw:grow">
+              <q-btn
+                class="tw:my-auto!"
+                :icon="biTrash"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                :disable="tmpFilters.shop_template!.default"
+                aria-label="Remove current template"
+                @click="removeTemplateDialog = true"
               >
-                Can't delete default template
-              </q-tooltip>
-              <q-tooltip
-                v-else
-                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                anchor="top middle"
-                self="bottom middle"
-              >
-                Delete template
-              </q-tooltip>
-            </q-btn>
+                <q-tooltip
+                  v-if="tmpFilters.shop_template!.default"
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Can't delete default template
+                </q-tooltip>
+                <q-tooltip
+                  v-else
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Delete template
+                </q-tooltip>
+              </q-btn>
+            </div>
             <q-dialog
               v-model="removeTemplateDialog"
               aria-label="Remove template dialog"

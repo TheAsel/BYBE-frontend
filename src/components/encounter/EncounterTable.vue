@@ -1441,7 +1441,7 @@ onMounted(async () => {
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
           <q-spinner-gears
-            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            class="tw:mx-auto tw:text-gray-800! tw:dark:text-white!"
             size="5em"
           />
         </q-inner-loading>
@@ -1456,7 +1456,7 @@ onMounted(async () => {
                 flat
                 round
                 dense
-                class="tw:mr-4! tw:my-2! tw:md:my-0!"
+                class="tw:mr-4! tw:my-2! tw:md:my-0! tw:text-gray-800! tw:dark:text-white!"
                 :icon="biArrowsCollapseVertical"
                 size="md"
                 padding="sm"
@@ -1477,7 +1477,7 @@ onMounted(async () => {
                 flat
                 round
                 dense
-                class="tw:mr-4! tw:my-2! tw:md:my-0!"
+                class="tw:mr-4! tw:my-2! tw:md:my-0! tw:text-gray-800! tw:dark:text-white!"
                 :icon="biArrowsExpandVertical"
                 size="md"
                 padding="sm"
@@ -2288,6 +2288,7 @@ onMounted(async () => {
             :name="mdiSword"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2302,6 +2303,7 @@ onMounted(async () => {
             :name="mdiBowArrow"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2316,6 +2318,7 @@ onMounted(async () => {
             :name="mdiMagicStaff"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2338,6 +2341,7 @@ onMounted(async () => {
             :name="fasHandFist"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2356,6 +2360,7 @@ onMounted(async () => {
             :name="fasMeteor"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2374,6 +2379,7 @@ onMounted(async () => {
             :name="fasGraduationCap"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2392,6 +2398,7 @@ onMounted(async () => {
             :name="fasUserNinja"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2410,6 +2417,7 @@ onMounted(async () => {
             :name="fasCrosshairs"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2428,6 +2436,7 @@ onMounted(async () => {
             :name="fasUserShield"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2446,6 +2455,7 @@ onMounted(async () => {
             :name="fasHatWizard"
             size="sm"
             left
+            class="tw:text-gray-800! tw:dark:text-white!"
           >
             <q-tooltip
               class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
@@ -2504,7 +2514,7 @@ onMounted(async () => {
       <template #loading>
         <q-inner-loading showing style="z-index: 2">
           <q-spinner-gears
-            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            class="tw:mx-auto tw:text-gray-800! tw:dark:text-white!"
             size="5em"
           />
         </q-inner-loading>

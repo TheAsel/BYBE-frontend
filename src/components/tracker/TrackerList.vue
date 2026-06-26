@@ -436,7 +436,7 @@ onUnmounted(() => {
             "
           >
             <div
-              class="tw:flex tw:flex-row tw:flex-wrap tw:justify-center tw:my-1 tw:ml-2"
+              class="tw:flex tw:flex-row tw:flex-wrap tw:justify-end tw:my-1 tw:ml-2"
             >
               <q-btn
                 class="tw:my-auto! tw:mr-2! tw:max-h-[33.15px]!"
@@ -599,7 +599,7 @@ onUnmounted(() => {
                   v-if="item.is_player"
                   v-model="item.element"
                   dense
-                  class="tw:align-middle tw:max-w-18! tw:md:max-w-64!"
+                  class="tw:max-2xl:max-w-32!"
                   :input-class="
                     item.health !== null && item.health === 0
                       ? 'tw:line-through! tw:text-red-600! tw:dark:text-red-400!'
@@ -607,31 +607,30 @@ onUnmounted(() => {
                   "
                 />
               </div>
-              <q-btn
-                v-if="!item.is_player && item.element.is_hazard"
-                v-model="item.disabled"
-                :icon="item.disabled ? mdiBombOff : mdiBomb"
-                round
-                unelevated
-                dense
-                class="tw:my-auto! tw:mr-2!"
-                @click="item.disabled = !item.disabled"
-              >
-                <q-tooltip
-                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
-                  anchor="top middle"
-                  self="bottom middle"
-                >
-                  {{ item.disabled ? "Enable" : "Disable" }}
-                </q-tooltip>
-              </q-btn>
               <div class="tw:flex tw:my-auto">
+                <q-btn
+                  v-if="!item.is_player && item.element.is_hazard"
+                  v-model="item.disabled"
+                  :icon="item.disabled ? mdiBombOff : mdiBomb"
+                  round
+                  unelevated
+                  dense
+                  class="tw:my-auto! tw:mr-2! tw:text-gray-800! tw:dark:text-white!"
+                  @click="item.disabled = !item.disabled"
+                >
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    {{ item.disabled ? "Enable" : "Disable" }}
+                  </q-tooltip>
+                </q-btn>
                 <q-input
                   v-if="item.max_health !== null"
                   :model-value="item.health"
                   dense
-                  filled
-                  outlined
+                  standout
                   stack-label
                   class="tw:w-17 tw:pr-2"
                   type="number"
@@ -666,8 +665,7 @@ onUnmounted(() => {
                   v-else
                   :model-value="item.initiative"
                   dense
-                  filled
-                  outlined
+                  standout
                   stack-label
                   class="tw:w-18 tw:mr-1!"
                   type="number"
@@ -678,6 +676,7 @@ onUnmounted(() => {
                   @blur="tracker_store.sortList()"
                 />
                 <q-btn
+                  v-if="tracker_store.running"
                   class="tw:my-auto! tw:mr-2! tw:p-2.25!"
                   :icon="fasMagnifyingGlass"
                   size="sm"
@@ -704,7 +703,7 @@ onUnmounted(() => {
       <q-page-container v-else class="tw:flex" style="height: 78vh">
         <div class="tw:m-auto">
           <q-spinner-gears
-            class="tw:mx-auto tw:text-black tw:dark:text-white"
+            class="tw:mx-auto tw:text-gray-800! tw:dark:text-white!"
             size="5em"
           />
         </div>

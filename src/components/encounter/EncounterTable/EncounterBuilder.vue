@@ -583,9 +583,13 @@ defineExpose({ generateEncounter });
                   <q-badge outline class="tw:text-sm!"> XP ratio: </q-badge>
 
                   <div class="tw:flex tw:justify-between">
-                    <q-badge color="primary"> Creatures </q-badge>
+                    <q-badge class="tw:text-white!" color="primary">
+                      Creatures
+                    </q-badge>
 
-                    <q-badge color="primary"> Hazards </q-badge>
+                    <q-badge class="tw:text-white!" color="primary">
+                      Hazards
+                    </q-badge>
                   </div>
                   <q-slider
                     v-model="tmpFilters.creature_hazard_ratio"

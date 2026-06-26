@@ -25,8 +25,16 @@ export function getGameFont(
   return game === "sf" ? "Orbitron Bold" : "Good Pro Condensed";
 }
 
-export function getGameFontSize(game: games): "tw:text-2xl!" | "tw:text-3xl!" {
-  return game === "sf" ? "tw:text-2xl!" : "tw:text-3xl!";
+export function getGameFontSize(
+  game: games
+): "tw:text-2xl! tw:tracking-tight!" | "tw:text-3xl!" {
+  return game === "sf" ? "tw:text-2xl! tw:tracking-tight!" : "tw:text-3xl!";
+}
+
+export function getGameFontSizeSmall(
+  game: games
+): "tw:text-xl! tw:tracking-tight!" | "tw:text-2xl!" {
+  return game === "sf" ? "tw:text-xl! tw:tracking-tight!" : "tw:text-2xl!";
 }
 
 export function getGameAonLink(game: games): "aonsrd" | "aonprd" {
