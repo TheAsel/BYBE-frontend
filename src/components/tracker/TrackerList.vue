@@ -7,6 +7,7 @@ import {
   fasForward,
   fasLandMineOn,
   fasMagnifyingGlass,
+  fasTag,
   fasUser
 } from "@quasar/extras/fontawesome-v7";
 import { matPriorityHigh } from "@quasar/extras/material-icons";
@@ -19,12 +20,13 @@ import {
   mdiClose,
   mdiSwordCross
 } from "@quasar/extras/mdi-v7";
+import { startCase } from "lodash-es";
 import { useQuasar } from "quasar";
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
-import DiceIcon from "@/components/generic/DiceIcon.vue";
 import { requestCreatureId, requestHazardId } from "@/api/encounter-api-calls";
+import DiceIcon from "@/components/generic/DiceIcon.vue";
 import { settingsStore } from "@/stores/settings";
 import { openSheet } from "@/utils/sheet";
 import { trackerStore } from "@/stores/tracker";
@@ -124,7 +126,9 @@ async function initializeTracker(): Promise<void> {
                 ac: itemData.core_hazard.essential.ac ?? null,
                 fortitude: itemData.core_hazard.essential.fortitude ?? null,
                 reflex: itemData.core_hazard.essential.reflex ?? null,
-                will: itemData.core_hazard.essential.will ?? null
+                will: itemData.core_hazard.essential.will ?? null,
+                conditions: [],
+                note: ""
               },
               success: true
             };
@@ -140,6 +144,15 @@ async function initializeTracker(): Promise<void> {
             return { success: false };
           }
           creature_list.push(itemData);
+          if (
+            itemData.combat_data?.conditions &&
+            itemData.combat_data.conditions.length > 0
+          ) {
+            for (let condition of itemData.combat_data.conditions) {
+              condition.name = startCase(condition.name);
+              condition.default = true;
+            }
+          }
           return {
             item: {
               element: item,
@@ -152,7 +165,9 @@ async function initializeTracker(): Promise<void> {
               ac: itemData.combat_data?.ac ?? null,
               fortitude: itemData.combat_data?.saving_throws.fortitude ?? null,
               reflex: itemData.combat_data?.saving_throws.reflex ?? null,
-              will: itemData.combat_data?.saving_throws.will ?? null
+              will: itemData.combat_data?.saving_throws.will ?? null,
+              conditions: itemData.combat_data?.conditions ?? [],
+              note: ""
             },
             success: true
           };
@@ -210,7 +225,9 @@ async function initializeTracker(): Promise<void> {
       ac: 0,
       fortitude: 0,
       reflex: 0,
-      will: 0
+      will: 0,
+      conditions: [],
+      note: ""
     });
   }
 
@@ -478,13 +495,15 @@ onUnmounted(() => {
                   class="tw:p-1! tw:invisible"
                   aria-label="Creature type"
                   @click="
-                    openSheet(
-                      router,
-                      'bestiary',
-                      item.element.game ?? settings_store.game,
-                      item.element.id,
-                      item.element.variant
-                    )
+                    if (!item.is_player) {
+                      openSheet(
+                        router,
+                        'bestiary',
+                        item.element.game ?? settings_store.game,
+                        item.element.id,
+                        item.element.variant
+                      );
+                    }
                   "
                 >
                   <q-avatar class="tw:visible" :icon="fasDragon" color="blue">
@@ -505,12 +524,14 @@ onUnmounted(() => {
                   class="tw:p-1! tw:invisible"
                   aria-label="Hazard type"
                   @click="
-                    openSheet(
-                      router,
-                      'hazard',
-                      item.element.game ?? settings_store.game,
-                      item.element.id
-                    )
+                    if (!item.is_player) {
+                      openSheet(
+                        router,
+                        'hazard',
+                        item.element.game ?? settings_store.game,
+                        item.element.id
+                      );
+                    }
                   "
                 >
                   <q-avatar
@@ -576,6 +597,27 @@ onUnmounted(() => {
                     }}{{ item.element.name }}</span
                   >
                 </span>
+                <q-icon
+                  v-if="item.conditions.length > 0"
+                  :name="fasTag"
+                  class="tw:ml-2 tw:my-auto"
+                >
+                  <q-tooltip
+                    class="tw:text-sm! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <strong>CONDITIONS</strong>
+                    <q-separator class="tw:my-1!" style="height: 2px" />
+                    <span v-for="condition in item.conditions">
+                      {{
+                        condition.name +
+                        (condition.is_stackable ? ` ${condition.value}` : "")
+                      }}
+                      <br
+                    /></span>
+                  </q-tooltip>
+                </q-icon>
               </div>
               <div v-else class="tw:flex tw:grow tw:mx-1">
                 <q-chip
@@ -606,6 +648,27 @@ onUnmounted(() => {
                       : ''
                   "
                 />
+                <q-icon
+                  v-if="item.conditions.length > 0"
+                  :name="fasTag"
+                  class="tw:ml-2 tw:my-auto"
+                >
+                  <q-tooltip
+                    class="tw:text-sm! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <strong>CONDITIONS</strong>
+                    <q-separator class="tw:my-1!" style="height: 2px" />
+                    <span v-for="condition in item.conditions">
+                      {{
+                        condition.name +
+                        (condition.is_stackable ? ` ${condition.value}` : "")
+                      }}
+                      <br
+                    /></span>
+                  </q-tooltip>
+                </q-icon>
               </div>
               <div class="tw:flex tw:my-auto">
                 <q-btn
@@ -630,7 +693,7 @@ onUnmounted(() => {
                   v-if="item.max_health !== null"
                   :model-value="item.health"
                   dense
-                  standout
+                  filled
                   stack-label
                   class="tw:w-17 tw:pr-2"
                   type="number"
@@ -665,7 +728,7 @@ onUnmounted(() => {
                   v-else
                   :model-value="item.initiative"
                   dense
-                  standout
+                  filled
                   stack-label
                   class="tw:w-18 tw:mr-1!"
                   type="number"

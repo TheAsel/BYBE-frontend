@@ -19,13 +19,15 @@ import {
   getGameFont,
   getGameFontSize,
   getGameFontSizeSmall,
+  immunityString,
   openSheet,
-  pfActionSymbol
+  pfActionSymbol,
+  rangeTraits,
+  resistanceString,
+  weaknessString
 } from "@/utils/sheet";
 
-import type { creature } from "@/types/creature";
 import type { variants } from "@/types/filters";
-import type { trait } from "@/types/generic";
 
 const route = useRoute();
 const router = useRouter();
@@ -365,87 +367,6 @@ const defenceString = computed(() => {
   return finalString;
 });
 
-const immunityString = (): string => {
-  let finalString = "";
-  if (combatData.value) {
-    const immunities = combatData.value.immunities;
-    immunities?.sort();
-    if (immunities.length > 0) {
-      for (const immunity of immunities) {
-        finalString += `${immunity.toLowerCase().replaceAll("-", " ")}, `;
-      }
-    }
-  }
-  return finalString.slice(0, -2);
-};
-
-const resistanceString = (): string => {
-  let finalString = "";
-  if (combatData.value) {
-    const resistances = combatData.value.resistances;
-    resistances?.sort();
-
-    if (resistances.length > 0) {
-      for (const resistance of resistances) {
-        finalString +=
-          `${resistance.core.name.replaceAll("-", " ")}` +
-          " " +
-          `${resistance.core.value}` +
-          ", ";
-
-        if (
-          resistance.exception_vs.length > 0 ||
-          resistance.double_vs.length > 0
-        ) {
-          if (resistance.exception_vs.length > 0) {
-            finalString = finalString.slice(0, -2);
-            finalString += " (except ";
-            for (const exception of resistance.exception_vs) {
-              finalString += `${exception.replaceAll("-", " ")}, `;
-            }
-            finalString += "";
-            finalString = finalString.slice(0, -2);
-          }
-
-          if (resistance.double_vs.length > 0) {
-            if (resistance.exception_vs.length > 0) {
-              finalString += ";";
-            }
-            finalString += " double resistance against ";
-            for (const double of resistance.double_vs) {
-              finalString += `${double.replaceAll("-", " ")}, `;
-            }
-            finalString += "";
-            finalString = finalString.slice(0, -2);
-          }
-
-          finalString += ")  ";
-        }
-      }
-    }
-  }
-  return finalString.slice(0, -2);
-};
-
-const weaknessString = (): string => {
-  let finalString = "";
-  if (combatData.value) {
-    const weaknesses = combatData.value.weaknesses;
-    const weakKeys = Object.keys(weaknesses!);
-    weakKeys.sort();
-    if (weakKeys.length > 0) {
-      for (const weakness of weakKeys) {
-        finalString +=
-          `${weakness.replaceAll("-", " ")}` +
-          " " +
-          `${encounter_store.selectedCreature?.combat_data?.weaknesses[weakness]}` +
-          ", ";
-      }
-    }
-  }
-  return finalString.slice(0, -2);
-};
-
 const healthString = computed(() => {
   let finalString = "";
   if (coreCreature.value && extraData.value && combatData.value) {
@@ -458,13 +379,13 @@ const healthString = computed(() => {
     }
 
     if (combatData.value.immunities.length > 0) {
-      finalString += `;<br><strong>Immunities</strong>&nbsp;${immunityString()}`;
+      finalString += `;<br><strong>Immunities</strong>&nbsp;${immunityString(combatData.value.immunities)}`;
     }
-    if (Object.keys(combatData.value.resistances).length > 0) {
-      finalString += `;<br><strong>Resistances</strong>&nbsp;${resistanceString()}`;
+    if (combatData.value.resistances.length > 0) {
+      finalString += `;<br><strong>Resistances</strong>&nbsp;${resistanceString(combatData.value.resistances)}`;
     }
-    if (Object.keys(combatData.value.weaknesses).length > 0) {
-      finalString += `;<br><strong>Weaknesess</strong>&nbsp;${weaknessString()};`;
+    if (combatData.value.weaknesses.length > 0) {
+      finalString += `;<br><strong>Weaknesess</strong>&nbsp;${weaknessString(combatData.value.weaknesses)};`;
     }
   }
   return finalString;
@@ -584,34 +505,6 @@ const spellString = computed(() => {
   }
   return finalStrings;
 });
-
-const rangeTraits = (
-  weapon: NonNullable<creature["combat_data"]>["weapons"][number]
-): trait[] => {
-  if (weapon.weapon_data?.range?.value) {
-    return weapon.item_core.traits.concat({
-      description:
-        "These attacks will either list a finite range or a range increment, which follows the normal rules for range increments.",
-      display_name: `range ${weapon.weapon_data?.range?.value} feet`,
-      name: `range ${weapon.weapon_data?.range?.value} feet`
-    });
-  } else if (weapon.weapon_data?.range?.increment) {
-    return weapon.item_core.traits.concat({
-      description:
-        "These attacks will either list a finite range or a range increment, which follows the normal rules for range increments.",
-      display_name: `range increment ${weapon.weapon_data?.range?.increment} feet`,
-      name: `range increment ${weapon.weapon_data?.range?.increment} feet`
-    });
-  } else if (weapon.weapon_data?.range?.max) {
-    return weapon.item_core.traits.concat({
-      description:
-        "These attacks will either list a finite range or a range increment, which follows the normal rules for range increments.",
-      display_name: `range ${weapon.weapon_data?.range?.max} feet`,
-      name: `range ${weapon.weapon_data?.range?.max} feet`
-    });
-  }
-  return weapon.item_core.traits;
-};
 </script>
 
 <template>
@@ -656,7 +549,7 @@ const rangeTraits = (
         dense
         size="sm"
         padding="sm"
-        class="tw:mr-1 tw:my-auto only-screen encounter-page-element"
+        class="tw:my-auto only-screen encounter-page-element"
         aria-label="Open creature sheet"
         @click="
           openSheet(
@@ -788,7 +681,7 @@ const rangeTraits = (
           sans-serif;
       "
       :options="Object.freeze(['Weak', 'Base', 'Elite'])"
-      standout
+      filled
       dense
       options-dense
       @update:model-value="

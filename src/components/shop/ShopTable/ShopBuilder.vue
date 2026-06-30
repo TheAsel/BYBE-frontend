@@ -951,7 +951,6 @@ defineExpose({ generateShop });
                             'Unique'
                           ])
                         "
-                        use-input
                         input-debounce="0"
                         label="Rarity"
                         class="tw:mb-2 tw:pb-0.5"
@@ -1412,7 +1411,6 @@ defineExpose({ generateShop });
                             'Unique'
                           ])
                         "
-                        use-input
                         input-debounce="0"
                         label="Rarity"
                         class="tw:mb-2 tw:pb-0.5"

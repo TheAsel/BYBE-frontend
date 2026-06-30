@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { settingsStore } from "@/stores/settings";
-import { trackerStore } from "@/stores/tracker";
-import { getGameFont, getGameFontSize, openSheet } from "@/utils/sheet";
-import { biBoxArrowUpRight } from "@quasar/extras/bootstrap-icons";
+import {
+  biBoxArrowUpRight,
+  biDash,
+  biPlus
+} from "@quasar/extras/bootstrap-icons";
 import {
   fasBrain,
   fasDumbbell,
@@ -12,21 +13,64 @@ import {
   fasPersonRunning,
   fasShield
 } from "@quasar/extras/fontawesome-v7";
-import { computed, ref } from "vue";
+import { matPriorityHigh } from "@quasar/extras/material-icons";
+import { startCase } from "lodash-es";
+import { useQuasar } from "quasar";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
+import { requestConditions } from "@/api/encounter-api-calls";
 import DiceIcon from "@/components/generic/DiceIcon.vue";
+import { settingsStore } from "@/stores/settings";
+import { trackerStore } from "@/stores/tracker";
+import {
+  cleanDescription,
+  getGameFont,
+  getGameFontSize,
+  openSheet
+} from "@/utils/sheet";
+
+import type { condition } from "@/types/tracker";
 
 const router = useRouter();
 
+const $q = useQuasar();
 const settings_store = settingsStore();
 const tracker_store = trackerStore();
 
+const conditionList = ref<condition[]>([]);
+const conditionFilter = ref<condition[]>([]);
 const detailedElement = computed(
   () => tracker_store.trackerList.list[tracker_store.trackerList.detail_index]
 );
 
 const changeHealthInput = ref(0);
+
+onMounted(async () => {
+  try {
+    const conditionRequest = await requestConditions(settings_store.game);
+    if (!conditionRequest) {
+      throw new Error("Error fetching conditions");
+    }
+    for (let condition of conditionRequest) {
+      condition.name = startCase(condition.name);
+    }
+
+    tracker_store.conditions = conditionRequest.toSorted((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+    conditionList.value = tracker_store.conditions;
+    conditionFilter.value = tracker_store.conditions;
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      icon: matPriorityHigh,
+      message: "Error fetching conditions",
+      progress: true,
+      type: "warning"
+    });
+  }
+});
 
 const validateNumber = (newValue: unknown): number => {
   const val = Number(newValue);
@@ -84,6 +128,18 @@ const rollInitiative = (index: number): void => {
       rollDice + tracker_store.trackerList.list[index].perception;
   }
 };
+
+const filterConditionsFn = (
+  val: string,
+  update: (fn: () => void) => void
+): void => {
+  update(() => {
+    const filter = val.toLowerCase();
+    conditionList.value = conditionFilter.value.filter(v =>
+      v.name.toLowerCase().includes(filter)
+    );
+  });
+};
 </script>
 
 <template>
@@ -126,7 +182,7 @@ const rollInitiative = (index: number): void => {
             </span>
             <span
               v-else
-              class="tw:flex"
+              class="tw:flex tw:my-auto"
               :style="
                 'font-family: ' +
                 getGameFont(
@@ -143,18 +199,21 @@ const rollInitiative = (index: number): void => {
                 round
                 dense
                 size="sm"
-                class="tw:px-2! only-screen encounter-page-element"
+                padding="sm"
+                class="only-screen encounter-page-element"
                 aria-label="Open creature sheet"
                 @click="
-                  openSheet(
-                    router,
-                    detailedElement.element.is_hazard ? 'hazard' : 'bestiary',
-                    detailedElement.element.game ?? settings_store.game,
-                    detailedElement.element.id ?? 0,
-                    !detailedElement.element.is_hazard
-                      ? detailedElement.element.variant
-                      : null
-                  )
+                  if (!detailedElement.is_player) {
+                    openSheet(
+                      router,
+                      detailedElement.element.is_hazard ? 'hazard' : 'bestiary',
+                      detailedElement.element.game ?? settings_store.game,
+                      detailedElement.element.id ?? 0,
+                      !detailedElement.element.is_hazard
+                        ? detailedElement.element.variant
+                        : null
+                    );
+                  }
                 "
               >
                 <q-tooltip
@@ -273,7 +332,7 @@ const rollInitiative = (index: number): void => {
               v-if="detailedElement.is_player"
               :model-value="detailedElement.perception"
               dense
-              standout
+              filled
               stack-label
               type="number"
               class="tw:mr-4 tw:my-auto tw:w-16 tw:min-w-16"
@@ -319,7 +378,7 @@ const rollInitiative = (index: number): void => {
                 <q-input
                   :model-value="detailedElement.health"
                   dense
-                  standout
+                  filled
                   class="tw:max-w-14! tw:max-h-8! tw:text-xl!"
                   input-class="tw:text-xl! tw:font-bold! tw:text-end"
                   type="number"
@@ -332,7 +391,7 @@ const rollInitiative = (index: number): void => {
                 <q-input
                   :model-value="detailedElement.max_health"
                   dense
-                  standout
+                  filled
                   class="tw:max-w-20! tw:max-h-8! tw:text-xl!"
                   input-class="tw:text-xl! tw:font-bold! tw:text-start"
                   type="number"
@@ -384,7 +443,7 @@ const rollInitiative = (index: number): void => {
               <q-input
                 :model-value="changeHealthInput"
                 dense
-                standout
+                filled
                 stack-label
                 type="number"
                 class="tw:mx-4 tw:max-w-15"
@@ -452,7 +511,7 @@ const rollInitiative = (index: number): void => {
                   v-else
                   :model-value="detailedElement.ac"
                   dense
-                  standout
+                  filled
                   class="tw:max-w-18! tw:text-xl! tw:mx-auto"
                   input-class="tw:text-xl! tw:font-bold! tw:text-center"
                   type="number"
@@ -494,7 +553,7 @@ const rollInitiative = (index: number): void => {
                   v-else
                   :model-value="detailedElement.fortitude"
                   dense
-                  standout
+                  filled
                   class="tw:max-w-18! tw:text-sm! tw:mx-auto"
                   input-class="tw:text-xl! tw:font-bold! tw:text-center"
                   type="number"
@@ -537,7 +596,7 @@ const rollInitiative = (index: number): void => {
                   v-else
                   :model-value="detailedElement.reflex"
                   dense
-                  standout
+                  filled
                   class="tw:max-w-18! tw:text-sm! tw:mx-auto"
                   input-class="tw:text-xl! tw:font-bold! tw:text-center"
                   type="number"
@@ -579,7 +638,7 @@ const rollInitiative = (index: number): void => {
                   v-else
                   :model-value="detailedElement.will"
                   dense
-                  standout
+                  filled
                   class="tw:max-w-18! tw:text-sm! tw:mx-auto"
                   input-class="tw:text-xl! tw:font-bold! tw:text-center"
                   type="number"
@@ -593,7 +652,101 @@ const rollInitiative = (index: number): void => {
           </div>
           <div>
             <q-separator class="tw:my-2!" style="height: 2px" />
-            CONDITIONS
+            <q-select
+              v-model="detailedElement.conditions"
+              multiple
+              filled
+              use-chips
+              options-dense
+              :options="conditionList"
+              option-label="name"
+              use-input
+              input-debounce="0"
+              label="Conditions"
+              class="tw:mx-auto tw:w-64"
+              @filter="filterConditionsFn"
+            >
+              <template #selected-item="scope">
+                <q-chip
+                  :removable="
+                    detailedElement.conditions[scope.index]!.default !== true
+                  "
+                  dense
+                  class="tw:text-white"
+                  :tabindex="scope.tabindex"
+                  @remove="
+                    detailedElement!.conditions[scope.index]!.value = null;
+                    scope.removeAtIndex(scope.index);
+                  "
+                >
+                  {{
+                    scope.opt.name +
+                    (scope.opt.is_stackable ? ` ${scope.opt.value}` : "")
+                  }}
+                  <q-tooltip
+                    style="
+                      font-family:
+                        Good Pro,
+                        sans-serif;
+                    "
+                    class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+                  >
+                    <strong>{{ scope.opt.name.toUpperCase() }} </strong>
+                    <q-separator class="tw:my-1!" style="height: 2px" />
+                    <span v-html="cleanDescription(scope.opt.rule)" />
+                  </q-tooltip>
+                </q-chip>
+              </template>
+              <template #option="scope">
+                <q-item dense class="tw:max-h-8">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.name }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn
+                      :icon="biDash"
+                      round
+                      dense
+                      flat
+                      @click="
+                        if (!detailedElement.is_player) {
+                          tracker_store.decreaseCondition(
+                            detailedElement,
+                            scope.opt
+                          );
+                        }
+                      "
+                    />
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn
+                      :icon="biPlus"
+                      round
+                      dense
+                      flat
+                      @click="
+                        if (!detailedElement.is_player) {
+                          tracker_store.increaseCondition(
+                            detailedElement,
+                            scope.opt
+                          );
+                        }
+                      "
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <div>
+            <q-separator class="tw:my-2!" style="height: 2px" />
+            <q-input
+              v-model="detailedElement.note"
+              label="Note"
+              filled
+              autogrow
+              type="textarea"
+            />
           </div>
         </div>
       </q-scroll-area>

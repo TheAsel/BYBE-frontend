@@ -5,6 +5,7 @@ import {
   biUnlock,
   biXLg
 } from "@quasar/extras/bootstrap-icons";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 
 import TraitsList from "@/components/generic/TraitsList.vue";
@@ -18,10 +19,13 @@ import {
   getGameFont,
   getGameFontSize,
   getGameFontSizeSmall,
+  immunityString,
   openSheet,
-  pfActionSymbol
+  pfActionSymbol,
+  rangeTraits,
+  resistanceString,
+  weaknessString
 } from "@/utils/sheet";
-import { computed } from "vue";
 
 const router = useRouter();
 
@@ -51,7 +55,7 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
           dense
           size="sm"
           padding="sm"
-          class="tw:mr-1 tw:my-auto only-screen tracker-page-element"
+          class="tw:my-auto only-screen tracker-page-element"
           :aria-label="
             (tracker_store.lockSheet ? 'Unlock' : 'Lock') + ' hazard sheet'
           "
@@ -126,7 +130,7 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
           )
         "
       >
-        NPC
+        Hazard
         <span>{{ coreHazard.essential.level }}</span>
       </div>
       <div class="tw:my-auto!">
@@ -380,6 +384,24 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
           <strong>HP</strong>
           {{ " " + coreHazard.essential.hp + "; " }}
         </span>
+        <span v-if="coreHazard.essential.hp_details">
+          {{ " " + coreHazard.essential.hp_details + "; " }}
+        </span>
+        <span v-if="coreHazard.immunities.length > 0">
+          <br />
+          <strong> Immunities </strong>
+          {{ immunityString(coreHazard.immunities) }}
+        </span>
+        <span v-if="coreHazard.resistances.length > 0">
+          <br />
+          <strong> Resistances </strong>
+          {{ resistanceString(coreHazard.resistances) }}
+        </span>
+        <span v-if="coreHazard.weaknesses.length > 0">
+          <br />
+          <strong> Weaknesses </strong>
+          {{ weaknessString(coreHazard.weaknesses) }}
+        </span>
       </div>
       <span v-for="action in coreHazard.actions" :key="action.core_action.name">
         <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
@@ -418,6 +440,99 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
             "
           />
         </div>
+      </div>
+    </span>
+    <span v-for="(item, index) in coreHazard.weapons" :key="index">
+      <div
+        v-if="item.weapon_data?.weapon_type !== 'Generic'"
+        class="tw:text-base tw:text-gray-800 tw:dark:text-white"
+      >
+        <strong v-if="item.weapon_data?.weapon_type === 'Melee'">Melee </strong>
+        <strong v-else-if="item.weapon_data?.weapon_type === 'Ranged'"
+          >Ranged
+        </strong>
+        <span
+          style="font-family: Pathfinder2eActions, sans-serif"
+          class="tw:text-2xl"
+          >1</span
+        >
+        <i>{{ " " + item.item_core.name.toLowerCase() + " " }} </i>
+        <span
+          >{{ addPlus(item.weapon_data?.to_hit_bonus!) }}
+          <span v-if="item.item_core.traits.map(t => t.name).includes('agile')"
+            >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 4) }}/{{
+              addPlus(item.weapon_data?.to_hit_bonus! - 8)
+            }}]
+          </span>
+          <span v-else
+            >[{{ addPlus(item.weapon_data?.to_hit_bonus! - 5) }}/{{
+              addPlus(item.weapon_data?.to_hit_bonus! - 10)
+            }}]
+          </span>
+        </span>
+        <TraitsList :traits="rangeTraits(item)" />
+        <strong> Damage </strong>
+        <span
+          v-for="(weapon, index) in item.weapon_data?.damage_data"
+          :key="index"
+        >
+          <span v-if="weapon.dice">
+            {{ weapon.dice.n_of_dices }}d{{ weapon.dice.dice_size
+            }}<span v-if="weapon.bonus_dmg !== 0">{{
+              addPlus(weapon.bonus_dmg)
+            }}</span>
+            {{ weapon.dmg_type }}
+            <span
+              v-if="
+                item.weapon_data?.damage_data.length &&
+                index !== item.weapon_data?.damage_data.length - 1
+              "
+            >
+              plus
+            </span>
+          </span>
+        </span>
+        <span v-if="item.weapon_data?.attack_effects?.length">
+          <span
+            v-for="action in item.weapon_data.attack_effects"
+            :key="action.core_action.id"
+          >
+            plus
+            <span
+              v-if="action.core_action.description !== null"
+              class="tw:decoration-2 tw:underline"
+            >
+              {{ action.core_action.name }}
+              <q-tooltip
+                style="
+                  font-family:
+                    Good Pro,
+                    sans-serif;
+                "
+                class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+              >
+                <strong>{{
+                  action.core_action.name.toUpperCase() + " "
+                }}</strong>
+                <span
+                  style="font-family: Pathfinder2eActions, sans-serif"
+                  class="tw:text-2xl"
+                  >{{
+                    pfActionSymbol(
+                      action.core_action.n_of_actions,
+                      action.core_action.action_type
+                    )
+                  }}</span
+                >
+                <q-separator class="tw:my-1!" style="height: 2px" />
+                <span
+                  v-html="cleanDescription(action.core_action.description)"
+                />
+              </q-tooltip>
+            </span>
+            <span v-else>{{ action.core_action.name }}</span>
+          </span>
+        </span>
       </div>
     </span>
     <q-separator

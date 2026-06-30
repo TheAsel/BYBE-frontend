@@ -1,4 +1,19 @@
-import type { min_creature_hazard } from "./encounter";
+import type { min_creature_hazard } from "@/types/encounter";
+
+export type condition = {
+  condition_group: string | null;
+  is_perpetual: boolean;
+  is_stackable: boolean;
+  license: string;
+  name: string;
+  note: string | null;
+  remaster: boolean;
+  rule: string;
+  source: string;
+  summary: string | null;
+  value: number | null;
+  default: boolean | null;
+};
 
 type tracker_base = {
   health: number | null;
@@ -9,6 +24,8 @@ type tracker_base = {
   fortitude: number | null;
   reflex: number | null;
   will: number | null;
+  conditions: condition[];
+  note: string;
 };
 
 export type min_tracker =

@@ -6,8 +6,16 @@ import type {
   sizes,
   variants
 } from "@/types/filters";
-import type { action, range, trait } from "@/types/generic";
+import type {
+  action,
+  range,
+  resistance,
+  trait,
+  weakness,
+  weapon
+} from "@/types/generic";
 import type { item } from "@/types/item";
+import type { condition } from "@/types/tracker";
 
 type KeyValue = Record<string, number>;
 
@@ -21,19 +29,10 @@ export type creature = {
         armor_data: item["armor_data"];
       }
     ];
+    conditions: condition[];
     immunities: string[];
-    resistances: [
-      {
-        core: {
-          id: number;
-          name: string;
-          value: number;
-        };
-        double_vs: string[];
-        exception_vs: string[];
-      }
-    ];
-    weaknesses: KeyValue;
+    resistances: resistance[];
+    weaknesses: weakness[];
     saving_throws: {
       fortitude: number;
       fortitude_detail: string;
@@ -42,12 +41,7 @@ export type creature = {
       will: number;
       will_detail: string;
     };
-    weapons: [
-      {
-        item_core: item["core_item"];
-        weapon_data: item["weapon_data"];
-      }
-    ];
+    weapons: weapon[];
   };
   core_data: {
     essential: {

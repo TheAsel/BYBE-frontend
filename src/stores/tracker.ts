@@ -2,22 +2,24 @@ import { defineStore } from "pinia";
 
 import type { creature } from "@/types/creature";
 import type { hazard } from "@/types/hazard";
-import type { min_tracker, tracker_list } from "@/types/tracker";
+import type { condition, min_tracker, tracker_list } from "@/types/tracker";
 
 export const trackerStore = defineStore("tracker_store", {
   state: (): {
     selectedCreature: creature | null;
     selectedHazard: hazard | null;
     trackerList: tracker_list;
+    conditions: condition[];
     running: boolean;
     round: number;
     lockSheet: boolean;
   } => ({
-    round: 0,
-    running: false,
     selectedCreature: null,
     selectedHazard: null,
     trackerList: { active_index: 0, detail_index: 0, list: [] },
+    conditions: [],
+    running: false,
+    round: 0,
     lockSheet: false
   }),
   actions: {
@@ -32,7 +34,9 @@ export const trackerStore = defineStore("tracker_store", {
         ac: 0,
         fortitude: 0,
         reflex: 0,
-        will: 0
+        will: 0,
+        conditions: [],
+        note: ""
       });
     },
     findNextValidIndex(
@@ -60,10 +64,70 @@ export const trackerStore = defineStore("tracker_store", {
       }
       return startIndex;
     },
+    increaseCondition(element: min_tracker, condition: condition) {
+      const conditionIndex = element.conditions
+        .map(cond => cond.name)
+        .indexOf(condition.name);
+
+      if (conditionIndex < 0) {
+        condition.value = 1;
+        element.conditions.push(condition);
+        return;
+      }
+
+      if (element.conditions[conditionIndex]) {
+        if (condition.is_stackable) {
+          if (element.conditions[conditionIndex].value === null) {
+            element.conditions[conditionIndex].value = 1;
+            return;
+          }
+          element.conditions[conditionIndex].value += 1;
+          return;
+        }
+        element.conditions[conditionIndex].value = 1;
+      }
+    },
+    decreaseCondition(element: min_tracker, condition: condition) {
+      const conditionIndex = element.conditions
+        .map(cond => cond.name)
+        .indexOf(condition.name);
+
+      if (conditionIndex < 0) {
+        return;
+      }
+
+      const selectedCondition = element.conditions[conditionIndex];
+
+      if (selectedCondition) {
+        if (
+          selectedCondition.value === null ||
+          selectedCondition.value <= 1 ||
+          Number.isNaN(selectedCondition.value)
+        ) {
+          if (!selectedCondition.default) {
+            element.conditions.splice(conditionIndex, 1);
+            return;
+          }
+          return;
+        }
+        selectedCondition.value -= 1;
+      }
+    },
     nextRound() {
       if (!this.running) {
         return;
       }
+
+      const current = this.trackerList.active_index;
+
+      for (let i = current; i < this.trackerList.list.length; i += 1) {
+        for (let condition of this.trackerList.list[i]!.conditions) {
+          if (!condition.is_perpetual) {
+            this.decreaseCondition(this.trackerList.list[i]!, condition);
+          }
+        }
+      }
+
       this.round += 1;
       this.trackerList.active_index = this.findNextValidIndex(-1, 1);
     },
@@ -71,7 +135,15 @@ export const trackerStore = defineStore("tracker_store", {
       if (!this.running) {
         return;
       }
+
       const current = this.trackerList.active_index;
+
+      for (let condition of this.trackerList.list[current]!.conditions) {
+        if (!condition.is_perpetual) {
+          this.decreaseCondition(this.trackerList.list[current]!, condition);
+        }
+      }
+
       const next = this.findNextValidIndex(current, 1);
       if (next <= current) {
         this.round += 1;
@@ -132,6 +204,9 @@ export const trackerStore = defineStore("tracker_store", {
         if (!item.is_player) {
           item.disabled = false;
         }
+        item.conditions = item.conditions.filter(
+          condition => condition.default === true
+        );
       }
     },
     setSelectedCreature(newSelectedCreature: creature) {

@@ -19,6 +19,7 @@ import type {
   variants
 } from "@/types/filters";
 import type { hazard, hazard_response } from "@/types/hazard";
+import type { condition } from "@/types/tracker";
 
 export async function requestCreatures(
   game: games,
@@ -107,6 +108,19 @@ export async function requestHazardFilters(
   try {
     return await apiFetch<string[]>(
       buildUrl(import.meta.env.API_URL, [game, "hazard", filter])
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function requestConditions(
+  game: games
+): Promise<condition[] | null> {
+  try {
+    return await apiFetch<condition[]>(
+      buildUrl(import.meta.env.API_URL, [game, "encounter", "conditions"])
     );
   } catch (error) {
     console.error(error);

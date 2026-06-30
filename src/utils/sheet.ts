@@ -1,4 +1,5 @@
 import type { games, variants } from "@/types/filters";
+import { resistance, trait, weakness, weapon } from "@/types/generic";
 import type { _RouterClassic } from "vue-router";
 
 export function openSheet(
@@ -106,4 +107,99 @@ export function pfActionSymbol(num: number | null, action: string): string {
     return "5";
   }
   return "";
+}
+
+export function rangeTraits(weapon: weapon): trait[] {
+  if (weapon.weapon_data?.range?.value) {
+    return weapon.item_core.traits.concat({
+      description:
+        "These attacks will either list a finite range or a range increment, which follows the normal rules for range increments.",
+      display_name: `range ${weapon.weapon_data?.range?.value} feet`,
+      name: `range ${weapon.weapon_data?.range?.value} feet`
+    });
+  } else if (weapon.weapon_data?.range?.increment) {
+    return weapon.item_core.traits.concat({
+      description:
+        "These attacks will either list a finite range or a range increment, which follows the normal rules for range increments.",
+      display_name: `range increment ${weapon.weapon_data?.range?.increment} feet`,
+      name: `range increment ${weapon.weapon_data?.range?.increment} feet`
+    });
+  } else if (weapon.weapon_data?.range?.max) {
+    return weapon.item_core.traits.concat({
+      description:
+        "These attacks will either list a finite range or a range increment, which follows the normal rules for range increments.",
+      display_name: `range ${weapon.weapon_data?.range?.max} feet`,
+      name: `range ${weapon.weapon_data?.range?.max} feet`
+    });
+  }
+  return weapon.item_core.traits;
+}
+
+export function immunityString(immunities: string[]): string {
+  let finalString = "";
+  immunities?.sort();
+  if (immunities.length > 0) {
+    for (const immunity of immunities) {
+      finalString += `${immunity.toLowerCase().replaceAll("-", " ")}, `;
+    }
+  }
+
+  return finalString.slice(0, -2);
+}
+
+export function resistanceString(resistances: resistance[]): string {
+  let finalString = "";
+
+  resistances.sort((a, b) => a.core.name.localeCompare(b.core.name));
+
+  if (resistances.length > 0) {
+    for (const resistance of resistances) {
+      finalString +=
+        resistance.core.name.replaceAll("-", " ") +
+        " " +
+        resistance.core.value +
+        ", ";
+
+      if (
+        resistance.exception_vs.length > 0 ||
+        resistance.double_vs.length > 0
+      ) {
+        if (resistance.exception_vs.length > 0) {
+          finalString = finalString.slice(0, -2);
+          finalString += " (except ";
+          for (const exception of resistance.exception_vs) {
+            finalString += `${exception.replaceAll("-", " ")}, `;
+          }
+          finalString = finalString.slice(0, -2);
+        }
+
+        if (resistance.double_vs.length > 0) {
+          if (resistance.exception_vs.length > 0) {
+            finalString += ";";
+          }
+          finalString += " double resistance against ";
+          for (const double of resistance.double_vs) {
+            finalString += `${double.replaceAll("-", " ")}, `;
+          }
+          finalString = finalString.slice(0, -2);
+        }
+
+        finalString += ")  ";
+      }
+    }
+  }
+  return finalString.slice(0, -2);
+}
+
+export function weaknessString(weaknesses: weakness[]): string {
+  let finalString = "";
+  weaknesses.sort((a, b) => a.name.localeCompare(b.name));
+  if (weaknesses.length > 0) {
+    for (const weakness of weaknesses) {
+      finalString +=
+        weakness.name.replaceAll("-", " ") + " " + weakness.value + ", ";
+    }
+  }
+
+  return finalString.slice(0, -2);
 }
