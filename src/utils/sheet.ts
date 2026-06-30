@@ -137,7 +137,7 @@ export function rangeTraits(weapon: weapon): trait[] {
 
 export function immunityString(immunities: string[]): string {
   let finalString = "";
-  immunities?.sort();
+  immunities?.sort((a, b) => a.localeCompare(b));
   if (immunities.length > 0) {
     for (const immunity of immunities) {
       finalString += `${immunity.toLowerCase().replaceAll("-", " ")}, `;

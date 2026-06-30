@@ -144,7 +144,7 @@ const languageString = computed(() => {
   let finalString = "";
   if (extraData.value) {
     const languages = extraData.value.languages;
-    languages?.sort();
+    languages?.sort((a, b) => a.localeCompare(b));
     if (languages.length > 0) {
       finalString += "<strong>Languages&nbsp;</strong>";
       for (const language of languages) {
@@ -846,7 +846,9 @@ const spellString = computed(() => {
       </a>
     </div>
     <div
-      v-for="item in encounter_store.selectedCreature?.core_data.traits.sort()"
+      v-for="item in encounter_store.selectedCreature?.core_data.traits.sort(
+        (a, b) => a.name.localeCompare(b.name)
+      )"
       :key="item.name"
       class="tw:bg-[#522e2c] tw:border-2 tw:border-[#d8c483] tw:my-1 tw:p-1"
     >
