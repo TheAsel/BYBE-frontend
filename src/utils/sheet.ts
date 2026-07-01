@@ -1,5 +1,5 @@
 import type { games, variants } from "@/types/filters";
-import { resistance, trait, weakness, weapon } from "@/types/generic";
+import type { resistance, trait, weakness, weapon } from "@/types/generic";
 import type { _RouterClassic } from "vue-router";
 
 export function openSheet(

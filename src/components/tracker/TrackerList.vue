@@ -44,7 +44,10 @@ const $q = useQuasar();
 const settings_store = settingsStore();
 const tracker_store = trackerStore();
 
-const sessionData = sessionStorage.getItem("tracker_data");
+const sessionData =
+  import.meta.env.IS_APP === true
+    ? localStorage.getItem("tracker_data")
+    : sessionStorage.getItem("tracker_data");
 
 const isGenerating = ref(false);
 

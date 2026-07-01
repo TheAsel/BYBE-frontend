@@ -583,22 +583,31 @@ const startTracker = (): void => {
     name: "tracker",
     query: { game: settings_store.game }
   });
-  sessionStorage.removeItem("tracker_data");
-  sessionStorage.setItem(
-    "tracker_data",
-    JSON.stringify({
-      encounter_list:
-        encounter_store.encounters[encounter_store.activeEncounter],
-      party: party_store.parties[party_store.activeParty]
-    })
-  );
 
   if (import.meta.env.IS_APP === true) {
+    localStorage.removeItem("tracker_data");
+    localStorage.setItem(
+      "tracker_data",
+      JSON.stringify({
+        encounter_list:
+          encounter_store.encounters[encounter_store.activeEncounter],
+        party: party_store.parties[party_store.activeParty]
+      })
+    );
     globalThis.open(routeData.href, "_self");
   } else {
+    sessionStorage.removeItem("tracker_data");
+    sessionStorage.setItem(
+      "tracker_data",
+      JSON.stringify({
+        encounter_list:
+          encounter_store.encounters[encounter_store.activeEncounter],
+        party: party_store.parties[party_store.activeParty]
+      })
+    );
     globalThis.open(routeData.href, "_blank");
+    sessionStorage.removeItem("tracker_data");
   }
-  sessionStorage.removeItem("tracker_data");
 };
 
 // Get info on creature list change
