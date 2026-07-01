@@ -35,7 +35,7 @@ const settings_store = settingsStore();
             Credit for the background art goes to Leon Tukker. Check him out at
             <a
               class="tw:text-blue-600 tw:sm:py-4 tw:dark:text-blue-400"
-              href="https://leontukker.artstation.com/"
+              href="https://leontukker.artstation.com"
               target="_blank"
               rel="noopener"
               >leontukker.artstation.com</a
