@@ -22,6 +22,7 @@ import {
 } from "@quasar/extras/mdi-v7";
 import { startCase } from "lodash-es";
 import { useQuasar } from "quasar";
+import Shepherd from "shepherd.js";
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -232,6 +233,7 @@ async function initializeTracker(): Promise<void> {
   }
 
   tracker_store.updateTracker(explodedCreatureList.concat(explodedPlayerList));
+  tracker_store.sortList();
   isGenerating.value = false;
 }
 
@@ -365,16 +367,31 @@ onMounted(() => {
 onUnmounted(() => {
   globalThis.removeEventListener("keydown", onGlobalKey);
 });
+
+Shepherd.on("start", () => {
+  tracker_store.running = true;
+  tracker_store.round = 1;
+  setSheetFromIndex(tracker_store.trackerList.active_index);
+});
+
+for (const event of ["complete", "cancel"]) {
+  Shepherd.on(event, () => {
+    tracker_store.running = false;
+    tracker_store.resetTracker();
+  });
+}
 </script>
 
 <template>
   <div class="tw:h-full">
     <q-layout
+      id="shepherd-0"
       view="lHh lpr lFf"
       container
       class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
     >
       <q-header
+        id="shepherd-1"
         bordered
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
@@ -442,6 +459,7 @@ onUnmounted(() => {
       <q-page-container v-if="!isGenerating">
         <q-page class="tw:min-h-auto!">
           <div
+            id="shepherd-2"
             v-for="(item, index) in tracker_store.trackerList.list"
             :key="index"
             class="tw:m-1"
@@ -600,7 +618,7 @@ onUnmounted(() => {
                 <q-icon
                   v-if="item.conditions.length > 0"
                   :name="fasTag"
-                  class="tw:ml-2 tw:my-auto"
+                  class="tw:ml-2 tw:my-auto tw:text-gray-800! tw:dark:text-white!"
                 >
                   <q-tooltip
                     class="tw:text-sm! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
@@ -651,7 +669,7 @@ onUnmounted(() => {
                 <q-icon
                   v-if="item.conditions.length > 0"
                   :name="fasTag"
-                  class="tw:ml-2 tw:my-auto"
+                  class="tw:ml-2 tw:my-auto tw:text-gray-800! tw:dark:text-white!"
                 >
                   <q-tooltip
                     class="tw:text-sm! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
@@ -775,7 +793,7 @@ onUnmounted(() => {
         bordered
         class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
       >
-        <div class="tw:mx-2">
+        <div id="shepherd-3" class="tw:mx-2">
           <div
             class="tw:flex tw:flex-wrap! tw:justify-center tw:my-1.5 tw:w-full"
           >

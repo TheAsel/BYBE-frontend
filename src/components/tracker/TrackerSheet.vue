@@ -18,6 +18,7 @@ watch(tracker_store, () => {
 <template>
   <div class="tracker-sheet tw:h-full">
     <div
+      id="shepherd-5"
       class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:items-center tw:text-left tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700 hide-print"
     >
       <q-scroll-area class="tw:h-full">

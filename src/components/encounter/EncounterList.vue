@@ -1037,13 +1037,15 @@ await debouncedCall();
                     class="tw:p-1! tw:invisible"
                     aria-label="Creature type"
                     @click="
-                      openSheet(
-                        router,
-                        'bestiary',
-                        item.game ?? settings_store.game,
-                        item.id,
-                        item.variant
-                      )
+                      if (!item.is_hazard) {
+                        openSheet(
+                          router,
+                          'bestiary',
+                          item.game ?? settings_store.game,
+                          item.id,
+                          item.variant
+                        );
+                      }
                     "
                   >
                     <q-avatar class="tw:visible" :icon="fasDragon" color="blue">

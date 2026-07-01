@@ -9,7 +9,6 @@ import {
   fasDumbbell,
   fasHeart,
   fasHeartCrack,
-  fasPenToSquare,
   fasPersonRunning,
   fasShield
 } from "@quasar/extras/fontawesome-v7";
@@ -45,6 +44,30 @@ const detailedElement = computed(
 );
 
 const changeHealthInput = ref(0);
+
+let closeTimer: ReturnType<typeof setTimeout>;
+const tooltipMap = ref<Record<number, boolean>>({});
+
+const openTooltip = (id: number): void => {
+  clearTimeout(closeTimer);
+  for (const tooltip in tooltipMap.value) {
+    tooltipMap.value[Number(tooltip)] = false;
+  }
+  tooltipMap.value[id] = true;
+};
+
+const cancelTooltipClose = (): void => {
+  clearTimeout(closeTimer);
+};
+
+const scheduleTooltipClose = (): void => {
+  clearTimeout(closeTimer);
+  closeTimer = setTimeout(() => {
+    for (const tooltip in tooltipMap.value) {
+      tooltipMap.value[Number(tooltip)] = false;
+    }
+  }, 100);
+};
 
 onMounted(async () => {
   try {
@@ -145,6 +168,7 @@ const filterConditionsFn = (
 <template>
   <div class="tw:h-full">
     <div
+      id="shepherd-4"
       class="tw:h-full tw:text-left tw:opacity-85 tw:dark:opacity-90 tw:rounded-xl tw:border tw:bg-white tw:border-gray-200 tw:dark:bg-gray-800 tw:dark:border-gray-700"
       :class="
         tracker_store.running &&
@@ -392,7 +416,7 @@ const filterConditionsFn = (
                   :model-value="detailedElement.max_health"
                   dense
                   filled
-                  class="tw:max-w-20! tw:max-h-8! tw:text-xl!"
+                  class="tw:max-w-14! tw:max-h-8! tw:text-xl!"
                   input-class="tw:text-xl! tw:font-bold! tw:text-start"
                   type="number"
                   @update:model-value="
@@ -400,13 +424,6 @@ const filterConditionsFn = (
                       (detailedElement!.max_health = validateNumber(v))
                   "
                 >
-                  <template v-slot:after>
-                    <q-icon
-                      :name="fasPenToSquare"
-                      size="xs"
-                      class="tw:my-4 tw:pb-1"
-                    />
-                  </template>
                 </q-input>
               </span>
             </b>
@@ -663,7 +680,7 @@ const filterConditionsFn = (
               use-input
               input-debounce="0"
               label="Conditions"
-              class="tw:mx-auto tw:w-64"
+              class="tw:mx-auto tw:my-4 tw:w-fit! tw:min-w-64"
               @filter="filterConditionsFn"
             >
               <template #selected-item="scope">
@@ -672,35 +689,83 @@ const filterConditionsFn = (
                     detailedElement.conditions[scope.index]!.default !== true
                   "
                   dense
+                  clickable
                   class="tw:text-white"
                   :tabindex="scope.tabindex"
                   @remove="
                     detailedElement!.conditions[scope.index]!.value = null;
                     scope.removeAtIndex(scope.index);
                   "
+                  @click="
+                    if (detailedElement) {
+                      tracker_store.increaseCondition(
+                        detailedElement,
+                        scope.opt
+                      );
+                    }
+                  "
+                  @contextmenu.prevent="
+                    if (detailedElement) {
+                      tracker_store.decreaseCondition(
+                        detailedElement,
+                        scope.opt
+                      );
+                    }
+                  "
+                  @mouseenter="openTooltip(scope.index)"
+                  @mouseleave="scheduleTooltipClose"
                 >
                   {{
                     scope.opt.name +
                     (scope.opt.is_stackable ? ` ${scope.opt.value}` : "")
                   }}
-                  <q-tooltip
+                  <q-menu
+                    :model-value="tooltipMap[scope.index] ?? false"
                     style="
                       font-family:
                         Good Pro,
                         sans-serif;
                     "
-                    class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+                    class="tw:text-base! tw:max-w-md! tw:p-2! tw:border tw:rounded-md tw:shadow-sm! tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+                    :offset="[0, 8]"
+                    anchor="top middle"
+                    self="bottom middle"
+                    @mouseenter="cancelTooltipClose"
+                    @mouseleave="scheduleTooltipClose"
                   >
                     <strong>{{ scope.opt.name.toUpperCase() }} </strong>
                     <q-separator class="tw:my-1!" style="height: 2px" />
                     <span v-html="cleanDescription(scope.opt.rule)" />
-                  </q-tooltip>
+                  </q-menu>
                 </q-chip>
               </template>
               <template #option="scope">
-                <q-item dense class="tw:max-h-8">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.name }}</q-item-label>
+                <q-item
+                  dense
+                  class="tw:max-h-8 tw:dark:hover:bg-[#4d5560]! tw:hover:bg-[#dddddd]"
+                >
+                  <q-item-section
+                    class="cursor-pointer"
+                    @click="
+                      if (detailedElement) {
+                        tracker_store.increaseCondition(
+                          detailedElement,
+                          scope.opt
+                        );
+                      }
+                    "
+                  >
+                    <q-item-label
+                      @contextmenu.prevent="
+                        if (detailedElement) {
+                          tracker_store.decreaseCondition(
+                            detailedElement,
+                            scope.opt
+                          );
+                        }
+                      "
+                      >{{ scope.opt.name }}</q-item-label
+                    >
                   </q-item-section>
                   <q-item-section side>
                     <q-btn
@@ -709,7 +774,7 @@ const filterConditionsFn = (
                       dense
                       flat
                       @click="
-                        if (!detailedElement.is_player) {
+                        if (detailedElement) {
                           tracker_store.decreaseCondition(
                             detailedElement,
                             scope.opt
@@ -725,7 +790,7 @@ const filterConditionsFn = (
                       dense
                       flat
                       @click="
-                        if (!detailedElement.is_player) {
+                        if (detailedElement) {
                           tracker_store.increaseCondition(
                             detailedElement,
                             scope.opt
@@ -742,6 +807,7 @@ const filterConditionsFn = (
             <q-separator class="tw:my-2!" style="height: 2px" />
             <q-input
               v-model="detailedElement.note"
+              class="tw:my-4"
               label="Note"
               filled
               autogrow

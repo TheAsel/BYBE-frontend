@@ -84,8 +84,8 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
             openSheet(
               router,
               'hazard',
-              selectedHazard.game ?? settings_store.game,
-              coreHazard.essential.id ?? 0
+              selectedHazard?.game ?? settings_store.game,
+              coreHazard?.essential.id ?? 0
             )
           "
         >

@@ -15,7 +15,8 @@ import { settingsStore } from "@/stores/settings";
 import {
   createTourEncounter,
   createTourNpc,
-  createTourShop
+  createTourShop,
+  createTourTracker
 } from "@/utils/tours";
 import { TailwindDarkFix } from "@/utils/tw-dark-fix";
 
@@ -33,7 +34,8 @@ const currentPath = ref(route.path);
 const isTourPage = ref(
   currentPath.value.startsWith("/encounter") ||
     currentPath.value.startsWith("/shop") ||
-    currentPath.value.startsWith("/npc")
+    currentPath.value.startsWith("/npc") ||
+    currentPath.value.startsWith("/tracker")
 );
 
 watch(
@@ -43,7 +45,8 @@ watch(
     isTourPage.value =
       currentPath.value.startsWith("/encounter") ||
       currentPath.value.startsWith("/shop") ||
-      currentPath.value.startsWith("/npc");
+      currentPath.value.startsWith("/npc") ||
+      currentPath.value.startsWith("/tracker");
   }
 );
 
@@ -337,6 +340,9 @@ const unhide = debounce(() => {
                     break;
                   case '/npc':
                     createTourNpc().start();
+                    break;
+                  case '/tracker':
+                    createTourTracker().start();
                     break;
                   default:
                     break;

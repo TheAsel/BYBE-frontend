@@ -120,6 +120,9 @@ export const trackerStore = defineStore("tracker_store", {
 
       const current = this.trackerList.active_index;
 
+      this.round += 1;
+      this.trackerList.active_index = this.findNextValidIndex(-1, 1);
+
       for (let i = current; i < this.trackerList.list.length; i += 1) {
         for (let condition of this.trackerList.list[i]!.conditions) {
           if (!condition.is_perpetual) {
@@ -127,9 +130,6 @@ export const trackerStore = defineStore("tracker_store", {
           }
         }
       }
-
-      this.round += 1;
-      this.trackerList.active_index = this.findNextValidIndex(-1, 1);
     },
     nextTurn() {
       if (!this.running) {
@@ -138,17 +138,19 @@ export const trackerStore = defineStore("tracker_store", {
 
       const current = this.trackerList.active_index;
 
-      for (let condition of this.trackerList.list[current]!.conditions) {
-        if (!condition.is_perpetual) {
-          this.decreaseCondition(this.trackerList.list[current]!, condition);
-        }
-      }
-
       const next = this.findNextValidIndex(current, 1);
       if (next <= current) {
         this.round += 1;
       }
       this.trackerList.active_index = next;
+
+      for (let i = current; i < next; i += 1) {
+        for (let condition of this.trackerList.list[i]!.conditions) {
+          if (!condition.is_perpetual) {
+            this.decreaseCondition(this.trackerList.list[i]!, condition);
+          }
+        }
+      }
     },
     prevRound() {
       if (!this.running) {
@@ -207,6 +209,7 @@ export const trackerStore = defineStore("tracker_store", {
         item.conditions = item.conditions.filter(
           condition => condition.default === true
         );
+        this.sortList();
       }
     },
     setSelectedCreature(newSelectedCreature: creature) {
@@ -219,6 +222,7 @@ export const trackerStore = defineStore("tracker_store", {
     },
     sortList() {
       const old_detail = this.trackerList.list[this.trackerList.detail_index];
+
       const withInit = [];
       const withoutInit = [];
       for (const item of this.trackerList.list) {
@@ -228,12 +232,43 @@ export const trackerStore = defineStore("tracker_store", {
           withInit.push(item);
         }
       }
+
       withInit.sort((a, b) => {
         const ai = a.initiative ?? -1;
         const bi = b.initiative ?? -1;
-        return bi - ai;
+
+        const an = a.is_player ? a.element : a.element.name;
+        const bn = b.is_player ? b.element : b.element.name;
+
+        // 1st priority: initiative
+        // 2nd priority: creatures before players
+        // 3rd priority: element name
+        return (
+          bi - ai ||
+          Number(a.is_player) - Number(b.is_player) ||
+          an.localeCompare(bn)
+        );
       });
+
+      withoutInit.sort((a, b) => {
+        const ai = a.initiative ?? -1;
+        const bi = b.initiative ?? -1;
+
+        const an = a.is_player ? a.element : a.element.name;
+        const bn = b.is_player ? b.element : b.element.name;
+
+        // 1st priority: initiative
+        // 2nd priority: creatures before players
+        // 3rd priority: element name
+        return (
+          bi - ai ||
+          Number(a.is_player) - Number(b.is_player) ||
+          an.localeCompare(bn)
+        );
+      });
+
       this.trackerList.list = [...withInit, ...withoutInit];
+
       if (old_detail) {
         this.trackerList.detail_index =
           this.trackerList.list.indexOf(old_detail);

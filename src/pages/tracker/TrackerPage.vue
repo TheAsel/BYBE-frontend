@@ -9,6 +9,7 @@ import { onMounted, onUnmounted, ref } from "vue";
 import TrackerSheet from "@/components/tracker/TrackerSheet.vue";
 import TrackerDashboard from "@/components/tracker/TrackerDashboard.vue";
 import TrackerList from "@/components/tracker/TrackerList.vue";
+import { trackerStore } from "@/stores/tracker";
 import { getScreenWidth, scrollDirection, scrollPage } from "@/utils/screen";
 
 useHead({
@@ -20,6 +21,8 @@ useHead({
   ],
   title: "Tracker - BYBE"
 });
+
+const tracker_store = trackerStore();
 
 const { width } = getScreenWidth();
 const scrollUp = ref(false);

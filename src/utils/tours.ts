@@ -330,7 +330,66 @@ export function createTourNpc(): Tour {
     {
       attachTo: { element: "#shepherd-7", on: "auto" },
       buttons: lastButtons(tour),
-      text: "This is where the final result of your NPC will be displayed. Click on the icon to the left of the name to open a new page with the fullscreen sheet."
+      text: "This is where the final result of your NPC will be displayed. Click on the icon to the left of the name to open a new page with the fullscreen sheet.",
+      title: "NPC Sheet"
+    }
+  ];
+
+  tour.addSteps(tourSteps);
+
+  return tour;
+}
+
+export function createTourTracker(): Tour {
+  const tour = useShepherd({
+    defaultStepOptions: {
+      floatingUIOptions: {
+        middleware: [offset(16)]
+      },
+      modalOverlayOpeningPadding: 5,
+      modalOverlayOpeningRadius: 10,
+      scrollTo: true
+    },
+    useModalOverlay: true
+  });
+
+  const tourSteps: StepOptions[] = [
+    {
+      attachTo: { element: "#shepherd-0", on: "auto" },
+      buttons: firstButtons(tour),
+      text: "This is the Tracker List, containing all creatures, hazards and players in the encounter.",
+      title: "Tracker List"
+    },
+    {
+      attachTo: { element: "#shepherd-1", on: "auto" },
+      buttons: defaultButtons(tour),
+      text: "Here you can roll initiative for everyone or just NPCs, see the current round and add new players.",
+      title: "Tracker Header"
+    },
+    {
+      attachTo: { element: "#shepherd-2", on: "auto" },
+      buttons: defaultButtons(tour),
+      text: "Depending on the element's type you can modify its health, initiative, name and disable status.\
+      Clicking the row will display its sheet on the right. Clicking the magnifying glass icon will pin its details on the dashboard in the middle",
+      title: "Tracked elements"
+    },
+    {
+      attachTo: { element: "#shepherd-3", on: "auto" },
+      buttons: defaultButtons(tour),
+      text: "Use these buttons or the arrow keys to advance turns and rounds. Dead or disabled elements will be skipped and conditions will be automatically reduced.",
+      title: "Encounter controls"
+    },
+    {
+      attachTo: { element: "#shepherd-4", on: "auto" },
+      buttons: defaultButtons(tour),
+      text: "This is the Tracker Dashboard, where you can check and modify the finer details for a tracked element.",
+      title: "Tracker Dashboard"
+    },
+    {
+      attachTo: { element: "#shepherd-5", on: "auto" },
+      buttons: lastButtons(tour),
+      text: "This is where the creature or hazard sheet is displayed. Click on the lock in the top right corner to prevent the sheet from changing to the active element.",
+      title: "Tracker Sheet"
     }
   ];
 
