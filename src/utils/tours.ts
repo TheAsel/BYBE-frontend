@@ -369,8 +369,7 @@ export function createTourTracker(): Tour {
     {
       attachTo: { element: "#shepherd-2", on: "auto" },
       buttons: defaultButtons(tour),
-      text: "Depending on the element's type you can modify its health, initiative, name and disable status.\
-      Clicking the row will display its sheet on the right. Clicking the magnifying glass icon will pin its details on the dashboard in the middle",
+      text: "Depending on the element's type you can modify its health, initiative, name and disable status. Clicking the row will display its sheet on the right. Clicking the magnifying glass icon will pin its details on the dashboard in the middle",
       title: "Tracked elements"
     },
     {
