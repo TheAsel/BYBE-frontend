@@ -170,7 +170,7 @@ switch (localTableLinks.value) {
     break;
   }
   default: {
-    table_links.value = false;
+    table_links.value = true;
     localStorage.setItem("table_links", "true");
     break;
   }
