@@ -12,7 +12,7 @@ import {
 import { fasDragon, fasLandMineOn } from "@quasar/extras/fontawesome-v7";
 import { matPriorityHigh } from "@quasar/extras/material-icons";
 import { debounce } from "lodash-es";
-import { copyToClipboard, useQuasar } from "quasar";
+import { copyToClipboard, QInput, useQuasar } from "quasar";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -51,7 +51,7 @@ const info_store = infoStore();
 const settings_store = settingsStore();
 
 const importEncounterDialog = ref(false);
-const importNameInput = ref();
+const importNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const importEncounterName = ref("");
 const importEncounterData = ref<shareable_encounter>();
 
@@ -61,11 +61,11 @@ const sharedLink = ref("");
 const isGenerating = ref(false);
 
 const newEncounterDialog = ref(false);
-const encounterNameInput = ref();
+const encounterNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const newEncounterName = ref("");
 
 const renameEncounterDialog = ref(false);
-const encounterRenameInput = ref();
+const encounterRenameInput = ref<InstanceType<typeof QInput> | null>(null);
 const newEncounterRename = ref("");
 
 const removeEncounterDialog = ref(false);
@@ -333,8 +333,8 @@ const openShare = async (): Promise<void> => {
 };
 
 const importEncounter = async (): Promise<void> => {
-  importNameInput.value.validate();
-  if (!importNameInput.value.hasError) {
+  importNameInput.value?.validate();
+  if (!importNameInput.value?.hasError) {
     const tmp_encounter: min_creature_hazard[] = [];
 
     const creatures = await Promise.all(
@@ -467,8 +467,8 @@ const importEncounter = async (): Promise<void> => {
 };
 
 const addEncounter = (): void => {
-  encounterNameInput.value.validate();
-  if (!encounterNameInput.value.hasError) {
+  encounterNameInput.value?.validate();
+  if (!encounterNameInput.value?.hasError) {
     encounter_store.addEncounter(newEncounterName.value);
     encounters.value = encounter_store.encounters.map(
       encounter => encounter.name
@@ -487,8 +487,8 @@ const addEncounter = (): void => {
 };
 
 const renameEncounter = (): void => {
-  encounterRenameInput.value.validate();
-  if (!encounterRenameInput.value.hasError) {
+  encounterRenameInput.value?.validate();
+  if (!encounterRenameInput.value?.hasError) {
     encounter_store.encounters[encounter_store.activeEncounter]!.name =
       newEncounterRename.value;
     encounters.value = encounter_store.encounters.map(

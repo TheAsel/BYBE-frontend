@@ -17,7 +17,7 @@ import {
   mdiTshirtCrew
 } from "@quasar/extras/mdi-v7";
 import { debounce } from "lodash-es";
-import { copyToClipboard, useQuasar } from "quasar";
+import { copyToClipboard, QInput, useQuasar } from "quasar";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -44,7 +44,7 @@ const settings_store = settingsStore();
 const items_store = itemsStore();
 
 const importShopDialog = ref(false);
-const importNameInput = ref();
+const importNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const importShopName = ref("");
 const importShopData = ref<shareable_shop>();
 
@@ -53,11 +53,11 @@ const shareUrl = ref("");
 const isGenerating = ref(false);
 
 const newShopDialog = ref(false);
-const shopNameInput = ref();
+const shopNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const newShopName = ref("");
 
 const renameShopDialog = ref(false);
-const shopRenameInput = ref();
+const shopRenameInput = ref<InstanceType<typeof QInput> | null>(null);
 const newShopRename = ref("");
 
 const removeShopDialog = ref(false);
@@ -220,8 +220,8 @@ const openShare = async (): Promise<void> => {
 };
 
 const importShop = async (): Promise<void> => {
-  importNameInput.value.validate();
-  if (!importNameInput.value.hasError) {
+  importNameInput.value?.validate();
+  if (!importNameInput.value?.hasError) {
     const tmp_items: min_item[] = [];
 
     const results = await Promise.all(
@@ -289,8 +289,8 @@ const importShop = async (): Promise<void> => {
 };
 
 const addShop = (): void => {
-  shopNameInput.value.validate();
-  if (!shopNameInput.value.hasError) {
+  shopNameInput.value?.validate();
+  if (!shopNameInput.value?.hasError) {
     items_store.addShop(newShopName.value);
     shops.value = items_store.shops.map(shop => shop.name);
     tmpShop.value = {
@@ -304,8 +304,8 @@ const addShop = (): void => {
 };
 
 const renameShop = (): void => {
-  shopRenameInput.value.validate();
-  if (!shopRenameInput.value.hasError) {
+  shopRenameInput.value?.validate();
+  if (!shopRenameInput.value?.hasError) {
     items_store.shops[items_store.activeShop]!.name = newShopRename.value;
     shops.value = items_store.shops.map(shop => shop.name);
     tmpShop.value = {

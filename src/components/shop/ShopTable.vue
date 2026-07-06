@@ -40,7 +40,7 @@ import { settingsStore } from "@/stores/settings";
 import { templateStore } from "@/stores/template";
 import { getGameAonLink, openSheet } from "@/utils/sheet";
 
-import type { QTableProps } from "quasar";
+import type { QTable, QTableProps } from "quasar";
 import type { item_columns, item_filters, rarities } from "@/types/filters";
 import type { item, min_item } from "@/types/item";
 
@@ -51,10 +51,10 @@ const settings_store = settingsStore();
 const items_store = itemsStore();
 const filters_store = filtersStore();
 
-const shopBuilderRef = ref();
+const shopBuilderRef = ref<InstanceType<typeof ShopBuilder> | null>(null);
 const router = useRouter();
 
-const itemTable = ref();
+const itemTable = ref<InstanceType<typeof QTable> | null>(null);
 const navigationActive = ref(false);
 const selected = ref<item[]>([]);
 const rows = ref<item[]>([]);
@@ -702,7 +702,7 @@ watch(
                 class="tw:p-2!"
                 size="md"
                 aria-label="Random shop"
-                @click="shopBuilderRef.generateShop()"
+                @click="shopBuilderRef?.generateShop()"
               >
                 <DiceIcon />
                 <q-tooltip

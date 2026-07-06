@@ -6,7 +6,7 @@ import {
   biXLg
 } from "@quasar/extras/bootstrap-icons";
 import { matPriorityHigh } from "@quasar/extras/material-icons";
-import { useQuasar } from "quasar";
+import { QInput, useQuasar } from "quasar";
 import { ref } from "vue";
 
 import { partyStore } from "@/stores/party";
@@ -38,7 +38,7 @@ const selectedParty = ref(party_store.parties[party_store.activeParty]!.name);
 const dialog = ref(false);
 
 const newPartyDialog = ref(false);
-const partyNameInput = ref();
+const partyNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const newPartyName = ref("");
 
 const removePartyDialog = ref(false);
@@ -175,8 +175,8 @@ const saveChanges = (): void => {
 };
 
 const addParty = (): void => {
-  partyNameInput.value.validate();
-  if (!partyNameInput.value.hasError) {
+  partyNameInput.value?.validate();
+  if (!partyNameInput.value?.hasError) {
     party_store.addParty(newPartyName.value);
     selectedParty.value = newPartyName.value;
     parties.value = party_store.parties.map(party => party.name);

@@ -44,7 +44,7 @@ import { filtersStore } from "@/stores/filters";
 import { settingsStore } from "@/stores/settings";
 import { getGameAonLink, openSheet } from "@/utils/sheet";
 
-import type { QTableProps } from "quasar";
+import type { QTable, QTableProps } from "quasar";
 import type { creature } from "@/types/creature";
 import type { min_creature_hazard } from "@/types/encounter";
 import type {
@@ -68,13 +68,15 @@ const settings_store = settingsStore();
 const filters_store = filtersStore();
 const encounter_store = encounterStore();
 
-const encounterBuilderRef = ref();
+const encounterBuilderRef = ref<InstanceType<typeof EncounterBuilder> | null>(
+  null
+);
 const router = useRouter();
 
 const hazardToggle = ref<"creatures" | "hazards">("creatures");
 encounter_store.removeSelectedHazard();
 
-const encounterTable = ref();
+const encounterTable = ref<InstanceType<typeof QTable> | null>(null);
 const navigationActive = ref(false);
 const selected = ref<creature[] | hazard[]>([]);
 const creatureRows = ref<creature[]>([]);
@@ -1511,7 +1513,7 @@ onMounted(async () => {
                 class="tw:p-2!"
                 size="md"
                 aria-label="Random encounter"
-                @click="encounterBuilderRef.generateEncounter()"
+                @click="encounterBuilderRef?.generateEncounter()"
               >
                 <DiceIcon />
                 <q-tooltip
@@ -2589,7 +2591,7 @@ onMounted(async () => {
                 class="tw:p-2!"
                 size="md"
                 aria-label="Random encounter"
-                @click="encounterBuilderRef.generateEncounter()"
+                @click="encounterBuilderRef?.generateEncounter()"
               >
                 <DiceIcon />
                 <q-tooltip

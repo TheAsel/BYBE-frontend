@@ -12,7 +12,7 @@ import {
 import { matPriorityHigh } from "@quasar/extras/material-icons";
 import { mdiCloseCircle } from "@quasar/extras/mdi-v7";
 import { capitalize, cloneDeep, debounce } from "lodash-es";
-import { useQuasar } from "quasar";
+import { QInput, QSelect, useQuasar } from "quasar";
 import { nextTick, ref } from "vue";
 
 import { shopGenerator } from "@/api/shop-api-calls";
@@ -53,12 +53,12 @@ const sourceFilter = filters_store.itemFilters.sources;
 const traitFilter = traitOptions.value;
 
 const newTemplateDialog = ref(false);
-const newNameInput = ref();
+const newNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const duplicateTemplateDialog = ref(false);
-const duplicateNameInput = ref();
+const duplicateNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const editTemplateDialog = ref(false);
-const editNameInput = ref();
-const editTraitSelect = ref();
+const editNameInput = ref<InstanceType<typeof QInput> | null>(null);
+const editTraitSelect = ref<InstanceType<typeof QSelect> | null>(null);
 
 const newTemplate = ref<template>({
   armor_percentage: 0,
@@ -345,11 +345,11 @@ const resetTemplateDialog = (): void => {
 
 const addTemplate = async (): Promise<void> => {
   try {
-    newNameInput.value.validate();
-    if (newNameInput.value.hasError) {
+    newNameInput.value?.validate();
+    if (newNameInput.value?.hasError) {
       tab.value = "General";
       await nextTick().then(() => {
-        newNameInput.value.validate();
+        newNameInput.value?.validate();
       });
     } else {
       for (const trait of selectedTraits.value) {
@@ -398,8 +398,8 @@ const addTemplate = async (): Promise<void> => {
 
 const duplicateTemplate = (): void => {
   try {
-    duplicateNameInput.value.validate();
-    if (!duplicateNameInput.value.hasError) {
+    duplicateNameInput.value?.validate();
+    if (!duplicateNameInput.value?.hasError) {
       const newName = newTemplate.value.name;
       newTemplate.value = cloneDeep(
         template_store.templates[template_store.activeTemplate]!
@@ -458,10 +458,12 @@ const openEditDialog = async (): Promise<void> => {
   }
   editTemplateDialog.value = true;
   await nextTick().then(() => {
-    for (const trait of selectedTraits.value) {
-      for (const opt of editTraitSelect.value.options) {
-        if (opt.label === trait.label) {
-          opt.state = trait.state;
+    if (editTraitSelect.value?.options) {
+      for (const trait of selectedTraits.value) {
+        for (const opt of editTraitSelect.value.options) {
+          if (opt.label === trait.label) {
+            opt.state = trait.state;
+          }
         }
       }
     }
@@ -470,11 +472,11 @@ const openEditDialog = async (): Promise<void> => {
 
 const editTemplate = async (): Promise<void> => {
   try {
-    editNameInput.value.validate();
-    if (editNameInput.value.hasError) {
+    editNameInput.value?.validate();
+    if (editNameInput.value?.hasError) {
       tab.value = "General";
       await nextTick().then(() => {
-        editNameInput.value.validate();
+        editNameInput.value?.validate();
       });
     } else {
       const newWhitelist: string[] = [];

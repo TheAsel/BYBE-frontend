@@ -11,7 +11,7 @@ import {
 } from "@quasar/extras/bootstrap-icons";
 import { matPriorityHigh } from "@quasar/extras/material-icons";
 import { debounce } from "lodash-es";
-import { copyToClipboard, useQuasar } from "quasar";
+import { copyToClipboard, QInput, useQuasar } from "quasar";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -39,20 +39,21 @@ const npc_store = npcStore();
 const settings_store = settingsStore();
 
 const importNpcDialog = ref(false);
-const importNameInput = ref();
+const importNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const importNpcName = ref("");
 const importNpcData = ref<shareable_npc>();
 
 const shareDialog = ref(false);
 const shareUrl = ref("");
+const sharedLink = ref("");
 const isGenerating = ref(false);
 
 const newNpcDialog = ref(false);
-const npcNameInput = ref();
+const npcNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const newNpcName = ref("");
 
 const renameNpcDialog = ref(false);
-const npcRenameInput = ref();
+const npcRenameInput = ref<InstanceType<typeof QInput> | null>(null);
 const newNpcRename = ref("");
 
 const removeNpcDialog = ref(false);
@@ -286,7 +287,7 @@ const closeDialog = (): void => {
   shareDialog.value = false;
   newNpcDialog.value = false;
   renameNpcDialog.value = false;
-  npcNameInput.value = false;
+  sharedLink.value = "";
   importNpcName.value = "";
   newNpcName.value = "";
   newNpcRename.value = "";
@@ -346,7 +347,6 @@ const decodeData = async (): Promise<void> => {
 await decodeData();
 
 // Clean and check the link for manual app import
-const sharedLink = ref("");
 const cleanLink = async (): Promise<void> => {
   try {
     const parsedUrl = new URL(sharedLink.value);
@@ -439,8 +439,8 @@ const openShare = async (): Promise<void> => {
 };
 
 const importNpc = (): void => {
-  importNameInput.value.validate();
-  if (!importNameInput.value.hasError && importNpcData.value?.npcs_data[0]) {
+  importNameInput.value?.validate();
+  if (!importNameInput.value?.hasError && importNpcData.value?.npcs_data[0]) {
     const tmp_npc: npc = {
       ancestry: importNpcData.value?.npcs_data[0].ancestry,
       class: importNpcData.value?.npcs_data[0].class,
@@ -475,8 +475,8 @@ const importNpc = (): void => {
 };
 
 const addNpc = (): void => {
-  npcNameInput.value.validate();
-  if (!npcNameInput.value.hasError) {
+  npcNameInput.value?.validate();
+  if (!npcNameInput.value?.hasError) {
     npc_store.addNpc(newNpcName.value);
     npcList.value = npc_store.npcs.map(npc => npc.name);
     tmpNpc.value = {
@@ -491,8 +491,8 @@ const addNpc = (): void => {
 };
 
 const renameNpc = (): void => {
-  npcRenameInput.value.validate();
-  if (!npcRenameInput.value.hasError) {
+  npcRenameInput.value?.validate();
+  if (!npcRenameInput.value?.hasError) {
     npc_store.npcs[npc_store.activeNpc]!.name = newNpcRename.value;
     npcList.value = npc_store.npcs.map(npc => npc.name);
     tmpNpc.value = {
