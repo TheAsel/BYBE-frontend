@@ -375,7 +375,7 @@ const healthString = computed(() => {
 
     finalString += `<strong>HP&nbsp;</strong>${variantStyle(hp)}`;
     if (hpDetail !== "") {
-      finalString += `, ${hpDetail}`;
+      finalString += ` ${hpDetail}`;
     }
 
     if (combatData.value.immunities.length > 0) {
@@ -855,7 +855,7 @@ const spellString = computed(() => {
       <span
         v-if="item.description !== null"
         class="tw:text-white! tw:decoration-2 tw:hover:underline"
-        >{{ item.display_name?.toUpperCase().replaceAll("-", " ")
+        >{{ (item.display_name ?? item.name.replaceAll("-", " ")).toUpperCase()
         }}<q-tooltip
           style="
             font-family:
@@ -864,11 +864,15 @@ const spellString = computed(() => {
           "
           class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
         >
-          <strong>{{ item.name.toUpperCase().replaceAll("-", " ") }}</strong>
+          <strong>{{
+            (item.display_name ?? item.name.replaceAll("-", " ")).toUpperCase()
+          }}</strong>
           <q-separator class="tw:my-1!" style="height: 2px" />
           <span v-html="cleanDescription(item.description)" /> </q-tooltip
       ></span>
-      <span v-else>{{ item.name.toUpperCase().replaceAll("-", " ") }}</span>
+      <span v-else>{{
+        (item.display_name ?? item.name.replaceAll("-", " ")).toUpperCase()
+      }}</span>
     </div>
   </div>
   <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">

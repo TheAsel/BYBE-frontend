@@ -267,7 +267,8 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
         <span
           v-if="item.description !== null"
           class="tw:text-white! tw:decoration-2 tw:hover:underline"
-          >{{ item.display_name?.toUpperCase()
+          >{{
+            (item.display_name ?? item.name.replaceAll("-", " ")).toUpperCase()
           }}<q-tooltip
             style="
               font-family:
@@ -276,11 +277,17 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
             "
             class="tw:text-base! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
           >
-            <strong>{{ item.display_name?.toUpperCase() }}</strong>
+            <strong>{{
+              (
+                item.display_name ?? item.name.replaceAll("-", " ")
+              ).toUpperCase()
+            }}</strong>
             <q-separator class="tw:my-1!" style="height: 2px" />
             <span v-html="cleanDescription(item.description)" /> </q-tooltip
         ></span>
-        <span v-else>{{ item.display_name?.toUpperCase() }}</span>
+        <span v-else>{{
+          (item.display_name ?? item.name.replaceAll("-", " ")).toUpperCase()
+        }}</span>
       </div>
     </div>
     <div class="tw:-indent-2 tw:pl-2 q-gutter-y-xs">
