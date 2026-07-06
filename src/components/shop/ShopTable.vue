@@ -1073,6 +1073,7 @@ watch(
               :name="biCaretRight"
             />
             <a
+              v-if="settings_store.table_links"
               :href="
                 'https://2e.' +
                 getGameAonLink(settings_store.game) +
@@ -1089,6 +1090,9 @@ watch(
                 >{{ name.row.core_item.name }}</span
               >
             </a>
+            <span v-else class="tw:align-middle">{{
+              name.row.core_item.name
+            }}</span>
             <q-chip
               v-if="
                 settings_store.game === 'pf' &&

@@ -157,6 +157,32 @@ const togglePwL = (): void => {
   settings_store.setPwL(is_pwl_on.value);
 };
 
+const table_links = ref(true);
+const localTableLinks = ref(localStorage.getItem("table_links"));
+
+switch (localTableLinks.value) {
+  case "true": {
+    table_links.value = true;
+    break;
+  }
+  case "false": {
+    table_links.value = false;
+    break;
+  }
+  default: {
+    table_links.value = false;
+    localStorage.setItem("table_links", "true");
+    break;
+  }
+}
+
+settings_store.setTableLinks(table_links.value);
+
+const toggleTableLinks = (): void => {
+  localStorage.setItem("table_links", JSON.stringify(table_links.value));
+  settings_store.setTableLinks(table_links.value);
+};
+
 const validateData = (result: string): void => {
   try {
     const parsedData = JSON.parse(result);
@@ -265,6 +291,17 @@ const validateData = (result: string): void => {
           }
           break;
         }
+        case "table_links": {
+          if (parsedData[key] !== "true" && parsedData[key] !== "false") {
+            $q.notify({
+              icon: matPriorityHigh,
+              message: "Invalid loaded table links value",
+              progress: true,
+              type: "warning"
+            });
+          }
+          break;
+        }
         default: {
           console.error(`Unknown loaded key: ${key}`);
           continue;
@@ -350,6 +387,7 @@ const downloadData = (): void => {
       >
         <q-tab name="General" label="General" />
         <q-tab name="Encounter" label="Encounter" />
+        <q-tab name="Links" label="Links" />
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="General" class="tw:space-y-3!">
@@ -436,6 +474,18 @@ const downloadData = (): void => {
                 Click to learn more
               </q-tooltip>
             </q-btn>
+          </q-card-actions>
+        </q-tab-panel>
+        <q-tab-panel name="Links" class="tw:space-y-3">
+          <q-card-actions>
+            <q-toggle
+              v-model="table_links"
+              label="Show links in Tables"
+              class="tw:mx-auto"
+              aria-label="Toggle table links"
+              @update:model-value="toggleTableLinks"
+            >
+            </q-toggle>
           </q-card-actions>
         </q-tab-panel>
       </q-tab-panels>

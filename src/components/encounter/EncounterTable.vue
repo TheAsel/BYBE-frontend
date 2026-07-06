@@ -2218,7 +2218,10 @@ onMounted(async () => {
               :name="biCaretRight"
             />
             <a
-              v-if="name.row.core_data.derived.archive_link"
+              v-if="
+                settings_store.table_links &&
+                name.row.core_data.derived.archive_link
+              "
               :href="name.row.core_data.derived.archive_link"
               target="_blank"
               rel="noopener"
@@ -2230,7 +2233,9 @@ onMounted(async () => {
               >
             </a>
             <a
-              v-else-if="settings_store.game === 'sf'"
+              v-else-if="
+                settings_store.table_links && settings_store.game === 'sf'
+              "
               :href="
                 'https://2e.' +
                 getGameAonLink(settings_store.game) +
@@ -3330,6 +3335,7 @@ onMounted(async () => {
               :name="biCaretRight"
             />
             <a
+              v-if="settings_store.table_links"
               :href="
                 'https://2e.' +
                 getGameAonLink(settings_store.game) +
@@ -3346,6 +3352,7 @@ onMounted(async () => {
                 >{{ name.value }}</span
               >
             </a>
+            <span v-else class="tw:align-middle">{{ name.value }}</span>
             <q-chip
               v-if="
                 settings_store.game === 'pf' &&

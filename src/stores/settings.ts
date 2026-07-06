@@ -4,15 +4,17 @@ import type { games } from "@/types/filters";
 
 export const settingsStore = defineStore("settings_store", {
   state: (): {
+    game: games;
+    game_version: string;
     hidden_nav: boolean;
     is_pwl_on: boolean;
-    game_version: string;
-    game: games;
+    table_links: boolean;
   } => ({
     game: "pf",
     game_version: "Any",
     hidden_nav: true,
-    is_pwl_on: false
+    is_pwl_on: false,
+    table_links: true
   }),
   actions: {
     setGame(newGame: games) {
@@ -26,6 +28,9 @@ export const settingsStore = defineStore("settings_store", {
     },
     setPwL(newPwl: boolean) {
       this.is_pwl_on = newPwl;
+    },
+    setTableLinks(newTableLinks: boolean) {
+      this.table_links = newTableLinks;
     }
   }
 });
