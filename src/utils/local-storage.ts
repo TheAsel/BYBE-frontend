@@ -75,7 +75,6 @@ export function validateParties(parties: string): boolean {
       }
     ];
     party_store.updateParties(defaultParty);
-    localStorage.setItem("parties", JSON.stringify(defaultParty));
     return false;
   }
 }
@@ -138,7 +137,6 @@ export function validateEncounters(encounters: string): boolean {
       { creatures: [], name: "Default" }
     ];
     encounter_store.updateEncounters(defaultEncounter);
-    localStorage.setItem("encounters", JSON.stringify(defaultEncounter));
     return false;
   }
 }
@@ -194,7 +192,6 @@ export function validateShops(shops: string): boolean {
     console.error(error);
     const defaultShop: shop_list[] = [{ items: [], name: "Default" }];
     item_store.updateShops(defaultShop);
-    localStorage.setItem("shops", JSON.stringify(defaultShop));
     return false;
   }
 }
@@ -324,7 +321,6 @@ export function validateTemplates(templates: string): boolean {
   } catch (error) {
     console.error(error);
     template_store.updateTemplates([]);
-    localStorage.setItem("templates", JSON.stringify([]));
     return false;
   }
 }
@@ -442,7 +438,6 @@ export function validateNpcs(npcs: string): boolean {
       }
     ];
     npc_store.updateNpcs(defaultNpc);
-    localStorage.setItem("npcs", JSON.stringify(defaultNpc));
     return false;
   }
 }
