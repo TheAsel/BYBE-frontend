@@ -1,0 +1,166 @@
+import { apiFetch, apiFetchText, buildUrl } from "@/utils/fetch";
+
+import type { games } from "@/types/filters";
+import type { npc, npc_data, shareable_npc, valid_genders } from "@/types/npc";
+
+export async function requestParameters(
+  game: games,
+  parameter: "genders" | "classes" | "jobs" | "cultures"
+): Promise<string[] | null> {
+  try {
+    return await apiFetch<string[]>(
+      buildUrl(import.meta.env.API_URL, [game, "npc", parameter])
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function requestAncestries(
+  game: games
+): Promise<valid_genders[] | null> {
+  try {
+    return await apiFetch<valid_genders[]>(
+      buildUrl(import.meta.env.API_URL, [game, "npc", "ancestries"])
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function npcGenerator(
+  game: games,
+  body: npc_data
+): Promise<npc | null> {
+  try {
+    return await apiFetch<npc>(
+      buildUrl(import.meta.env.API_URL, [game, "npc", "generator"]),
+      {
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        method: "POST"
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function npcParametersGenerator(
+  game: games,
+  parameter:
+    | "ancestry"
+    | "class"
+    | "gender"
+    | "job"
+    | "nickname"
+    | "level"
+    | "culture"
+): Promise<string | null> {
+  try {
+    return await apiFetch<string>(
+      buildUrl(import.meta.env.API_URL, [game, "npc", "generator", parameter]),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        method: "POST"
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function npcLevelGenerator(game: games): Promise<number | null> {
+  try {
+    return await apiFetch<number>(
+      buildUrl(import.meta.env.API_URL, [game, "npc", "generator", "level"]),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        method: "POST"
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function npcNamesGenerator(
+  game: games,
+  body: {
+    gender?: string;
+    origin?: {
+      FromAncestry?: string;
+      FromCulture?: string;
+    };
+  }
+): Promise<string[] | null> {
+  try {
+    return await apiFetch<string[]>(
+      buildUrl(import.meta.env.API_URL, [game, "npc", "generator", "names"]),
+      {
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        method: "POST"
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function generateNpcLink(
+  body: shareable_npc
+): Promise<string | null> {
+  try {
+    return await apiFetchText(
+      buildUrl(import.meta.env.API_URL, ["shareable", "npc", "encode"]),
+      {
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        method: "POST"
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function decodeNpcLink(
+  encoded_data: string
+): Promise<shareable_npc | null> {
+  try {
+    return await apiFetch<shareable_npc>(
+      buildUrl(import.meta.env.API_URL, [
+        "shareable",
+        "npc",
+        "decode",
+        encoded_data
+      ])
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}

@@ -1,0 +1,912 @@
+<script setup lang="ts">
+import {
+  fasAngleLeft,
+  fasAngleRight,
+  fasBackward,
+  fasDragon,
+  fasForward,
+  fasLandMineOn,
+  fasMagnifyingGlass,
+  fasTag,
+  fasUser
+} from "@quasar/extras/fontawesome-v7";
+import { matPriorityHigh } from "@quasar/extras/material-icons";
+import {
+  mdiAccountGroup,
+  mdiAccountMultipleOutline,
+  mdiAccountPlus,
+  mdiBomb,
+  mdiBombOff,
+  mdiClose,
+  mdiSwordCross
+} from "@quasar/extras/mdi-v7";
+import { startCase } from "lodash-es";
+import { useQuasar } from "quasar";
+import Shepherd from "shepherd.js";
+import { onMounted, onUnmounted, ref } from "vue";
+import { useRouter } from "vue-router";
+
+import { requestCreatureId, requestHazardId } from "@/api/encounter-api-calls";
+import DiceIcon from "@/components/generic/DiceIcon.vue";
+import { settingsStore } from "@/stores/settings";
+import { openSheet } from "@/utils/sheet";
+import { trackerStore } from "@/stores/tracker";
+
+import type { creature } from "@/types/creature";
+import type { encounter_list } from "@/types/encounter";
+import type { hazard } from "@/types/hazard";
+import type { party } from "@/types/party";
+import type { min_tracker } from "@/types/tracker";
+
+const router = useRouter();
+const $q = useQuasar();
+
+const settings_store = settingsStore();
+const tracker_store = trackerStore();
+
+const sessionData =
+  import.meta.env.IS_APP === true
+    ? localStorage.getItem("tracker_data")
+    : sessionStorage.getItem("tracker_data");
+
+const isGenerating = ref(false);
+
+const trackerData = ref<{
+  party: party | null;
+  encounter_list: encounter_list | null;
+}>({ encounter_list: null, party: null });
+
+const creature_list: creature[] = [];
+const hazard_list: hazard[] = [];
+
+if (sessionData) {
+  trackerData.value = JSON.parse(sessionData) as {
+    party: party | null;
+    encounter_list: encounter_list | null;
+  };
+} else {
+  console.error("Failed to start tracker");
+  $q.notify({
+    icon: matPriorityHigh,
+    message: "Failed to start tracker",
+    progress: true,
+    type: "warning"
+  });
+  await router.push({
+    name: "encounter",
+    query: { game: settings_store.game }
+  });
+}
+
+async function initializeTracker(): Promise<void> {
+  if (
+    trackerData.value === null ||
+    trackerData.value.encounter_list === null ||
+    trackerData.value.party === null
+  ) {
+    console.error("Invalid tracker data");
+    $q.notify({
+      icon: matPriorityHigh,
+      message: "Invalid tracker data",
+      progress: true,
+      type: "warning"
+    });
+    await router.push({
+      name: "encounter",
+      query: { game: settings_store.game }
+    });
+    return;
+  }
+
+  isGenerating.value = true;
+  const tmpTrackerList: min_tracker[] = [];
+
+  const results = await Promise.all(
+    trackerData.value.encounter_list.creatures.map(
+      async (
+        item
+      ): Promise<{ success: true; item: min_tracker } | { success: false }> => {
+        try {
+          if (item.is_hazard) {
+            const itemData = await requestHazardId(item.game, item.id);
+            if (!itemData) {
+              console.error("Missing hazard ID");
+              return { success: false };
+            }
+            hazard_list.push(itemData);
+            return {
+              item: {
+                element: item,
+                disabled: false,
+                health: itemData.core_hazard.essential.has_health
+                  ? itemData.core_hazard.essential.hp
+                  : null,
+                initiative: null,
+                is_player: false,
+                max_health: itemData.core_hazard.essential.has_health
+                  ? itemData.core_hazard.essential.hp
+                  : null,
+                perception: itemData.core_hazard.essential.stealth ?? 0,
+                ac: itemData.core_hazard.essential.ac ?? null,
+                fortitude: itemData.core_hazard.essential.fortitude ?? null,
+                reflex: itemData.core_hazard.essential.reflex ?? null,
+                will: itemData.core_hazard.essential.will ?? null,
+                conditions: [],
+                note: ""
+              },
+              success: true
+            };
+          }
+          const itemData = await requestCreatureId(
+            item.game,
+            item.id,
+            item.variant!,
+            settings_store.is_pwl_on
+          );
+          if (!itemData) {
+            console.error("Missing creature ID");
+            return { success: false };
+          }
+          creature_list.push(itemData);
+          if (
+            itemData.combat_data?.conditions &&
+            itemData.combat_data.conditions.length > 0
+          ) {
+            for (let condition of itemData.combat_data.conditions) {
+              condition.name = startCase(condition.name);
+              condition.default = true;
+            }
+          }
+          return {
+            item: {
+              element: item,
+              disabled: false,
+              health: itemData.core_data.essential.hp,
+              initiative: null,
+              is_player: false,
+              max_health: itemData.core_data.essential.hp,
+              perception: itemData.extra_data?.perception ?? 0,
+              ac: itemData.combat_data?.ac ?? null,
+              fortitude: itemData.combat_data?.saving_throws.fortitude ?? null,
+              reflex: itemData.combat_data?.saving_throws.reflex ?? null,
+              will: itemData.combat_data?.saving_throws.will ?? null,
+              conditions: itemData.combat_data?.conditions ?? [],
+              note: ""
+            },
+            success: true
+          };
+        } catch (error) {
+          console.error(error);
+          return { success: false };
+        }
+      }
+    )
+  );
+
+  if (results.some(r => !r.success)) {
+    $q.notify({
+      icon: matPriorityHigh,
+      message: "Some items could not be loaded",
+      progress: true,
+      type: "warning"
+    });
+    await router.push({
+      name: "encounter",
+      query: { game: settings_store.game }
+    });
+    return;
+  }
+
+  tmpTrackerList.push(
+    ...results
+      .filter((r): r is Extract<typeof r, { success: true }> => r.success)
+      .map(r => r.item)
+  );
+
+  const explodedCreatureList: min_tracker[] = tmpTrackerList.flatMap(
+    ({ element, ...rest }) => {
+      if (!rest.is_player && typeof element !== "string") {
+        return Array.from({ length: element.quantity ?? 1 }, () => ({
+          element,
+          ...rest
+        }));
+      }
+      return [];
+    }
+  );
+
+  const explodedPlayerList: min_tracker[] = [];
+
+  for (let i = 0; i < trackerData.value.party.members.length; i += 1) {
+    explodedPlayerList.push({
+      element:
+        trackerData.value.party.members[i]?.name ?? `Player ${String(i + 1)}`,
+      health: 1,
+      initiative: null,
+      is_player: true,
+      max_health: 1,
+      perception: 0,
+      ac: 0,
+      fortitude: 0,
+      reflex: 0,
+      will: 0,
+      conditions: [],
+      note: ""
+    });
+  }
+
+  tracker_store.updateTracker(explodedCreatureList.concat(explodedPlayerList));
+  tracker_store.sortList();
+  isGenerating.value = false;
+}
+
+initializeTracker(); // oxlint-disable-line prefer-top-level-await
+
+const showItem = (item: min_tracker): void => {
+  if (
+    !tracker_store.lockSheet ||
+    (tracker_store.selectedCreature === null &&
+      tracker_store.selectedHazard === null)
+  ) {
+    if (item.is_player) {
+      tracker_store.removeSelectedCreature();
+      tracker_store.removeSelectedHazard();
+    } else if (item.element.is_hazard) {
+      const found_hazard = hazard_list.find(
+        hazard => hazard.core_hazard.essential.id === item.element.id
+      );
+      if (found_hazard) {
+        tracker_store.setSelectedHazard(found_hazard);
+      }
+    } else {
+      const found_creature = creature_list.find(
+        creature => creature.core_data.essential.id === item.element.id
+      );
+      if (found_creature) {
+        tracker_store.setSelectedCreature(found_creature);
+      }
+    }
+  }
+};
+
+function showDetails(index: number): void {
+  tracker_store.trackerList.detail_index = index;
+}
+
+const rollInitiative = (index: number): void => {
+  const rollDice = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
+  if (tracker_store.trackerList.list[index]) {
+    tracker_store.trackerList.list[index]!.initiative =
+      rollDice + tracker_store.trackerList.list[index].perception;
+  }
+};
+
+const rollAll = (): void => {
+  for (let i = 0; i < tracker_store.trackerList.list.length; i += 1) {
+    rollInitiative(i);
+  }
+  tracker_store.sortList();
+};
+
+const rollAllNpcs = (): void => {
+  for (let i = 0; i < tracker_store.trackerList.list.length; i += 1) {
+    if (!tracker_store.trackerList.list[i]?.is_player) {
+      rollInitiative(i);
+    }
+  }
+  tracker_store.sortList();
+};
+
+const validateNumber = (newValue: unknown): number => {
+  const val = Number(newValue);
+  if (Number.isNaN(val) || val < 0) {
+    return 0;
+  } else if (val > 999) {
+    return 999;
+  }
+  return Math.round(val);
+};
+
+const setSheetFromIndex = (index: number): void => {
+  const element = tracker_store.trackerList.list[index];
+  if (element) {
+    showItem(element);
+  }
+};
+
+// Checks if typing to prevent stealing shortcuts
+function isTextInput(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  return Boolean(
+    el?.closest('input, textarea, [contenteditable="true"], .q-editor')
+  );
+}
+
+// Global shortcuts
+function onGlobalKey(evt: KeyboardEvent): void {
+  if (isTextInput(evt.target) || !tracker_store.running) {
+    return;
+  }
+  switch (evt.key) {
+    case " ": {
+      tracker_store.running = !tracker_store.running;
+      if (tracker_store.running) {
+        tracker_store.round = 1;
+        setSheetFromIndex(tracker_store.trackerList.active_index);
+      } else {
+        tracker_store.resetTracker();
+      }
+      break;
+    }
+    case "ArrowLeft": {
+      tracker_store.prevRound();
+      setSheetFromIndex(tracker_store.trackerList.active_index);
+      break;
+    }
+    case "ArrowUp": {
+      tracker_store.prevTurn();
+      setSheetFromIndex(tracker_store.trackerList.active_index);
+      break;
+    }
+    case "ArrowRight": {
+      tracker_store.nextRound();
+      setSheetFromIndex(tracker_store.trackerList.active_index);
+      break;
+    }
+    case "ArrowDown": {
+      tracker_store.nextTurn();
+      setSheetFromIndex(tracker_store.trackerList.active_index);
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+onMounted(() => {
+  globalThis.addEventListener("keydown", onGlobalKey);
+});
+
+onUnmounted(() => {
+  globalThis.removeEventListener("keydown", onGlobalKey);
+});
+
+Shepherd.on("start", () => {
+  tracker_store.running = true;
+  tracker_store.round = 1;
+  setSheetFromIndex(tracker_store.trackerList.active_index);
+});
+
+for (const event of ["complete", "cancel"]) {
+  Shepherd.on(event, () => {
+    tracker_store.running = false;
+    tracker_store.resetTracker();
+  });
+}
+</script>
+
+<template>
+  <div class="tw:h-full">
+    <q-layout
+      id="shepherd-0"
+      view="lHh lpr lFf"
+      container
+      class="tw:h-full tw:opacity-85 tw:dark:opacity-90 tw:border tw:border-gray-200! tw:rounded-xl tw:shadow-sm tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
+    >
+      <q-header
+        id="shepherd-1"
+        bordered
+        class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
+      >
+        <div class="tw:flex tw:flex-row tw:my-1 tw:mx-4 tw:gap-2">
+          <div class="tw:basis-1/3">
+            <q-btn
+              :icon="mdiAccountGroup"
+              flat
+              rounded
+              aria-label="Roll all"
+              @click="rollAll"
+            >
+              <q-tooltip
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Roll all
+              </q-tooltip>
+            </q-btn>
+            <q-btn
+              :icon="mdiAccountMultipleOutline"
+              flat
+              rounded
+              aria-label="Roll NPCs"
+              @click="rollAllNpcs"
+            >
+              <q-tooltip
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Roll NPCs
+              </q-tooltip>
+            </q-btn>
+          </div>
+          <b
+            class="tw:basis-1/3 tw:my-auto! tw:text-center tw:max-h-[33.15px]!"
+          >
+            {{
+              tracker_store.running
+                ? "Round " + tracker_store.round
+                : "Not Started"
+            }}
+          </b>
+          <div class="tw:basis-1/3 tw:my-auto! tw:text-end">
+            <q-btn
+              :icon="mdiAccountPlus"
+              flat
+              rounded
+              aria-label="Add player"
+              @click="tracker_store.addPlayer"
+            >
+              <q-tooltip
+                class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                Add player
+              </q-tooltip>
+            </q-btn>
+          </div>
+        </div>
+      </q-header>
+      <q-page-container v-if="!isGenerating">
+        <q-page class="tw:min-h-auto!">
+          <div
+            id="shepherd-2"
+            v-for="(item, index) in tracker_store.trackerList.list"
+            :key="index"
+            class="tw:m-1"
+            :class="
+              index === tracker_store.trackerList.active_index &&
+              tracker_store.running
+                ? 'tw:outline-solid tw:outline-red-600 tw:rounded-md'
+                : ''
+            "
+          >
+            <div
+              class="tw:flex tw:flex-row tw:flex-wrap tw:justify-end tw:my-1 tw:ml-2"
+            >
+              <q-btn
+                class="tw:my-auto! tw:mr-2! tw:max-h-[33.15px]!"
+                :icon="mdiClose"
+                size="sm"
+                padding="sm"
+                flat
+                round
+                dense
+                aria-label="Remove element"
+                @click="tracker_store.removeFromTracker(index)"
+              >
+                <q-tooltip
+                  class="tw:text-nowrap text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  {{
+                    "Remove " +
+                    (item.is_player
+                      ? "player"
+                      : item.element.is_hazard
+                        ? "hazard"
+                        : "creature")
+                  }}
+                </q-tooltip>
+              </q-btn>
+              <div
+                v-if="!item.is_player"
+                class="tw:flex-1 tw:my-auto tw:mx-1 cursor-pointer"
+                style="min-width: 100px"
+                @click="showItem(item)"
+              >
+                <q-chip
+                  v-if="item.element.is_hazard === false"
+                  text-color="white"
+                  clickable
+                  :ripple="false"
+                  class="tw:p-1! tw:invisible"
+                  aria-label="Creature type"
+                  @click="
+                    if (!item.is_player) {
+                      openSheet(
+                        router,
+                        'bestiary',
+                        item.element.game ?? settings_store.game,
+                        item.element.id,
+                        item.element.variant
+                      );
+                    }
+                  "
+                >
+                  <q-avatar class="tw:visible" :icon="fasDragon" color="blue">
+                    <q-tooltip
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Creature
+                    </q-tooltip>
+                  </q-avatar>
+                </q-chip>
+                <q-chip
+                  v-if="item.element.is_hazard === true"
+                  text-color="white"
+                  clickable
+                  :ripple="false"
+                  class="tw:p-1! tw:invisible"
+                  aria-label="Hazard type"
+                  @click="
+                    if (!item.is_player) {
+                      openSheet(
+                        router,
+                        'hazard',
+                        item.element.game ?? settings_store.game,
+                        item.element.id
+                      );
+                    }
+                  "
+                >
+                  <q-avatar
+                    class="tw:visible"
+                    :icon="fasLandMineOn"
+                    color="red"
+                  >
+                    <q-tooltip
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Hazard
+                    </q-tooltip>
+                  </q-avatar>
+                </q-chip>
+                <span class="tw:align-middle">
+                  <a
+                    v-if="item.element.archive_link"
+                    :href="
+                      item.element.archive_link +
+                      (!item.element.is_hazard
+                        ? '&Weak=' +
+                          (item.element.variant === 'Weak') +
+                          '&Elite=' +
+                          (item.element.variant === 'Elite')
+                        : '')
+                    "
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <span
+                      class="tw:text-blue-600! tw:decoration-2 tw:hover:underline tw:dark:text-blue-400!"
+                      :class="
+                        (item.health !== null && item.health <= 0) ||
+                        (!item.is_player && item.disabled)
+                          ? 'tw:line-through tw:text-red-600! tw:dark:text-red-400!'
+                          : ''
+                      "
+                      >{{
+                        !item.element.is_hazard &&
+                        (item.element.variant === "Elite" ||
+                          item.element.variant === "Weak")
+                          ? item.element.variant + " "
+                          : ""
+                      }}{{ item.element.name }}</span
+                    >
+                  </a>
+                  <span
+                    v-else
+                    :class="
+                      (item.health !== null && item.health === 0) ||
+                      (!item.is_player && item.disabled)
+                        ? 'tw:line-through! tw:text-red-600! tw:dark:text-red-400!'
+                        : ''
+                    "
+                    >{{
+                      !item.element.is_hazard &&
+                      (item.element.variant === "Elite" ||
+                        item.element.variant === "Weak")
+                        ? item.element.variant + " "
+                        : ""
+                    }}{{ item.element.name }}</span
+                  >
+                </span>
+                <q-icon
+                  v-if="item.conditions.length > 0"
+                  :name="fasTag"
+                  class="tw:ml-2 tw:my-auto tw:text-gray-800! tw:dark:text-white!"
+                >
+                  <q-tooltip
+                    class="tw:text-sm! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <strong>CONDITIONS</strong>
+                    <q-separator class="tw:my-1!" style="height: 2px" />
+                    <span v-for="condition in item.conditions">
+                      {{
+                        condition.name +
+                        (condition.is_stackable ? ` ${condition.value}` : "")
+                      }}
+                      <br
+                    /></span>
+                  </q-tooltip>
+                </q-icon>
+              </div>
+              <div v-else class="tw:flex tw:grow tw:mx-1">
+                <q-chip
+                  v-if="item.is_player"
+                  text-color="white"
+                  :ripple="false"
+                  class="tw:p-1! tw:my-auto! tw:invisible"
+                  aria-label="Player type"
+                >
+                  <q-avatar class="tw:visible" :icon="fasUser" color="green">
+                    <q-tooltip
+                      class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      Player
+                    </q-tooltip>
+                  </q-avatar>
+                </q-chip>
+                <q-input
+                  v-if="item.is_player"
+                  v-model="item.element"
+                  dense
+                  class="tw:max-2xl:max-w-32!"
+                  :input-class="
+                    item.health !== null && item.health === 0
+                      ? 'tw:line-through! tw:text-red-600! tw:dark:text-red-400!'
+                      : ''
+                  "
+                />
+                <q-icon
+                  v-if="item.conditions.length > 0"
+                  :name="fasTag"
+                  class="tw:ml-2 tw:my-auto tw:text-gray-800! tw:dark:text-white!"
+                >
+                  <q-tooltip
+                    class="tw:text-sm! tw:max-w-md! tw:border tw:rounded-md tw:shadow-sm tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:border-gray-800! tw:dark:border-white!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <strong>CONDITIONS</strong>
+                    <q-separator class="tw:my-1!" style="height: 2px" />
+                    <span v-for="condition in item.conditions">
+                      {{
+                        condition.name +
+                        (condition.is_stackable ? ` ${condition.value}` : "")
+                      }}
+                      <br
+                    /></span>
+                  </q-tooltip>
+                </q-icon>
+              </div>
+              <div class="tw:flex tw:my-auto">
+                <q-btn
+                  v-if="!item.is_player && item.element.is_hazard"
+                  v-model="item.disabled"
+                  :icon="item.disabled ? mdiBombOff : mdiBomb"
+                  round
+                  unelevated
+                  dense
+                  class="tw:my-auto! tw:mr-2! tw:text-gray-800! tw:dark:text-white!"
+                  @click="item.disabled = !item.disabled"
+                >
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    {{ item.disabled ? "Enable" : "Disable" }}
+                  </q-tooltip>
+                </q-btn>
+                <q-input
+                  v-if="item.max_health !== null"
+                  :model-value="item.health"
+                  dense
+                  filled
+                  stack-label
+                  class="tw:w-17 tw:pr-2"
+                  type="number"
+                  label="Health"
+                  @update:model-value="
+                    (v: unknown) => (item.health = validateNumber(v))
+                  "
+                />
+                <q-btn
+                  v-if="item.initiative === null"
+                  flat
+                  round
+                  dense
+                  class="tw:p-2.25! tw:mr-1!"
+                  size="md"
+                  aria-label="Roll initiative"
+                  @click="
+                    rollInitiative(index);
+                    tracker_store.sortList();
+                  "
+                >
+                  <DiceIcon />
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Roll initiative
+                  </q-tooltip>
+                </q-btn>
+                <q-input
+                  v-else
+                  :model-value="item.initiative"
+                  dense
+                  filled
+                  stack-label
+                  class="tw:w-18 tw:mr-1!"
+                  type="number"
+                  label="Initiative"
+                  @update:model-value="
+                    (v: unknown) => (item.initiative = validateNumber(v))
+                  "
+                  @blur="tracker_store.sortList()"
+                />
+                <q-btn
+                  v-if="tracker_store.running"
+                  class="tw:my-auto! tw:mr-2! tw:p-2.25!"
+                  :icon="fasMagnifyingGlass"
+                  size="sm"
+                  flat
+                  round
+                  dense
+                  aria-label="Show details"
+                  @click="showDetails(index)"
+                >
+                  <q-tooltip
+                    class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    Show details
+                  </q-tooltip>
+                </q-btn>
+              </div>
+            </div>
+            <q-separator class="tw:bg-gray-200! tw:dark:bg-gray-700!" />
+          </div>
+        </q-page>
+      </q-page-container>
+      <q-page-container v-else class="tw:flex" style="height: 78vh">
+        <div class="tw:m-auto">
+          <q-spinner-gears
+            class="tw:mx-auto tw:text-gray-800! tw:dark:text-white!"
+            size="5em"
+          />
+        </div>
+      </q-page-container>
+      <q-footer
+        bordered
+        class="tw:text-gray-800! tw:dark:text-gray-200! tw:bg-white! tw:dark:bg-gray-800! tw:dark:border-gray-700!"
+      >
+        <div id="shepherd-3" class="tw:mx-2">
+          <div
+            class="tw:flex tw:flex-wrap! tw:justify-center tw:my-1.5 tw:w-full"
+          >
+            <span>
+              <q-btn
+                v-if="tracker_store.running"
+                class="tw:px-4!"
+                :icon="fasBackward"
+                aria-label="Previous round"
+                @click="
+                  tracker_store.prevRound();
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                "
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Previous round
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                v-if="tracker_store.running"
+                class="tw:px-4!"
+                :icon="fasAngleLeft"
+                aria-label="Previous turn"
+                @click="
+                  tracker_store.prevTurn();
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                "
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Previous turn
+                </q-tooltip>
+              </q-btn>
+            </span>
+            <q-btn
+              class="tw:grow!"
+              :icon="tracker_store.running ? mdiClose : mdiSwordCross"
+              :label="
+                tracker_store.running ? 'End Encounter' : 'Begin Encounter'
+              "
+              aria-label="Toggle tracker running"
+              @click="
+                tracker_store.running = !tracker_store.running;
+                if (tracker_store.running) {
+                  tracker_store.round = 1;
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                } else {
+                  tracker_store.resetTracker();
+                }
+              "
+            />
+            <span>
+              <q-btn
+                v-if="tracker_store.running"
+                class="tw:px-4!"
+                :icon="fasAngleRight"
+                aria-label="Next round"
+                @click="
+                  tracker_store.nextTurn();
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                "
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Next turn
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                v-if="tracker_store.running"
+                class="tw:px-4!"
+                :icon="fasForward"
+                aria-label="Previous turn"
+                @click="
+                  tracker_store.nextRound();
+                  setSheetFromIndex(tracker_store.trackerList.active_index);
+                "
+              >
+                <q-tooltip
+                  class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  Next round
+                </q-tooltip>
+              </q-btn>
+            </span>
+          </div>
+        </div>
+      </q-footer>
+    </q-layout>
+  </div>
+</template>
+
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  appearance: textfield;
+}
+</style>

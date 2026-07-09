@@ -1,0 +1,37 @@
+$white      : #ffffff
+$gray-800   : #1e2939
+
+::-webkit-scrollbar
+  width: 12px
+
+body.body--light
+
+  scrollbar-width: thin
+  scrollbar-color: $primary $white
+
+  &::-webkit-scrollbar-track, ::-webkit-scrollbar-track
+    background: $white
+
+  &::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb
+    background: $primary
+    border: solid 2px $white
+    border-radius: 7px
+
+  &::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:hover
+    background: $white
+
+body.body--dark
+
+  scrollbar-width: thin
+  scrollbar-color: $primary $gray-800
+
+  &::-webkit-scrollbar-track, ::-webkit-scrollbar-track
+    background: $gray-800
+
+  &::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb
+    background: $primary
+    border: solid 2px $gray-800
+    border-radius: 7px
+
+  &::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:hover
+    background: $gray-800

@@ -1,4 +1,4 @@
-import type { creature } from './creature';
+import type { creature } from "@/types/creature";
 import type {
   alignments,
   challenges,
@@ -8,8 +8,8 @@ import type {
   roles,
   sizes,
   variants
-} from './filters';
-import type { hazard } from './hazard';
+} from "@/types/filters";
+import type { hazard } from "@/types/hazard";
 
 export type encounter = {
   experience: number;
@@ -22,7 +22,7 @@ export type encounter = {
     Extreme: number;
     Impossible: number;
   };
-  color?: 'lime' | 'green' | 'amber' | 'orange' | 'red' | 'purple-10';
+  color?: "lime" | "green" | "amber" | "orange" | "red" | "purple-10";
 };
 
 export type encounter_data = {
@@ -30,43 +30,46 @@ export type encounter_data = {
   adventure_group?: adventure_groups;
   creature_percentage?: number;
   creature_data: {
-    trait_whitelist_filter: string[] | undefined;
-    alignment_filter: alignments[] | undefined;
-    size_filter: sizes[] | undefined;
-    rarity_filter: rarities[] | undefined;
-    family_filter: string[] | undefined;
-    type_filter: string[] | undefined;
-    source_filter: string[] | undefined;
-    party_levels: number[];
-    min_creatures?: number;
-    max_creatures?: number;
-    allow_weak_variants: boolean;
-    allow_elite_variants: boolean;
-    role_filter: roles[] | undefined;
+    alignment_filter?: alignments[] | null;
+    allow_elite_variants?: boolean | null;
+    allow_weak_variants?: boolean | null;
+    family_filter?: string[] | null;
+    max_creatures?: number | null;
+    min_creatures?: number | null;
+    rarity_filter?: rarities[] | null;
+    role_filter?: roles[] | null;
+    role_lower_threshold?: number | null;
+    role_upper_threshold?: number | null;
+    size_filter?: sizes[] | null;
+    source_filter?: string[] | null;
+    trait_blacklist_filter?: string[] | null;
+    trait_whitelist_filter?: string[] | null;
+    type_filter?: string[] | null;
     is_pwl_on: boolean;
     game_system_version: string;
   };
   hazard_percentage?: number;
   hazard_data: {
-    trait_whitelist_filter: string[] | undefined;
-    complexity_filter: complexities[] | undefined;
-    size_filter: sizes[] | undefined;
-    rarity_filter: rarities[] | undefined;
-    source_filter: string[] | undefined;
-    min_stealth?: number;
-    max_stealth?: number;
-    min_ac?: number;
-    max_ac?: number;
-    min_fortitude?: number;
-    max_fortitude?: number;
-    min_reflex?: number;
-    max_reflex?: number;
-    min_will?: number;
-    max_will?: number;
-    min_hardnes?: number;
-    max_hardness?: number;
-    min_hazards?: number;
-    max_hazards?: number;
+    complexity_filter?: complexities[] | null;
+    min_ac?: number | null;
+    max_ac?: number | null;
+    min_fortitude?: number | null;
+    max_fortitude?: number | null;
+    min_hardnes?: number | null;
+    max_hardness?: number | null;
+    min_hazards?: number | null;
+    max_hazards?: number | null;
+    min_reflex?: number | null;
+    max_reflex?: number | null;
+    min_stealth?: number | null;
+    max_stealth?: number | null;
+    min_will?: number | null;
+    max_will?: number | null;
+    size_filter?: sizes[] | null;
+    source_filter?: string[] | null;
+    rarity_filter?: rarities[] | null;
+    trait_blacklist_filter?: string[] | null;
+    trait_whitelist_filter?: string[] | null;
     game_system_version: string;
   };
   party_levels: number[];
@@ -81,17 +84,24 @@ export type random_encounter = {
   };
 };
 
-export type min_creature_hazard = {
-  game: games;
+type creature_hazard_base = {
   id: number;
-  archive_link: string;
   name: string;
   level: number;
-  quantity?: number;
-  variant?: variants | undefined;
-  complexity?: complexities;
-  is_hazard: boolean;
+  game: games;
+  archive_link: string | null;
+  quantity: number;
 };
+
+export type min_creature_hazard =
+  | (creature_hazard_base & {
+      is_hazard: false;
+      variant: variants;
+    })
+  | (creature_hazard_base & {
+      is_hazard: true;
+      complexity: complexities;
+    });
 
 export type encounter_list = {
   name: string;
@@ -113,13 +123,13 @@ export type encounter_info = {
 };
 
 export type adventure_groups =
-  | 'BossAndLackeys'
-  | 'BossAndLieutenant'
-  | 'EliteEnemies'
-  | 'LieutenantAndLackeys'
-  | 'MatedPair'
-  | 'Troop'
-  | 'MookSquad';
+  | "BossAndLackeys"
+  | "BossAndLieutenant"
+  | "EliteEnemies"
+  | "LieutenantAndLackeys"
+  | "MatedPair"
+  | "Troop"
+  | "MookSquad";
 
 export type shareable_encounter = {
   encounter_name: string;

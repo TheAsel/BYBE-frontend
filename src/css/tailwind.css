@@ -1,4 +1,4 @@
-@import 'tailwindcss' prefix(tw);
+@import "tailwindcss" prefix(tw);
 
 @custom-variant dark (&:is(.tw\:dark *));
 

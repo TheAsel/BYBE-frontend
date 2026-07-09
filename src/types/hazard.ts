@@ -1,41 +1,32 @@
-import type { complexities, games, rarities, sizes } from './filters';
+import type { complexities, games, rarities, sizes } from "@/types/filters";
+import type {
+  action,
+  resistance,
+  trait,
+  weakness,
+  weapon
+} from "@/types/generic";
 
 export type hazard = {
   game: games;
   core_hazard: {
-    actions: [
-      {
-        core_action: {
-          action_type: string;
-          category: string;
-          description: string;
-          id: number;
-          license: string;
-          n_of_actions: number;
-          name: string;
-          rarity: rarities;
-          remaster: boolean;
-          slug: string;
-          source: string;
-        };
-        traits: string[];
-      }
-    ];
+    actions: action[];
     essential: {
-      ac: number;
+      ac: number | null;
       complexity: complexities;
       description: string;
       disable_description: string;
-      fortitude: number;
+      fortitude: number | null;
       hardness: number;
       has_health: true;
-      hp: number;
+      hp: number | null;
+      hp_details: string | null;
       id: number;
       level: number;
       license: string;
       name: string;
       rarity: rarities;
-      reflex: number;
+      reflex: number | null;
       remaster: true;
       reset_description: string;
       routine_description: string;
@@ -43,10 +34,14 @@ export type hazard = {
       source: string;
       stealth: number | null;
       stealth_detail: string;
-      will: number;
+      will: number | null;
     };
+    immunities: string[];
+    resistances: resistance[];
+    weaknesses: weakness[];
+    weapons: weapon[];
     game_system: games;
-    traits: string[];
+    traits: trait[];
   };
 };
 

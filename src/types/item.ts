@@ -1,4 +1,12 @@
-import type { games, rarities, sizes } from './filters';
+import type { games, rarities, sizes } from "@/types/filters";
+import type { action, range, trait } from "@/types/generic";
+
+export type item_type =
+  | "Armor"
+  | "Consumable"
+  | "Equipment"
+  | "Weapon"
+  | "Shield";
 
 export type item = {
   game: games;
@@ -27,7 +35,7 @@ export type item = {
     price: number;
     usage: string | null;
     group: string | null;
-    item_type: 'Armor' | 'Consumable' | 'Equipment' | 'Weapon' | 'Shield';
+    item_type: item_type;
     material_grade: string | null;
     material_type: string | null;
     number_of_uses: number | null;
@@ -36,7 +44,7 @@ export type item = {
     source: string;
     rarity: rarities;
     size: sizes;
-    traits: string[];
+    traits: trait[];
   };
   shield_data?: {
     bonus_ac: number;
@@ -61,10 +69,11 @@ export type item = {
     n_of_potency_runes: number;
     n_of_striking_runes: number;
     property_runes: string[];
-    range: number;
+    range?: range;
     reload: string;
-    weapon_type: 'Melee' | 'Ranged' | 'Generic';
+    weapon_type: "Melee" | "Ranged" | "Generic";
     splash_dmg: number;
+    attack_effects?: action[];
   };
 };
 

@@ -1,53 +1,65 @@
 export type alignments =
-  | 'CE'
-  | 'CN'
-  | 'CG'
-  | 'NE'
-  | 'N'
-  | 'NG'
-  | 'LE'
-  | 'LN'
-  | 'LG'
-  | 'No Alignment';
+  | "CE"
+  | "CN"
+  | "CG"
+  | "NE"
+  | "N"
+  | "NG"
+  | "LE"
+  | "LN"
+  | "LG"
+  | "No Alignment";
 
-export type sizes = 'Tiny' | 'Small' | 'Medium' | 'Large' | 'Huge' | 'Gargantuan';
+export type sizes =
+  | "Tiny"
+  | "Small"
+  | "Medium"
+  | "Large"
+  | "Huge"
+  | "Gargantuan";
 
-export type rarities = 'Common' | 'Uncommon' | 'Rare' | 'Unique';
+export type rarities = "Common" | "Uncommon" | "Rare" | "Unique";
 
-export type challenges = 'Trivial' | 'Low' | 'Moderate' | 'Severe' | 'Extreme' | 'Impossible';
+export type challenges =
+  | "Trivial"
+  | "Low"
+  | "Moderate"
+  | "Severe"
+  | "Extreme"
+  | "Impossible";
 
-export type creature_type = 'Creature' | 'NPC';
+export type creature_type = "Creature" | "NPC";
 
 export type roles =
-  | 'None'
-  | 'Brute'
-  | 'Magical Striker'
-  | 'Skill Paragon'
-  | 'Skirmisher'
-  | 'Sniper'
-  | 'Soldier'
-  | 'Spellcaster';
+  | "None"
+  | "Brute"
+  | "Magical Striker"
+  | "Skill Paragon"
+  | "Skirmisher"
+  | "Sniper"
+  | "Soldier"
+  | "Spellcaster";
 
-export type variants = 'Weak' | 'Base' | 'Elite';
+export type variants = "Weak" | "Base" | "Elite";
 
-export type complexities = 'Simple' | 'Complex';
+export type complexities = "Simple" | "Complex";
 
-export type games = 'pf' | 'sf';
+export type games = "pf" | "sf";
 
 export type creature_columns =
-  | 'id'
-  | 'source'
-  | 'name'
-  | 'level'
-  | 'hp'
-  | 'trait'
-  | 'alignment'
-  | 'size'
-  | 'rarity'
-  | 'family'
-  | 'type'
-  | 'attack'
-  | 'role';
+  | "id"
+  | "source"
+  | "name"
+  | "level"
+  | "hp"
+  | "trait"
+  | "alignment"
+  | "size"
+  | "rarity"
+  | "family"
+  | "type"
+  | "attack"
+  | "role";
 
 export type creature_filters = {
   source_filter?: string[];
@@ -74,21 +86,21 @@ export type creature_filters = {
 };
 
 export type hazard_columns =
-  | 'id'
-  | 'source'
-  | 'name'
-  | 'level'
-  | 'hp'
-  | 'trait'
-  | 'complexity'
-  | 'size'
-  | 'rarity'
-  | 'stealth'
-  | 'ac'
-  | 'fortitude'
-  | 'reflex'
-  | 'will'
-  | 'hardness';
+  | "id"
+  | "source"
+  | "name"
+  | "level"
+  | "hp"
+  | "trait"
+  | "complexity"
+  | "size"
+  | "rarity"
+  | "stealth"
+  | "ac"
+  | "fortitude"
+  | "reflex"
+  | "will"
+  | "hardness";
 
 export type hazard_filters = {
   source_filter?: string[];
@@ -117,7 +129,14 @@ export type hazard_filters = {
   game_system_version: string;
 };
 
-export type item_columns = 'id' | 'name' | 'level' | 'trait' | 'rarity' | 'type' | 'source';
+export type item_columns =
+  | "id"
+  | "name"
+  | "level"
+  | "trait"
+  | "rarity"
+  | "type"
+  | "source";
 
 export type item_filters = {
   name_filter?: string;

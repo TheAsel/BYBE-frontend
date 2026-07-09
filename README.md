@@ -10,7 +10,7 @@
   </a>
 </p>
 
-> Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e and Starfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE/)
+> Beyond Your Bestiary Explorer (BYBE) provides tools to help Pathfinder 2e and Starfinder 2e Game Masters. Built on top of the [BYBE - Backend](https://github.com/RakuJa/BYBE-backend/)
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -47,6 +47,7 @@ BYBE is also available offline! We currently support Windows, MacOS and Linux (A
   - Browse and filter a list of all creatures and hazards
   - Balance encounters based on your party size and level
   - Generate random encounters based on your requirements
+  - Run your encounters with the tracker
 - Shop Generator
   - Browse and filter a list of all items
   - Generate random shops with filters and templates
@@ -60,7 +61,17 @@ BYBE is also available offline! We currently support Windows, MacOS and Linux (A
 ![Screenshot of the Encounter Builder page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter_builder.png)
 
 <p align="center">
-  Encounter Builder 
+  Encounter Builder
+</p>
+
+---
+
+<br/>
+
+![Screenshot of the Tracker page of BYBE](https://raw.githubusercontent.com/TheAsel/BYBE-frontend/HEAD/.github/encounter_tracker.png)
+
+<p align="center">
+    Tracker
 </p>
 
 ---
@@ -93,6 +104,7 @@ Built using:
 - [Vue.js](https://vuejs.org/)
 - [Quasar](https://quasar.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
+- [Shepherd.js](https://www.shepherdjs.dev/)
 
 ### Local
 

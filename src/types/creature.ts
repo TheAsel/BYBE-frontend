@@ -1,9 +1,23 @@
-import type { alignments, games, rarities, roles, sizes, variants } from './filters';
-import type { item } from './item';
+import type {
+  alignments,
+  games,
+  rarities,
+  roles,
+  sizes,
+  variants
+} from "@/types/filters";
+import type {
+  action,
+  range,
+  resistance,
+  trait,
+  weakness,
+  weapon
+} from "@/types/generic";
+import type { item } from "@/types/item";
+import type { condition } from "@/types/tracker";
 
-interface KeyValue {
-  [key: string]: number;
-}
+type KeyValue = Record<string, number>;
 
 export type creature = {
   game: games;
@@ -11,23 +25,14 @@ export type creature = {
     ac: number;
     armors: [
       {
-        item_core: item['core_item'];
-        armor_data: item['armor_data'];
+        item_core: item["core_item"];
+        armor_data: item["armor_data"];
       }
     ];
+    conditions: condition[];
     immunities: string[];
-    resistances: [
-      {
-        core: {
-          id: number;
-          name: string;
-          value: number;
-        };
-        double_vs: string[];
-        exception_vs: string[];
-      }
-    ];
-    weaknesses: KeyValue;
+    resistances: resistance[];
+    weaknesses: weakness[];
     saving_throws: {
       fortitude: number;
       fortitude_detail: string;
@@ -36,12 +41,7 @@ export type creature = {
       will: number;
       will_detail: string;
     };
-    weapons: [
-      {
-        item_core: item['core_item'];
-        weapon_data: item['weapon_data'];
-      }
-    ];
+    weapons: weapon[];
   };
   core_data: {
     essential: {
@@ -78,7 +78,7 @@ export type creature = {
       };
       creature_role?: roles[];
     };
-    traits: string[];
+    traits: trait[];
   };
   extra_data?: {
     ability_scores: {
@@ -90,28 +90,10 @@ export type creature = {
       wisdom: number;
     };
     ac_detail: string;
-    actions: [
-      {
-        core_action: {
-          action_type: string;
-          category: string;
-          creature_id: number;
-          description: string;
-          id: number;
-          license: string;
-          n_of_actions: number | null;
-          name: string;
-          rarity: rarities;
-          remaster: boolean;
-          slug: string;
-          source: string;
-        };
-        traits: string[];
-      }
-    ];
+    actions: action[];
     has_vision: boolean;
     hp_detail: string;
-    items: [item['core_item']];
+    items: [item["core_item"]];
     language_detail: string;
     languages: string[];
     perception: number;
@@ -121,7 +103,7 @@ export type creature = {
         acuity: string;
         id: number;
         name: string;
-        range: number;
+        range?: range;
       }
     ];
     skills: [
@@ -158,7 +140,7 @@ export type creature = {
           level: number;
           license: string;
           name: string;
-          range: string;
+          range?: range;
           rarity: string;
           remaster: boolean;
           saving_throw_is_basic: boolean;

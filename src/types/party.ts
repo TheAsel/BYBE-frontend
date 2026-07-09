@@ -1,7 +1,10 @@
 export type party = {
+  advanced: boolean;
   name: string;
-  size?: number | undefined;
-  level?: number | undefined;
-  advanced?: boolean | undefined;
-  members: number[];
+  level: number;
+  size: number;
+  members: {
+    name: string;
+    level: number;
+  }[];
 };

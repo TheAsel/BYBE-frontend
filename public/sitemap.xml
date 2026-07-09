@@ -1,123 +1,63 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://bybe.app</loc>
-		<lastmod>2025-09-23</lastmod>
+		<lastmod>2026-06-01</lastmod>
 		<priority>0.8</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf</loc>
-		<lastmod>2025-10-17</lastmod>
-		<priority>0.8</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/pf/encounter</loc>
-		<lastmod>2025-09-23</lastmod>
+		<loc>https://bybe.app/encounter</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf/bestiary</loc>
-		<lastmod>2025-09-23</lastmod>
+		<loc>https://bybe.app/bestiary</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf/hazard</loc>
-		<lastmod>2026-03-12</lastmod>
+		<loc>https://bybe.app/hazard</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf/npc</loc>
-		<lastmod>2025-09-23</lastmod>
+		<loc>https://bybe.app/npc</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf/character</loc>
-		<lastmod>2025-07-03</lastmod>
+		<loc>https://bybe.app/character</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf/shop</loc>
-		<lastmod>2025-09-23</lastmod>
+		<loc>https://bybe.app/shop</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf/item</loc>
-		<lastmod>2025-09-23</lastmod>
+		<loc>https://bybe.app/item</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf/creature</loc>
-		<lastmod>2025-07-03</lastmod>
+		<loc>https://bybe.app/creature</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf/city</loc>
-		<lastmod>2025-07-03</lastmod>
+		<loc>https://bybe.app/city</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://bybe.app/pf/license</loc>
-		<lastmod>2025-09-23</lastmod>
-		<priority>0.8</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf</loc>
-		<lastmod>2025-10-17</lastmod>
-		<priority>0.8</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/encounter</loc>
-		<lastmod>2025-09-23</lastmod>
-		<priority>1.0</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/bestiary</loc>
-		<lastmod>2025-09-23</lastmod>
-		<priority>1.0</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/hazard</loc>
-		<lastmod>2026-03-12</lastmod>
-		<priority>1.0</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/npc</loc>
-		<lastmod>2025-09-23</lastmod>
-		<priority>1.0</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/character</loc>
-		<lastmod>2025-07-03</lastmod>
-		<priority>1.0</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/shop</loc>
-		<lastmod>2025-09-23</lastmod>
-		<priority>1.0</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/item</loc>
-		<lastmod>2025-09-23</lastmod>
-		<priority>1.0</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/creature</loc>
-		<lastmod>2025-07-03</lastmod>
-		<priority>1.0</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/city</loc>
-		<lastmod>2025-07-03</lastmod>
-		<priority>1.0</priority>
-	</url>
-	<url>
-		<loc>https://bybe.app/sf/license</loc>
-		<lastmod>2025-09-23</lastmod>
+		<loc>https://bybe.app/license</loc>
+		<lastmod>2026-06-01</lastmod>
 		<priority>0.8</priority>
 	</url>
 	<url>
 		<loc>https://bybe.app/download</loc>
-		<lastmod>2024-12-24</lastmod>
+		<lastmod>2026-06-01</lastmod>
 		<priority>0.8</priority>
 	</url>
 </urlset>
