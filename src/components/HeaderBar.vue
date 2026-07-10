@@ -54,7 +54,6 @@ const navigation = [
   { name: "Encounter Builder", to: "encounter" },
   { name: "Shop Generator", to: "shop" },
   { name: "NPC Generator", to: "npc" },
-  { name: "Creature Generator", to: "creature" },
   { name: "City Planner", to: "city" }
 ];
 

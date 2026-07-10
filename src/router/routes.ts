@@ -56,11 +56,6 @@ const routes: RouteRecordRaw[] = [
         path: "character"
       },
       {
-        component: async () => import("@/pages/creature/CreaturePage.vue"),
-        name: "creature",
-        path: "creature"
-      },
-      {
         component: async () => import("@/pages/city/CityPage.vue"),
         name: "city",
         path: "city"

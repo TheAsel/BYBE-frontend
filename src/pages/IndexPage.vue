@@ -47,13 +47,6 @@ const cards = [
     to: "/npc"
   },
   {
-    description: "Create custom creatures with the help of custom generation.",
-    icon: biPencil,
-    name: "Creature Generator",
-    subtext: "Work in progress...",
-    to: "/creature"
-  },
-  {
     description:
       "Combine what you created with the other tools to plan an entire city.",
     icon: biHouses,
@@ -66,10 +59,10 @@ const cards = [
 
 <template>
   <div
-    class="tw:place-content-center tw:overflow-auto tw:h-full tw:w-full! tw:px-4 tw:sm:px-6 tw:lg:px-8 tw:py-4 tw:pt-0 tw:2xl:py-14 tw:mx-auto"
+    class="tw:place-content-center tw:overflow-auto tw:h-full tw:w-full! tw:p-4"
   >
     <div
-      class="tw:max-w-3xl tw:mx-auto tw:text-center tw:my-4 tw:2xl:mb-14 tw:drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
+      class="tw:max-w-3xl tw:mx-auto tw:text-center tw:my-4 tw:mb-8 tw:drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
     >
       <h1 class="tw:block tw:text-white tw:text-4xl! tw:font-bold!">
         Welcome to BYBE
@@ -80,7 +73,7 @@ const cards = [
       </h2>
     </div>
     <div
-      class="tw:grid tw:sm:grid-cols-2 tw:lg:grid-cols-3 tw:gap-6 tw:mx-auto tw:max-w-7xl"
+      class="tw:grid tw:sm:grid-cols-2 tw:lg:grid-cols-2 tw:gap-8 tw:mx-auto tw:max-w-3xl"
     >
       <!-- Cards -->
       <router-link
