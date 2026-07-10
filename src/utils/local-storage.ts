@@ -374,17 +374,26 @@ export function validateNpcs(npcs: string): boolean {
         throw new Error("Invalid saved npc job");
       if (typeof npc.core_npc.level !== "number")
         throw new Error("Invalid saved npc level");
-      if (typeof npc.core_npc.languages !== "string")
+      if (npc.core_npc.languages && typeof npc.core_npc.languages !== "string")
         throw new Error("Invalid saved npc languages");
-      if (typeof npc.core_npc.quirk !== "string")
+      if (npc.core_npc.quirk && typeof npc.core_npc.quirk !== "string")
         throw new Error("Invalid saved npc quirk");
-      if (typeof npc.core_npc.description !== "string")
+      if (
+        npc.core_npc.description &&
+        typeof npc.core_npc.description !== "string"
+      )
         throw new Error("Invalid saved npc description");
-      if (typeof npc.core_npc.personality !== "string")
+      if (
+        npc.core_npc.personality &&
+        typeof npc.core_npc.personality !== "string"
+      )
         throw new Error("Invalid saved npc personality");
-      if (typeof npc.core_npc.relationships !== "string")
+      if (
+        npc.core_npc.relationships &&
+        typeof npc.core_npc.relationships !== "string"
+      )
         throw new Error("Invalid saved npc relationships");
-      if (typeof npc.core_npc.ideology !== "string")
+      if (npc.core_npc.ideology && typeof npc.core_npc.ideology !== "string")
         throw new Error("Invalid saved npc ideology");
 
       if (!Array.isArray(npc.core_npc.custom_fields))
@@ -393,9 +402,9 @@ export function validateNpcs(npcs: string): boolean {
       for (const field of npc.core_npc.custom_fields) {
         if (typeof field !== "object" || field === null)
           throw new Error("Invalid saved custom field");
-        if (typeof field.name !== "string")
+        if (field.name && typeof field.name !== "string")
           throw new Error("Invalid saved custom field name");
-        if (typeof field.body !== "string")
+        if (field.body && typeof field.body !== "string")
           throw new Error("Invalid saved custom field body");
       }
 
