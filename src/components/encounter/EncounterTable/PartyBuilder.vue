@@ -312,7 +312,7 @@ const changeActiveParty = (selected: string): void => {
               anchor="top middle"
               self="bottom middle"
             >
-              Delete party
+              Remove party
             </q-tooltip>
           </q-btn>
           <q-dialog

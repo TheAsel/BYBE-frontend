@@ -880,7 +880,7 @@ watch(npc_store, () => {
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  Delete NPC
+                  Remove NPC
                 </q-tooltip>
               </q-btn>
             </div>

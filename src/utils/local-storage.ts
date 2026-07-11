@@ -315,12 +315,12 @@ export function validateTemplates(templates: string): boolean {
     )
       throw new Error("Illegal saved template names");
 
-    template_store.updateTemplates(parsedTemplates);
+    template_store.updateCustomTemplates(parsedTemplates);
     localStorage.setItem("templates", JSON.stringify(parsedTemplates));
     return true;
   } catch (error) {
     console.error(error);
-    template_store.updateTemplates([]);
+    template_store.updateCustomTemplates([]);
     return false;
   }
 }

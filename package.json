@@ -1,6 +1,6 @@
 {
   "name": "bybe-frontend",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "private": true,
   "description": "Beyond Your Bestiary Explorer (BYBE) is a one-stop shop for the most useful tools for Pathfinder 2e and Starfinder 2e GMs",
   "author": "TheAsel <a.osele@proton.me>",
@@ -15,7 +15,7 @@
     "start": "./node_modules/@quasar/cli/bin/quasar.js serve dist/spa --history --hostname localhost"
   },
   "dependencies": {
-    "@floating-ui/dom": "^1.7.6",
+    "@floating-ui/dom": "^1.8.0",
     "@quasar/extras": "^2.0.2",
     "@tauri-apps/plugin-opener": "^2.5.4",
     "@unhead/vue": "^3.1.7",
