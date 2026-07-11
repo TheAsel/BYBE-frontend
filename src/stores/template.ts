@@ -4,15 +4,20 @@ import type { template, template_data } from "@/types/template";
 
 export const templateStore = defineStore("template_store", {
   state: (): {
-    templates: template[];
+    default_templates: template[];
+    custom_templates: template[];
+    all_templates: template[];
     activeTemplate: number;
-    defaultTemplates: number;
   } => ({
-    activeTemplate: 0,
-    defaultTemplates: 0,
-    templates: []
+    default_templates: [],
+    custom_templates: [],
+    all_templates: [],
+    activeTemplate: 0
   }),
   actions: {
+    concatAllTemplates() {
+      this.all_templates = this.default_templates.concat(this.custom_templates);
+    },
     addDefaultTemplates(defaultTemplates: template_data[]) {
       const newTemplates: template[] = [];
       for (const template of defaultTemplates) {
@@ -31,43 +36,63 @@ export const templateStore = defineStore("template_store", {
           weapon_percentage: template.weapon_percentage
         });
       }
-      this.defaultTemplates = newTemplates.length;
       newTemplates.sort((a, b) => a.name.localeCompare(b.name));
-      for (const template of this.templates) {
-        newTemplates.push(template);
-      }
-      this.templates = newTemplates;
-      this.changeActiveTemplate(this.getTemplateIndex("General"));
+      this.default_templates = newTemplates;
+      this.concatAllTemplates();
+      this.changeActiveTemplate(this.getAllTemplateIndex("General"));
     },
-    addTemplate(newTemplate: template) {
-      this.templates.push(newTemplate);
-      this.activeTemplate = this.templates.length - 1;
+    addCustomTemplate(newTemplate: template) {
+      this.custom_templates.push(newTemplate);
+      this.concatAllTemplates();
+      this.activeTemplate = this.all_templates.length - 1;
     },
     changeActiveTemplate(templateIndex: number) {
-      if (templateIndex >= this.templates.length || templateIndex < 0) {
+      if (templateIndex >= this.all_templates.length || templateIndex < 0) {
         this.activeTemplate = 0;
       } else {
         this.activeTemplate = templateIndex;
       }
     },
-    getTemplateIndex(templateName: string): number {
-      const index = this.templates
+    getAllTemplateIndex(templateName: string): number {
+      const index = this.all_templates
+        .map(template => template.name)
+        .indexOf(templateName);
+      return index;
+    },
+    getCustomTemplateIndex(templateName: string): number {
+      const index = this.custom_templates
         .map(template => template.name)
         .indexOf(templateName);
       return index;
     },
     removeTemplate() {
-      this.templates.splice(this.activeTemplate, 1);
-      this.changeActiveTemplate(this.getTemplateIndex("General"));
-    },
-    updateTemplate(oldName: string, newTemplate: template) {
-      const templateIndex = this.getTemplateIndex(oldName);
-      if (templateIndex >= this.defaultTemplates - 1) {
-        this.templates[templateIndex] = newTemplate;
+      const templateName = this.all_templates[this.activeTemplate]?.name;
+      this.all_templates.splice(this.activeTemplate, 1);
+      this.changeActiveTemplate(this.getAllTemplateIndex("General"));
+      if (templateName) {
+        const customTemplateIndex = this.getCustomTemplateIndex(templateName);
+        this.custom_templates.splice(customTemplateIndex, 1);
       }
     },
-    updateTemplates(newTemplates: template[]) {
-      this.templates = newTemplates;
+    updateCustomTemplate(oldName: string, newTemplate: template) {
+      const allTemplateIndex = this.getAllTemplateIndex(oldName);
+      if (
+        this.all_templates[allTemplateIndex] &&
+        !this.all_templates[allTemplateIndex].default
+      ) {
+        this.all_templates[allTemplateIndex] = newTemplate;
+      }
+      const customTemplateIndex = this.getCustomTemplateIndex(oldName);
+      if (
+        this.custom_templates[customTemplateIndex] &&
+        !this.custom_templates[customTemplateIndex].default
+      ) {
+        this.custom_templates[customTemplateIndex] = newTemplate;
+      }
+    },
+    updateCustomTemplates(newTemplates: template[]) {
+      this.custom_templates = newTemplates;
+      this.concatAllTemplates();
     }
   }
 });

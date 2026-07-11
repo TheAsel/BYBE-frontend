@@ -700,7 +700,7 @@ watch(items_store, () => {
                 anchor="top middle"
                 self="bottom middle"
               >
-                Delete shop
+                Remove shop
               </q-tooltip>
             </q-btn>
           </div>

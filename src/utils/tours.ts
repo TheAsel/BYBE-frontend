@@ -300,7 +300,7 @@ export function createTourNpc(): Tour {
     {
       attachTo: { element: "#shepherd-2", on: "auto" },
       buttons: defaultButtons(tour),
-      text: "From here you can modify the individual parameters of your NPC. You can also save or delete the NPCs you created.",
+      text: "From here you can modify the individual parameters of your NPC. You can also save or remove the NPCs you created.",
       title: "NPC Editor"
     },
     {

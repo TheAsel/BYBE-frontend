@@ -118,7 +118,7 @@ const diceSelect = [
 ];
 
 const template_list = ref<string[]>(
-  template_store.templates.map(template => template.name)
+  template_store.all_templates.map(template => template.name)
 );
 
 const consumable_dices = ref({
@@ -139,7 +139,7 @@ const tmpFilters = ref({
   equippable_dices: equippable_dices.value,
   levels: levels.value,
   shop_template: cloneDeep(
-    template_store.templates[template_store.activeTemplate]
+    template_store.all_templates[template_store.activeTemplate]
   )
 });
 
@@ -161,7 +161,7 @@ const restoreSettings = (): void => {
   };
   tmpFilters.value.levels = levels.value;
   tmpFilters.value.shop_template = cloneDeep(
-    template_store.templates[template_store.activeTemplate]
+    template_store.all_templates[template_store.activeTemplate]
   );
 };
 
@@ -170,12 +170,12 @@ const saveChanges = (): void => {
   equippable_dices.value = tmpFilters.value.equippable_dices;
   levels.value = tmpFilters.value.levels;
   template_store.changeActiveTemplate(
-    template_store.getTemplateIndex(tmpFilters.value.shop_template!.name)
+    template_store.getAllTemplateIndex(tmpFilters.value.shop_template!.name)
   );
-  const customTemplates = template_store.templates.filter(
-    template => template.default === false
+  localStorage.setItem(
+    "templates",
+    JSON.stringify(template_store.custom_templates)
   );
-  localStorage.setItem("templates", JSON.stringify(customTemplates));
 };
 
 const generateShop = debounce(async () => {
@@ -380,12 +380,12 @@ const addTemplate = async (): Promise<void> => {
         newTemplate.value.item_types?.push("Weapon");
       }
       newTemplate.value.item_types?.push("Consumable");
-      template_store.addTemplate(newTemplate.value);
-      template_list.value = template_store.templates.map(
+      template_store.addCustomTemplate(newTemplate.value);
+      template_list.value = template_store.all_templates.map(
         template => template.name
       );
       tmpFilters.value.shop_template = cloneDeep(
-        template_store.templates[template_store.activeTemplate]
+        template_store.all_templates[template_store.activeTemplate]
       );
       saveChanges();
       newTemplateDialog.value = false;
@@ -402,16 +402,16 @@ const duplicateTemplate = (): void => {
     if (!duplicateNameInput.value?.hasError) {
       const newName = newTemplate.value.name;
       newTemplate.value = cloneDeep(
-        template_store.templates[template_store.activeTemplate]!
+        template_store.all_templates[template_store.activeTemplate]!
       );
       newTemplate.value.name = newName;
       newTemplate.value.default = false;
-      template_store.addTemplate(newTemplate.value);
-      template_list.value = template_store.templates.map(
+      template_store.addCustomTemplate(newTemplate.value);
+      template_list.value = template_store.all_templates.map(
         template => template.name
       );
       tmpFilters.value.shop_template = cloneDeep(
-        template_store.templates[template_store.activeTemplate]
+        template_store.all_templates[template_store.activeTemplate]
       );
       saveChanges();
       duplicateTemplateDialog.value = false;
@@ -424,7 +424,7 @@ const duplicateTemplate = (): void => {
 
 const openEditDialog = async (): Promise<void> => {
   newTemplate.value = cloneDeep(
-    template_store.templates[template_store.activeTemplate]!
+    template_store.all_templates[template_store.activeTemplate]!
   );
   armorOn.value = newTemplate.value.item_types!.includes("Armor");
   equipmentOn.value = newTemplate.value.item_types!.includes("Equipment");
@@ -513,15 +513,15 @@ const editTemplate = async (): Promise<void> => {
       }
       newTypes.push("Consumable");
       newTemplate.value.item_types = newTypes;
-      template_store.updateTemplate(
-        template_store.templates[template_store.activeTemplate]!.name,
+      template_store.updateCustomTemplate(
+        template_store.all_templates[template_store.activeTemplate]!.name,
         newTemplate.value
       );
-      template_list.value = template_store.templates.map(
+      template_list.value = template_store.all_templates.map(
         template => template.name
       );
       tmpFilters.value.shop_template = cloneDeep(
-        template_store.templates[template_store.activeTemplate]
+        template_store.all_templates[template_store.activeTemplate]
       );
       saveChanges();
       editTemplateDialog.value = false;
@@ -534,9 +534,11 @@ const editTemplate = async (): Promise<void> => {
 
 const removeTemplate = (): void => {
   template_store.removeTemplate();
-  template_list.value = template_store.templates.map(template => template.name);
+  template_list.value = template_store.all_templates.map(
+    template => template.name
+  );
   tmpFilters.value.shop_template = cloneDeep(
-    template_store.templates[template_store.activeTemplate]
+    template_store.all_templates[template_store.activeTemplate]
   );
   saveChanges();
   removeTemplateDialog.value = false;
@@ -545,10 +547,10 @@ const removeTemplate = (): void => {
 
 const changeActiveTemplate = (selected: string): void => {
   template_store.changeActiveTemplate(
-    template_store.getTemplateIndex(selected)
+    template_store.getAllTemplateIndex(selected)
   );
   tmpFilters.value.shop_template = cloneDeep(
-    template_store.templates[template_store.activeTemplate]
+    template_store.all_templates[template_store.activeTemplate]
   );
 };
 
@@ -1301,7 +1303,7 @@ defineExpose({ generateShop });
                               name =>
                                 name.toLowerCase() === val.toLowerCase() &&
                                 newTemplate.name !==
-                                  template_store.templates[
+                                  template_store.all_templates[
                                     template_store.activeTemplate
                                   ]!.name
                             ) || 'This template already exists'
@@ -1439,7 +1441,7 @@ defineExpose({ generateShop });
                               name =>
                                 name.toLowerCase() === val.toLowerCase() &&
                                 newTemplate.name !==
-                                  template_store.templates[
+                                  template_store.all_templates[
                                     template_store.activeTemplate
                                   ]!.name
                             ) || 'This template already exists'
@@ -1635,7 +1637,7 @@ defineExpose({ generateShop });
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  Can't delete default template
+                  Can't remove default template
                 </q-tooltip>
                 <q-tooltip
                   v-else
@@ -1643,7 +1645,7 @@ defineExpose({ generateShop });
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  Delete template
+                  Remove template
                 </q-tooltip>
               </q-btn>
             </div>

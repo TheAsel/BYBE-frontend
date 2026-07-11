@@ -975,7 +975,7 @@ await debouncedCall();
                 anchor="top middle"
                 self="bottom middle"
               >
-                Delete encounter
+                Remove encounter
               </q-tooltip>
             </q-btn>
           </div>

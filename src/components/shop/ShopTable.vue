@@ -47,9 +47,10 @@ import type { item, min_item } from "@/types/item";
 const props = defineProps({ sheetVisible: Boolean, toggleSheetView: Function }); // oxlint-disable-line max-props
 
 const $q = useQuasar();
-const settings_store = settingsStore();
-const items_store = itemsStore();
 const filters_store = filtersStore();
+const items_store = itemsStore();
+const settings_store = settingsStore();
+const template_store = templateStore();
 
 const shopBuilderRef = ref<InstanceType<typeof ShopBuilder> | null>(null);
 const router = useRouter();
@@ -564,7 +565,7 @@ onMounted(async () => {
     filters_store.updateItemTraits(traitsRequest);
     traitFilter.value = filters_store.itemFilters.traits;
 
-    templateStore().addDefaultTemplates(templatesRequest);
+    template_store.addDefaultTemplates(templatesRequest);
 
     filters_store.shopRanges = shopRangesRequest;
   } catch (error) {
