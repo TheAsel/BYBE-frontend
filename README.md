@@ -16,6 +16,7 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
+    <li><a href="#-ai-notice">AI Notice</a></li>
     <li><a href="#-download">Download</a></li>
     <li><a href="#-features">Features</a></li>
     <li>
@@ -30,6 +31,12 @@
 
   </ol>
 </details>
+
+## 🤖 AI Notice
+
+This project does NOT make use of AI to generate the code. Everything in this repository, the good (and especially the bad!), was written by me.
+
+The emojis used in the commits are an inside joke between me and my friend [RakuJa](https://github.com/RakuJa), using the [gitmoji](https://gitmoji.dev/) "standard". Don't take them too seriously.
 
 ## 📥 Download
 
