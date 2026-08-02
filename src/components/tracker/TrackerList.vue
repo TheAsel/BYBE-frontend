@@ -630,7 +630,10 @@ for (const event of ["complete", "cancel"]) {
                   >
                     <strong>CONDITIONS</strong>
                     <q-separator class="tw:my-1!" style="height: 2px" />
-                    <span v-for="condition in item.conditions">
+                    <span
+                      v-for="condition in item.conditions"
+                      :key="condition.name"
+                    >
                       {{
                         condition.name +
                         (condition.is_stackable ? ` ${condition.value}` : "")
@@ -681,7 +684,10 @@ for (const event of ["complete", "cancel"]) {
                   >
                     <strong>CONDITIONS</strong>
                     <q-separator class="tw:my-1!" style="height: 2px" />
-                    <span v-for="condition in item.conditions">
+                    <span
+                      v-for="condition in item.conditions"
+                      :key="condition.name"
+                    >
                       {{
                         condition.name +
                         (condition.is_stackable ? ` ${condition.value}` : "")
