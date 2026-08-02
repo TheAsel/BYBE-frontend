@@ -823,7 +823,7 @@ await debouncedCall();
 
     <q-dialog
       v-model="renameEncounterDialog"
-      aria-label="New encounter dialog"
+      aria-label="Rename encounter dialog"
       @escape-key="closeDialog"
     >
       <q-card flat bordered>
@@ -949,7 +949,12 @@ await debouncedCall();
               round
               dense
               aria-label="Rename encounter"
-              @click="renameEncounterDialog = true"
+              @click="
+                renameEncounterDialog = true;
+                newEncounterRename =
+                  encounter_store.encounters[encounter_store.activeEncounter]!
+                    .name;
+              "
             >
               <q-tooltip
                 class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"

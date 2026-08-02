@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   biDashLg,
+  biInputCursorText,
   biPlusLg,
   biTrash,
   biXLg
@@ -40,6 +41,10 @@ const dialog = ref(false);
 const newPartyDialog = ref(false);
 const partyNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const newPartyName = ref("");
+
+const renamePartyDialog = ref(false);
+const partyRenameInput = ref<InstanceType<typeof QInput> | null>(null);
+const newPartyRename = ref("");
 
 const removePartyDialog = ref(false);
 
@@ -165,8 +170,10 @@ const removePlayer = (index: number): void => {
 
 const closeDialog = (): void => {
   newPartyDialog.value = false;
+  renamePartyDialog.value = false;
   removePartyDialog.value = false;
   newPartyName.value = "";
+  newPartyRename.value = "";
 };
 
 const saveChanges = (): void => {
@@ -184,6 +191,25 @@ const addParty = (): void => {
     saveChanges();
     newPartyName.value = "";
     newPartyDialog.value = false;
+  }
+};
+
+const renameParty = (): void => {
+  partyRenameInput.value?.validate();
+  if (!partyRenameInput.value?.hasError) {
+    party_store.parties[party_store.activeParty]!.name = newPartyRename.value;
+    selectedParty.value = newPartyRename.value;
+    parties.value = party_store.parties.map(party => party.name);
+    tmpParty.value = {
+      advanced: party_store.parties[party_store.activeParty]!.advanced,
+      level: party_store.parties[party_store.activeParty]!.level,
+      members: [...party_store.parties[party_store.activeParty]!.members],
+      name: party_store.parties[party_store.activeParty]!.name,
+      size: party_store.parties[party_store.activeParty]!.size
+    };
+    saveChanges();
+    newPartyRename.value = "";
+    renamePartyDialog.value = false;
   }
 };
 
@@ -225,14 +251,14 @@ const changeActiveParty = (selected: string): void => {
           <q-select
             v-model="selectedParty"
             dense
-            style="width: 180px"
+            style="width: 139px"
             outlined
             :options="parties"
             label="Active Party"
             @update:model-value="changeActiveParty"
           />
           <q-btn
-            class="tw:my-auto! tw:mx-2! tw:max-h-[33.15px]!"
+            class="tw:my-auto! tw:ml-2! tw:max-h-[33.15px]!"
             :icon="biPlusLg"
             size="sm"
             padding="sm"
@@ -296,6 +322,79 @@ const changeActiveParty = (selected: string): void => {
               </q-card-actions>
             </q-card>
           </q-dialog>
+
+          <q-btn
+            class="tw:my-auto! tw:mx-2! tw:max-h-[33.15px]!"
+            :icon="biInputCursorText"
+            size="sm"
+            padding="sm"
+            flat
+            round
+            dense
+            aria-label="Rename party"
+            @click="
+              renamePartyDialog = true;
+              newPartyRename =
+                party_store.parties[party_store.activeParty]!.name;
+            "
+          >
+            <q-tooltip
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Rename party
+            </q-tooltip>
+          </q-btn>
+          <q-dialog
+            v-model="renamePartyDialog"
+            aria-label="Rename party dialog"
+            @escape-key="closeDialog"
+          >
+            <q-card flat bordered>
+              <q-card-section>
+                <div class="text-h6">Rename party</div>
+              </q-card-section>
+
+              <q-card-section class="q-pt-none">
+                <q-input
+                  ref="partyRenameInput"
+                  v-model="newPartyRename"
+                  dense
+                  autofocus
+                  counter
+                  :maxlength="50"
+                  :no-error-icon="true"
+                  :rules="[
+                    (val: string) => !!val || 'Field is required',
+                    (val: string) =>
+                      !parties.some(
+                        name => name.toLowerCase() === val.toLowerCase()
+                      ) || 'This party already exists'
+                  ]"
+                  @keyup.enter="renameParty"
+                />
+              </q-card-section>
+
+              <q-card-actions align="center" class="text-primary">
+                <q-btn
+                  flat
+                  label="Cancel"
+                  class="tw:text-blue-600! tw:dark:text-blue-400!"
+                  aria-label="Close dialog"
+                  @click="closeDialog"
+                />
+                <q-btn
+                  flat
+                  label="Rename party"
+                  class="tw:text-blue-600! tw:dark:text-blue-400!"
+                  aria-label="Rename party"
+                  @click="renameParty"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+
           <q-btn
             class="tw:my-auto! tw:max-h-[33.15px]!"
             :icon="biTrash"

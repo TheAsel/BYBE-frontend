@@ -723,7 +723,7 @@ watch(npc_store, () => {
 
     <q-dialog
       v-model="renameNpcDialog"
-      aria-label="New npc dialog"
+      aria-label="Rename npc dialog"
       @escape-key="closeDialog"
     >
       <q-card flat bordered>
@@ -852,7 +852,10 @@ watch(npc_store, () => {
                 round
                 dense
                 aria-label="Rename NPC"
-                @click="renameNpcDialog = true"
+                @click="
+                  renameNpcDialog = true;
+                  newNpcRename = npc_store.npcs[npc_store.activeNpc]!.name;
+                "
               >
                 <q-tooltip
                   class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"

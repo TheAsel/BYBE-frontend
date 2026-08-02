@@ -549,7 +549,7 @@ watch(items_store, () => {
 
     <q-dialog
       v-model="renameShopDialog"
-      aria-label="New shop dialog"
+      aria-label="Rename shop dialog"
       @escape-key="closeDialog"
     >
       <q-card flat bordered>
@@ -674,7 +674,10 @@ watch(items_store, () => {
               round
               dense
               aria-label="Rename shop"
-              @click="renameShopDialog = true"
+              @click="
+                renameShopDialog = true;
+                newShopRename = items_store.shops[items_store.activeShop]!.name;
+              "
             >
               <q-tooltip
                 class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
