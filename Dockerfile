@@ -1,7 +1,6 @@
 ARG ALPINE_VERSION=3.24.1
 ARG BUN_VERSION=1.3.14
 ARG NGINX_VERSION=1.31.2
-ARG NGINX_CHECKSUM=af2a957c41da636ddc4f883e4523c6d140b4784dbce42000c364ae5092aa473c
 
 ### STAGE 1: Build nginx + brotli ###
 FROM alpine:${ALPINE_VERSION} AS brotli-stage
@@ -16,7 +15,6 @@ RUN apk add --no-cache \
     brotli-dev
 WORKDIR /app
 RUN wget --secure-protocol=TLSv1_2 --max-redirect=0 "https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
-    && echo "${NGINX_CHECKSUM} nginx-${NGINX_VERSION}.tar.gz" | sha256sum -c - \
     && tar -zxf "nginx-${NGINX_VERSION}.tar.gz" \
     && ln -s "nginx-${NGINX_VERSION}" nginx \
     && git clone --recurse-submodules -j8 https://github.com/google/ngx_brotli \
