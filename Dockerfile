@@ -15,7 +15,7 @@ RUN apk add --no-cache \
     git \
     brotli-dev
 WORKDIR /app
-RUN wget "https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
+RUN wget --secure-protocol=TLSv1_2 --max-redirect=0 "https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
     && echo "${NGINX_CHECKSUM} nginx-${NGINX_VERSION}.tar.gz" | sha256sum -c - \
     && tar -zxf "nginx-${NGINX_VERSION}.tar.gz" \
     && ln -s "nginx-${NGINX_VERSION}" nginx \
