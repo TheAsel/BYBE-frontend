@@ -16,6 +16,7 @@ import { trackerStore } from "@/stores/tracker";
 import {
   addPlus,
   cleanDescription,
+  getGameAonLink,
   getGameFont,
   getGameFontSize,
   getGameFontSizeSmall,
@@ -27,6 +28,7 @@ import {
   weaknessString
 } from "@/utils/sheet";
 
+import type { creature, spell_group } from "@/types/creature";
 import type { variants } from "@/types/filters";
 
 const route = useRoute();
@@ -433,78 +435,28 @@ const ordinalSuffix = (n: number): string => {
   return `${n}th`;
 };
 
-const spellString = computed(() => {
-  const finalStrings: string[] = [];
-  for (const entry of encounter_store.selectedCreature?.spellcaster_data
-    ?.spellcaster_entries ?? []) {
-    let finalString = "";
-    const spellLevels: boolean[] = Array.from<boolean>({ length: 11 }).fill(
-      false
-    );
-    finalString += `<strong>${entry.spellcaster_data.spellcasting_name}</strong>`;
-    if (entry.spellcaster_data.spellcasting_dc_mod !== 0) {
-      finalString += `&nbsp;DC ${variantStyle(entry.spellcaster_data.spellcasting_dc_mod)}`;
-    }
-    if (encounter_store.selectedCreature?.variant_data?.variant === "Elite") {
-      finalString += ` (${variantStyle("+4 dmg")})`;
-    }
-    if (encounter_store.selectedCreature?.variant_data?.variant === "Weak") {
-      finalString += ` (${variantStyle("-4 dmg")})`;
-    }
-    if (entry.spellcaster_data.spellcasting_atk_mod !== 0) {
-      finalString += `, attack ${variantStyle(
-        addPlus(entry.spellcaster_data.spellcasting_atk_mod)
-      )}`;
-    }
-    if (
-      (encounter_store.selectedCreature?.core_data.essential.focus_points ??
-        0) > 0 &&
-      entry.spellcaster_data.type_of_spellcaster === "focus"
-    ) {
-      finalString += `,&nbsp;${
-        encounter_store.selectedCreature?.core_data.essential.focus_points
-      }`;
+const groupSpells = (
+  entry: NonNullable<
+    creature["spellcaster_data"]
+  >["spellcaster_entries"][number]
+): spell_group[] => {
+  const sorted = entry.spells.toSorted((a, b) => b.slot - a.slot);
+  const groups: spell_group[] = [];
+  let lastSlot: number | null = null;
 
-      if (
-        (encounter_store.selectedCreature?.core_data.essential.focus_points ??
-          0) > 1
-      ) {
-        finalString += " Focus Points";
-      } else {
-        finalString += " Focus Point";
-      }
+  for (const spell of sorted) {
+    if (spell.slot !== lastSlot) {
+      lastSlot = spell.slot;
+      const level =
+        spell.slot === 0
+          ? `Cantrips (${ordinalSuffix(entry.spellcaster_data.heighten_level)})`
+          : ordinalSuffix(spell.slot);
+      groups.push({ level, spells: [] });
     }
-    finalString += "; ";
-    entry.spells.sort((a, b) => b.slot - a.slot);
-    if (entry.spellcaster_data.type_of_spellcaster === "focus") {
-      finalString = finalString.slice(0, -2);
-      finalString += `;&nbsp;<strong>${ordinalSuffix(
-        entry.spellcaster_data.heighten_level
-      )}</strong>&nbsp;`;
-      for (const spell of entry.spells) {
-        finalString += `${spell.name.toLowerCase()}, `;
-      }
-    } else {
-      for (const spell of entry.spells) {
-        if (spell.slot === 0 && !spellLevels[0]) {
-          spellLevels[0] = true;
-          finalString = finalString.slice(0, -2);
-          finalString += `;&nbsp;<strong>Cantrips (${ordinalSuffix(
-            entry.spellcaster_data.heighten_level
-          )})</strong>&nbsp;`;
-        } else if (!spellLevels[spell.slot]) {
-          spellLevels[spell.slot] = true;
-          finalString = finalString.slice(0, -2);
-          finalString += `;&nbsp;<strong>${ordinalSuffix(spell.slot)}</strong>&nbsp;`;
-        }
-        finalString += `${spell.name.toLowerCase()}, `;
-      }
-    }
-
-    finalStrings.push(`${finalString.slice(0, -2)}<br>`);
+    groups.at(groups.length - 1)?.spells.push(spell.name);
   }
-  return finalStrings;
-});
+  return groups;
+};
 </script>
 
 <template>
@@ -616,11 +568,10 @@ const spellString = computed(() => {
       "
       class="tw:my-auto"
       :href="
-        'https://2e.aonsrd.com/search?q=' +
+        'https://2e.aonsrd.com/search?type=eqs&q=type%3A(creature) ' +
         encodeURIComponent(
           encounter_store.selectedCreature?.core_data.essential.name
-        ) +
-        ' type%3A(creature)&type=eqs'
+        )
       "
       target="_blank"
       rel="noopener"
@@ -883,11 +834,10 @@ const spellString = computed(() => {
       <strong>Source </strong>
       <a
         :href="
-          'https://store.paizo.com/search.php?search_query=' +
+          'https://store.paizo.com/search.php?section=product&search_query=' +
           encodeURIComponent(
             encounter_store.selectedCreature?.core_data.essential.source
-          ) +
-          '&section=product'
+          )
         "
         target="_blank"
         rel="noopener"
@@ -1128,12 +1078,110 @@ const spellString = computed(() => {
         </span>
       </div>
     </span>
-    <span v-for="entity in spellString" :key="entity">
-      <div
-        v-html="entity"
-        class="tw:text-base tw:text-gray-800 tw:dark:text-white"
-      />
-    </span>
+    <template
+      v-for="entry in spellData?.spellcaster_entries"
+      :key="entry.spellcaster_data.id"
+    >
+      <div class="tw:text-base tw:text-gray-800 tw:dark:text-white">
+        <strong>
+          {{ entry.spellcaster_data.spellcasting_name }}
+        </strong>
+        <template v-if="entry.spellcaster_data.spellcasting_dc_mod !== 0">
+          {{ " DC " }}
+          <span
+            v-html="variantStyle(entry.spellcaster_data.spellcasting_dc_mod)"
+          />
+        </template>
+        <template v-if="entry.spellcaster_data.spellcasting_atk_mod !== 0">
+          {{ ", attack " }}
+          <span
+            v-html="
+              variantStyle(addPlus(entry.spellcaster_data.spellcasting_atk_mod))
+            "
+          />
+        </template>
+        <template
+          v-if="
+            (coreCreature?.essential.focus_points ?? 0) > 0 &&
+            entry.spellcaster_data.type_of_spellcaster === 'focus'
+          "
+          >, {{ coreCreature?.essential.focus_points }}
+          {{
+            (coreCreature?.essential.focus_points ?? 0) > 1
+              ? "Focus Points"
+              : "Focus Point"
+          }}
+        </template>
+        <template
+          v-if="
+            encounter_store.selectedCreature?.variant_data?.variant === 'Elite'
+          "
+        >
+          (<span v-html="variantStyle('+4 dmg')"></span>)</template
+        >
+        <template
+          v-else-if="
+            encounter_store.selectedCreature?.variant_data?.variant === 'Weak'
+          "
+        >
+          (<span v-html="variantStyle('-4 dmg')"></span>)</template
+        >
+        <template v-if="entry.spellcaster_data.type_of_spellcaster === 'focus'"
+          >{{ "; "
+          }}<strong>
+            {{ ordinalSuffix(entry.spellcaster_data.heighten_level) + " " }}
+          </strong>
+          <template
+            v-for="(spell, index) in entry.spells.toSorted((a, b) =>
+              a.name.localeCompare(b.name)
+            )"
+            :key="spell.id"
+            ><a
+              :href="
+                'https://2e.' +
+                getGameAonLink(
+                  encounter_store.selectedCreature?.game ?? settings_store.game
+                ) +
+                '.com/search?type=eqs&q=type%3A(spell) ' +
+                encodeURIComponent(spell.name)
+              "
+              target="_blank"
+              rel="noopener"
+              ><i class="tw:decoration-2 tw:underline">{{
+                spell.name.toLowerCase()
+              }}</i></a
+            ><template v-if="index < entry.spells.length - 1">, </template>
+          </template>
+        </template>
+        <template v-else>
+          <template v-for="group in groupSpells(entry)" :key="group.level">
+            <strong>{{ "; " + group.level + " " }}</strong>
+            <template
+              v-for="(spell, index) in group.spells.toSorted((a, b) =>
+                a.localeCompare(b)
+              )"
+              :key="spell"
+              ><a
+                :href="
+                  'https://2e.' +
+                  getGameAonLink(
+                    encounter_store.selectedCreature?.game ??
+                      settings_store.game
+                  ) +
+                  '.com/search?type=eqs&q=type%3A(spell) ' +
+                  encodeURIComponent(spell)
+                "
+                target="_blank"
+                rel="noopener"
+                ><i class="tw:decoration-2 tw:underline">{{
+                  spell.toLowerCase()
+                }}</i></a
+              ><template v-if="index < group.spells.length - 1">, </template>
+            </template>
+          </template>
+        </template>
+      </div>
+    </template>
     <span
       v-for="item in encounter_store.selectedCreature?.extra_data?.actions"
       :key="item.core_action.name"

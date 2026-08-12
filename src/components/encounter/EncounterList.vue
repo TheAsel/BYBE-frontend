@@ -412,9 +412,9 @@ const importEncounter = async (): Promise<void> => {
               hazard: {
                 archive_link: `https://2e.${getGameAonLink(
                   hazard.game
-                )}.com/search?q=${encodeURIComponent(
+                )}.com/search?type=eqs&q=type%3A(hazard) ${encodeURIComponent(
                   fetchedHazardsData.core_hazard.essential.name
-                )} type%3A(hazard)&type=eqs`,
+                )}`,
                 complexity: fetchedHazardsData.core_hazard.essential.complexity,
                 game: hazard.game,
                 id: hazard.id,

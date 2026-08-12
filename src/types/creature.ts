@@ -167,3 +167,8 @@ export type creature_response = {
   next: string;
   results: creature[];
 };
+
+export type spell_group = {
+  level: string;
+  spells: string[];
+};

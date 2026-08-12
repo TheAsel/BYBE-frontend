@@ -62,9 +62,8 @@ const game = computed(() => selectedItem.value?.game ?? settings_store.game);
       :href="
         'https://2e.' +
         getGameAonLink(game) +
-        '.com/search?q=' +
-        encodeURIComponent(coreItem.name) +
-        '&type=eqs'
+        '.com/search?type=eqs&q=type%3A(item) ' +
+        encodeURIComponent(coreItem.name)
       "
       target="_blank"
       rel="noopener"
@@ -209,9 +208,8 @@ const game = computed(() => selectedItem.value?.game ?? settings_store.game);
       <strong>Source </strong>
       <a
         :href="
-          'https://store.paizo.com/search.php?search_query=' +
-          encodeURIComponent(coreItem.source) +
-          '&section=product'
+          'https://store.paizo.com/search.php?section=product&search_query=' +
+          encodeURIComponent(coreItem.source)
         "
         target="_blank"
         rel="noopener"

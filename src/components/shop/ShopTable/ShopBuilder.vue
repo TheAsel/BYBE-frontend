@@ -264,9 +264,9 @@ const generateShop = debounce(async () => {
         const min_item: min_item = {
           archive_link: `https://2e.${getGameAonLink(
             settings_store.game
-          )}.com/search?q=${encodeURIComponent(
+          )}.com/search?type=eqs&q=type%3A(item) ${encodeURIComponent(
             randomShop.results[i]!.core_item.name
-          )}&type=eqs`,
+          )}`,
           game: randomShop.results[i]!.game,
           id: randomShop.results[i]!.core_item.id,
           level: randomShop.results[i]!.core_item.level,

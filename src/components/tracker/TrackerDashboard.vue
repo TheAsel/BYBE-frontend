@@ -294,9 +294,8 @@ const filterConditionsFn = (
                 "
                 class="tw:my-auto"
                 :href="
-                  'https://2e.aonsrd.com/search?q=' +
-                  encodeURIComponent(detailedElement.element.name) +
-                  ' type%3A(creature)&type=eqs'
+                  'https://2e.aonsrd.com/search?type=eqs&q=type%3A(creature) ' +
+                  encodeURIComponent(detailedElement.element.name)
                 "
                 target="_blank"
                 rel="noopener"

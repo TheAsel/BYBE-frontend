@@ -239,9 +239,9 @@ const importShop = async (): Promise<void> => {
               item: {
                 archive_link: `https://2e.${getGameAonLink(
                   item.game
-                )}.com/search?q=${encodeURIComponent(
+                )}.com/search?type=eqs&q=type%3A(item) ${encodeURIComponent(
                   fetchedItemData.core_item.name
-                )}&type=eqs`,
+                )}`,
                 game: item.game,
                 id: item.id,
                 level: fetchedItemData.core_item.level,

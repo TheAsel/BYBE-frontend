@@ -291,7 +291,7 @@ const sort = (col: item_columns): void => {
 const addItem = debounce((item: item) => {
   const aon_link = `https://2e.${getGameAonLink(
     settings_store.game
-  )}.com/search?q=${encodeURIComponent(item.core_item.name)}&type=eqs`;
+  )}.com/search?type=eqs&q=type%3A(item) ${encodeURIComponent(item.core_item.name)}`;
   const min_item: min_item = {
     archive_link: aon_link,
     game: item.game,
@@ -1041,9 +1041,8 @@ watch(
             size="sm"
             padding="sm"
             :href="
-              'https://store.paizo.com/search.php?search_query=' +
-              encodeURIComponent(source.row.core_item.source) +
-              '&section=product'
+              'https://store.paizo.com/search.php?section=product&search_query=' +
+              encodeURIComponent(source.row.core_item.source)
             "
             target="_blank"
             rel="noopener"
@@ -1078,9 +1077,8 @@ watch(
               :href="
                 'https://2e.' +
                 getGameAonLink(settings_store.game) +
-                '.com/search?q=' +
-                encodeURIComponent(name.row.core_item.name) +
-                '&type=eqs'
+                '.com/search?type=eqs&q=type%3A(item) ' +
+                encodeURIComponent(name.row.core_item.name)
               "
               target="_blank"
               rel="noopener"

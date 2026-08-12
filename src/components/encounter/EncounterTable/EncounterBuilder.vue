@@ -286,9 +286,9 @@ const generateEncounter = debounce(async () => {
           const min_hazard: min_creature_hazard = {
             archive_link: `https://2e.${getGameAonLink(
               hazard.game
-            )}.com/search?q=${encodeURIComponent(
+            )}.com/search?type=eqs&q=type%3A(hazard) ${encodeURIComponent(
               hazard.core_hazard.essential.name
-            )} type%3A(hazard)&type=eqs`,
+            )}`,
             complexity: hazard.core_hazard.essential.complexity,
             game: hazard.game,
             id: hazard.core_hazard.essential.id,

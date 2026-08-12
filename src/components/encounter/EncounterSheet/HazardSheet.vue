@@ -103,9 +103,8 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
         :href="
           'https://2e.' +
           getGameAonLink(selectedHazard.game ?? settings_store.game) +
-          '.com/search?q=' +
-          encodeURIComponent(coreHazard.essential.name) +
-          ' type%3A(hazard)&type=eqs'
+          '.com/search?type=eqs&q=type%3A(hazard) ' +
+          encodeURIComponent(coreHazard.essential.name)
         "
         target="_blank"
         rel="noopener"
@@ -298,9 +297,8 @@ const coreHazard = computed(() => selectedHazard.value?.core_hazard);
         <strong>Source </strong>
         <a
           :href="
-            'https://store.paizo.com/search.php?search_query=' +
-            encodeURIComponent(coreHazard.essential.source) +
-            '&section=product'
+            'https://store.paizo.com/search.php?section=product&search_query=' +
+            encodeURIComponent(coreHazard.essential.source)
           "
           target="_blank"
           rel="noopener"

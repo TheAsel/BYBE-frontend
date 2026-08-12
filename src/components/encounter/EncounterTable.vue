@@ -890,9 +890,9 @@ const sortHazards = (col: hazard_columns): void => {
 const addCreature = debounce((creature: creature) => {
   const aon_link =
     settings_store.game === "sf"
-      ? `https://2e.aonsrd.com/search?q=${encodeURIComponent(
+      ? `https://2e.aonsrd.com/search?type=eqs&q=type%3A(creature) ${encodeURIComponent(
           creature.core_data.essential.name
-        )} type%3A(creature)&type=eqs`
+        )}`
       : creature.core_data.derived.archive_link;
   const min_creature: min_creature_hazard = {
     archive_link: aon_link,
@@ -912,9 +912,9 @@ const addHazard = debounce((hazard: hazard) => {
   const min_hazard: min_creature_hazard = {
     archive_link: `https://2e.${getGameAonLink(
       hazard.game
-    )}.com/search?q=${encodeURIComponent(
+    )}.com/search?type=eqs&q=type%3A(hazard) ${encodeURIComponent(
       hazard.core_hazard.essential.name
-    )} type%3A(hazard)&type=eqs`,
+    )}`,
     complexity: hazard.core_hazard.essential.complexity,
     game: hazard.game,
     id: hazard.core_hazard.essential.id,
@@ -2186,9 +2186,8 @@ onMounted(async () => {
             size="sm"
             padding="sm"
             :href="
-              'https://store.paizo.com/search.php?search_query=' +
-              encodeURIComponent(source.row.core_data.essential.source) +
-              '&section=product'
+              'https://store.paizo.com/search.php?section=product&search_query=' +
+              encodeURIComponent(source.row.core_data.essential.source)
             "
             target="_blank"
             rel="noopener"
@@ -2241,9 +2240,8 @@ onMounted(async () => {
               :href="
                 'https://2e.' +
                 getGameAonLink(settings_store.game) +
-                '.com/search?q=' +
-                encodeURIComponent(name.value) +
-                ' type%3A(creature)&type=eqs'
+                '.com/search?type=eqs&q=type%3A(creature) ' +
+                encodeURIComponent(name.value)
               "
               target="_blank"
               rel="noopener"
@@ -3303,9 +3301,8 @@ onMounted(async () => {
             size="sm"
             padding="sm"
             :href="
-              'https://store.paizo.com/search.php?search_query=' +
-              encodeURIComponent(source.row.core_hazard.essential.source) +
-              '&section=product'
+              'https://store.paizo.com/search.php?section=product&search_query=' +
+              encodeURIComponent(source.row.core_hazard.essential.source)
             "
             target="_blank"
             rel="noopener"
@@ -3341,9 +3338,8 @@ onMounted(async () => {
               :href="
                 'https://2e.' +
                 getGameAonLink(settings_store.game) +
-                '.com/search?q=' +
-                encodeURIComponent(name.value) +
-                ' type%3A(hazard)&type=eqs'
+                '.com/search?type=eqs&q=type%3A(hazard) ' +
+                encodeURIComponent(name.value)
               "
               target="_blank"
               rel="noopener"
