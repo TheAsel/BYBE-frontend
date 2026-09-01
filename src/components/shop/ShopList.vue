@@ -10,10 +10,13 @@ import {
 } from "@quasar/extras/bootstrap-icons";
 import { matPriorityHigh } from "@quasar/extras/material-icons";
 import {
+  mdiAmmunition,
+  mdiBagPersonal,
   mdiFoodDrumstick,
   mdiRing,
   mdiShield,
   mdiSword,
+  mdiTreasureChest,
   mdiTshirtCrew
 } from "@quasar/extras/mdi-v7";
 import { debounce } from "lodash-es";
@@ -763,6 +766,36 @@ watch(items_store, () => {
                   style="min-width: 100px"
                 >
                   <q-chip
+                    v-if="item.type === 'Ammunition'"
+                    text-color="white"
+                    clickable
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Ammunition item type"
+                    @click="
+                      openSheet(
+                        router,
+                        'item',
+                        item.game ?? settings_store.game,
+                        item.id
+                      )
+                    "
+                  >
+                    <q-avatar
+                      class="tw:visible"
+                      :icon="mdiAmmunition"
+                      color="black"
+                    >
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Ammunition
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
+                  <q-chip
                     v-if="item.type === 'Armor'"
                     text-color="white"
                     clickable
@@ -789,6 +822,36 @@ watch(items_store, () => {
                         self="bottom middle"
                       >
                         Armor
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
+                  <q-chip
+                    v-if="item.type === 'Backpack'"
+                    text-color="white"
+                    clickable
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Backpack item type"
+                    @click="
+                      openSheet(
+                        router,
+                        'item',
+                        item.game ?? settings_store.game,
+                        item.id
+                      )
+                    "
+                  >
+                    <q-avatar
+                      class="tw:visible"
+                      :icon="mdiBagPersonal"
+                      color="brown"
+                    >
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Backpack
                       </q-tooltip>
                     </q-avatar>
                   </q-chip>
@@ -875,6 +938,36 @@ watch(items_store, () => {
                         self="bottom middle"
                       >
                         Shield
+                      </q-tooltip>
+                    </q-avatar>
+                  </q-chip>
+                  <q-chip
+                    v-if="item.type === 'Treasure'"
+                    text-color="white"
+                    clickable
+                    :ripple="false"
+                    class="tw:p-1! tw:invisible"
+                    aria-label="Treasure item type"
+                    @click="
+                      openSheet(
+                        router,
+                        'item',
+                        item.game ?? settings_store.game,
+                        item.id
+                      )
+                    "
+                  >
+                    <q-avatar
+                      class="tw:visible"
+                      :icon="mdiTreasureChest"
+                      color="amber"
+                    >
+                      <q-tooltip
+                        class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        Treasure
                       </q-tooltip>
                     </q-avatar>
                   </q-chip>

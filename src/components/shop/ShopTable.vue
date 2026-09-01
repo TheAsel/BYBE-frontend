@@ -18,7 +18,10 @@ import {
   mdiRing,
   mdiShield,
   mdiSword,
-  mdiTshirtCrew
+  mdiTshirtCrew,
+  mdiAmmunition,
+  mdiTreasureChest,
+  mdiBagPersonal
 } from "@quasar/extras/mdi-v7";
 import { capitalize, debounce } from "lodash-es";
 import { useQuasar } from "quasar";
@@ -969,10 +972,13 @@ watch(
                 options-dense
                 :options="
                   Object.freeze([
+                    'Ammunition',
                     'Armor',
+                    'Backpack',
                     'Consumable',
                     'Equipment',
                     'Shield',
+                    'Treasure',
                     'Weapon'
                   ])
                 "
@@ -1129,6 +1135,21 @@ watch(
       <template #body-cell-type="type">
         <q-td :props="type">
           <q-icon
+            v-if="type.row.core_item.item_type === 'Ammunition'"
+            :name="mdiAmmunition"
+            size="sm"
+            left
+            class="tw:text-gray-800! tw:dark:text-white!"
+          >
+            <q-tooltip
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Ammunition
+            </q-tooltip>
+          </q-icon>
+          <q-icon
             v-if="type.row.core_item.item_type === 'Armor'"
             :name="mdiTshirtCrew"
             size="sm"
@@ -1141,6 +1162,21 @@ watch(
               self="bottom middle"
             >
               Armor
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="type.row.core_item.item_type === 'Backpack'"
+            :name="mdiBagPersonal"
+            size="sm"
+            left
+            class="tw:text-gray-800! tw:dark:text-white!"
+          >
+            <q-tooltip
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Backpack
             </q-tooltip>
           </q-icon>
           <q-icon
@@ -1186,6 +1222,21 @@ watch(
               self="bottom middle"
             >
               Shield
+            </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="type.row.core_item.item_type === 'Treasure'"
+            :name="mdiTreasureChest"
+            size="sm"
+            left
+            class="tw:text-gray-800! tw:dark:text-white!"
+          >
+            <q-tooltip
+              class="text-caption tw:bg-gray-700! tw:text-gray-200! tw:rounded-md tw:shadow-sm tw:dark:bg-slate-700!"
+              anchor="top middle"
+              self="bottom middle"
+            >
+              Treasure
             </q-tooltip>
           </q-icon>
           <q-icon

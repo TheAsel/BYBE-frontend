@@ -30,10 +30,24 @@ export const templateStore = defineStore("template_store", {
           item_traits_blacklist: template.item_traits_blacklist,
           item_traits_whitelist: template.item_traits_whitelist,
           item_types: template.item_types,
-          armor_percentage: template.armor_percentage,
-          equipment_percentage: template.equipment_percentage,
-          shield_percentage: template.shield_percentage,
-          weapon_percentage: template.weapon_percentage
+          consumable_percentages: {
+            ammunition_percentage:
+              template.consumable_percentages.ammunition_percentage,
+            generic_percentage:
+              template.consumable_percentages.generic_percentage
+          },
+          equippable_percentages: {
+            armor_percentage: template.equippable_percentages.armor_percentage,
+            backpack_percentage:
+              template.equippable_percentages.backpack_percentage,
+            equipment_percentage:
+              template.equippable_percentages.equipment_percentage,
+            shield_percentage:
+              template.equippable_percentages.shield_percentage,
+            treasure_percentage:
+              template.equippable_percentages.treasure_percentage,
+            weapon_percentage: template.equippable_percentages.weapon_percentage
+          }
         });
       }
       newTemplates.sort((a, b) => a.name.localeCompare(b.name));

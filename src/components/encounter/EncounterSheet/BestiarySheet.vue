@@ -225,7 +225,7 @@ const itemString = computed(() => {
             }
             if (weapon.weapon_data.property_runes.length > 0) {
               for (const rune of weapon.weapon_data.property_runes) {
-                weaponString += `${rune} `;
+                weaponString += `${rune.replaceAll(/([A-Z])/gu, " $1").toLowerCase()} `;
               }
             }
             if (weapon.item_core.material_type) {
@@ -247,7 +247,13 @@ const itemString = computed(() => {
     }
     if (items.length > 0) {
       for (const item of items) {
-        if (item.item_type === "Consumable" || item.item_type === "Equipment") {
+        if (
+          item.item_type === "Ammunition" ||
+          item.item_type === "Backpack" ||
+          item.item_type === "Consumable" ||
+          item.item_type === "Equipment" ||
+          item.item_type === "Treasure"
+        ) {
           let tmpString = "";
           if (item.quantity === 1) {
             tmpString += item.name.toLowerCase();
@@ -377,7 +383,7 @@ const healthString = computed(() => {
 
     finalString += `<strong>HP&nbsp;</strong>${variantStyle(hp)}`;
     if (hpDetail !== "") {
-      finalString += ` ${hpDetail}`;
+      finalString += `, ${hpDetail}`;
     }
 
     if (combatData.value.immunities.length > 0) {

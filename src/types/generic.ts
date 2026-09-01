@@ -19,6 +19,8 @@ export type action = {
     action_type: string;
     category: string;
     description: string;
+    frequency_max: number | null;
+    frequency_per: string | null;
     id: number;
     license: string;
     n_of_actions: number | null;

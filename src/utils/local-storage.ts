@@ -215,6 +215,7 @@ export function validateTemplates(templates: string): boolean {
         throw new Error("Invalid saved template default");
       template.default = false;
 
+      // Legacy format
       if ("source_filter" in template) {
         template.item_sources = template.source_filter;
         delete template.source_filter;
@@ -231,6 +232,7 @@ export function validateTemplates(templates: string): boolean {
         }
       }
 
+      // Legacy format
       if ("rarity_filter" in template) {
         template.item_rarities = template.rarity_filter;
         delete template.rarity_filter;
@@ -247,6 +249,7 @@ export function validateTemplates(templates: string): boolean {
         }
       }
 
+      // Legacy format
       if ("trait_blacklist_filter" in template) {
         template.item_traits_blacklist = template.trait_blacklist_filter;
         delete template.trait_blacklist_filter;
@@ -263,6 +266,7 @@ export function validateTemplates(templates: string): boolean {
         }
       }
 
+      // Legacy format
       if ("trait_whitelist_filter" in template) {
         template.item_traits_whitelist = template.trait_whitelist_filter;
         delete template.trait_whitelist_filter;
@@ -279,6 +283,7 @@ export function validateTemplates(templates: string): boolean {
         }
       }
 
+      // Legacy format
       if ("type_filter" in template) {
         template.item_types = template.type_filter;
         delete template.type_filter;
@@ -293,13 +298,76 @@ export function validateTemplates(templates: string): boolean {
         }
       }
 
-      if (typeof template.armor_percentage !== "number")
+      // Legacy format
+      if ("armor_percentage" in template) {
+        template.equippable_percentages ??= {};
+        template.equippable_percentages.armor_percentage =
+          template.armor_percentage;
+        delete template.armor_percentage;
+      }
+      if ("equipment_percentage" in template) {
+        template.equippable_percentages ??= {};
+        template.equippable_percentages.equipment_percentage =
+          template.equipment_percentage;
+        delete template.equipment_percentage;
+      }
+      if ("shield_percentage" in template) {
+        template.equippable_percentages ??= {};
+        template.equippable_percentages.shield_percentage =
+          template.shield_percentage;
+        delete template.shield_percentage;
+      }
+      if ("weapon_percentage" in template) {
+        template.equippable_percentages ??= {};
+        template.equippable_percentages.weapon_percentage =
+          template.weapon_percentage;
+        delete template.weapon_percentage;
+      }
+
+      if (
+        typeof template.consumable_percentages !== "object" ||
+        template.consumable_percentages === null
+      ) {
+        template.consumable_percentages ??= {};
+        template.consumable_percentages.ammunition_percentage = 0;
+        template.consumable_percentages.generic_percentage = 0;
+      }
+      if (
+        typeof template.consumable_percentages.ammunition_percentage !==
+        "number"
+      )
+        throw new Error("Invalid saved template ammunition percentage");
+      if (
+        typeof template.consumable_percentages.generic_percentage !== "number"
+      )
+        throw new Error("Invalid saved template generic percentage");
+
+      if (
+        typeof template.equippable_percentages !== "object" ||
+        template.equippable_percentages === null
+      )
+        throw new Error("Invalid equippable percentages");
+      if (typeof template.equippable_percentages.armor_percentage !== "number")
         throw new Error("Invalid saved template armor percentage");
-      if (typeof template.equipment_percentage !== "number")
+      if (
+        typeof template.equippable_percentages.backpack_percentage !== "number"
+      ) {
+        template.equippable_percentages.backpack_percentage = 0;
+        console.error("Invalid saved template backpack percentage");
+      }
+      if (
+        typeof template.equippable_percentages.equipment_percentage !== "number"
+      )
         throw new Error("Invalid saved template equipment percentage");
-      if (typeof template.shield_percentage !== "number")
+      if (typeof template.equippable_percentages.shield_percentage !== "number")
         throw new Error("Invalid saved template shield percentage");
-      if (typeof template.weapon_percentage !== "number")
+      if (
+        typeof template.equippable_percentages.treasure_percentage !== "number"
+      ) {
+        template.equippable_percentages.treasure_percentage = 0;
+        console.error("Invalid saved template treasure percentage");
+      }
+      if (typeof template.equippable_percentages.weapon_percentage !== "number")
         throw new Error("Invalid saved template weapon percentage");
     }
 
@@ -340,6 +408,7 @@ export function validateNpcs(npcs: string): boolean {
         throw new Error("Invalid saved npc");
       if (typeof npc.name !== "string")
         throw new Error("Invalid saved npc list name");
+      // Legacy format
       if ("culture" in npc) {
         if (npc.culture === "") {
           npc.culture = false;
@@ -349,6 +418,7 @@ export function validateNpcs(npcs: string): boolean {
       }
       if (typeof npc.has_culture !== "boolean")
         throw new Error("Invalid saved npc has_culture");
+      // Legacy format
       if ("npc" in npc) {
         npc.core_npc = npc.npc;
         delete npc.npc;

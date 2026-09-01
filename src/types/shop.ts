@@ -21,10 +21,6 @@ export type shop_data = {
   trait_whitelist_filter: string[] | null;
   rarity_filter: string[] | null;
   type_filter: string[] | null;
-  armor_percentage: number | null;
-  equipment_percentage: number | null;
-  shield_percentage: number | null;
-  weapon_percentage: number | null;
   consumable_dices: {
     dice_size: number | null;
     n_of_dices: number | null;
@@ -33,6 +29,20 @@ export type shop_data = {
     dice_size: number | null;
     n_of_dices: number | null;
   }[];
+  percentages: {
+    consumable_percentages: {
+      ammunition_percentage: number | null;
+      generic_percentage: number | null;
+    };
+    equippable_percentages: {
+      armor_percentage: number | null;
+      backpack_percentage: number | null;
+      equipment_percentage: number | null;
+      shield_percentage: number | null;
+      treasure_percentage: number | null;
+      weapon_percentage: number | null;
+    };
+  };
   min_level: number;
   max_level: number;
   shop_template?: string;

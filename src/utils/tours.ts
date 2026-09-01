@@ -25,7 +25,7 @@ function firstButtons(tour: Tour): (
     },
     {
       action(): void {
-        tour.next();
+        tour.next(); // oxlint-disable-line no-floating-promises
       },
       text: "NEXT"
     }
@@ -47,7 +47,7 @@ function lastButtons(tour: Tour): (
   return [
     {
       action(): void {
-        tour.back();
+        tour.back(); // oxlint-disable-line no-floating-promises
       },
       secondary: true,
       text: "PREVIOUS"
@@ -84,13 +84,13 @@ function defaultButtons(tour: Tour): (
     },
     {
       action(): void {
-        tour.back();
+        tour.back(); // oxlint-disable-line no-floating-promises
       },
       text: "PREVIOUS"
     },
     {
       action(): void {
-        tour.next();
+        tour.next(); // oxlint-disable-line no-floating-promises
       },
       text: "NEXT"
     }

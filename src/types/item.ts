@@ -2,11 +2,14 @@ import type { games, rarities, sizes } from "@/types/filters";
 import type { action, range, trait } from "@/types/generic";
 
 export type item_type =
+  | "Ammunition"
   | "Armor"
+  | "Backpack"
   | "Consumable"
   | "Equipment"
-  | "Weapon"
-  | "Shield";
+  | "Shield"
+  | "Treasure"
+  | "Weapon";
 
 export type item = {
   game: games;

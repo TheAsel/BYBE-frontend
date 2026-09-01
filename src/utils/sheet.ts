@@ -93,6 +93,15 @@ export function cleanDescription(description: string): string {
     '<hr class="q-separator q-separator--horizontal tw:my-2! tw:bg-gray-200! tw:dark:bg-gray-500!" style="height: 2px;" aria-orientation="horizontal">'
   );
 
+  finalString = finalString.replaceAll(
+    /@VariantDamage\(([-+]?\d+)\)/gu,
+    (_, num) => {
+      const n = Number(num);
+      if (n === 0) return "";
+      if (n > 0) return `+ ${n}`;
+      return `- ${Math.abs(n)}`;
+    }
+  );
   return finalString.replaceAll(cleanRegex, "");
 }
 

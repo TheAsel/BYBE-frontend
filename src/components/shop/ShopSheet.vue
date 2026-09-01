@@ -23,8 +23,11 @@ const items_store = itemsStore();
           />
           <ItemSheet
             v-if="
+              items_store.selectedItem.core_item.item_type === 'Ammunition' ||
+              items_store.selectedItem.core_item.item_type === 'Backpack' ||
               items_store.selectedItem.core_item.item_type === 'Consumable' ||
-              items_store.selectedItem.core_item.item_type === 'Equipment'
+              items_store.selectedItem.core_item.item_type === 'Equipment' ||
+              items_store.selectedItem.core_item.item_type === 'Treasure'
             "
           />
           <ShieldSheet

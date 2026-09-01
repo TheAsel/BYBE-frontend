@@ -91,6 +91,8 @@ export type creature = {
     };
     ac_detail: string;
     actions: action[];
+    blurb: string;
+    description: string;
     has_vision: boolean;
     hp_detail: string;
     items: [item["core_item"]];
@@ -115,6 +117,7 @@ export type creature = {
       }
     ];
     speeds: KeyValue;
+    speed_details: string;
   };
   spellcaster_data?: {
     spellcaster_entries: [
@@ -135,6 +138,17 @@ export type creature = {
           area_value: number;
           counteraction: boolean;
           creature_id: number;
+          damage: {
+            bonus_dmg: number;
+            category: string | null;
+            dice: {
+              n_of_dices: number;
+              dice_size: number;
+            } | null;
+            dmg_type: string | null;
+            id: number;
+            kinds: string[] | null;
+          }[];
           duration: string;
           id: number;
           level: number;

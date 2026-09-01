@@ -61,25 +61,37 @@ const editNameInput = ref<InstanceType<typeof QInput> | null>(null);
 const editTraitSelect = ref<InstanceType<typeof QSelect> | null>(null);
 
 const newTemplate = ref<template>({
-  armor_percentage: 0,
-  default: false,
-  description: "",
-  equipment_percentage: 0,
   name: "",
+  description: "",
+  default: false,
   item_rarities: [],
-  shield_percentage: 0,
   item_sources: [],
   item_traits_blacklist: [],
   item_traits_whitelist: [],
   item_types: [],
-  weapon_percentage: 0
+  consumable_percentages: {
+    ammunition_percentage: 0,
+    generic_percentage: 0
+  },
+  equippable_percentages: {
+    armor_percentage: 0,
+    backpack_percentage: 0,
+    equipment_percentage: 0,
+    shield_percentage: 0,
+    treasure_percentage: 0,
+    weapon_percentage: 0
+  }
 });
 const removeTemplateDialog = ref(false);
 
 const fixedConsumableDice = ref(false);
 const fixedEquipmentDice = ref(false);
 
+const ammunitionOn = ref(true);
+const genericOn = ref(true);
+
 const armorOn = ref(true);
+const backpackOn = ref(true);
 const equipmentOn = ref(true);
 const shieldOn = ref(true);
 const weaponOn = ref(true);
@@ -184,14 +196,12 @@ const generateShop = debounce(async () => {
   const { game_version } = settings_store;
 
   const body: shop_data = {
-    armor_percentage: null,
     consumable_dices: [
       {
         dice_size: tmpFilters.value.consumable_dices.dice_size.value,
         n_of_dices: tmpFilters.value.consumable_dices.n_of_dices
       }
     ],
-    equipment_percentage: null,
     equippable_dices: [
       {
         dice_size: tmpFilters.value.equippable_dices.dice_size.value,
@@ -202,12 +212,24 @@ const generateShop = debounce(async () => {
     max_level: tmpFilters.value.levels.max,
     min_level: tmpFilters.value.levels.min,
     rarity_filter: null,
-    shield_percentage: null,
     source_filter: null,
     trait_blacklist_filter: null,
     trait_whitelist_filter: null,
     type_filter: null,
-    weapon_percentage: null
+    percentages: {
+      consumable_percentages: {
+        ammunition_percentage: null,
+        generic_percentage: null
+      },
+      equippable_percentages: {
+        armor_percentage: null,
+        backpack_percentage: null,
+        equipment_percentage: null,
+        shield_percentage: null,
+        treasure_percentage: null,
+        weapon_percentage: null
+      }
+    }
   };
   if (fixedConsumableDice.value) {
     body.consumable_dices = [
@@ -236,20 +258,61 @@ const generateShop = debounce(async () => {
         tmpFilters.value.shop_template.item_traits_whitelist;
       body.rarity_filter = tmpFilters.value.shop_template.item_rarities;
       body.type_filter = tmpFilters.value.shop_template.item_types;
-      if (tmpFilters.value.shop_template.armor_percentage! > 0) {
-        body.armor_percentage = tmpFilters.value.shop_template.armor_percentage;
+      if (
+        tmpFilters.value.shop_template.consumable_percentages
+          .ammunition_percentage! > 0
+      ) {
+        body.percentages.consumable_percentages.ammunition_percentage =
+          tmpFilters.value.shop_template.consumable_percentages.ammunition_percentage;
       }
-      if (tmpFilters.value.shop_template.equipment_percentage! > 0) {
-        body.equipment_percentage =
-          tmpFilters.value.shop_template.equipment_percentage;
+      if (
+        tmpFilters.value.shop_template.equippable_percentages
+          .armor_percentage! > 0
+      ) {
+        body.percentages.equippable_percentages.armor_percentage =
+          tmpFilters.value.shop_template.equippable_percentages.armor_percentage;
       }
-      if (tmpFilters.value.shop_template.shield_percentage! > 0) {
-        body.shield_percentage =
-          tmpFilters.value.shop_template.shield_percentage;
+      if (
+        tmpFilters.value.shop_template.equippable_percentages
+          .backpack_percentage! > 0
+      ) {
+        body.percentages.equippable_percentages.backpack_percentage =
+          tmpFilters.value.shop_template.equippable_percentages.backpack_percentage;
       }
-      if (tmpFilters.value.shop_template.weapon_percentage! > 0) {
-        body.weapon_percentage =
-          tmpFilters.value.shop_template.weapon_percentage;
+      if (
+        tmpFilters.value.shop_template.consumable_percentages
+          .generic_percentage! > 0
+      ) {
+        body.percentages.consumable_percentages.generic_percentage =
+          tmpFilters.value.shop_template.consumable_percentages.generic_percentage;
+      }
+      if (
+        tmpFilters.value.shop_template.equippable_percentages
+          .equipment_percentage! > 0
+      ) {
+        body.percentages.equippable_percentages.equipment_percentage =
+          tmpFilters.value.shop_template.equippable_percentages.equipment_percentage;
+      }
+      if (
+        tmpFilters.value.shop_template.equippable_percentages
+          .shield_percentage! > 0
+      ) {
+        body.percentages.equippable_percentages.shield_percentage =
+          tmpFilters.value.shop_template.equippable_percentages.shield_percentage;
+      }
+      if (
+        tmpFilters.value.shop_template.equippable_percentages
+          .treasure_percentage! > 0
+      ) {
+        body.percentages.equippable_percentages.treasure_percentage =
+          tmpFilters.value.shop_template.equippable_percentages.treasure_percentage;
+      }
+      if (
+        tmpFilters.value.shop_template.equippable_percentages
+          .weapon_percentage! > 0
+      ) {
+        body.percentages.equippable_percentages.weapon_percentage =
+          tmpFilters.value.shop_template.equippable_percentages.weapon_percentage;
       }
     }
   }
@@ -319,18 +382,26 @@ const validateNumber = (consumables: boolean): void => {
 
 const resetTemplateDialog = (): void => {
   newTemplate.value = {
-    armor_percentage: 0,
-    default: false,
-    description: "",
-    equipment_percentage: 0,
     name: "",
+    description: "",
+    default: false,
     item_rarities: [],
-    shield_percentage: 0,
     item_sources: [],
     item_traits_blacklist: [],
     item_traits_whitelist: [],
     item_types: [],
-    weapon_percentage: 0
+    consumable_percentages: {
+      ammunition_percentage: 0,
+      generic_percentage: 0
+    },
+    equippable_percentages: {
+      armor_percentage: 0,
+      backpack_percentage: 0,
+      equipment_percentage: 0,
+      shield_percentage: 0,
+      treasure_percentage: 0,
+      weapon_percentage: 0
+    }
   };
   for (const trait of selectedTraits.value) {
     trait.state = null;
@@ -961,7 +1032,7 @@ defineExpose({ generateShop });
                       />
                     </q-card-section>
                   </q-tab-panel>
-                  <q-tab-panel name="Advanced" class="tw:px-3! tw:mb-2!">
+                  <q-tab-panel name="Advanced" class="tw:px-3! tw:py-0!">
                     <q-card-section class="tw:flex" style="max-height: 46rem">
                       <q-input
                         ref="newNameInput"
@@ -982,7 +1053,88 @@ defineExpose({ generateShop });
                             ) || 'This template already exists'
                         ]"
                       />
-                      <div class="tw:space-y-3">
+                      <span>
+                        <u>Consumables:</u>
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
+                            <q-checkbox
+                              v-model="ammunitionOn"
+                              label="Enable Ammunitions?"
+                              @click="
+                                if (!ammunitionOn) {
+                                  newTemplate.consumable_percentages.ammunition_percentage = 0;
+                                }
+                              "
+                            />
+                          </div>
+                          <q-slider
+                            v-model="
+                              newTemplate.consumable_percentages
+                                .ammunition_percentage
+                            "
+                            label
+                            :min="0"
+                            :max="100"
+                            :inner-max="
+                              100 -
+                              newTemplate.consumable_percentages
+                                .generic_percentage!
+                            "
+                            :step="5"
+                            :label-value="
+                              'Min: ' +
+                              newTemplate.consumable_percentages
+                                .ammunition_percentage +
+                              '%'
+                            "
+                            :disable="!ammunitionOn"
+                            class="tw:px-3"
+                            style="min-width: 236px"
+                            aria-label="Ammunition percentage"
+                            role="menuitem"
+                          />
+                        </div>
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
+                            <q-checkbox
+                              v-model="genericOn"
+                              label="Enable Generics?"
+                              @click="
+                                if (!genericOn) {
+                                  newTemplate.consumable_percentages.generic_percentage = 0;
+                                }
+                              "
+                            />
+                          </div>
+                          <q-slider
+                            v-model="
+                              newTemplate.consumable_percentages
+                                .generic_percentage
+                            "
+                            label
+                            :min="0"
+                            :max="100"
+                            :inner-max="
+                              100 -
+                              newTemplate.consumable_percentages
+                                .ammunition_percentage!
+                            "
+                            :step="5"
+                            :label-value="
+                              'Min: ' +
+                              newTemplate.consumable_percentages
+                                .generic_percentage +
+                              '%'
+                            "
+                            :disable="!genericOn"
+                            class="tw:px-3"
+                            style="min-width: 236px"
+                            aria-label="Generic percentage"
+                            role="menuitem"
+                          />
+                        </div>
+                        <q-separator class="tw:my-2!" />
+                        <u>Equippables:</u>
                         <div class="tw:flex tw:flex-col">
                           <div class="tw:flex tw:flex-row">
                             <q-checkbox
@@ -990,25 +1142,36 @@ defineExpose({ generateShop });
                               label="Enable Armors?"
                               @click="
                                 if (!armorOn) {
-                                  newTemplate.armor_percentage = 0;
+                                  newTemplate.equippable_percentages.armor_percentage = 0;
                                 }
                               "
                             />
                           </div>
                           <q-slider
-                            v-model="newTemplate.armor_percentage"
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .armor_percentage
+                            "
                             label
                             :min="0"
                             :max="100"
                             :inner-max="
                               100 -
-                              newTemplate.equipment_percentage! -
-                              newTemplate.shield_percentage! -
-                              newTemplate.weapon_percentage!
+                              newTemplate.equippable_percentages
+                                .backpack_percentage! -
+                              newTemplate.equippable_percentages
+                                .equipment_percentage! -
+                              newTemplate.equippable_percentages
+                                .shield_percentage! -
+                              newTemplate.equippable_percentages
+                                .weapon_percentage!
                             "
                             :step="5"
                             :label-value="
-                              'Min: ' + newTemplate.armor_percentage + '%'
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .armor_percentage +
+                              '%'
                             "
                             :disable="!armorOn"
                             class="tw:px-3"
@@ -1016,7 +1179,51 @@ defineExpose({ generateShop });
                             aria-label="Armor percentage"
                             role="menuitem"
                           />
-                          <q-separator />
+                        </div>
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
+                            <q-checkbox
+                              v-model="backpackOn"
+                              label="Enable Backpacks?"
+                              @click="
+                                if (!backpackOn) {
+                                  newTemplate.equippable_percentages.backpack_percentage = 0;
+                                }
+                              "
+                            />
+                          </div>
+                          <q-slider
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .backpack_percentage
+                            "
+                            label
+                            :min="0"
+                            :max="100"
+                            :inner-max="
+                              100 -
+                              newTemplate.equippable_percentages
+                                .armor_percentage! -
+                              newTemplate.equippable_percentages
+                                .equipment_percentage! -
+                              newTemplate.equippable_percentages
+                                .shield_percentage! -
+                              newTemplate.equippable_percentages
+                                .weapon_percentage!
+                            "
+                            :step="5"
+                            :label-value="
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .backpack_percentage +
+                              '%'
+                            "
+                            :disable="!backpackOn"
+                            class="tw:px-3"
+                            style="min-width: 236px"
+                            aria-label="Backpack percentage"
+                            role="menuitem"
+                          />
                         </div>
                         <div class="tw:flex tw:flex-col">
                           <div class="tw:flex tw:flex-row">
@@ -1025,25 +1232,36 @@ defineExpose({ generateShop });
                               label="Enable Equipments?"
                               @click="
                                 if (!equipmentOn) {
-                                  newTemplate.equipment_percentage = 0;
+                                  newTemplate.equippable_percentages.equipment_percentage = 0;
                                 }
                               "
                             />
                           </div>
                           <q-slider
-                            v-model="newTemplate.equipment_percentage"
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .equipment_percentage
+                            "
                             label
                             :min="0"
                             :max="100"
                             :inner-max="
                               100 -
-                              newTemplate.armor_percentage! -
-                              newTemplate.shield_percentage! -
-                              newTemplate.weapon_percentage!
+                              newTemplate.equippable_percentages
+                                .backpack_percentage! -
+                              newTemplate.equippable_percentages
+                                .armor_percentage! -
+                              newTemplate.equippable_percentages
+                                .shield_percentage! -
+                              newTemplate.equippable_percentages
+                                .weapon_percentage!
                             "
                             :step="5"
                             :label-value="
-                              'Min: ' + newTemplate.equipment_percentage + '%'
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .equipment_percentage +
+                              '%'
                             "
                             :disable="!equipmentOn"
                             class="tw:px-3"
@@ -1051,7 +1269,6 @@ defineExpose({ generateShop });
                             aria-label="Equipment percentage"
                             role="menuitem"
                           />
-                          <q-separator />
                         </div>
                         <div class="tw:flex tw:flex-col">
                           <div class="tw:flex tw:flex-row">
@@ -1060,25 +1277,36 @@ defineExpose({ generateShop });
                               label="Enable Shields?"
                               @click="
                                 if (!shieldOn) {
-                                  newTemplate.shield_percentage = 0;
+                                  newTemplate.equippable_percentages.shield_percentage = 0;
                                 }
                               "
                             />
                           </div>
                           <q-slider
-                            v-model="newTemplate.shield_percentage"
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .shield_percentage
+                            "
                             label
                             :min="0"
                             :max="100"
                             :inner-max="
                               100 -
-                              newTemplate.armor_percentage! -
-                              newTemplate.equipment_percentage! -
-                              newTemplate.weapon_percentage!
+                              newTemplate.equippable_percentages
+                                .backpack_percentage! -
+                              newTemplate.equippable_percentages
+                                .armor_percentage! -
+                              newTemplate.equippable_percentages
+                                .equipment_percentage! -
+                              newTemplate.equippable_percentages
+                                .weapon_percentage!
                             "
                             :step="5"
                             :label-value="
-                              'Min: ' + newTemplate.shield_percentage + '%'
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .shield_percentage +
+                              '%'
                             "
                             :disable="!shieldOn"
                             class="tw:px-3"
@@ -1086,7 +1314,6 @@ defineExpose({ generateShop });
                             aria-label="Shield percentage"
                             role="menuitem"
                           />
-                          <q-separator />
                         </div>
                         <div class="tw:flex tw:flex-col">
                           <div class="tw:flex tw:flex-row">
@@ -1095,25 +1322,36 @@ defineExpose({ generateShop });
                               label="Enable Weapons?"
                               @click="
                                 if (!weaponOn) {
-                                  newTemplate.weapon_percentage = 0;
+                                  newTemplate.equippable_percentages.weapon_percentage = 0;
                                 }
                               "
                             />
                           </div>
                           <q-slider
-                            v-model="newTemplate.weapon_percentage"
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .weapon_percentage
+                            "
                             label
                             :min="0"
                             :max="100"
                             :inner-max="
                               100 -
-                              newTemplate.armor_percentage! -
-                              newTemplate.equipment_percentage! -
-                              newTemplate.shield_percentage!
+                              newTemplate.equippable_percentages
+                                .backpack_percentage! -
+                              newTemplate.equippable_percentages
+                                .armor_percentage! -
+                              newTemplate.equippable_percentages
+                                .equipment_percentage! -
+                              newTemplate.equippable_percentages
+                                .shield_percentage!
                             "
                             :step="5"
                             :label-value="
-                              'Min: ' + newTemplate.weapon_percentage + '%'
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .weapon_percentage +
+                              '%'
                             "
                             :disable="!weaponOn"
                             class="tw:px-3"
@@ -1122,7 +1360,7 @@ defineExpose({ generateShop });
                             role="menuitem"
                           />
                         </div>
-                      </div>
+                      </span>
                     </q-card-section>
                   </q-tab-panel>
                 </q-tab-panels>
@@ -1421,7 +1659,7 @@ defineExpose({ generateShop });
                       />
                     </q-card-section>
                   </q-tab-panel>
-                  <q-tab-panel name="Advanced" class="tw:px-3! tw:mb-2!">
+                  <q-tab-panel name="Advanced" class="tw:px-3! tw:py-0!">
                     <q-card-section class="tw:flex" style="max-height: 46rem">
                       <q-input
                         ref="editNameInput"
@@ -1447,7 +1685,88 @@ defineExpose({ generateShop });
                             ) || 'This template already exists'
                         ]"
                       />
-                      <div class="tw:space-y-3">
+                      <span>
+                        <u>Consumables:</u>
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
+                            <q-checkbox
+                              v-model="ammunitionOn"
+                              label="Enable Ammunitions?"
+                              @click="
+                                if (!ammunitionOn) {
+                                  newTemplate.consumable_percentages.ammunition_percentage = 0;
+                                }
+                              "
+                            />
+                          </div>
+                          <q-slider
+                            v-model="
+                              newTemplate.consumable_percentages
+                                .ammunition_percentage
+                            "
+                            label
+                            :min="0"
+                            :max="100"
+                            :inner-max="
+                              100 -
+                              newTemplate.consumable_percentages
+                                .generic_percentage!
+                            "
+                            :step="5"
+                            :label-value="
+                              'Min: ' +
+                              newTemplate.consumable_percentages
+                                .ammunition_percentage +
+                              '%'
+                            "
+                            :disable="!ammunitionOn"
+                            class="tw:px-3"
+                            style="min-width: 236px"
+                            aria-label="Ammunition percentage"
+                            role="menuitem"
+                          />
+                        </div>
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
+                            <q-checkbox
+                              v-model="genericOn"
+                              label="Enable Generics?"
+                              @click="
+                                if (!genericOn) {
+                                  newTemplate.consumable_percentages.generic_percentage = 0;
+                                }
+                              "
+                            />
+                          </div>
+                          <q-slider
+                            v-model="
+                              newTemplate.consumable_percentages
+                                .generic_percentage
+                            "
+                            label
+                            :min="0"
+                            :max="100"
+                            :inner-max="
+                              100 -
+                              newTemplate.consumable_percentages
+                                .ammunition_percentage!
+                            "
+                            :step="5"
+                            :label-value="
+                              'Min: ' +
+                              newTemplate.consumable_percentages
+                                .generic_percentage +
+                              '%'
+                            "
+                            :disable="!genericOn"
+                            class="tw:px-3"
+                            style="min-width: 236px"
+                            aria-label="Generic percentage"
+                            role="menuitem"
+                          />
+                        </div>
+                        <q-separator class="tw:my-2!" />
+                        <u>Equippables:</u>
                         <div class="tw:flex tw:flex-col">
                           <div class="tw:flex tw:flex-row">
                             <q-checkbox
@@ -1455,25 +1774,36 @@ defineExpose({ generateShop });
                               label="Enable Armors?"
                               @click="
                                 if (!armorOn) {
-                                  newTemplate.armor_percentage = 0;
+                                  newTemplate.equippable_percentages.armor_percentage = 0;
                                 }
                               "
                             />
                           </div>
                           <q-slider
-                            v-model="newTemplate.armor_percentage"
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .armor_percentage
+                            "
                             label
                             :min="0"
                             :max="100"
                             :inner-max="
                               100 -
-                              newTemplate.equipment_percentage! -
-                              newTemplate.shield_percentage! -
-                              newTemplate.weapon_percentage!
+                              newTemplate.equippable_percentages
+                                .backpack_percentage! -
+                              newTemplate.equippable_percentages
+                                .equipment_percentage! -
+                              newTemplate.equippable_percentages
+                                .shield_percentage! -
+                              newTemplate.equippable_percentages
+                                .weapon_percentage!
                             "
                             :step="5"
                             :label-value="
-                              'Min: ' + newTemplate.armor_percentage + '%'
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .armor_percentage +
+                              '%'
                             "
                             :disable="!armorOn"
                             class="tw:px-3"
@@ -1481,7 +1811,51 @@ defineExpose({ generateShop });
                             aria-label="Armor percentage"
                             role="menuitem"
                           />
-                          <q-separator />
+                        </div>
+                        <div class="tw:flex tw:flex-col">
+                          <div class="tw:flex tw:flex-row">
+                            <q-checkbox
+                              v-model="backpackOn"
+                              label="Enable Backpacks?"
+                              @click="
+                                if (!backpackOn) {
+                                  newTemplate.equippable_percentages.backpack_percentage = 0;
+                                }
+                              "
+                            />
+                          </div>
+                          <q-slider
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .backpack_percentage
+                            "
+                            label
+                            :min="0"
+                            :max="100"
+                            :inner-max="
+                              100 -
+                              newTemplate.equippable_percentages
+                                .armor_percentage! -
+                              newTemplate.equippable_percentages
+                                .equipment_percentage! -
+                              newTemplate.equippable_percentages
+                                .shield_percentage! -
+                              newTemplate.equippable_percentages
+                                .weapon_percentage!
+                            "
+                            :step="5"
+                            :label-value="
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .backpack_percentage +
+                              '%'
+                            "
+                            :disable="!backpackOn"
+                            class="tw:px-3"
+                            style="min-width: 236px"
+                            aria-label="Backpack percentage"
+                            role="menuitem"
+                          />
                         </div>
                         <div class="tw:flex tw:flex-col">
                           <div class="tw:flex tw:flex-row">
@@ -1490,25 +1864,36 @@ defineExpose({ generateShop });
                               label="Enable Equipments?"
                               @click="
                                 if (!equipmentOn) {
-                                  newTemplate.equipment_percentage = 0;
+                                  newTemplate.equippable_percentages.equipment_percentage = 0;
                                 }
                               "
                             />
                           </div>
                           <q-slider
-                            v-model="newTemplate.equipment_percentage"
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .equipment_percentage
+                            "
                             label
                             :min="0"
                             :max="100"
                             :inner-max="
                               100 -
-                              newTemplate.armor_percentage! -
-                              newTemplate.shield_percentage! -
-                              newTemplate.weapon_percentage!
+                              newTemplate.equippable_percentages
+                                .backpack_percentage! -
+                              newTemplate.equippable_percentages
+                                .armor_percentage! -
+                              newTemplate.equippable_percentages
+                                .shield_percentage! -
+                              newTemplate.equippable_percentages
+                                .weapon_percentage!
                             "
                             :step="5"
                             :label-value="
-                              'Min: ' + newTemplate.equipment_percentage + '%'
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .equipment_percentage +
+                              '%'
                             "
                             :disable="!equipmentOn"
                             class="tw:px-3"
@@ -1516,7 +1901,6 @@ defineExpose({ generateShop });
                             aria-label="Equipment percentage"
                             role="menuitem"
                           />
-                          <q-separator />
                         </div>
                         <div class="tw:flex tw:flex-col">
                           <div class="tw:flex tw:flex-row">
@@ -1525,25 +1909,36 @@ defineExpose({ generateShop });
                               label="Enable Shields?"
                               @click="
                                 if (!shieldOn) {
-                                  newTemplate.shield_percentage = 0;
+                                  newTemplate.equippable_percentages.shield_percentage = 0;
                                 }
                               "
                             />
                           </div>
                           <q-slider
-                            v-model="newTemplate.shield_percentage"
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .shield_percentage
+                            "
                             label
                             :min="0"
                             :max="100"
                             :inner-max="
                               100 -
-                              newTemplate.armor_percentage! -
-                              newTemplate.equipment_percentage! -
-                              newTemplate.weapon_percentage!
+                              newTemplate.equippable_percentages
+                                .backpack_percentage! -
+                              newTemplate.equippable_percentages
+                                .armor_percentage! -
+                              newTemplate.equippable_percentages
+                                .equipment_percentage! -
+                              newTemplate.equippable_percentages
+                                .weapon_percentage!
                             "
                             :step="5"
                             :label-value="
-                              'Min: ' + newTemplate.shield_percentage + '%'
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .shield_percentage +
+                              '%'
                             "
                             :disable="!shieldOn"
                             class="tw:px-3"
@@ -1551,7 +1946,6 @@ defineExpose({ generateShop });
                             aria-label="Shield percentage"
                             role="menuitem"
                           />
-                          <q-separator />
                         </div>
                         <div class="tw:flex tw:flex-col">
                           <div class="tw:flex tw:flex-row">
@@ -1560,25 +1954,36 @@ defineExpose({ generateShop });
                               label="Enable Weapons?"
                               @click="
                                 if (!weaponOn) {
-                                  newTemplate.weapon_percentage = 0;
+                                  newTemplate.equippable_percentages.weapon_percentage = 0;
                                 }
                               "
                             />
                           </div>
                           <q-slider
-                            v-model="newTemplate.weapon_percentage"
+                            v-model="
+                              newTemplate.equippable_percentages
+                                .weapon_percentage
+                            "
                             label
                             :min="0"
                             :max="100"
                             :inner-max="
                               100 -
-                              newTemplate.armor_percentage! -
-                              newTemplate.equipment_percentage! -
-                              newTemplate.shield_percentage!
+                              newTemplate.equippable_percentages
+                                .backpack_percentage! -
+                              newTemplate.equippable_percentages
+                                .armor_percentage! -
+                              newTemplate.equippable_percentages
+                                .equipment_percentage! -
+                              newTemplate.equippable_percentages
+                                .shield_percentage!
                             "
                             :step="5"
                             :label-value="
-                              'Min: ' + newTemplate.weapon_percentage + '%'
+                              'Min: ' +
+                              newTemplate.equippable_percentages
+                                .weapon_percentage +
+                              '%'
                             "
                             :disable="!weaponOn"
                             class="tw:px-3"
@@ -1587,7 +1992,7 @@ defineExpose({ generateShop });
                             role="menuitem"
                           />
                         </div>
-                      </div>
+                      </span>
                     </q-card-section>
                   </q-tab-panel>
                 </q-tab-panels>
