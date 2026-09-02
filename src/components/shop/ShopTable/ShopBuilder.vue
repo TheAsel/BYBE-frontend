@@ -407,8 +407,11 @@ const resetTemplateDialog = (): void => {
     trait.state = null;
   }
   selectedTraits.value = [];
+  ammunitionOn.value = true;
   armorOn.value = true;
+  backpackOn.value = true;
   equipmentOn.value = true;
+  genericOn.value = true;
   shieldOn.value = true;
   weaponOn.value = true;
   tab.value = "General";
@@ -438,11 +441,20 @@ const addTemplate = async (): Promise<void> => {
           }
         }
       }
+      if (ammunitionOn.value) {
+        newTemplate.value.item_types?.push("Ammunition");
+      }
       if (armorOn.value) {
         newTemplate.value.item_types?.push("Armor");
       }
+      if (backpackOn.value) {
+        newTemplate.value.item_types?.push("Backpack");
+      }
       if (equipmentOn.value) {
         newTemplate.value.item_types?.push("Equipment");
+      }
+      if (genericOn.value) {
+        newTemplate.value.item_types?.push("Consumable");
       }
       if (shieldOn.value) {
         newTemplate.value.item_types?.push("Shield");
@@ -497,8 +509,11 @@ const openEditDialog = async (): Promise<void> => {
   newTemplate.value = cloneDeep(
     template_store.all_templates[template_store.activeTemplate]!
   );
+  ammunitionOn.value = newTemplate.value.item_types!.includes("Ammunition");
   armorOn.value = newTemplate.value.item_types!.includes("Armor");
+  backpackOn.value = newTemplate.value.item_types!.includes("Backpack");
   equipmentOn.value = newTemplate.value.item_types!.includes("Equipment");
+  genericOn.value = newTemplate.value.item_types!.includes("Consumable");
   shieldOn.value = newTemplate.value.item_types!.includes("Shield");
   weaponOn.value = newTemplate.value.item_types!.includes("Weapon");
   for (const trait of selectedTraits.value) {
@@ -570,11 +585,20 @@ const editTemplate = async (): Promise<void> => {
       newTemplate.value.item_traits_whitelist = newWhitelist;
       newTemplate.value.item_traits_blacklist = newBlacklist;
       const newTypes: item_type[] = [];
+      if (ammunitionOn.value) {
+        newTypes.push("Ammunition");
+      }
       if (armorOn.value) {
         newTypes.push("Armor");
       }
+      if (backpackOn.value) {
+        newTypes.push("Backpack");
+      }
       if (equipmentOn.value) {
         newTypes.push("Equipment");
+      }
+      if (genericOn.value) {
+        newTypes.push("Consumable");
       }
       if (shieldOn.value) {
         newTypes.push("Shield");
