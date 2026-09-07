@@ -94,7 +94,7 @@ export function cleanDescription(description: string): string {
   );
 
   finalString = finalString.replaceAll(
-    /@VariantDamage\(([-+]?\d+)\)/gu,
+    /@VariantDamage\(([-+]?\d*)\)/gu,
     (_, num) => {
       const n = Number(num);
       if (n === 0) return "";
