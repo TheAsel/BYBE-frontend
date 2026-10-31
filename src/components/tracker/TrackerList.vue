@@ -507,6 +507,9 @@ for (const event of ["complete", "cancel"]) {
                 class="tw:flex-1 tw:my-auto tw:mx-1 cursor-pointer"
                 style="min-width: 100px"
                 @click="showItem(item)"
+                @keydown.enter="showItem(item)"
+                role="button"
+                tabindex="0"
               >
                 <q-chip
                   v-if="item.element.is_hazard === false"

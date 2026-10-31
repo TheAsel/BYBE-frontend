@@ -1038,6 +1038,9 @@ await debouncedCall();
               <div
                 class="tw:flex tw:flex-wrap tw:flex-row tw:grow cursor-pointer"
                 @click="showItem(item)"
+                @keydown.enter="showItem(item)"
+                role="button"
+                tabindex="0"
               >
                 <div
                   class="tw:flex-1 tw:my-auto tw:mx-1"

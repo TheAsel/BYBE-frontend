@@ -3,7 +3,6 @@ import {
   biArrowRightShort,
   biCalculator,
   biHouses,
-  biPencil,
   biPersonVcard,
   biShop
 } from "@quasar/extras/bootstrap-icons";

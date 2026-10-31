@@ -6,13 +6,14 @@ ARG NGINX_VERSION=1.31.8
 FROM alpine:${ALPINE_VERSION} AS brotli-stage
 ARG NGINX_VERSION
 RUN apk add --no-cache \
+    brotli-dev \
     build-base \
-    pcre-dev \
-    zlib-dev \
-    openssl-dev \
-    wget \
     git \
-    brotli-dev
+    openssl-dev \
+    pcre-dev \
+    wget \
+    zlib-dev
+
 WORKDIR /app
 RUN wget --secure-protocol=TLSv1_2 --max-redirect=0 "https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
     && tar -zxf "nginx-${NGINX_VERSION}.tar.gz" \

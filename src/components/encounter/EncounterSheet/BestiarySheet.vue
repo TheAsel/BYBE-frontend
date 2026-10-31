@@ -459,7 +459,7 @@ const groupSpells = (
           : ordinalSuffix(spell.slot);
       groups.push({ level, spells: [] });
     }
-    groups.at(groups.length - 1)?.spells.push(spell.name);
+    groups.at(-1)?.spells.push(spell.name);
   }
   return groups;
 };
