@@ -1,6 +1,6 @@
-ARG ALPINE_VERSION=3.24.1
-ARG BUN_VERSION=1.4.0
-ARG NGINX_VERSION=1.31.4
+ARG ALPINE_VERSION=3.24.3
+ARG BUN_VERSION=1.4.4
+ARG NGINX_VERSION=1.31.8
 
 ### STAGE 1: Build nginx + brotli ###
 FROM alpine:${ALPINE_VERSION} AS brotli-stage
@@ -31,7 +31,7 @@ ENV API_URL=$API_URL
 RUN bun install --frozen-lockfile --ignore-scripts && bun run build
 
 ### STAGE 3: Deploy ###
-FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}-alpine AS deploy-stage
+FROM nginx/nginx-unprivileged:${NGINX_VERSION}-alpine AS deploy-stage
 
 COPY --from=brotli-stage /app/nginx/objs/ngx_http_brotli_static_module.so /etc/nginx/modules/
 COPY --from=brotli-stage /app/nginx/objs/ngx_http_brotli_filter_module.so /etc/nginx/modules/
